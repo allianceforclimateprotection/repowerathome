@@ -1,0 +1,13 @@
+{% extends "rah/base.html" %}
+{% block content %}
+    {% if form.errors %}
+        {{form.errors}}
+    {% endif %}
+
+    <form action="" method="post">
+        {{form.as_p}}
+        <input type="submit" value="Login" />
+        <input type="hidden" name="next" value="{{ next|escape }}" />
+        {% csrf_token %}
+    </form>
+{% endblock %}
