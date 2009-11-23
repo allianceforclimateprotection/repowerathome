@@ -1,0 +1,16 @@
+ssh_options[:keys] = %w(~/.ec2/acp-ec2-pk.pem)  
+
+set :application, "rah"
+set :user, "ubuntu"
+set :scm, :git
+
+role :app, "repowerathome.com"
+# role :web, "repowerathome.com"
+# role :db, "repowerathome.com"
+
+namespace :rah do
+    desc "Does something AMAZING!!"
+    task :deploy, :roles => :app do
+        run "pwd"
+    end
+end
