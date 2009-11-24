@@ -180,9 +180,11 @@ acronym {
 #header .site-logo {
 	float: left;
 	display: block;
-	height: 138px;
-	width: 420px;
-	background: transparent url(http://static.repowerathome.com/images/theme/header-logo.png) no-repeat left top;
+	height: 88px;
+	width: 500px;
+	margin-top:30px;
+	margin-left:8px;
+	background: transparent url(http://static.repowerathome.com/images/theme/header-ratlogo.png) no-repeat left top;
 }
 
 

@@ -12,7 +12,7 @@ role :app, "repowerathome.com"
 # role :web, "repowerathome.com"
 # role :db, "repowerathome.com", :primary => true
 
-namespace :rah do
+namespace :deploy do
     desc "Meta task that calls update and restart"
     task :default do
         update
