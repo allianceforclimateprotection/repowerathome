@@ -1,23 +1,31 @@
 ssh_options[:keys] = %w(~/.ec2/acp-ec2-pk.pem)  
 
 set :deploy_to, "/scripts/www"
-set :repository, "git@codebasehq-deploy:rah/rah/rah.git"
 set :application, "rah"
 set :user, "ubuntu"
+
+# These things are not used at the moment
 set :scm, :git
+set :repository, "git@codebasehq-deploy:rah/rah/rah.git"
 
 role :app, "repowerathome.com"
 # role :web, "repowerathome.com"
 # role :db, "repowerathome.com", :primary => true
 
 namespace :rah do
+    desc "Meta task that calls update and restart"
+    task :default do
+        update
+        restart
+    end
+    
     desc "Update Repo"
     task :update, :roles => :app do
         run "cd #{deploy_to}; git pull"
     end
     
     desc "Restart Apache"
-    task :reload, :roles => :app do
+    task :restart, :roles => :app do
         sudo "/etc/init.d/apache2 restart"
     end
 end

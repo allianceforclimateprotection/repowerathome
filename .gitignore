@@ -2,3 +2,4 @@
 *.tmproj
 .DS_Store
 logs/*
+settings.py
