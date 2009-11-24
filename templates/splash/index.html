@@ -1,13 +1,14 @@
 {% extends "rah/base.html" %}
 {% block title %}
-    Signup
+    Welcome
 {% endblock %}
-{% block content %}
-  <h1>Repower@Home</h1>
-  <h2>Sign Up</h2>
+{% block minorcol %}
+  <h2>Stay in the loop</h2>
+  <p>Sign up for our email list and you'll be the first to hear about Repower@Home news, private betas, and our big launch!</p>
   <form action="" method="post">
-      <div>{{ form.as_ul }}</div>
+      <div>{{ form.as_p }}
       <input type="submit" value="Sign Up"/>
+      </div>
       {% csrf_token %}
   </form>
 {% endblock %}
