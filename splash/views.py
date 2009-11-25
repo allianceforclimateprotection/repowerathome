@@ -10,13 +10,15 @@ def index(request):
     """
     Home Page
     """
+    success = False
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
             new_user = form.save()
-            return HttpResponseRedirect("/?signup=success")
+            success = True
     else:
         form = SignupForm()
     return render_to_response("splash/index.html", {
         'form': form,
+        'success': success
     }, context_instance=RequestContext(request))
