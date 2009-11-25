@@ -176,6 +176,7 @@ acronym {
 #header {
 	margin: 0 auto;
 	width: 960px;
+	position:relative;
 }
 #header .site-logo {
 	float: left;
@@ -187,6 +188,11 @@ acronym {
 	background: transparent url(http://static.repowerathome.com/images/theme/header-ratlogo.png) no-repeat left top;
 }
 
+#header-links {
+    position:absolute;
+    right:0px;
+    top:20px;
+}
 
 /** Footer **/
 #footer-container {

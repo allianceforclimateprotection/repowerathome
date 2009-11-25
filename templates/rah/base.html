@@ -10,19 +10,21 @@
         <div id="header-container">
             <div id="header">
                 <a href="/" alt="Repower America" class="site-logo"></a>
+                <div id="header-links">
+                    {% if user.is_authenticated %}
+                        Welcome, {{user.username}} | <a href="/logout">Logout</a>
+                    {% else %}
+                        <a href="/login">Login</a> | <a href="/register">Sign Up</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div id="content-container">
             <div id="major-col">
-                <h1 class="page-header">National Security</h1>
-                <p>As long as we continue to send hundreds of billions of dollars for foreign oil to the most dangerous and unstable regions of the world year after year, our national security will continue to be at risk.</p>
-                <p>Transitioning America to a clean energy economy that relies on renewable domestic sources of energy will reduce our dangerous over reliance on foreign oil and our exposure to energy-driven conflicts overseas. By repowering America with renewable energy, we can regain control of our own national destiny and restore America’s moral and economic leadership in the world.</p>
                 {% block content %}{% endblock %}
             </div>
             <div id="minor-col">
-                {% block minorcol %}
-                    
-                {% endblock %}
+                {% block minorcol %}{% endblock %}
             </div>
         </div>
         <div id="footer-container">

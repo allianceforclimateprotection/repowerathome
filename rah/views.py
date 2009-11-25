@@ -22,7 +22,7 @@ def index(request):
     
     
     
-    return render_to_response('rah/home_logged_in.html', {})
+    return render_to_response('rah/home_logged_in.html', {}, context_instance=RequestContext(request))
 
 @csrf_protect
 def register(request):
