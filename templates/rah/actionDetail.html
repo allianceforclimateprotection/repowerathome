@@ -1,4 +1,11 @@
 {% extends "rah/base.html" %}
 {% block content %}
-<h1>Action Detail</h1>
+<div id="breadcrumbs">
+    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+    <a href="{% url rah.views.actionBrowse %}">Actions</a> &rsaquo;
+    <a href="{% url rah.views.actionCat cat.slug %}">{{cat.name}}</a> &rsaquo;
+    {{action.name}}
+</div>
+<h1>{{action.name}}</h1>
+{{action.content}}
 {% endblock %}

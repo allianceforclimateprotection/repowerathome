@@ -4,7 +4,8 @@ from django.contrib import auth
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
-
+from django.shortcuts import get_object_or_404
+from rah.models import Action, ActionCat
 
 def index(request):
     """
@@ -41,13 +42,18 @@ def register(request):
     }, context_instance=RequestContext(request))
 
 def actionBrowse(request):
-    """docstring for action"""
-    return render_to_response('rah/actionBrowse.html')
+    """Browse all actions by category"""
+    cats = ActionCat.objects.all()
+    return render_to_response('rah/actionBrowse.html', {'cats':cats})
 
 def actionCat(request, catSlug):
-    """docstring for actionCat"""
-    return render_to_response('rah/actionCat.html')
+    """View an action category page with links to actions in that category"""
+    cat     = get_object_or_404(ActionCat, slug=catSlug)
+    actions = Action.objects.filter(category=cat.id)
+    return render_to_response('rah/actionCat.html', {'cat':cat, 'actions':actions})
 
 def actionDetail(request, catSlug, actionSlug):
-    """docstring for actionDetail"""
-    return render_to_response('rah/actionDetail.html')
+    """Detail page for an action"""
+    action = get_object_or_404(Action, slug=actionSlug)
+    cat    = ActionCat.objects.get(slug=catSlug)
+    return render_to_response('rah/actionDetail.html', {'action':action, 'cat':cat})

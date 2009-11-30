@@ -1,4 +1,15 @@
 {% extends "rah/base.html" %}
 {% block content %}
-<h1>Action Cat</h1>
+<div id="breadcrumbs">
+    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+    <a href="{% url rah.views.actionBrowse %}">Actions</a> &rsaquo;
+    {{cat.name}}
+</div>
+<h1>{{cat.name}} Actions</h1>
+<p>These are actions in the {{cat.name}} category</p>
+<ul>
+    {% for action in actions %}
+     <li><a href="{% url rah.views.actionDetail cat.slug,action.slug %}">{{action.name}}</a></li>
+    {% endfor %}
+</ul>
 {% endblock %}

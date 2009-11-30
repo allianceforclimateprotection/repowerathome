@@ -175,6 +175,9 @@ acronym {
     width: 300px;
 }
 
+/* Breadcrumbs */
+#breadcrumbs {font-size:11px; margin-bottom:20px;}
+
 /** Header **/
 #header-container {
 	width: 100%;

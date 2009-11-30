@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 class Action(models.Model):
     name = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
     points = models.IntegerField()
@@ -17,6 +18,7 @@ class Action(models.Model):
 
 class ActionCat(models.Model):
     name = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
