@@ -26,7 +26,6 @@ def index(request):
 
 @csrf_protect
 def register(request):
-    # from django.contrib.auth.forms import UserCreationForm
     from www.rah.forms import RegistrationForm
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -40,3 +39,15 @@ def register(request):
     return render_to_response("registration/register.html", {
         'form': form,
     }, context_instance=RequestContext(request))
+
+def actionBrowse(request):
+    """docstring for action"""
+    return render_to_response('rah/actionBrowse.html')
+
+def actionCat(request, catSlug):
+    """docstring for actionCat"""
+    return render_to_response('rah/actionCat.html')
+
+def actionDetail(request, catSlug, actionSlug):
+    """docstring for actionDetail"""
+    return render_to_response('rah/actionDetail.html')

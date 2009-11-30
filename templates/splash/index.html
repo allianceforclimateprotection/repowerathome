@@ -18,11 +18,11 @@
             Thanks! We'll be in touch.
         </div>
     {% else %}
-    <form action="" method="post">
-        <div>{{ form.as_p }}
-        <input type="submit" value="Sign Up"/>
-        </div>
-        {% csrf_token %}
-    </form>
+        <form action="" method="post">
+            <div>{{ form.as_p }}
+            <input type="submit" value="Sign Up"/>
+            </div>
+            {% csrf_token %}
+        </form>
     {% endif %}
 {% endblock %}
