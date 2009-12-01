@@ -55,5 +55,5 @@ def actionCat(request, catSlug):
 def actionDetail(request, catSlug, actionSlug):
     """Detail page for an action"""
     action = get_object_or_404(Action, slug=actionSlug)
-    cat    = ActionCat.objects.get(slug=catSlug)
+    cat    = get_object_or_404(ActionCat, slug=catSlug)
     return render_to_response('rah/actionDetail.html', {'action':action, 'cat':cat})

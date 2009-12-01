@@ -36,3 +36,27 @@ class ActionStatus(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.status)
+
+class Location(models.Model):
+    name = models.CharField(max_length=200)
+    zipcode = models.CharField(max_length=5)
+    county = models.CharField(max_length=100)
+    st = models.CharField(max_length=2)
+    state = models.CharField(max_length=50)
+    lon = models.CharField(max_length=50)
+    lat = models.CharField(max_length=50)
+    pop = models.PositiveIntegerField()
+    timezone = models.CharField(max_length=100)
+    
+    def __unicode__(self):
+        return u'%s (%s)' % (self.name, self.zipcode)
+
+class Home(models.Model):
+    name = models.CharField(max_length=200)
+    user = models.ForeignKey(User)
+    location = models.ForeignKey(Location)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return u'%s' % (self.name)

@@ -124,7 +124,7 @@ for line in fin:
                     county = counties["US." + st + "." + parts[11]]
                 
                 # Write a line of SQL
-                fout.write("INSERT INTO `rah_geo` (`name`,`zipcode`,`county`,`st`,`state`,`lon`,`lat`,`pop`,`timezone`) ")
+                fout.write("INSERT INTO `rah_location` (`name`,`zipcode`,`county`,`st`,`state`,`lon`,`lat`,`pop`,`timezone`) ")
                 fout.write('VALUES ("%s","%s","%s","%s","%s","%s","%s",%s,"%s");\n' % (name, zipcode, county, st, state, lon, lat, pop, timezone)) 
                 zipsFound += 1
             else:
