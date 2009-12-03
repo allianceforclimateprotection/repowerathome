@@ -175,6 +175,17 @@ acronym {
     width: 300px;
 }
 
+/* Navigation */
+#nav {
+    width: 100%;
+    float:left;
+    font-size:20px;
+    font-weight:bold;
+}
+
+/* Breadcrumbs */
+#breadcrumbs {font-size:11px; margin-bottom:20px;}
+
 /** Header **/
 #header-container {
 	width: 100%;

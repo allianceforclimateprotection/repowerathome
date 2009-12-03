@@ -9,13 +9,17 @@
     <body>
         <div id="header-container">
             <div id="header">
-                <a href="/" alt="Repower America" class="site-logo"></a>
+                <a href="/" title="Repower America" class="site-logo"></a>
                 <div id="header-links">
                     {% if user.is_authenticated %}
                         Welcome, {{user.username}} | <a href="/logout">Logout</a>
                     {% else %}
                         <a href="/login">Login</a> | <a href="/register">Sign Up</a>
                     {% endif %}
+                </div>
+                <div id="nav">
+                    <a href="{% url rah.views.index %}">Home</a> | 
+                    <a href="{% url rah.views.actionBrowse %}">Actions</a>
                 </div>
             </div>
         </div>

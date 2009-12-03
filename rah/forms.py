@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from www.rah.models import Signup
 
 class RegistrationForm(UserCreationForm):
     """
@@ -12,3 +13,17 @@ class RegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("username","email")
+
+class SignupForm(forms.ModelForm):
+    class Meta:
+        model = Signup
+        fields = ("email","zipcode")
+
+    def clean_zipcode(self):
+        data = self.cleaned_data['zipcode']
+        if (not data.isdigit()) or (len(data) <> 5):
+            raise forms.ValidationError("Please enter a valid 5 digit zipcode")
+
+        # Always return the cleaned data, whether you have changed it or
+        # not.
+        return data

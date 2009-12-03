@@ -1,20 +1,35 @@
 from django import forms
 from django.http import HttpResponseRedirect
 from django.contrib import auth
+from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
-from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from rah.models import Action, ActionCat
+from rah.forms import SignupForm
 from rah.models import Profile
-
 
 def index(request):
     """
     Home Page
     """
-    # If the user is not logged in, show them the logged out homepage and bail
-    if not request.user.is_authenticated():
-        return render_to_response('rah/home_logged_out.html')
+    # If the user is logged in, show them the logged in homepage and bail
+    if request.user.is_authenticated():
+        return render_to_response('rah/home_logged_in.html', {}, context_instance=RequestContext(request))
+    
+    success = False
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            success = True
+    else:
+        form = SignupForm()
+    return render_to_response("rah/home_logged_out.html", {
+        'form': form,
+        'success': success
+    }, context_instance=RequestContext(request))
     
     # Get a list of relevant actions
     
@@ -28,7 +43,6 @@ def index(request):
 
 @csrf_protect
 def register(request):
-    # from django.contrib.auth.forms import UserCreationForm
     from www.rah.forms import RegistrationForm
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -42,7 +56,24 @@ def register(request):
     return render_to_response("registration/register.html", {
         'form': form,
     }, context_instance=RequestContext(request))
-    
+
+def actionBrowse(request):
+    """Browse all actions by category"""
+    cats = ActionCat.objects.all()
+    return render_to_response('rah/actionBrowse.html', {'cats':cats})
+
+def actionCat(request, catSlug):
+    """View an action category page with links to actions in that category"""
+    cat     = get_object_or_404(ActionCat, slug=catSlug)
+    actions = Action.objects.filter(category=cat.id)
+    return render_to_response('rah/actionCat.html', {'cat':cat, 'actions':actions})
+
+def actionDetail(request, catSlug, actionSlug):
+    """Detail page for an action"""
+    action = get_object_or_404(Action, slug=actionSlug)
+    cat    = get_object_or_404(ActionCat, slug=catSlug)
+    return render_to_response('rah/actionDetail.html', {'action':action, 'cat':cat})
+
 def profile(request, username):
     """docstring for profile"""
     user = User.objects.get(username=username)

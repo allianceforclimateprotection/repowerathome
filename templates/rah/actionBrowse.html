@@ -1,0 +1,14 @@
+{% extends "rah/base.html" %}
+{% block content %}
+<div id="breadcrumbs">
+    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+    Actions
+</div>
+<h1>Action Library</h1>
+<p>Select a category of action</p>
+<ul>
+    {% for cat in cats %}
+    <li><a href="{% url rah.views.actionCat cat.slug %}">{{cat}}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
