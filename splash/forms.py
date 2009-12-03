@@ -8,7 +8,7 @@ class SignupForm(forms.ModelForm):
     
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode']
-        if not data.isdigit() or len(data) < 5 or len(data) > 5:
+        if not data.isdigit() or len(data) <> 5:
             raise forms.ValidationError("Please enter a valid 5 digit zipcode")
 
         # Always return the cleaned data, whether you have changed it or
