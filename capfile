@@ -16,12 +16,18 @@ namespace :deploy do
     desc "Meta task that calls update and restart"
     task :default do
         update
+        syncdb
         restart
     end
     
     desc "Update Repo"
     task :update, :roles => :app do
         run "cd #{deploy_to}; git pull"
+    end
+    
+    desc "Sync DB"
+    task :syncdb, :roles => :app do
+        run "cd /scripts/www/; python manage.py syncdb"
     end
     
     desc "Restart Apache"
