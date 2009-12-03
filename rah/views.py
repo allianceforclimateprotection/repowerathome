@@ -71,10 +71,9 @@ def actionDetail(request, catSlug, actionSlug):
     action = get_object_or_404(Action, slug=actionSlug)
     
     # Lookup the user's status for this action
-    status = ActionStatus.objects.filter(user=request.user.id, action=action.id)
-    if len(status):
-        status = status[0]
-    else:
+    try:
+        status = ActionStatus.objects.get(user=request.user.id, action=action.id)
+    except:
         status = False
     
     return render_to_response('rah/actionDetail.html', {
