@@ -6,14 +6,28 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import get_object_or_404
 from rah.models import Action, ActionCat
+from rah.forms import SignupForm
 
 def index(request):
     """
     Home Page
     """
-    # If the user is not logged in, show them the logged out homepage and bail
-    if not request.user.is_authenticated():
-        return render_to_response('rah/home_logged_out.html')
+    # If the user is logged in, show them the logged in homepage and bail
+    if request.user.is_authenticated():
+        return render_to_response('rah/home_logged_in.html', {}, context_instance=RequestContext(request))
+    
+    success = False
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            success = True
+    else:
+        form = SignupForm()
+    return render_to_response("rah/home_logged_out.html", {
+        'form': form,
+        'success': success
+    }, context_instance=RequestContext(request))
     
     # Get a list of relevant actions
     
