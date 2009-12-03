@@ -83,4 +83,5 @@ INSTALLED_APPS = (
 )
 
 LOGIN_REDIRECT_URL = "/"
+AUTH_PROFILE_MODULE = 'rah.Profile'
 # STATIC_DOC_ROOT = "/Users/jonlesser/Documents/Repower@Home/www/static/"
