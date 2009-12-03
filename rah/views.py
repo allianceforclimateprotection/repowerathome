@@ -4,6 +4,8 @@ from django.contrib import auth
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.models import User
+from rah.models import Profile
 
 
 def index(request):
@@ -40,3 +42,9 @@ def register(request):
     return render_to_response("registration/register.html", {
         'form': form,
     }, context_instance=RequestContext(request))
+    
+def profile(request, username):
+    """docstring for profile"""
+    user = User.objects.get(username=username)
+    profile = user.get_profile()
+    return render_to_response('rah/profile.html', {'profile': profile})
