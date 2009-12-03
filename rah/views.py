@@ -59,13 +59,13 @@ def register(request):
 def actionBrowse(request):
     """Browse all actions by category"""
     cats = ActionCat.objects.all()
-    return render_to_response('rah/actionBrowse.html', {'cats':cats})
+    return render_to_response('rah/actionBrowse.html', {'cats':cats}, context_instance=RequestContext(request))
 
 def actionCat(request, catSlug):
     """View an action category page with links to actions in that category"""
     cat     = get_object_or_404(ActionCat, slug=catSlug)
     actions = Action.objects.filter(category=cat.id)
-    return render_to_response('rah/actionCat.html', {'cat':cat, 'actions':actions})
+    return render_to_response('rah/actionCat.html', {'cat':cat, 'actions':actions}, context_instance=RequestContext(request))
 
 def actionDetail(request, catSlug, actionSlug):
     """Detail page for an action"""
@@ -87,4 +87,4 @@ def profile(request, username):
     """docstring for profile"""
     user = User.objects.get(username=username)
     profile = user.get_profile()
-    return render_to_response('rah/profile.html', {'profile': profile})
+    return render_to_response('rah/profile.html', {'profile': profile}, context_instance=RequestContext(request))
