@@ -3,9 +3,18 @@
 <div id="breadcrumbs">
     <a href="{% url rah.views.index %}">Home</a> &rsaquo;
     <a href="{% url rah.views.actionBrowse %}">Actions</a> &rsaquo;
-    <a href="{% url rah.views.actionCat cat.slug %}">{{cat.name}}</a> &rsaquo;
+    <a href="{% url rah.views.actionCat action.category.slug %}">{{action.category.name}}</a> &rsaquo;
     {{action.name}}
 </div>
 <h1>{{action.name}}</h1>
 {{action.content}}
+
+<h1>Your Status: 
+{% if user.is_authenticated and status %}
+    {{status.status}}
+{% else %}
+    Not Started
+{% endif %}
+</h1>
+    
 {% endblock %}

@@ -35,7 +35,8 @@ class ActionStatus(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return u'%s' % (self.status)
+        return u'%s (%s), %s (%s), %s' % (self.user.username, self.user.id, self.action.name,
+                                          self.action.id, self.status)
 
 class Location(models.Model):
     name = models.CharField(max_length=200)

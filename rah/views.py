@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import get_object_or_404
-from rah.models import Action, ActionCat
+from rah.models import Action, ActionCat, ActionStatus
 from rah.forms import SignupForm
 
 def index(request):
@@ -14,8 +14,15 @@ def index(request):
     """
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
+        # Get a list of relevant actions
+
+        # Get a list of completed actions
+
+        # Get a list of the user's earned points
+        
         return render_to_response('rah/home_logged_in.html', {}, context_instance=RequestContext(request))
     
+    # Setup and handle email form on logged out home page
     success = False
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -28,15 +35,7 @@ def index(request):
         'form': form,
         'success': success
     }, context_instance=RequestContext(request))
-    
-    # Get a list of relevant actions
-    
-    # Get a list of completed actions
-    
-    # Get a list of the user's earned points
-    
-    
-    
+        
     return render_to_response('rah/home_logged_in.html', {}, context_instance=RequestContext(request))
 
 @csrf_protect
@@ -68,6 +67,17 @@ def actionCat(request, catSlug):
 
 def actionDetail(request, catSlug, actionSlug):
     """Detail page for an action"""
+    # Lookup the action
     action = get_object_or_404(Action, slug=actionSlug)
-    cat    = get_object_or_404(ActionCat, slug=catSlug)
-    return render_to_response('rah/actionDetail.html', {'action':action, 'cat':cat})
+    
+    # Lookup the user's status for this action
+    status = ActionStatus.objects.filter(user=request.user.id, action=action.id)
+    if len(status):
+        status = status[0]
+    else:
+        status = False
+    
+    return render_to_response('rah/actionDetail.html', {
+                                'action':action, 
+                                'status': status
+                              }, context_instance=RequestContext(request))
