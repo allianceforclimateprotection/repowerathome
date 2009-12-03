@@ -49,6 +49,7 @@ def register(request):
             new_user = form.save()
             user = auth.authenticate(username=form.cleaned_data["username"], password=form.cleaned_data["password1"])
             auth.login(request, user)
+            Profile.objects.create(user=user)
             return HttpResponseRedirect("/")
     else:
         form = RegistrationForm()
