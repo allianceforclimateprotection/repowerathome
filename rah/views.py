@@ -1,12 +1,14 @@
 from django import forms
 from django.http import HttpResponseRedirect
 from django.contrib import auth
+from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import get_object_or_404
 from rah.models import Action, ActionCat, ActionStatus
 from rah.forms import SignupForm
+from rah.models import Profile
 
 def index(request):
     """
@@ -80,3 +82,9 @@ def actionDetail(request, catSlug, actionSlug):
                                 'action':action, 
                                 'status': status
                               }, context_instance=RequestContext(request))
+
+def profile(request, username):
+    """docstring for profile"""
+    user = User.objects.get(username=username)
+    profile = user.get_profile()
+    return render_to_response('rah/profile.html', {'profile': profile})

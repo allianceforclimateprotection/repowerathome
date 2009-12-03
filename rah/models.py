@@ -1,5 +1,8 @@
+import hashlib
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
 
 class Action(models.Model):
     name = models.CharField(max_length=255)
@@ -68,3 +71,13 @@ class Signup(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.email)
+
+class Profile(models.Model):
+    """Profile"""
+    user = models.ForeignKey(User)
+
+    def __unicode__(self):
+        return u'%s' % (self.user.username)
+
+    def get_gravatar_url(self):
+        return 'http://www.gravatar.com/avatar/%s?d=identicon' % (hashlib.md5(self.user.email.lower()).hexdigest())
