@@ -1,4 +1,3 @@
-from django import forms
 from django.http import HttpResponseRedirect
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -6,9 +5,9 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import get_object_or_404
-from rah.models import Action, ActionCat, ActionStatus
-from rah.forms import SignupForm
-from rah.models import Profile
+
+from rah.models import Action, ActionCat, ActionStatus, Profile
+from rah.forms import RegistrationForm, SignupForm, InquiryForm
 
 def index(request):
     """
@@ -42,7 +41,6 @@ def index(request):
 
 @csrf_protect
 def register(request):
-    from www.rah.forms import RegistrationForm
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -88,4 +86,16 @@ def profile(request, username):
     """docstring for profile"""
     user = User.objects.get(username=username)
     profile = user.get_profile()
-    return render_to_response('rah/profile.html', {'profile': profile}, context_instance=RequestContext(request))
+    return render_to_response('rah/profile.html', {'profile': profile,}, context_instance=RequestContext(request))
+    
+def inquiry(request):
+    """docstring for inquiry"""
+    if request.method == 'POST':
+        form = InquiryForm(request.POST, instance=request.user.get_profile())
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/%s/" % (request.user.username))
+    else:
+        form = InquiryForm(instance=request.user.get_profile())
+    return render_to_response('rah/inquiry.html', {'form': form,}, context_instance=RequestContext(request))
+
