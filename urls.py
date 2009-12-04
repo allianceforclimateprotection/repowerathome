@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     (r'^actions/$', 'www.rah.views.actionBrowse'),
     (r'^actions/([a-z0-9-]+)/$', 'www.rah.views.actionCat'),
     (r'^actions/([a-z0-9-]+)/([a-z0-9-]+)/$', 'www.rah.views.actionDetail'),
+    (r'^inquiry/', 'www.rah.views.inquiry'),
     
     (r'^admin/', include(admin.site.urls)),
     #(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),

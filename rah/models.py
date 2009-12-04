@@ -66,10 +66,14 @@ class Signup(models.Model):
 
 class Profile(models.Model):
     """Profile"""
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, unique=True)
+    location = models.ForeignKey(Location, null=True)
 
     def __unicode__(self):
         return u'%s' % (self.user.username)
 
     def get_gravatar_url(self):
-        return 'http://www.gravatar.com/avatar/%s?d=identicon' % (hashlib.md5(self.user.email.lower()).hexdigest())
+        return 'http://www.gravatar.com/avatar/%s?r=g&s=200&d=identicon' % (self._email_hash())
+
+    def _email_hash(self):
+        return (hashlib.md5(self.user.email.lower()).hexdigest())

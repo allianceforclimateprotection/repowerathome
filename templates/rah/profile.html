@@ -1,5 +1,9 @@
 {% extends "rah/base.html" %}
 {% block content %}
-<h1>{{profile.user.get_full_name}} Profile Page</h1>
-<img src="{{profile.get_gravatar_url}}" alt="user gravatar" height="30" width="30" />
+  <h1>{{profile.user.get_full_name}} is located at {{profile.location.name}}, {{profile.location.state}}</h1>
+  
+  <img src="{{profile.get_gravatar_url}}" alt="user gravatar" />
+  <h3><a href="/inquiry/">Edit My Profile</a></h3>
 {% endblock %}
+
+{% block minorcol %}{% endblock %}
