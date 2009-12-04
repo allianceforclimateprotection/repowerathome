@@ -9,7 +9,9 @@
 <p>These are actions in the {{cat.name}} category</p>
 <ul>
     {% for action in actions %}
-     <li><a href="{% url rah.views.actionDetail cat.slug,action.slug %}">{{action.name}}</a></li>
+     <li><a href="{% url rah.views.actionDetail cat.slug,action.slug %}">{{action.name}}</a>
+         <b>{{action.status.all}}</b>
+         </li>
     {% endfor %}
 </ul>
 {% endblock %}

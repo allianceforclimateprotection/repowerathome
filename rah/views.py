@@ -66,6 +66,10 @@ def actionCat(request, catSlug):
     """View an action category page with links to actions in that category"""
     cat     = get_object_or_404(ActionCat, slug=catSlug)
     actions = Action.objects.filter(category=cat.id)
+    stati   = ActionStatus.objects.filter(user=request.user.id)
+    print stati
+    # for each action in actions:
+        
     return render_to_response('rah/actionCat.html', {'cat':cat, 'actions':actions}, context_instance=RequestContext(request))
 
 def actionDetail(request, catSlug, actionSlug):
