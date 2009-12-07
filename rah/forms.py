@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from www.rah.models import Signup, Profile, Location, ActionStatus
+from www.rah.models import *
 
 class RegistrationForm(UserCreationForm):
     """
@@ -47,3 +47,29 @@ class ActionStatusForm(forms.ModelForm):
     class Meta:
         model = ActionStatus
         fields = ("status",)
+
+class ActionAdminForm(forms.ModelForm):
+    class Meta:
+        model = Action
+
+    def clean_slug(self):
+        import re
+        data = self.cleaned_data['slug']
+        
+        if not re.search('^[a-z0-9-]+$', data):
+            raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
+    
+        return data
+
+class ActionCatAdminForm(forms.ModelForm):
+    class Meta:
+        model = ActionCat
+
+    def clean_slug(self):
+        import re
+        data = self.cleaned_data['slug']
+
+        if not re.search('^[a-z0-9-]+$', data):
+            raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
+
+        return data
