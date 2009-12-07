@@ -1,8 +1,7 @@
 from django import forms
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from www.rah.models import Signup, Profile, Location
+from www.rah.models import *
 from django.forms import ValidationError
 from django.core.urlresolvers import resolve, Resolver404
 from urlparse import urlparse
@@ -11,7 +10,7 @@ class RegistrationForm(UserCreationForm):
     """
         Extends the stock User Creation Form that ships with auth to include an email field
     """
-    email = forms.EmailField(label=_("Email"))
+    email = forms.EmailField(label="Email")
     
     class Meta:
         model = User
@@ -39,8 +38,6 @@ class SignupForm(forms.ModelForm):
         if (not data.isdigit()) or (len(data) <> 5):
             raise forms.ValidationError("Please enter a valid 5 digit zipcode")
 
-        # Always return the cleaned data, whether you have changed it or
-        # not.
         return data
 
 class InquiryForm(forms.ModelForm):
@@ -52,6 +49,7 @@ class InquiryForm(forms.ModelForm):
         
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode']
+        # TODO Remove debug print statements before commiting 
         print "Data: %s" % (data)
         if len(data) <> 5:
             raise forms.ValidationError("Please enter a 5 digit zipcode")
@@ -60,3 +58,33 @@ class InquiryForm(forms.ModelForm):
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
 
+class ActionStatusForm(forms.ModelForm):
+    class Meta:
+        model = ActionStatus
+        fields = ("status",)
+
+class ActionAdminForm(forms.ModelForm):
+    class Meta:
+        model = Action
+
+    def clean_slug(self):
+        import re
+        data = self.cleaned_data['slug']
+        
+        if not re.search('^[a-z0-9-]+$', data):
+            raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
+    
+        return data
+
+class ActionCatAdminForm(forms.ModelForm):
+    class Meta:
+        model = ActionCat
+
+    def clean_slug(self):
+        import re
+        data = self.cleaned_data['slug']
+
+        if not re.search('^[a-z0-9-]+$', data):
+            raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
+
+        return data

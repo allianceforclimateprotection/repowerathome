@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 
 from rah.models import Action, ActionCat, ActionStatus, Profile
-from rah.forms import RegistrationForm, SignupForm, InquiryForm
+from rah.forms import RegistrationForm, SignupForm, InquiryForm, ActionStatusForm
 
 def index(request):
     """
@@ -57,21 +57,48 @@ def register(request):
         'form': form,
     }, context_instance=RequestContext(request))
 
-def actionBrowse(request):
+def action_browse(request):
     """Browse all actions by category"""
     cats = ActionCat.objects.all()
-    return render_to_response('rah/actionBrowse.html', {'cats':cats}, context_instance=RequestContext(request))
+    return render_to_response('rah/action_browse.html', {'cats':cats}, context_instance=RequestContext(request))
 
-def actionCat(request, catSlug):
+def action_cat(request, catSlug):
     """View an action category page with links to actions in that category"""
     cat     = get_object_or_404(ActionCat, slug=catSlug)
-    actions = Action.objects.filter(category=cat.id)
-    return render_to_response('rah/actionCat.html', {'cat':cat, 'actions':actions}, context_instance=RequestContext(request))
+    
+    # If there is a logged in user, grab their status for each action, else, just grab the actions
+    if(request.user.is_authenticated()):
+        actions = Action.objects.filter(category=cat.id).extra(
+                    select_params = (request.user.id,),
+                    select = { 'user_status': ' SELECT rah_actionstatus.status \
+                                                FROM rah_actionstatus \
+                                                WHERE rah_actionstatus.user_id = %s AND \
+                                                rah_actionstatus.action_id = rah_action.id' }
+                  )
+    else:
+        actions = Action.objects.filter(category=cat.id)
+        
+    return render_to_response('rah/action_cat.html', {'cat': cat, 'actions': actions}, context_instance=RequestContext(request))
 
-def actionDetail(request, catSlug, actionSlug):
+def action_detail(request, catSlug, actionSlug):
     """Detail page for an action"""
     # Lookup the action
     action = get_object_or_404(Action, slug=actionSlug)
+
+    # Process the status update is form is POSTed
+    if request.method == 'POST':
+        form = ActionStatusForm(request.POST)
+        if form.is_valid():
+            # If the form is valid, look for an existing ActionStatus object before creating a new one
+            try:
+                st = ActionStatus.objects.get(user=request.user, action=action)
+            except Exception, e:
+                ActionStatus.objects.create(user=request.user, action=action, status=form.cleaned_data["status"])
+            else:
+                st.status = form.cleaned_data["status"]
+                st.save()
+    else:
+        form = ActionStatusForm()
     
     # Lookup the user's status for this action
     try:
@@ -79,9 +106,10 @@ def actionDetail(request, catSlug, actionSlug):
     except:
         status = False
     
-    return render_to_response('rah/actionDetail.html', {
-                                'action':action, 
-                                'status': status
+    return render_to_response('rah/action_detail.html', {
+                                'action': action, 
+                                'status': status,
+                                'form'  : form
                               }, context_instance=RequestContext(request))
 
 def profile(request, username):

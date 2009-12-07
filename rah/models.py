@@ -1,8 +1,6 @@
 import hashlib
-
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.files.storage import FileSystemStorage
 
 class Action(models.Model):
     name = models.CharField(max_length=255)
@@ -14,7 +12,7 @@ class Action(models.Model):
     updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey('ActionCat')
     status = models.ManyToManyField(User, through='ActionStatus')
-    
+        
     def __unicode__(self):
         return u'%s' % (self.name)
     
@@ -31,9 +29,14 @@ class ActionCat(models.Model):
         return u'%s' % (self.name)
     
 class ActionStatus(models.Model):
+    STATUS_CHOICES = (
+        ('Committed', 'Committed'),
+        ('Finished', 'Finished'),
+    )
+    
     user = models.ForeignKey(User)
     action = models.ForeignKey(Action)
-    status = models.CharField(max_length=50)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -54,16 +57,6 @@ class Location(models.Model):
     
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.zipcode)
-
-class Home(models.Model):
-    name = models.CharField(max_length=200)
-    user = models.ForeignKey(User)
-    location = models.ForeignKey(Location)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-
-    def __unicode__(self):
-        return u'%s' % (self.name)
 
 class Signup(models.Model):
     email = models.EmailField(max_length=255)

@@ -11,13 +11,12 @@ urlpatterns = patterns('',
     (r'^login/$', 'django.contrib.auth.views.login'),
     (r'^register/$', 'www.rah.views.register'),
     (r'^logout/$', 'django.contrib.auth.views.logout', {'next_page':'/'}),
-    (r'^actions/$', 'www.rah.views.actionBrowse'),
-    (r'^actions/([a-z0-9-]+)/$', 'www.rah.views.actionCat'),
-    (r'^actions/([a-z0-9-]+)/([a-z0-9-]+)/$', 'www.rah.views.actionDetail'),
+    (r'^actions/$', 'www.rah.views.action_browse'),
+    (r'^actions/([a-z0-9-]+)/$', 'www.rah.views.action_cat'),
+    (r'^actions/([a-z0-9-]+)/([a-z0-9-]+)/$', 'www.rah.views.action_detail'),
     
     (r'^admin/', include(admin.site.urls)),
     #(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
-    
     (r'^(?P<username>.+)/edit/$', 'www.rah.views.profile_edit'),
     (r'^(?P<username>.+)/$', 'www.rah.views.profile'),
 )
