@@ -3,6 +3,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from www.rah.models import Signup, Profile, Location
+from django.forms import ValidationError
+from django.core.urlresolvers import resolve, Resolver404
+from urlparse import urlparse
 
 class RegistrationForm(UserCreationForm):
     """
@@ -13,6 +16,18 @@ class RegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("username","email",)
+
+    def clean_username(self):
+        """
+            Ensures that any usernames added will not conflict with exisiting commands
+        """
+        username = super(RegistrationForm, self).clean_username()
+        try:
+            resolve(urlparse('/' + username + '/')[2])
+        except Resolver404, e:
+            #TODO: create a list of urls we want to save; then validate the username against these
+            return username
+        raise ValidationError(_(u'This username has been reserved by our system.  Please choose another.'))
 
 class SignupForm(forms.ModelForm):
     class Meta:
