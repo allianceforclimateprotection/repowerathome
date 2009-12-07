@@ -12,11 +12,7 @@ class Action(models.Model):
     updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey('ActionCat')
     status = models.ManyToManyField(User, through='ActionStatus')
-    
-    def fname(self):
-        """docstring for fname"""
-        pass
-    
+        
     def __unicode__(self):
         return u'%s' % (self.name)
     
@@ -33,9 +29,14 @@ class ActionCat(models.Model):
         return u'%s' % (self.name)
     
 class ActionStatus(models.Model):
+    STATUS_CHOICES = (
+        ('Committed', 'Committed'),
+        ('Finished', 'Finished'),
+    )
+    
     user = models.ForeignKey(User)
     action = models.ForeignKey(Action)
-    status = models.CharField(max_length=50)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

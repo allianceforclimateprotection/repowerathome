@@ -2,16 +2,17 @@
 {% block content %}
 <div id="breadcrumbs">
     <a href="{% url rah.views.index %}">Home</a> &rsaquo;
-    <a href="{% url rah.views.actionBrowse %}">Actions</a> &rsaquo;
+    <a href="{% url rah.views.action_browse %}">Actions</a> &rsaquo;
     {{cat.name}}
 </div>
 <h1>{{cat.name}} Actions</h1>
 <p>These are actions in the {{cat.name}} category</p>
 <ul>
     {% for action in actions %}
-     <li><a href="{% url rah.views.actionDetail cat.slug,action.slug %}">{{action.name}}</a>
-         <b>{{action.status.all}}</b>
-         </li>
+    <li>
+        <a href="{% url rah.views.action_detail cat.slug,action.slug %}">{{action.name}}</a>
+        (Your status: {{action.user_status}})
+    </li>
     {% endfor %}
 </ul>
 {% endblock %}
