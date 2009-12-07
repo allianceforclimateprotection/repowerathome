@@ -3,8 +3,10 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import PermissionDenied
 
 from rah.models import Action, ActionCat, ActionStatus, Profile
 from rah.forms import RegistrationForm, SignupForm, InquiryForm
@@ -84,12 +86,15 @@ def actionDetail(request, catSlug, actionSlug):
 
 def profile(request, username):
     """docstring for profile"""
-    user = User.objects.get(username=username)
+    user = get_object_or_404(User, username=username)
     profile = user.get_profile()
     return render_to_response('rah/profile.html', {'profile': profile,}, context_instance=RequestContext(request))
-    
-def inquiry(request):
+
+@login_required
+def profile_edit(request, username):
     """docstring for inquiry"""
+    if request.user.username <> username:
+        raise PermissionDenied
     if request.method == 'POST':
         form = InquiryForm(request.POST, instance=request.user.get_profile())
         if form.is_valid():
@@ -98,5 +103,5 @@ def inquiry(request):
     else:
         profile = request.user.get_profile()
         form = InquiryForm(instance=profile, initial={'zipcode': profile.location.zipcode})
-    return render_to_response('rah/inquiry.html', {'form': form,}, context_instance=RequestContext(request))
+    return render_to_response('rah/profile_edit.html', {'form': form,}, context_instance=RequestContext(request))
 

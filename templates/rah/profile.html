@@ -3,7 +3,7 @@
   <h1>{{profile.user.get_full_name}} is located at {{profile.location.name}}, {{profile.location.state}} living in a {{profile.get_building_type_display}}</h1>
   
   <img src="{{profile.get_gravatar_url}}" alt="user gravatar" />
-  <h3><a href="/inquiry/">Edit My Profile</a></h3>
+  <h3><a href="{% url rah.views.profile_edit profile.user %}">Edit My Profile</a></h3>
 {% endblock %}
 
 {% block minorcol %}{% endblock %}
