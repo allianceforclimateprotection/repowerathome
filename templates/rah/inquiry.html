@@ -4,6 +4,7 @@
     <p>City: {{user.get_profile.location.name}}</p>
     <p>State: {{user.get_profile.location.state}}</p>
     <p>Zipcode: {{user.get_profile.location.zipcode}}</p>
+    <p>Building Type: {{user.get_profile.get_building_type_display}}</p>
     <form action="/inquiry/" method="POST">
         <div>{{form.as_p}}</div>
         <input type="submit" value="Submit" />

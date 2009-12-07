@@ -30,7 +30,7 @@ class InquiryForm(forms.ModelForm):
     
     class Meta:
         model = Profile
-        fields = ("zipcode",)
+        fields = ("zipcode", "building_type")
         
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode']

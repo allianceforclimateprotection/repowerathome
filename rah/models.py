@@ -67,8 +67,13 @@ class Signup(models.Model):
 
 class Profile(models.Model):
     """Profile"""
+    BUILDING_CHOICES = (
+        ('A', 'Apartment'),
+        ('S', 'Single Family Home'),
+    )
     user = models.ForeignKey(User, unique=True)
     location = models.ForeignKey(Location, null=True)
+    building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES)
 
     def __unicode__(self):
         return u'%s' % (self.user.username)
