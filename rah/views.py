@@ -96,6 +96,7 @@ def inquiry(request):
             form.save()
             return HttpResponseRedirect("/%s/" % (request.user.username))
     else:
-        form = InquiryForm(instance=request.user.get_profile())
+        profile = request.user.get_profile()
+        form = InquiryForm(instance=profile, initial={'zipcode': profile.location.zipcode})
     return render_to_response('rah/inquiry.html', {'form': form,}, context_instance=RequestContext(request))
 
