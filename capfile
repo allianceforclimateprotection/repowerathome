@@ -15,9 +15,9 @@ role :app, "repowerathome.com"
 namespace :deploy do
     desc "Meta task that calls update and restart"
     task :default do
-        # update
-        # syncdb
-        # restart
+        update
+        syncdb
+        restart
         add_deployment_to_codebase
     end
     
@@ -39,6 +39,8 @@ namespace :deploy do
     task :add_deployment_to_codebase do
       username = `git config codebase.username`.chomp.strip
       api_key  = `git config codebase.apikey`.chomp.strip
+      revision = `git ls-remote origin master | awk 'BEGIN { FS = " " } ; { print $1 }'`.chomp.strip
+      branch   = 'master'
 
       regex = /git\@(codebasehq-deploy):(.*)\/(.*)\/(.*)\.git/
       unless m = repository.match(regex)
@@ -55,7 +57,6 @@ namespace :deploy do
 
         puts "      -  Project......: #{project}"
         puts "      -  Repository...: #{repository}"
-
 
         environment_to_send = begin
           env = (self.environment rescue self.rails_env).dup
@@ -74,17 +75,18 @@ namespace :deploy do
         servers = roles.values.collect{|r| r.servers}.flatten.collect{|s| s.host}.uniq.join(', ') rescue ''
 
         puts "      -  Servers......: #{servers}"
-        # puts "      -  Revision.....: #{real_revision}"
-        # puts "      -  Branch.......: #{branch}"
+        puts "      -  Revision.....: #{revision}"
+        puts "      -  Branch.......: #{branch}"
+        puts "      -  Environment..: #{environment_to_send}"
 
         xml = []
         xml << "<deployment>"
         xml << "<servers>#{servers}</servers>"
-        xml << "<revision>c76a9746ce8d420c69ed93906fc59140882e21b2</revision>"
+        xml << "<revision>#{revision}</revision>"
         xml << "<environment>#{environment_to_send}</environment>"
-        xml << "<branch>master</branch>"
+        xml << "<branch>#{branch}</branch>"
         xml << "</deployment>"
-        
+
         require 'net/http'
         require 'uri'
 
@@ -98,7 +100,6 @@ namespace :deploy do
         req.add_field('Content-type', 'application/xml')
         req.add_field('Accept', 'application/xml')
         res = Net::HTTP.new(url.host, url.port).start { |http| http.request(req, xml.join) }
-        
         case res
         when Net::HTTPCreated then puts "  * \e[32mAdded deployment to Codebase\e[0m"
         else 
