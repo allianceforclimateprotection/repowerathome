@@ -1,6 +1,8 @@
 from django.conf.urls.defaults import *
 import settings
 
+from django.core.urlresolvers import reverse
+
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -17,6 +19,6 @@ urlpatterns = patterns('',
     
     (r'^admin/', include(admin.site.urls)),
     #(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
-    (r'^(?P<username>.+)/edit/$', 'www.rah.views.profile_edit'),
-    (r'^(?P<username>.+)/$', 'www.rah.views.profile'),
+    (r'^(?P<username>\w+)/edit/$', 'www.rah.views.profile_edit'),
+    (r'^(?P<username>\w+)/$', 'www.rah.views.profile'),
 )

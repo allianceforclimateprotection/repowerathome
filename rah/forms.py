@@ -21,12 +21,20 @@ class RegistrationForm(UserCreationForm):
             Ensures that any usernames added will not conflict with exisiting commands
         """
         username = super(RegistrationForm, self).clean_username()
+        valid = False
         try:
-            resolve(urlparse('/' + username + '/')[2])
-        except Resolver404, e:
+            view_function = resolve(urlparse('/' + username + '/')[2])[0]
+            if view_function.func_name == 'profile':
+                valid = True
+        except Resolver404, re:
             #TODO: create a list of urls we want to save; then validate the username against these
-            return username
-        raise ValidationError(_(u'This username has been reserved by our system.  Please choose another.'))
+            valid = True
+        except AttributeError, ae:
+            pass
+            
+        if not valid:
+            raise ValidationError('This username has been reserved by our system.  Please choose another.')
+        return username
 
 class SignupForm(forms.ModelForm):
     class Meta:
