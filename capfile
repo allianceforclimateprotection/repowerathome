@@ -1,3 +1,5 @@
+require 'codebase/recipes'
+
 ssh_options[:keys] = %w(~/.ec2/acp-ec2-pk.pem)  
 
 set :deploy_to, "/scripts/www"
