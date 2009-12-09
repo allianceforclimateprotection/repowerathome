@@ -27,3 +27,10 @@ urlpatterns += patterns('www.rah.views',
     (r'^(?P<username>\w+)/edit/$', 'profile_edit'),
     (r'^(?P<username>\w+)/$', 'profile'),
 )
+
+if settings.DEBUG:
+    urlpatterns += patterns('django.views.static',
+    (r'^static/(?P<path>.*)$', 
+        'serve', {
+        'document_root': settings.MEDIA_ROOT,
+        'show_indexes': True }),)
