@@ -14,7 +14,6 @@ urlpatterns = patterns('',
     (r'^logout/$', 'django.contrib.auth.views.logout', {'next_page':'/'}),
 
     (r'^admin/', include(admin.site.urls)),
-    #(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
 )
 
 urlpatterns += patterns('www.rah.views',

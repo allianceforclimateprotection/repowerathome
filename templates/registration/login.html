@@ -7,6 +7,9 @@
     <form action="" method="post">
         {{form.as_p}}
         <input type="submit" value="Login" />
+        {% comment %}
+            FIXME: find out why the next parameter isn't being used
+        {% endcomment %}
         <input type="hidden" name="next" value="{{ next|escape }}" />
         {% csrf_token %}
     </form>
