@@ -5,10 +5,10 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
+from django.forms.formsets import formset_factory
 from django.db.models import Sum
-
-from rah.models import Action, ActionCat, Profile, Points
-from rah.forms import RegistrationForm, SignupForm, InquiryForm
+from rah.models import *
+from rah.forms import *
 
 def index(request):
     """
@@ -70,16 +70,19 @@ def action_cat(request, catSlug):
     cat     = get_object_or_404(ActionCat, slug=catSlug)
     actions = Action.objects.filter(category=cat.id)
         
-    return render_to_response('rah/action_cat.html', {'cat': cat, 'actions': actions}, context_instance=RequestContext(request))
+    return render_to_response('rah/action_cat.html', {'cat': cat, 'actions': actions}, 
+                                context_instance=RequestContext(request))
 
 def action_detail(request, catSlug, actionSlug):
     """Detail page for an action"""
     # Lookup the action
     action = get_object_or_404(Action, slug=actionSlug)
-    
+    tasks = UserActionTask.get_tasks_by_user_action_with_default(action, request.user)
+
     return render_to_response('rah/action_detail.html', {
-        'action': action, 
-    }, context_instance=RequestContext(request))
+                                'action': action,
+                                'tasks': tasks
+                              }, context_instance=RequestContext(request))
 
 def profile(request, username):
     """docstring for profile"""
@@ -102,12 +105,12 @@ def profile_edit(request, username):
     if request.user.username <> username:
         return HttpResponseForbidden()
     if request.method == 'POST':
-        form = InquiryForm(request.POST, instance=request.user.get_profile())
+        form = ProfileEditForm(request.POST, instance=request.user.get_profile())
         if form.is_valid():
             form.save()
             return redirect('www.rah.views.profile', username=request.user.username)
     else:
         profile = request.user.get_profile()
-        form = InquiryForm(instance=profile, initial={'zipcode': profile.location.zipcode})
+        form = ProfileEditForm(instance=profile, initial={'zipcode': profile.location.zipcode})
     return render_to_response('rah/profile_edit.html', {'form': form,}, context_instance=RequestContext(request))
 

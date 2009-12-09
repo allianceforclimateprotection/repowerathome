@@ -7,5 +7,17 @@
     {{action.name}}
 </div>
 <h1>{{action.name}}</h1>
+{% for task in tasks %}
+    <form action="" method="post" accept-charset="utf-8">
+        {% ifequal task.completed None %}
+            <input type="checkbox" name="">{{ task.task.name }}</input>
+        {% else %}
+            <input type="checkbox" name="" checked>{{ task.task.name }}</input>
+        {% endifequal %}
+        <span><input type="submit" value="Update"></span>
+        {% csrf_token %}
+    </form>
+{% endfor %}
+<br/>
 {{action.content}}
 {% endblock %}

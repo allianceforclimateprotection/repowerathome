@@ -5,6 +5,7 @@ from www.rah.models import *
 from django.forms import ValidationError
 from django.core.urlresolvers import resolve, Resolver404
 from urlparse import urlparse
+from django.forms.widgets import CheckboxSelectMultiple
 
 class RegistrationForm(UserCreationForm):
     """
@@ -48,7 +49,7 @@ class SignupForm(forms.ModelForm):
 
         return data
 
-class InquiryForm(forms.ModelForm):
+class ProfileEditForm(forms.ModelForm):
     zipcode = forms.CharField(max_length=5)
     
     class Meta:
@@ -65,6 +66,13 @@ class InquiryForm(forms.ModelForm):
             self.instance.location = Location.objects.get(zipcode=data)
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
+
+class UserActionTaskForm(forms.Form):
+    is_done = forms.BooleanField(label='test')
+    
+    class Meta:
+        model = UserActionTask
+        fields = ("is_done",)
 
 class ActionAdminForm(forms.ModelForm):
     class Meta:
