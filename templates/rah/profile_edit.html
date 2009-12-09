@@ -5,7 +5,7 @@
     <p>State: {{user.get_profile.location.state}}</p>
     <p>Zipcode: {{user.get_profile.location.zipcode}}</p>
     <p>Building Type: {{user.get_profile.get_building_type_display}}</p>
-    <form action="/inquiry/" method="POST">
+    <form action="{% url rah.views.profile_edit user.username %}" method="POST">
         <div>{{form.as_p}}</div>
         <input type="submit" value="Submit" />
         <input type="hidden" name="next" value="{{ next|escape }}" />
