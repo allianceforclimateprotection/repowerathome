@@ -13,7 +13,7 @@ class ActionCatAdmin(admin.ModelAdmin):
     form = ActionCatAdminForm
 
 admin.site.register(Signup, SignupAdmin)
+admin.site.register(ActionTask)
 admin.site.register(Action, ActionAdmin)
 admin.site.register(ActionCat, ActionCatAdmin)
-admin.site.register(ActionStatus)
 admin.site.register(Profile)

@@ -50,7 +50,26 @@ class UserActionTask(models.Model):
     completed = models.DateTimeField(blank=True, default=datetime.now)
 
     def __unicode__(self):
-        return u'%s completed by %s' % (self.task, self.user)
+        return u'%s completed at %s' % (self.task, self.completed)
+
+    @classmethod
+    def get_tasks_by_user_action_with_default(clas, action, user):
+        """docstring for get_tasks_by_user_action_with_default"""
+        from django.db import connection, transaction
+        cursor = connection.cursor()
+        query = """
+            SELECT at.name, at.content, at.sequence, uat.completed
+            FROM rah_useractiontask uat
+            RIGHT JOIN rah_actiontask at ON uat.task_id = at.id AND uat.user_id = %s
+            WHERE at.action_id = %s
+        """
+        cursor.execute(query, [user.id, action.id])
+        rows = cursor.fetchall()
+        user_action_tasks = []
+        for row in rows:
+            task = ActionTask(action=action, name=row[0], content=row[1], sequence=row[2])
+            user_action_tasks.append(UserActionTask(task=task, user=user, completed=row[3]))
+        return user_action_tasks
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
