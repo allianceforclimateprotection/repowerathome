@@ -1,6 +1,7 @@
 import hashlib
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 
 class Action(models.Model):
     name = models.CharField(max_length=255)
@@ -11,7 +12,6 @@ class Action(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey('ActionCat')
-    status = models.ManyToManyField(User, through='ActionStatus')
         
     def __unicode__(self):
         return u'%s' % (self.name)
@@ -27,22 +27,30 @@ class ActionCat(models.Model):
     
     def __unicode__(self):
         return u'%s' % (self.name)
-    
-class ActionStatus(models.Model):
-    STATUS_CHOICES = (
-        ('Committed', 'Committed'),
-        ('Finished', 'Finished'),
-    )
-    
-    user = models.ForeignKey(User)
+
+class ActionTask(models.Model):
+    """
+    class representing the individual tasks (or steps) a user must complete
+    in order to gain successful completion of the associated action
+    """
     action = models.ForeignKey(Action)
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='')
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=255)
+    content = models.TextField()
+    sequence = models.PositiveIntegerField()
+    
+    def __unicode__(self):
+        return u'%s' % (self.name)
+
+class UserActionTask(models.Model):
+    """
+    class representing the ActionTasks a specific user has completed
+    """
+    task = models.ForeignKey(ActionTask)
+    user = models.ForeignKey(User)
+    completed = models.DateTimeField(blank=True, default=datetime.now)
 
     def __unicode__(self):
-        return u'%s (%s), %s (%s), %s' % (self.user.username, self.user.id, self.action.name,
-                                          self.action.id, self.status)
+        return u'%s completed by %s' % (self.task, self.user)
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
