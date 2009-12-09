@@ -1,9 +1,25 @@
 {% extends "rah/base.html" %}
 {% block content %}
-  <h1>{{profile.user.get_full_name}} is located at {{profile.location.name}}, {{profile.location.state}} living in a {{profile.get_building_type_display}}</h1>
-  
-  <img src="{{profile.get_gravatar_url}}" alt="user gravatar" />
-  <h3><a href="{% url rah.views.profile_edit profile.user %}">Edit My Profile</a></h3>
+<h1>{{profile.user.username}}'s Profile (<a href="{% url rah.views.profile_edit profile.user %}">Edit</a>)</h1>
+<ul>
+    <li>Location: {{profile.location.name}}, {{profile.location.state}}</li>
+    <li>Home Type: {{profile.get_building_type_display}}</li>
+</ul>
+<img src="{{profile.get_gravatar_url}}" alt="user gravatar" />
+
+<h2>Total Points: {{total_points}}</h2>
+<ul>
+    {% for point in points %}
+        <li>
+            {{point.points}} points: 
+            {% if point.task %} 
+                {{point.task.name}} 
+            {% else %} 
+                {{point.get_reason_display}}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
 {% endblock %}
 
 {% block minorcol %}{% endblock %}

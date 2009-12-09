@@ -8,7 +8,6 @@ class Action(models.Model):
     slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
-    points = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey('ActionCat')
@@ -36,6 +35,7 @@ class ActionTask(models.Model):
     action = models.ForeignKey(Action)
     name = models.CharField(max_length=255)
     content = models.TextField()
+    points = models.IntegerField()
     sequence = models.PositiveIntegerField()
     
     def __unicode__(self):
@@ -84,7 +84,7 @@ class Points(models.Model):
     user = models.ForeignKey(User)
     points = models.IntegerField()
     # TODO Change this to ActionTasks when that model is ready
-    task = models.ForeignKey(Action, related_name="task", null=True)
+    task = models.ForeignKey(ActionTask, related_name="task", null=True)
     reason = models.IntegerField(choices=REASONS, default='')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

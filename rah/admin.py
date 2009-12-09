@@ -15,5 +15,4 @@ class ActionCatAdmin(admin.ModelAdmin):
 admin.site.register(Signup, SignupAdmin)
 admin.site.register(Action, ActionAdmin)
 admin.site.register(ActionCat, ActionCatAdmin)
-admin.site.register(ActionStatus)
 admin.site.register(Profile)

@@ -7,18 +7,5 @@
     {{action.name}}
 </div>
 <h1>{{action.name}}</h1>
-Your Status: 
-{% if user.is_authenticated and status %}
-    {{status.status}}
-{% else %}
-    Not Started
-{% endif %}
-<form action="" method="post" accept-charset="utf-8">
-    
-    {{form.as_p}}
-    <p><input type="submit" value="Update Status"></p>
-    {% csrf_token %}
-</form>
-<br/>
 {{action.content}}
 {% endblock %}

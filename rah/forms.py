@@ -66,11 +66,6 @@ class InquiryForm(forms.ModelForm):
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
 
-class ActionStatusForm(forms.ModelForm):
-    class Meta:
-        model = ActionStatus
-        fields = ("status",)
-
 class ActionAdminForm(forms.ModelForm):
     class Meta:
         model = Action
