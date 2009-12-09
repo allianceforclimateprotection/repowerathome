@@ -1,12 +1,10 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
-from django.shortcuts import get_object_or_404
-from django.core.exceptions import PermissionDenied
 
 from rah.models import Action, ActionCat, ActionStatus, Profile
 from rah.forms import RegistrationForm, SignupForm, InquiryForm, ActionStatusForm
@@ -50,7 +48,7 @@ def register(request):
             user = auth.authenticate(username=form.cleaned_data["username"], password=form.cleaned_data["password1"])
             auth.login(request, user)
             Profile.objects.create(user=user)
-            return HttpResponseRedirect("/")
+            return redirect('www.rah.views.index')
     else:
         form = RegistrationForm()
     return render_to_response("registration/register.html", {
@@ -122,12 +120,12 @@ def profile(request, username):
 def profile_edit(request, username):
     """docstring for inquiry"""
     if request.user.username <> username:
-        raise PermissionDenied
+        return HttpResponseForbidden()
     if request.method == 'POST':
         form = InquiryForm(request.POST, instance=request.user.get_profile())
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/%s/" % (request.user.username))
+            return redirect('www.rah.views.profile', username=request.user.username)
     else:
         profile = request.user.get_profile()
         form = InquiryForm(instance=profile, initial={'zipcode': profile.location.zipcode})
