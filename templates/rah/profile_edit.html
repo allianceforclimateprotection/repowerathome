@@ -1,11 +1,7 @@
 {% extends "rah/base.html" %}
 {% block content %}
-    <p>Username: {{user.username}}</p>
-    <p>City: {{user.get_profile.location.name}}</p>
-    <p>State: {{user.get_profile.location.state}}</p>
-    <p>Zipcode: {{user.get_profile.location.zipcode}}</p>
-    <p>Building Type: {{user.get_profile.get_building_type_display}}</p>
-    <form action="{% url rah.views.profile_edit user.username %}" method="POST">
+    <h1>Edit your Profile</h1>
+    <form action="{% url rah.views.profile_edit user.username %}" method="post">
         <div>{{form.as_p}}</div>
         <input type="submit" value="Submit" />
         <input type="hidden" name="next" value="{{ next|escape }}" />
