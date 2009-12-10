@@ -41,6 +41,15 @@ class ActionTask(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+    @classmethod
+    def get_action_tasks_by_action_optional_user(clas, action, user):
+        return ActionTask.objects.filter(action=action.id).extra(
+            select_params = (user.id,), 
+            select = { 'completed': 'SELECT rah_useractiontask.completed \
+                                     FROM rah_useractiontask \
+                                     WHERE rah_useractiontask.user_id = %s AND \
+                                     rah_useractiontask.action_task_id = rah_actiontask.id' })
+
 class UserActionTask(models.Model):
     """
     class representing the ActionTasks a specific user has completed

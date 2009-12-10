@@ -77,7 +77,8 @@ class UserActionTaskForm(forms.Form):
 class ActionAdminForm(forms.ModelForm):
     class Meta:
         model = Action
-
+    
+    #OPTIMIZE: make function reusable by creating an abstract sluggable form
     def clean_slug(self):
         import re
         data = self.cleaned_data['slug']

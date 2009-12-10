@@ -21,8 +21,9 @@ urlpatterns += patterns('www.rah.views',
     # OPTIMIZE: we can remove our custom register view altogether and just specify our custom from as a parameter in the url pattern
     (r'^register/$', 'register'),
     (r'^actions/$', 'action_browse'),
-    (r'^actions/([a-z0-9-]+)/$', 'action_cat'),
-    (r'^actions/([a-z0-9-]+)/([a-z0-9-]+)/$', 'action_detail'),
+    (r'^actions/(?P<cat_slug>[a-z0-9-]+)/$', 'action_cat'),
+    (r'^actions/(?P<cat_slug>[a-z0-9-]+)/(?P<action_slug>[a-z0-9-]+)/$', 'action_detail'),
+    (r'^actiontasks/(?P<action_task_id>\d+)/$', 'action_task'),
     (r'^(?P<username>\w+)/edit/$', 'profile_edit'),
     (r'^(?P<username>\w+)/$', 'profile'),
 )
