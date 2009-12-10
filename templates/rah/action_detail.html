@@ -7,8 +7,9 @@
     {{action.name}}
 </div>
 <h1>{{action.name}}</h1>
+{{action.content|safe|linebreaks}}
 {% for task in action_tasks %}
-    <h2>{{ task.sequence }}) {{ task.name }}</h2>
+    <h2>{{ task.sequence }}) {{ task.name }} ({{ task.points }} points)</h2>
     {% if user.is_authenticated %}
     <form action="" method="post" accept-charset="utf-8">
         <input type="checkbox" name="task_completed" {% if task.completed %}checked="checked"{% endif %}>Completed</input>
