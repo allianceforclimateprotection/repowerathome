@@ -1,10 +1,12 @@
 {% extends "rah/base.html" %}
 {% block content %}
     <h1>Edit your Profile</h1>
+    <a href="http://en.gravatar.com/">Change your image on gravatar.com</a>
     <form action="{% url rah.views.profile_edit user.username %}" method="post">
         <div>{{form.as_p}}</div>
         <input type="submit" value="Submit" />
         <input type="hidden" name="next" value="{{ next|escape }}" />
         {% csrf_token %}
     </form>
+    
 {% endblock %}
