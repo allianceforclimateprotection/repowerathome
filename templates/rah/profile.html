@@ -6,7 +6,7 @@
 {% endifequal %}
 </h1>
 <ul>
-    <li>Location: {{profile.location.name}}, {{profile.location.state}}</li>
+    <li>Location: {{profile.location}}</li>
     <li>Home Type: {{profile.get_building_type_display}}</li>
 </ul>
 <img src="{{profile.get_gravatar_url}}" alt="user gravatar" />

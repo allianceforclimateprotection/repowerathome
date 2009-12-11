@@ -127,6 +127,7 @@ def profile_edit(request, username):
             return redirect('www.rah.views.profile', username=request.user.username)
     else:
         profile = request.user.get_profile()
-        form = ProfileEditForm(instance=profile, initial={'zipcode': profile.location.zipcode})
+        zipcode = profile.location and profile.location.zipcode or ''
+        form = ProfileEditForm(instance=profile, initial={'zipcode': zipcode})
     return render_to_response('rah/profile_edit.html', {'form': form,}, context_instance=RequestContext(request))
 

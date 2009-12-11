@@ -73,7 +73,7 @@ class Location(models.Model):
     timezone = models.CharField(max_length=100)
     
     def __unicode__(self):
-        return u'%s (%s)' % (self.name, self.zipcode)
+        return u'%s, %s (%s)' % (self.name, self.st, self.zipcode)
 
 class Points(models.Model):
     """
@@ -116,7 +116,7 @@ class Profile(models.Model):
     )
     user = models.ForeignKey(User, unique=True)
     location = models.ForeignKey(Location, null=True)
-    building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES)
+    building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES, blank=True)
     
     def __unicode__(self):
         return u'%s' % (self.user.username)
