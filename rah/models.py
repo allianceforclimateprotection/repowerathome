@@ -36,10 +36,14 @@ class ActionTask(DefaultModel):
     content = models.TextField()
     points = models.IntegerField()
     sequence = models.PositiveIntegerField()
+    
+    class Meta:
+        ordering = ['action', 'sequence']
+        unique_together = ('action', 'sequence',)
 
     @staticmethod
     def get_action_tasks_by_action_optional_user(action, user):
-        return ActionTask.objects.filter(action=action.id).order_by('sequence').extra(
+        return ActionTask.objects.filter(action=action.id).extra(
             select_params = (user.id,), 
             select = { 'completed': 'SELECT rah_useractiontask.completed \
                                      FROM rah_useractiontask \
@@ -53,6 +57,9 @@ class UserActionTask(models.Model):
     action_task = models.ForeignKey(ActionTask)
     user = models.ForeignKey(User)
     completed = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        get_latest_by = 'complete'
 
     def __unicode__(self):
         return u'%s completed at %s' % (self.action_task, self.completed)
@@ -85,6 +92,9 @@ class Points(DefaultModel):
         (1, "Because we like you"),
         (2, "Because we don't like you"),
     )
+    
+    class Meta:
+        verbose_name_plural = 'points'
     
     user = models.ForeignKey(User)
     points = models.IntegerField()
