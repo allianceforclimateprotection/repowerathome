@@ -19,6 +19,32 @@ class Action(DefaultModel):
     teaser = models.TextField()
     content = models.TextField()
     category = models.ForeignKey('ActionCat')
+    
+    @staticmethod
+    def get_recommended_actions_for_user(user, quantity=5):
+        """
+        return a list of actions that are recommended for this user
+        """
+        return Action.objects.all()[:quantity]
+        
+    @staticmethod
+    def get_actions_with_tasks_and_user_completes_for_user(user):
+        """
+        return a list of actions with 2 extra attributes, tasks will contain the number
+        of assocaited tasks and user_completes will contain the number of tasks completed
+        by the specified user
+        """
+        if not user:
+            raise Exception("User must be defined.")
+        return Action.objects.all().extra(
+            select = { 'tasks': 'SELECT COUNT(at.id) \
+                                 FROM rah_actiontask at \
+                                 WHERE at.action_id = rah_action.id' }).extra(
+            select_params = (user.id,),
+            select = { 'user_completes': 'SELECT COUNT(uat.id) \
+                                          FROM rah_useractiontask uat \
+                                          JOIN rah_actiontask at ON uat.action_task_id = at.id \
+                                          WHERE uat.user_id = %s AND at.action_id = rah_action.id'})
 
 class ActionCat(DefaultModel):
     name = models.CharField(max_length=255)

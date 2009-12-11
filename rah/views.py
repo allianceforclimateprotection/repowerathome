@@ -17,10 +17,12 @@ def index(request):
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
         # Get a list of relevant actions
-        action_recs = Action.objects.select_related().all()[:5]
-
-        # Get a list of actions in progress
-        in_progress = UserActionTask.objects.select_related().filter(user=request.user)
+        recommended = Action.get_recommended_actions_for_user(request.user)
+        
+        # get a list of actions with additinal attributes for tasks and user_completes
+        actions = Action.get_actions_with_tasks_and_user_completes_for_user(request.user)
+        in_progress = [action for action in actions if action.tasks > action.user_completes and action.user_completes > 0]
+        completed = [action for action in actions if action.tasks == action.user_completes]
         
         # Get a list of points earned by this user and their total points
         points = Points.objects.filter(user=request.user)[:10]
@@ -30,7 +32,8 @@ def index(request):
             'points': points,
             'total_points': total_points,
             'in_progress': in_progress,
-            'action_recs': action_recs,
+            'recommended': recommended,
+            'completed': completed,
         }, context_instance=RequestContext(request))
     
     # Setup and handle email form on logged out home page
