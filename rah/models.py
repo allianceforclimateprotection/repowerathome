@@ -3,31 +3,30 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 
-class Action(models.Model):
+class DefaultModel(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        abstract = True
+    
+    def __unicode__(self):
+        return u'%s' % (self.name)
+
+class Action(DefaultModel):
     name = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey('ActionCat')
-        
-    def __unicode__(self):
-        return u'%s' % (self.name)
-    
 
-class ActionCat(models.Model):
+class ActionCat(DefaultModel):
     name = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
-    def __unicode__(self):
-        return u'%s' % (self.name)
 
-class ActionTask(models.Model):
+class ActionTask(DefaultModel):
     """
     class representing the individual tasks (or steps) a user must complete
     in order to gain successful completion of the associated action
@@ -37,13 +36,10 @@ class ActionTask(models.Model):
     content = models.TextField()
     points = models.IntegerField()
     sequence = models.PositiveIntegerField()
-    
-    def __unicode__(self):
-        return u'%s' % (self.name)
 
-    @classmethod
-    def get_action_tasks_by_action_optional_user(clas, action, user):
-        return ActionTask.objects.filter(action=action.id).extra(
+    @staticmethod
+    def get_action_tasks_by_action_optional_user(action, user):
+        return ActionTask.objects.filter(action=action.id).order_by('sequence').extra(
             select_params = (user.id,), 
             select = { 'completed': 'SELECT rah_useractiontask.completed \
                                      FROM rah_useractiontask \
@@ -75,7 +71,7 @@ class Location(models.Model):
     def __unicode__(self):
         return u'%s, %s (%s)' % (self.name, self.st, self.zipcode)
 
-class Points(models.Model):
+class Points(DefaultModel):
     """
     Points can be associated with a given action task or a given arbitrarily.
     To assign the points arbitrarily, you should provide a value for `reason`
@@ -94,8 +90,6 @@ class Points(models.Model):
     points = models.IntegerField()
     task = models.ForeignKey(ActionTask, related_name="task", null=True)
     reason = models.IntegerField(choices=REASONS, default='')
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return u'%s points' % (self.points)
@@ -121,8 +115,8 @@ class Profile(models.Model):
     def __unicode__(self):
         return u'%s' % (self.user.username)
 
-    def get_gravatar_url(self):
-        return 'http://www.gravatar.com/avatar/%s?r=g&s=200&d=identicon' % (self._email_hash())
+    def get_gravatar_url(self, size=200, default_icon='identicon'):
+        return 'http://www.gravatar.com/avatar/%s?r=g&s=%s&d=%s' % (self._email_hash(), size, default_icon)
 
     def _email_hash(self):
         return (hashlib.md5(self.user.email.lower()).hexdigest())

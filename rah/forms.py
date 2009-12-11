@@ -59,7 +59,8 @@ class ProfileEditForm(forms.ModelForm):
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
         # TODO Remove debug print statements before commiting 
-        if len(data) == 0:
+        if not len(data):
+            self.instance.location = None
             return
         if len(data) <> 5:
             raise forms.ValidationError("Please enter a 5 digit zipcode")

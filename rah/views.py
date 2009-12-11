@@ -127,8 +127,7 @@ def profile_edit(request, username):
             return redirect('www.rah.views.profile', username=request.user.username)
     else:
         profile = request.user.get_profile()
-        zipcode = profile.location and profile.location.zipcode or ''
-        form = ProfileEditForm(instance=profile, initial={'zipcode': zipcode})
+        form = ProfileEditForm(instance=profile, initial={'zipcode': profile.location.zipcode if profile.location else ''})
     return render_to_response('rah/profile_edit.html', {'form': form,}, context_instance=RequestContext(request))
     
 @login_required
