@@ -101,3 +101,10 @@ class ActionCatAdminForm(forms.ModelForm):
             raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
 
         return data
+
+class AccountForm(forms.ModelForm):
+    """docstring for AccountForm"""
+    class Meta:
+        model = User
+        fields = ('email',)
+        

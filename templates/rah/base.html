@@ -12,7 +12,8 @@
                 <a href="/" title="Repower America" class="site-logo"></a>
                 <div id="header-links">
                     {% if user.is_authenticated %}
-                        Welcome, {{user.username}} | <a href="{% url rah.views.profile user.username %}">Profile</a> | <a href="/logout">Logout</a>
+                        Welcome, {{user.username}} | <a href="{% url rah.views.profile user.username %}">Profile</a> | 
+                        <a href="{% url rah.views.account %}">Account</a> | <a href="/logout">Logout</a>
                     {% else %}
                         <a href="/login">Login</a> | <a href="/register">Sign Up</a>
                     {% endif %}

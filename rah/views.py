@@ -130,4 +130,18 @@ def profile_edit(request, username):
         zipcode = profile.location and profile.location.zipcode or ''
         form = ProfileEditForm(instance=profile, initial={'zipcode': zipcode})
     return render_to_response('rah/profile_edit.html', {'form': form,}, context_instance=RequestContext(request))
+    
+@login_required
+def account(request):
+    """
+    The account view is used to generate and accept a form used by the user to update their registration specific details
+    """
+    if request.method == 'POST':
+        form = AccountForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('www.rah.views.index')
+    else:
+        form = AccountForm(instance=request.user)
+    return render_to_response('rah/account.html', {'form': form,}, context_instance=RequestContext(request))
 
