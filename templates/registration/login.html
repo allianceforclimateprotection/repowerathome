@@ -1,9 +1,5 @@
 {% extends "rah/base.html" %}
 {% block content %}
-    {% if form.errors %}
-        {{form.errors}}
-    {% endif %}
-
     <form action="" method="post">
         {{form.as_p}}
         <input type="submit" value="Login" />
@@ -13,4 +9,5 @@
         <input type="hidden" name="next" value="{{ next|escape }}" />
         {% csrf_token %}
     </form>
+    <a href="{% url django.contrib.auth.views.password_reset %}">Lost your password</a>
 {% endblock %}

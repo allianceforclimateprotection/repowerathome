@@ -1,0 +1,6 @@
+{% extends "rah/base.html" %}
+{% block content %}
+    
+You are now logged out! <br/>
+<a href="{% url django.contrib.auth.views.login %}">Log in again</a>
+{% endblock %}

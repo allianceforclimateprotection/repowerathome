@@ -10,10 +10,7 @@ admin.autodiscover()
 # OPTIMIZE: we can wrap the regex patterns in the url function to insure there are no reverse conflicts
 urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    (r'^login/$', 'django.contrib.auth.views.login'),
-    (r'^logout/$', 'django.contrib.auth.views.logout', {'next_page':'/'}),
-    (r'^account/password/$', 'django.contrib.auth.views.password_change'),
-    (r'^account/password_done/$', 'django.contrib.auth.views.password_change_done'),
+    (r'^', include('django.contrib.auth.urls')),
     (r'^admin/', include(admin.site.urls)),
 )
 
