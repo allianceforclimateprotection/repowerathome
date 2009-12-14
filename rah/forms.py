@@ -171,14 +171,27 @@ class ActionCatAdminForm(forms.ModelForm):
 
 class AccountForm(forms.ModelForm):
     """docstring for AccountForm"""
+    make_profile_private = forms.BooleanField(label=_("Make Profile Private"), required=False)
+    
     class Meta:
         model = User
-        fields = ('email',)
+        fields = ('email', 'make_profile_private')
         
     def clean_email(self):
-        email = self.cleaned_data['email']
-        if self.instance.set_email(email):
+        email = self.cleaned_data['email'].strip()
+        if not len(email):
+            raise ValidationError(_('Email can not be blank'))
+        
+        if self.instance.email == email or self.instance.set_email(email):
             return email
         else:
              raise ValidationError(_('This email address has already been registered in our system.'))
+             
+    def clean_make_profile_private(self):
+        make_profile_private = self.cleaned_data['make_profile_private']
+        self.instance.get_profile().is_profile_private = make_profile_private
+        
+    def save(self):
+        super(AccountForm, self).save()
+        self.instance.get_profile().save()
         

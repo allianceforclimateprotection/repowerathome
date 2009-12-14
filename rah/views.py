@@ -106,6 +106,8 @@ def action_task(request, action_task_id):
 def profile(request, user_id):
     """docstring for profile"""
     user = get_object_or_404(User, id=user_id)
+    if request.user <> user and user.get_profile().is_profile_private:
+        return HttpResponseForbidden()
     profile = user.get_profile()
     
     # Get a list of points earned by this user and their total points
@@ -147,6 +149,7 @@ def account(request):
             form.save()
             return redirect('www.rah.views.index')
     else:
-        form = AccountForm(instance=request.user)
+        profile = request.user.get_profile()
+        form = AccountForm(instance=request.user, initial={ 'make_profile_private': profile.is_profile_private, })
     return render_to_response('rah/account.html', {'form': form,}, context_instance=RequestContext(request))
 

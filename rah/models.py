@@ -164,6 +164,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User, unique=True)
     location = models.ForeignKey(Location, null=True)
     building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES, blank=True)
+    is_profile_private = models.BooleanField(default=0)
     
     def __unicode__(self):
         return u'%s' % (self.user.username)
