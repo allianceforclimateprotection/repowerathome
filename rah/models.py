@@ -2,6 +2,23 @@ import hashlib
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
+from base64 import b64encode
+
+class User(User):
+    class Meta:
+        proxy = True
+
+    def get_name(self):
+        return self.get_full_name() if self.get_full_name() else self.email
+
+    def get_welcome(self):
+        return 'Welcome, %s' % (self.get_full_name()) if self.get_full_name() else 'Logged in as, %s' % (self.email)
+        
+    def set_email(self, email):
+        if User.objects.filter(email=email):
+            return False
+        self.username = b64encode(email)
+        return True
 
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -147,6 +164,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User, unique=True)
     location = models.ForeignKey(Location, null=True)
     building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES, blank=True)
+    is_profile_private = models.BooleanField(default=0)
     
     def __unicode__(self):
         return u'%s' % (self.user.username)

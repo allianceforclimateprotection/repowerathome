@@ -1,7 +1,7 @@
 {% extends "rah/base.html" %}
 {% block content %}
     <form action="" method="post">
-        {{form.as_p}}
+        <div>{{form.as_p}}</div>
         <input type="submit" value="Login" />
         {% comment %}
             FIXME: find out why the next parameter isn't being used
