@@ -17,10 +17,12 @@ def index(request):
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
         # Get a list of relevant actions
-        action_recs = Action.objects.select_related().all()[:5]
-
-        # Get a list of actions in progress
-        in_progress = UserActionTask.objects.select_related().filter(user=request.user)
+        recommended = Action.get_recommended_actions_for_user(request.user)
+        
+        # get a list of actions with additinal attributes for tasks and user_completes
+        actions = Action.get_actions_with_tasks_and_user_completes_for_user(request.user)
+        in_progress = [action for action in actions if action.tasks > action.user_completes and action.user_completes > 0]
+        completed = [action for action in actions if action.tasks == action.user_completes]
         
         # Get a list of points earned by this user and their total points
         points = Points.objects.filter(user=request.user)[:10]
@@ -30,7 +32,8 @@ def index(request):
             'points': points,
             'total_points': total_points,
             'in_progress': in_progress,
-            'action_recs': action_recs,
+            'recommended': recommended,
+            'completed': completed,
         }, context_instance=RequestContext(request))
     
     # Setup and handle email form on logged out home page
@@ -70,48 +73,35 @@ def action_browse(request):
     cats = ActionCat.objects.all()
     return render_to_response('rah/action_browse.html', {'cats':cats}, context_instance=RequestContext(request))
 
-def action_cat(request, catSlug):
+def action_cat(request, cat_slug):
     """View an action category page with links to actions in that category"""
-    cat     = get_object_or_404(ActionCat, slug=catSlug)
+    cat     = get_object_or_404(ActionCat, slug=cat_slug)
     actions = Action.objects.filter(category=cat.id)
         
     return render_to_response('rah/action_cat.html', {'cat': cat, 'actions': actions}, 
                                 context_instance=RequestContext(request))
 
-def action_detail(request, catSlug, actionSlug):
+def action_detail(request, cat_slug, action_slug):
     """Detail page for an action"""
     # Lookup the action
-    action = get_object_or_404(Action, slug=actionSlug)
-    
-    #  Handle the POST if a task is being completed and task_id is an integer
-    if request.method == 'POST' and request.POST.get('task_id').isdigit():
-        try:
-            # Look for a row in UserActionTask table and delete it if task_completed is unchecked
-            user_action_task = UserActionTask.objects.get(user=request.user, action_task=request.POST.get('task_id'))
-            if request.POST.get('task_completed') == None:
-                user_action_task.delete()
-        except:
-            # There was no row in UserActionTask, so create one if task_completed is checked
-            if request.POST.get('task_completed') == 'on':
-                UserActionTask(user=request.user, action_task=ActionTask(pk=request.POST.get('task_id'))).save()
-    
-    # Get action tasks conditionally depending on whether or not they're logged in
-    if(request.user.is_authenticated()):
-        # If they're logged in, grab the completed time for any completed tasks
-        action_tasks = ActionTask.objects.filter(action=action.id).extra(
-            select_params = (request.user.id,), 
-            select = { 'completed': 'SELECT rah_useractiontask.completed \
-                                     FROM rah_useractiontask \
-                                     WHERE rah_useractiontask.user_id = %s AND \
-                                     rah_useractiontask.action_task_id = rah_actiontask.id' }
-        )
-    else:
-        action_tasks = ActionTask.objects.filter(action=action.id)
+    action = get_object_or_404(Action, slug=action_slug)
+    action_tasks = ActionTask.get_action_tasks_by_action_optional_user(action, request.user)
     
     return render_to_response('rah/action_detail.html', {
                                 'action': action,
                                 'action_tasks': action_tasks
                               }, context_instance=RequestContext(request))
+                              
+def action_task(request, action_task_id):
+    #  Handle the POST if a task is being completed and task_id is an integer
+    action_task = get_object_or_404(ActionTask, id=action_task_id)
+    if request.method == 'POST' and request.user.is_authenticated(): #and request.POST.get('task_id').isdigit():
+        user_action_task, created = UserActionTask.objects.get_or_create(user=request.user, action_task=action_task)
+        print "HAS BEEN CREATED: %s" % (created)
+        print "IS TASK COMPLETE: %s" % (request.POST.get('task_completed'))
+        if request.POST.get('task_completed') == None:
+            user_action_task.delete()
+    return redirect('www.rah.views.action_detail', cat_slug=action_task.action.category.slug, action_slug=action_task.action.slug)
 
 def profile(request, username):
     """docstring for profile"""
@@ -140,6 +130,20 @@ def profile_edit(request, username):
             return redirect('www.rah.views.profile', username=request.user.username)
     else:
         profile = request.user.get_profile()
-        form = ProfileEditForm(instance=profile, initial={'zipcode': profile.location.zipcode})
+        form = ProfileEditForm(instance=profile, initial={'zipcode': profile.location.zipcode if profile.location else ''})
     return render_to_response('rah/profile_edit.html', {'form': form,}, context_instance=RequestContext(request))
+    
+@login_required
+def account(request):
+    """
+    The account view is used to generate and accept a form used by the user to update their registration specific details
+    """
+    if request.method == 'POST':
+        form = AccountForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('www.rah.views.index')
+    else:
+        form = AccountForm(instance=request.user)
+    return render_to_response('rah/account.html', {'form': form,}, context_instance=RequestContext(request))
 

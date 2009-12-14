@@ -50,16 +50,18 @@ class SignupForm(forms.ModelForm):
         return data
 
 class ProfileEditForm(forms.ModelForm):
-    zipcode = forms.CharField(max_length=5)
+    zipcode = forms.CharField(max_length=5, required=False)
     
     class Meta:
         model = Profile
         fields = ("zipcode", "building_type")
         
     def clean_zipcode(self):
-        data = self.cleaned_data['zipcode']
+        data = self.cleaned_data['zipcode'].strip()
         # TODO Remove debug print statements before commiting 
-        print "Data: %s" % (data)
+        if not len(data):
+            self.instance.location = None
+            return
         if len(data) <> 5:
             raise forms.ValidationError("Please enter a 5 digit zipcode")
         try:
@@ -77,7 +79,8 @@ class UserActionTaskForm(forms.Form):
 class ActionAdminForm(forms.ModelForm):
     class Meta:
         model = Action
-
+    
+    #OPTIMIZE: make function reusable by creating an abstract sluggable form
     def clean_slug(self):
         import re
         data = self.cleaned_data['slug']
@@ -99,3 +102,10 @@ class ActionCatAdminForm(forms.ModelForm):
             raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
 
         return data
+
+class AccountForm(forms.ModelForm):
+    """docstring for AccountForm"""
+    class Meta:
+        model = User
+        fields = ('email',)
+        

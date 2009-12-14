@@ -11,7 +11,7 @@
 {% for task in action_tasks %}
     <h2>{{ task.sequence }}) {{ task.name }} ({{ task.points }} points)</h2>
     {% if user.is_authenticated %}
-    <form action="" method="post" accept-charset="utf-8">
+    <form action="{% url rah.views.action_task task.id %}" method="post" accept-charset="utf-8">
         <input type="checkbox" name="task_completed" {% if task.completed %}checked="checked"{% endif %}>Completed</input>
         <input type="hidden" name="task_id" value="{{task.id}}"/>
         <span><input type="submit" value="Update"/></span>

@@ -5,7 +5,7 @@
 <hr/>
 <h2>Actions we recommend for you</h2>
 <ul>
-    {% for action in action_recs %}
+    {% for action in recommended %}
         <li><a href="{% url rah.views.action_detail action.category.slug,action.slug %}">{{action.name}}</a></li>
     {% endfor %}
 </ul>
@@ -14,10 +14,21 @@
     <ul>
     {% if in_progress %}        
         {% for action in in_progress %}
-            <li><a href="{% url rah.views.action_detail action.action_task.action.category.slug,action.action_task.action.slug %}">{{action.action_task.action.name}}</a></li>
+            <li><a href="{% url rah.views.action_detail action.category.slug,action.slug %}">{{action.name}}</a></li>
         {% endfor %}
     {% else %}
         <li>You're not working on anything!</li>
+    {% endif %}
+    </ul>
+<hr/>
+<h2>Actions you've completed</h2>
+    <ul>
+    {% if completed %}        
+        {% for action in completed %}
+            <li><a href="{% url rah.views.action_detail action.category.slug,action.slug %}">{{action.name}}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>You haven't completed anything yet!</li>
     {% endif %}
     </ul>
 <hr/>
