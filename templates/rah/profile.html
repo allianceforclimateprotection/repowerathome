@@ -1,8 +1,8 @@
 {% extends "rah/base.html" %}
 {% block content %}
-<h1>{{profile.user.username}}'s Profile
+<h1>{{profile.user.get_name}}'s Profile
 {% ifequal user.id profile.user.id  %}
-(<a href="{% url rah.views.profile_edit profile.user %}">Edit your profile</a>)
+    (<a href="{% url rah.views.profile_edit profile.user.id %}">Edit your profile</a>)
 {% endifequal %}
 </h1>
 <ul>

@@ -1,6 +1,5 @@
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import auth
-from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -58,10 +57,11 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
-            user = auth.authenticate(username=form.cleaned_data["username"], password=form.cleaned_data["password1"])
+            # OPTIMIZE: authentication logic can be moved to the RegistrationForm
+            user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
             Profile.objects.create(user=user)
-            return redirect('www.rah.views.index')
+            return redirect('www.rah.views.profile_edit', user_id=user.id)
     else:
         form = RegistrationForm()
     return render_to_response("registration/register.html", {
@@ -103,9 +103,9 @@ def action_task(request, action_task_id):
             user_action_task.delete()
     return redirect('www.rah.views.action_detail', cat_slug=action_task.action.category.slug, action_slug=action_task.action.slug)
 
-def profile(request, username):
+def profile(request, user_id):
     """docstring for profile"""
-    user = get_object_or_404(User, username=username)
+    user = get_object_or_404(User, id=user_id)
     profile = user.get_profile()
     
     # Get a list of points earned by this user and their total points
@@ -119,18 +119,21 @@ def profile(request, username):
     }, context_instance=RequestContext(request))
 
 @login_required
-def profile_edit(request, username):
+def profile_edit(request, user_id):
     """docstring for inquiry"""
-    if request.user.username <> username:
+    if request.user.id <> int(user_id):
         return HttpResponseForbidden()
     if request.method == 'POST':
         form = ProfileEditForm(request.POST, instance=request.user.get_profile())
         if form.is_valid():
             form.save()
-            return redirect('www.rah.views.profile', username=request.user.username)
+            return redirect('www.rah.views.profile', user_id=request.user.id)
     else:
         profile = request.user.get_profile()
-        form = ProfileEditForm(instance=profile, initial={'zipcode': profile.location.zipcode if profile.location else ''})
+        initial = {'firstname': request.user.first_name,
+            'lastname': request.user.last_name,
+            'zipcode': profile.location.zipcode if profile.location else ''}
+        form = ProfileEditForm(instance=profile, initial=initial)
     return render_to_response('rah/profile_edit.html', {'form': form,}, context_instance=RequestContext(request))
     
 @login_required

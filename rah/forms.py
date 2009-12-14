@@ -1,41 +1,93 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib import auth
 from www.rah.models import *
 from django.forms import ValidationError
 from django.core.urlresolvers import resolve, Resolver404
 from urlparse import urlparse
 from django.forms.widgets import CheckboxSelectMultiple
+from django.utils.translation import ugettext_lazy as _
 
-class RegistrationForm(UserCreationForm):
+class RegistrationForm(forms.ModelForm):
     """
-        Extends the stock User Creation Form that ships with auth to include an email field
+    A form that creates a user, with no privileges, from the given email and password.
     """
-    email = forms.EmailField(label="Email")
-    
+    email = forms.EmailField(label=_('Email'))
+    password1 = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
+    password2 = forms.CharField(label=_('Password confirmation'), widget=forms.PasswordInput)
+
     class Meta:
         model = User
-        fields = ("username","email",)
+        fields = ("email",)
 
-    def clean_username(self):
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1', '')
+        password2 = self.cleaned_data['password2']
+        if password1 != password2:
+            raise forms.ValidationError(_("The two password fields didn't match."))
+        return password2
+
+    def save(self, commit=True):
+        user = super(RegistrationForm, self).save(commit=False)
+        user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+        return user
+
+    def clean_email(self):
         """
-            Ensures that any usernames added will not conflict with exisiting commands
+        Ensure that the email address is valid and unique
         """
-        username = super(RegistrationForm, self).clean_username()
-        valid = False
-        try:
-            view_function = resolve(urlparse('/' + username + '/')[2])[0]
-            if view_function.func_name == 'profile':
-                valid = True
-        except Resolver404, re:
-            #TODO: create a list of urls we want to save; then validate the username against these
-            valid = True
-        except AttributeError, ae:
-            pass
-            
-        if not valid:
-            raise ValidationError('This username has been reserved by our system.  Please choose another.')
-        return username
+        email = self.cleaned_data['email']
+        if self.instance.set_email(email):
+            return email
+        else:
+             raise ValidationError(_('This email address has already been registered in our system.  If you have forgotten your password, please use the password reset link.'))
+
+class AuthenticationForm(forms.Form):
+   """
+   Base class for authenticating users. Extend this to get a form that accepts
+   username/password logins.
+   """
+   email = forms.EmailField(label=_("Email"))
+   password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+
+   def __init__(self, request=None, *args, **kwargs):
+       """
+       If request is passed in, the form will validate that cookies are
+       enabled. Note that the request (a HttpRequest object) must have set a
+       cookie with the key TEST_COOKIE_NAME and value TEST_COOKIE_VALUE before
+       running this validation.
+       """
+       self.request = request
+       self.user_cache = None
+       super(AuthenticationForm, self).__init__(*args, **kwargs)
+
+   def clean(self):
+       email = self.cleaned_data.get('email')
+       password = self.cleaned_data.get('password')
+
+       if email and password:
+           self.user_cache = auth.authenticate(username=email, password=password)
+           if self.user_cache is None:
+               # FIXME: email should not be case sensitive
+               raise forms.ValidationError(_("Please enter a correct email and password. Note that both fields are case-sensitive."))
+           elif not self.user_cache.is_active:
+               raise forms.ValidationError(_("This account is inactive."))
+
+       # TODO: determine whether this should move to its own method.
+       if self.request:
+           if not self.request.session.test_cookie_worked():
+               raise forms.ValidationError(_("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
+
+       return self.cleaned_data
+
+   def get_user_id(self):
+       if self.user_cache:
+           return self.user_cache.id
+       return None
+
+   def get_user(self):
+       return self.user_cache
 
 class SignupForm(forms.ModelForm):
     class Meta:
@@ -50,11 +102,13 @@ class SignupForm(forms.ModelForm):
         return data
 
 class ProfileEditForm(forms.ModelForm):
+    firstname = forms.CharField(label=_('First Name'), required=False)
+    lastname = forms.CharField(label=_('Last Name'), required=False)
     zipcode = forms.CharField(max_length=5, required=False)
     
     class Meta:
         model = Profile
-        fields = ("zipcode", "building_type")
+        fields = ("firstname", "lastname", "zipcode", "building_type",)
         
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
@@ -68,6 +122,18 @@ class ProfileEditForm(forms.ModelForm):
             self.instance.location = Location.objects.get(zipcode=data)
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
+            
+    def clean_firstname(self):
+        data = self.cleaned_data['firstname'].strip()
+        self.instance.user.first_name = data
+        
+    def clean_lastname(self):
+        data = self.cleaned_data['lastname'].strip()
+        self.instance.user.last_name = data
+        
+    def save(self):
+        super(ProfileEditForm, self).save()
+        self.instance.user.save()
 
 class UserActionTaskForm(forms.Form):
     is_done = forms.BooleanField(label='test')
@@ -108,4 +174,11 @@ class AccountForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email',)
+        
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if self.instance.set_email(email):
+            return email
+        else:
+             raise ValidationError(_('This email address has already been registered in our system.'))
         
