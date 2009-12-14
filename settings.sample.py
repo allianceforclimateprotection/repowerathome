@@ -82,6 +82,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 )
 
+AUTHENTICATION_BACKENDS = ( 'www.rah.backends.EmailBackend',)
 LOGIN_REDIRECT_URL = "/"
 AUTH_PROFILE_MODULE = 'rah.Profile'
 
