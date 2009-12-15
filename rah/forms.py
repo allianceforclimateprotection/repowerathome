@@ -11,6 +11,7 @@ class RegistrationForm(forms.ModelForm):
     """
     A form that creates a user, with no privileges, from the given email and password.
     """
+    # OPTIMIZE remove _
     email = forms.EmailField(label=_('Email'))
     password1 = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
     password2 = forms.CharField(label=_('Password confirmation'), widget=forms.PasswordInput)

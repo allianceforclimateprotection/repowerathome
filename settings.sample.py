@@ -4,7 +4,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Jon Lesser', 'jon.lesser@climateprotect.org'),
+    ('Feedback', 'feedback@repowerathome.com'),
 )
 
 MANAGERS = ADMINS
@@ -82,8 +82,10 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 )
 
-AUTHENTICATION_BACKENDS = ( 'www.rah.backends.EmailBackend',)
+AUTHENTICATION_BACKENDS = ('www.rah.backends.EmailBackend',)
 LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "/login"
+LOGOUT_URL = "/logout"
 AUTH_PROFILE_MODULE = 'rah.Profile'
 
 # Email Settings
@@ -93,3 +95,8 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_SUBJECT_PREFIX = ""
+DEFAULT_FROM_EMAIL = "'Repower at Home' <server@repowerathome.com>"
+
+# MISC
+SEND_BROKEN_LINK_EMAILS = True
+SERVER_EMAIL = DEFAULT_FROM_EMAIL

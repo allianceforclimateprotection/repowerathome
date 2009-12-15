@@ -9,6 +9,7 @@ from django.db.models import Sum
 from rah.models import *
 from rah.forms import *
 
+@csrf_protect
 def index(request):
     """
     Home Page

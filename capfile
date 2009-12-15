@@ -7,6 +7,11 @@ set :user, "ubuntu"
 # These things are not used at the moment
 set :scm, :git
 set :repository, "git@codebasehq-deploy:rah/rah/rah.git"
+set :branch, "master"
+# TODO replace awk command with ruby processing
+set :revision, `git ls-remote origin #{branch} | awk 'BEGIN { FS = " " } ; { print $1 }'`.chomp.strip
+set :username, `git config codebase.username`.chomp.strip
+set :api_key, `git config codebase.apikey`.chomp.strip
 
 role :app, "repowerathome.com"
 # role :web, "repowerathome.com"
@@ -28,7 +33,7 @@ namespace :deploy do
     
     desc "Sync DB"
     task :syncdb, :roles => :app do
-        run "cd /scripts/www/; python manage.py syncdb"
+        run "cd #{deploy_to}; python manage.py syncdb"
     end
     
     desc "Restart Apache"
@@ -37,11 +42,6 @@ namespace :deploy do
     end
     
     task :add_deployment_to_codebase do
-      username = `git config codebase.username`.chomp.strip
-      api_key  = `git config codebase.apikey`.chomp.strip
-      revision = `git ls-remote origin master | awk 'BEGIN { FS = " " } ; { print $1 }'`.chomp.strip
-      branch   = 'master'
-
       regex = /git\@(codebasehq-deploy):(.*)\/(.*)\/(.*)\.git/
       unless m = repository.match(regex)
         puts "  * \e[31mYour repository URL does not a match a valid CodebaseHQ Clone URL\e[0m"
