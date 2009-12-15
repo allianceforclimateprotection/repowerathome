@@ -39,7 +39,7 @@
             <li>
                 {{point.points}} points: 
                 {% if point.task %} 
-                    {{point.task.name}} 
+                    {{point.task.name}} ({{point.task.action.name}})
                 {% else %} 
                     {{point.get_reason_display}}
                 {% endif %}
