@@ -1,0 +1,6 @@
+[
+    {"pk": 1, "model": "auth.user", "fields": {"username": "1", "email": "test1@test.com"}}, 
+    {"pk": 2, "model": "auth.user", "fields": {"username": "2", "first_name": "first", "email": "test2@test.com"}}, 
+    {"pk": 3, "model": "auth.user", "fields": {"username": "3", "last_name": "last",  "email": "test3@test.com"}},
+    {"pk": 4, "model": "auth.user", "fields": {"username": "4", "first_name": "first", "last_name": "last",  "email": "test4@test.com"}}
+]
