@@ -93,14 +93,16 @@ def action_detail(request, cat_slug, action_slug):
                               }, context_instance=RequestContext(request))
                               
 def action_task(request, action_task_id):
-    #  Handle the POST if a task is being completed and task_id is an integer
+    #  Handle the POST if a task is being completed
+    # OPTIMIZE There are some extra queries going on here
     action_task = get_object_or_404(ActionTask, id=action_task_id)
-    if request.method == 'POST' and request.user.is_authenticated(): #and request.POST.get('task_id').isdigit():
+    if request.method == 'POST' and request.user.is_authenticated():
         user_action_task, created = UserActionTask.objects.get_or_create(user=request.user, action_task=action_task)
-        print "HAS BEEN CREATED: %s" % (created)
-        print "IS TASK COMPLETE: %s" % (request.POST.get('task_completed'))
+        Points.give(user=request.user, reason=action_task, points=action_task.points)
+        
         if request.POST.get('task_completed') == None:
             user_action_task.delete()
+            Points.take(user=request.user, reason=action_task)
     return redirect('www.rah.views.action_detail', cat_slug=action_task.action.category.slug, action_slug=action_task.action.slug)
 
 def profile(request, user_id):

@@ -19,6 +19,9 @@ class User(User):
             return False
         self.username = b64encode(email)
         return True
+    
+    def __unicode__(self):
+        return u'%s' % (self.email)
 
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -124,11 +127,7 @@ class Location(models.Model):
 class Points(DefaultModel):
     """
     Points can be associated with a given action task or a given arbitrarily.
-    To assign the points arbitrarily, you should provide a value for `reason`
-    
-    
-    ex: Points(user=request.user, points=10, task=task).save()
-    ex: Points(user=request.user, points=10, reason=1).save()
+    To assign the points arbitrarily, you should provide an int value for `reason`
     """
     
     REASONS = (
@@ -142,8 +141,28 @@ class Points(DefaultModel):
     user = models.ForeignKey(User)
     points = models.IntegerField()
     task = models.ForeignKey(ActionTask, related_name="task", null=True)
-    reason = models.IntegerField(choices=REASONS, default='')
+    reason = models.IntegerField(choices=REASONS, null=True)
+    
+    @staticmethod
+    def give(points, reason, user):
+        """
+        Gives a user a certain number of points. Check if we have an int or actiontask instance
+        If we have an actiontask, see if we've already given points for it. We don't give double
+        points for the same action task.
+        
+        OPTIMIZE this seems open to concurrency issues. Maybe lock tables? 
+        """
+        if type(reason) == ActionTask:
+            Points.take(user=user, reason=reason)
+            Points(user=user, points=points, task=reason).save()
+        else:
+            Points(user=user, points=points, reason=reason).save()
 
+    @staticmethod
+    def take(user, reason):
+        """Take points away. Used for when a user unchecks an action task. Reason must be an ActionTask"""
+        Points.objects.filter(user=user, task=reason).delete()
+        
     def __unicode__(self):
         return u'%s points' % (self.points)
 
