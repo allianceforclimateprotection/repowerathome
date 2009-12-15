@@ -2,7 +2,6 @@ import hashlib
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
-from base64 import b64encode
 
 class User(User):
     class Meta:
@@ -17,7 +16,8 @@ class User(User):
     def set_email(self, email):
         if User.objects.filter(email=email):
             return False
-        self.username = b64encode(email)
+        self.username = hashlib.md5(email).hexdigest()[:30]
+        self.email = email
         return True
     
     def __unicode__(self):
@@ -112,6 +112,7 @@ class UserActionTask(models.Model):
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
+	# OPTIMIZE: adding an index on zipcode should speed up the searches
     zipcode = models.CharField(max_length=5)
     county = models.CharField(max_length=100)
     st = models.CharField(max_length=2)
