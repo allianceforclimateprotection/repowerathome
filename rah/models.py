@@ -39,13 +39,6 @@ class Action(DefaultModel):
     teaser = models.TextField()
     content = models.TextField()
     category = models.ForeignKey('ActionCat')
-    
-    @staticmethod
-    def get_recommended_actions_for_user(user, quantity=5):
-        """
-        return a list of actions that are recommended for this user
-        """
-        return Action.objects.all()[:quantity]
         
     @staticmethod
     def get_actions_with_tasks_and_user_completes_for_user(user):
@@ -88,7 +81,7 @@ class ActionTask(DefaultModel):
         unique_together = ('action', 'sequence',)
 
     @staticmethod
-    def get_action_tasks_by_action_optional_user(action, user):
+    def get_action_tasks_by_action_and_user(action, user):
         return ActionTask.objects.filter(action=action.id).extra(
             select_params = (user.id,), 
             select = { 'completed': 'SELECT rah_useractiontask.completed \

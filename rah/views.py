@@ -16,11 +16,10 @@ def index(request):
     """
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
-        # Get a list of relevant actions
-        recommended = Action.get_recommended_actions_for_user(request.user)
-        
         # get a list of actions with additinal attributes for tasks and user_completes
         actions = Action.get_actions_with_tasks_and_user_completes_for_user(request.user)
+        
+        recommended = [action for action in actions if action.user_completes == 0][:5]
         in_progress = [action for action in actions if action.tasks > action.user_completes and action.user_completes > 0]
         completed = [action for action in actions if action.tasks == action.user_completes]
         
@@ -86,7 +85,7 @@ def action_detail(request, cat_slug, action_slug):
     """Detail page for an action"""
     # Lookup the action
     action = get_object_or_404(Action, slug=action_slug)
-    action_tasks = ActionTask.get_action_tasks_by_action_optional_user(action, request.user)
+    action_tasks = ActionTask.get_action_tasks_by_action_and_user(action, request.user)
     
     return render_to_response('rah/action_detail.html', {
                                 'action': action,
