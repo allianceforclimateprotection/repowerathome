@@ -37,7 +37,7 @@ class UserTest(TestCase):
         self.u1.set_email('normal_email@test.com')
         self.failUnlessEqual(len(self.u1.username), 30)
         self.failUnlessEqual(self.u1.email, 'normal_email@test.com')
-        
+
 class ActionTest(TestCase):
     def setUp(self):
         create_test_users_and_action_tasks(self)

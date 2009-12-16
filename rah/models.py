@@ -19,10 +19,10 @@ class User(User):
         self.username = hashlib.md5(email).hexdigest()[:30]
         self.email = email
         return True
-    
+
     def __unicode__(self):
         return u'%s' % (self.email)
-
+    
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -137,6 +137,7 @@ class Points(DefaultModel):
     task = models.ForeignKey(ActionTask, related_name="task", null=True)
     reason = models.IntegerField(choices=REASONS, null=True)
     
+    # TODO: write unit test for give method
     @staticmethod
     def give(points, reason, user):
         """
@@ -152,6 +153,7 @@ class Points(DefaultModel):
         else:
             Points(user=user, points=points, reason=reason).save()
 
+    # TODO: write unit test for take method
     @staticmethod
     def take(user, reason):
         """Take points away. Used for when a user unchecks an action task. Reason must be an ActionTask"""
@@ -182,6 +184,7 @@ class Profile(models.Model):
     def __unicode__(self):
         return u'%s' % (self.user.username)
 
+    # TODO write get_gravatar_url unit test
     def get_gravatar_url(self, size=200, default_icon='identicon'):
         return 'http://www.gravatar.com/avatar/%s?r=g&s=%s&d=%s' % (self._email_hash(), size, default_icon)
 
