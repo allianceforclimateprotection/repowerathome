@@ -3,35 +3,30 @@
 <h1>Hello {{user.get_name}}!</h1>
 <p>Welcome to Repower@Home.</p>
 <hr/>
-<h2>Actions we recommend for you</h2>
-<ul>
-    {% for action in recommended %}
-        <li><a href="{% url rah.views.action_detail action.category.slug,action.slug %}">{{action.name}}</a></li>
-    {% endfor %}
-</ul>
-<hr/>
-<h2>Actions you're working on</h2>
+<div class="actions_block">
+	<h2>In Progress Actions</h2>
     <ul>
     {% if in_progress %}        
         {% for action in in_progress %}
-            <li><a href="{% url rah.views.action_detail action.category.slug,action.slug %}">{{action.name}}</a></li>
+			{% include 'rah/action_nugget.html' %}
         {% endfor %}
     {% else %}
         <li>You're not working on anything!</li>
     {% endif %}
     </ul>
-<hr/>
-<h2>Actions you've completed</h2>
-    <ul>
-    {% if completed %}        
-        {% for action in completed %}
-            <li><a href="{% url rah.views.action_detail action.category.slug,action.slug %}">{{action.name}}</a></li>
-        {% endfor %}
-    {% else %}
-        <li>You haven't completed anything yet!</li>
-    {% endif %}
-    </ul>
-<hr/>
+	<hr class="spacer" />
+</div>
+<div class="actions_block">
+	<h2>Recommended Actions</h2>
+	<ul>
+	{% if recommended %}
+	    {% for action in recommended %}
+	        {% include 'rah/action_nugget.html' %}
+	    {% endfor %}
+	{% endif %}
+	</ul>
+	<hr class="spacer" />
+</div>
 <h2>Total Points: {% if total_points %} {{total_points}} {% else %} 0 {% endif %}</h2>
 <ul>
     {% if points %}

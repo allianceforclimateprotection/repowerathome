@@ -39,6 +39,18 @@ class Action(DefaultModel):
     teaser = models.TextField()
     content = models.TextField()
     category = models.ForeignKey('ActionCat')
+    
+    def get_total_points(self):
+        """
+        retrieve the summation of all the points in related action tasks
+        """
+        return Action.objects.filter(id=self.id).aggregate(total=models.Sum('actiontask__points'))['total']
+        
+    def get_number_of_tasks(self):
+        """
+        retrieve the summation of all the points in related action tasks
+        """
+        return Action.objects.filter(id=self.id).aggregate(number=models.Count('actiontask'))['number']
         
     @staticmethod
     def get_actions_with_tasks_and_user_completes_for_user(user):
@@ -57,7 +69,10 @@ class Action(DefaultModel):
             select = { 'user_completes': 'SELECT COUNT(uat.id) \
                                           FROM rah_useractiontask uat \
                                           JOIN rah_actiontask at ON uat.action_task_id = at.id \
-                                          WHERE uat.user_id = %s AND at.action_id = rah_action.id'})
+                                          WHERE uat.user_id = %s AND at.action_id = rah_action.id'}).extra(
+            select = { 'total_points': 'SELECT SUM(at.points) \
+                                        FROM rah_actiontask at \
+                                        WHERE at.action_id = rah_action.id' })
 
 class ActionCat(DefaultModel):
     name = models.CharField(max_length=255)
