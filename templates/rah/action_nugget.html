@@ -2,7 +2,15 @@
 	<span class='total_points'>{{ action.total_points }}</span>
 	<h5 class='title'>{{ action.name }}</h5>
 	<p class='teaser'>{{ action.teaser }}</p>
-	<p class='completion'>{{ action.user_completes }} of {{ action.tasks }} tasks completed
+	<p class='completion'><span class='user_completes'>{{ action.user_completes }}</span> of {{ action.tasks }} tasks completed
 		<span class='tasks_link'>(<a href="{% url rah.views.action_detail action.category.slug,action.slug %}">show</a>)</span>
 	</p>
+	<div class='task_list'>
+		{% for action_task in action.action_tasks %}
+			<form action="{% url rah.views.action_task action_task.id %}" method='POST' accept-charset='utf-8'>
+				<input type='checkbox' name='task_completed' {% if action_task.completed %}checked='checked'{% endif %}>{{ action_task.name }}</input>
+			</form>
+		{% endfor %}
+	</div>
 </div>
+

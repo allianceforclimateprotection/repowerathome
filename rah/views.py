@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import auth
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
@@ -17,7 +17,7 @@ def index(request):
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
         # get a list of actions with additinal attributes for tasks and user_completes
-        actions = Action.get_actions_with_tasks_and_user_completes_for_user(request.user)
+        actions = request.user.actions_with_tasks()
         
         recommended = [action for action in actions if action.user_completes == 0][:5]
         in_progress = [action for action in actions if action.tasks > action.user_completes and action.user_completes > 0]
@@ -103,7 +103,11 @@ def action_task(request, action_task_id):
         if request.POST.get('task_completed') == None:
             user_action_task.delete()
             Points.take(user=request.user, reason=action_task)
-    return redirect('www.rah.views.action_detail', cat_slug=action_task.action.category.slug, action_slug=action_task.action.slug)
+            
+    if request.is_ajax:
+        return HttpResponse(request.user.completes_for_action(action_task.action))
+    else:
+        return redirect('www.rah.views.action_detail', cat_slug=action_task.action.category.slug, action_slug=action_task.action.slug)
 
 def profile(request, user_id):
     """docstring for profile"""

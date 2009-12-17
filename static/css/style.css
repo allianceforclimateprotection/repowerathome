@@ -281,6 +281,7 @@ acronym {
 	padding: 5px;
 	margin-bottom: 5px;
 	margin-top: 5px;
+	position: relative;
 }
 .action_nugget .title { color: #407cf3; }
 .action_nugget .total_points {
@@ -289,4 +290,14 @@ acronym {
 	font-size: larger;
 }
 .action_nugget .completion { font-weight: bold; }
+.action_nugget .task_list {
+	z-index: 1;
+	position: absolute;
+	border: 1px solid #000;
+	top: 110px;
+	left: 20px;
+	width: 235px;
+	background-color: #fff;
+	display: none;
+}
 /* @end */
