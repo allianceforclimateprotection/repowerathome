@@ -26,6 +26,31 @@ var rah = {
     **/
     page_register: {
         init: function(){
+            // Validate the form
+            $("#registration_form").validate({
+                rules: {
+                    email: {
+                        required: true,
+                        // email: true
+                    },
+                    password1: {
+        				required: true,
+        				minlength: 5
+        			},
+        			password2: {
+        				required: true,
+        				minlength: 5,
+        				equalTo: "#id_password1"
+        			},
+                },
+                submitHandler: function(form) {
+                    $(form).ajaxSubmit({
+                        success: function(responseText, statusText){
+                            console.log(responseText);
+                        }
+                    });
+                }
+            });
             // Submit the form with an AJAX request
             // On successful valid submission, display post reg questions
         },
