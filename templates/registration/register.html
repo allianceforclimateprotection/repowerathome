@@ -4,8 +4,11 @@
   <h1>Create an account</h1>
 
   <form action="" method="post">
-      <div>{{ form.as_p }}</div>
-      <input type="submit" value="Register"/>
+      <div>
+          {{ form.as_p }}
+          <input type="submit" value="Register"/>
+      </div>
       {% csrf_token %}
   </form>
 {% endblock %}
+{% block javascript %} var rah_name = "register"; {% endblock %}
