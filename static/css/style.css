@@ -283,7 +283,7 @@ acronym {
 	margin-top: 5px;
 	position: relative;
 }
-.action_nugget .title { color: #407cf3; }
+.action_nugget .title { color: #407cf3; font-weight: bold; }
 .action_nugget .total_points {
 	float: right;
 	font-weight: bold;

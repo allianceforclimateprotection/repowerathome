@@ -41,12 +41,23 @@ var rah = {
     },
     
     /**
+    * Action Detail page
+    **/
+    page_action_detail: {
+        init: function(){
+            var checkboxes = $(".action_task_submitter :checkbox");
+            checkboxes.parents('form').find(':submit').remove();
+            rah.set_task_completion_submission.init(checkboxes);
+        },
+    },
+    
+    /**
     * Action Nugget
     */
     mod_action_nugget: {
         init: function(){
             rah.mod_action_nugget.set_tasks_list_toggle();
-            rah.mod_action_nugget.set_task_completion_submission();
+            rah.set_task_completion_submission.init($('.action_task_submitter :checkbox'));
         },
         
         set_tasks_list_toggle: function(){
@@ -55,17 +66,21 @@ var rah = {
                 return false;
             });
         },
-        
-        set_task_completion_submission: function(){
-            $('.action_nugget .task_list :checkbox').click(function(){
+    },
+    
+    set_task_completion_submission: {
+        init: function(checkboxes){
+            checkboxes.click(function(){
                 var form = $(this).parents('form');
                 $.post(form.attr('action'), form.serialize(), function(completed_tasks){
-                    form.parents('.action_nugget').find('.user_completes').text(completed_tasks);
+                    try{
+                        form.parents('.action_nugget').find('.user_completes').text(completed_tasks);
+                    } catch(err){}
                     var box = form.find(':checkbox');
                     box.attr('checked', !box.attr('checked'));
                 });
                 return false;
             });
-        },
+        }
     },
 }
