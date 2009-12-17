@@ -19,10 +19,42 @@ class User(User):
         self.username = hashlib.md5(email).hexdigest()[:30]
         self.email = email
         return True
-    
+
     def __unicode__(self):
         return u'%s' % (self.email)
+        
+    def actions_with_tasks(self):
+        actions = Action.objects.select_related().all().extra(
+            select = { 'tasks': 'SELECT COUNT(at.id) \
+                                 FROM rah_actiontask at \
+                                 WHERE at.action_id = rah_action.id' }).extra(
+            select_params = (self.id,),
+            select = { 'user_completes': 'SELECT COUNT(uat.id) \
+                                          FROM rah_useractiontask uat \
+                                          JOIN rah_actiontask at ON uat.action_task_id = at.id \
+                                          WHERE uat.user_id = %s AND at.action_id = rah_action.id'}).extra(
+            select = { 'total_points': 'SELECT SUM(at.points) \
+                                        FROM rah_actiontask at \
+                                        WHERE at.action_id = rah_action.id' })
 
+        action_tasks = ActionTask.objects.all().extra(
+            select_params = (self.id,), 
+            select = { 'completed': 'SELECT rah_useractiontask.completed \
+                                     FROM rah_useractiontask \
+                                     WHERE rah_useractiontask.user_id = %s AND \
+                                     rah_useractiontask.action_task_id = rah_actiontask.id' })
+        action_task_dict = dict([(at.id, at) for at in action_tasks])
+
+        for action in actions:
+            action.action_tasks = action.actiontask_set.all()
+            for action_task in action.action_tasks:
+                action_task.completed = action_task_dict[action_task.id].completed
+
+        return actions
+        
+    def completes_for_action(self, action):
+        return self.useractiontask_set.filter(action_task__action=action).count()
+    
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -39,25 +71,18 @@ class Action(DefaultModel):
     teaser = models.TextField()
     content = models.TextField()
     category = models.ForeignKey('ActionCat')
+    
+    def get_total_points(self):
+        """
+        retrieve the summation of all the points in related action tasks
+        """
+        return self.actiontask_set.aggregate(total=models.Sum('points'))['total']
         
-    @staticmethod
-    def get_actions_with_tasks_and_user_completes_for_user(user):
+    def get_number_of_tasks(self):
         """
-        return a list of actions with 2 extra attributes, tasks will contain the number
-        of assocaited tasks and user_completes will contain the number of tasks completed
-        by the specified user
+        retrieve the summation of all the points in related action tasks
         """
-        if not user:
-            raise Exception("User must be defined.")
-        return Action.objects.all().extra(
-            select = { 'tasks': 'SELECT COUNT(at.id) \
-                                 FROM rah_actiontask at \
-                                 WHERE at.action_id = rah_action.id' }).extra(
-            select_params = (user.id,),
-            select = { 'user_completes': 'SELECT COUNT(uat.id) \
-                                          FROM rah_useractiontask uat \
-                                          JOIN rah_actiontask at ON uat.action_task_id = at.id \
-                                          WHERE uat.user_id = %s AND at.action_id = rah_action.id'})
+        return self.actiontask_set.count()
 
 class ActionCat(DefaultModel):
     name = models.CharField(max_length=255)
@@ -79,6 +104,12 @@ class ActionTask(DefaultModel):
     class Meta:
         ordering = ['action', 'sequence']
         unique_together = ('action', 'sequence',)
+        
+    def is_completed_by_user(self, user):
+        """
+        return whether or not the specific user has completed the task
+        """
+        return len(UserActionTask.objects.filter(action_task=self, user=user)) == 1
 
     @staticmethod
     def get_action_tasks_by_action_and_user(action, user):
@@ -137,6 +168,7 @@ class Points(DefaultModel):
     task = models.ForeignKey(ActionTask, related_name="task", null=True)
     reason = models.IntegerField(choices=REASONS, null=True)
     
+    # TODO: write unit test for give method
     @staticmethod
     def give(points, reason, user):
         """
@@ -152,6 +184,7 @@ class Points(DefaultModel):
         else:
             Points(user=user, points=points, reason=reason).save()
 
+    # TODO: write unit test for take method
     @staticmethod
     def take(user, reason):
         """Take points away. Used for when a user unchecks an action task. Reason must be an ActionTask"""
@@ -182,6 +215,7 @@ class Profile(models.Model):
     def __unicode__(self):
         return u'%s' % (self.user.username)
 
+    # TODO write get_gravatar_url unit test
     def get_gravatar_url(self, size=200, default_icon='identicon'):
         return 'http://www.gravatar.com/avatar/%s?r=g&s=%s&d=%s' % (self._email_hash(), size, default_icon)
 

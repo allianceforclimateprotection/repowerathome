@@ -268,3 +268,36 @@ acronym {
 	color: #000;
 }
 #footer .footer-links a, #footer .learn a { font-style: normal; }
+
+.spacer { clear: both; }
+
+/* @group action_nugget */
+.action_nugget {
+	width: 275px;
+	height: 100px;
+	float: left;
+	margin-right: 23px;
+	border: 1px solid #000;
+	padding: 5px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	position: relative;
+}
+.action_nugget .title { color: #407cf3; }
+.action_nugget .total_points {
+	float: right;
+	font-weight: bold;
+	font-size: larger;
+}
+.action_nugget .completion { font-weight: bold; }
+.action_nugget .task_list {
+	z-index: 1;
+	position: absolute;
+	border: 1px solid #000;
+	top: 110px;
+	left: 20px;
+	width: 235px;
+	background-color: #fff;
+	display: none;
+}
+/* @end */
