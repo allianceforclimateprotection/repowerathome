@@ -43,7 +43,7 @@ class ActionTest(TestCase):
         create_test_users_and_action_tasks(self)
     
     def test_no_user_completes(self):
-        action = self.u1.actions_with_tasks()[0]
+        action = Action.objects.with_tasks_for_user(self.u1)[0]
         
         self.failUnlessEqual(action.tasks, 3)
         self.failUnlessEqual(action.user_completes, 0)
@@ -51,7 +51,7 @@ class ActionTest(TestCase):
     def test_one_user_complete(self):
         UserActionTask.objects.create(action_task=self.at1, user=self.u1)
         
-        action = self.u1.actions_with_tasks()[0]
+        action = Action.objects.with_tasks_for_user(self.u1)[0]
         
         self.failUnlessEqual(action.tasks, 3)
         self.failUnlessEqual(action.user_completes, 1)
@@ -61,7 +61,7 @@ class ActionTest(TestCase):
         UserActionTask.objects.create(action_task=self.at2, user=self.u1)
         UserActionTask.objects.create(action_task=self.at3, user=self.u1)
 
-        action = self.u1.actions_with_tasks()[0]
+        action = Action.objects.with_tasks_for_user(self.u1)[0]
 
         self.failUnlessEqual(action.tasks, 3)
         self.failUnlessEqual(action.user_completes, 3)
@@ -71,8 +71,8 @@ class ActionTest(TestCase):
         UserActionTask.objects.create(action_task=self.at2, user=self.u2)
         UserActionTask.objects.create(action_task=self.at3, user=self.u1)
 
-        action1 = self.u1.actions_with_tasks()[0]
-        action2 = self.u2.actions_with_tasks()[0]
+        action1 = Action.objects.with_tasks_for_user(self.u1)[0]
+        action2 = Action.objects.with_tasks_for_user(self.u2)[0]
 
         self.failUnlessEqual(action1.tasks, 3)
         self.failUnlessEqual(action1.user_completes, 2)
@@ -87,8 +87,8 @@ class ActionTest(TestCase):
         UserActionTask.objects.create(action_task=self.at2, user=self.u2)
         UserActionTask.objects.create(action_task=self.at3, user=self.u2)
 
-        action1 = self.u1.actions_with_tasks()[0]
-        action2 = self.u2.actions_with_tasks()[0]
+        action1 = Action.objects.with_tasks_for_user(self.u1)[0]
+        action2 = Action.objects.with_tasks_for_user(self.u2)[0]
 
         self.failUnlessEqual(action1.tasks, 3)
         self.failUnlessEqual(action1.user_completes, 3)
@@ -96,13 +96,13 @@ class ActionTest(TestCase):
         self.failUnlessEqual(action2.user_completes, 3)
         
     def test_action_total_points(self):
-        action1 = self.u1.actions_with_tasks()[0]
+        action1 = Action.objects.with_tasks_for_user(self.u1)[0]
         
         self.failUnlessEqual(action1.total_points, 35)
         self.failUnlessEqual(action1.get_total_points(), 35)
         
     def test_action_number_of_tasks(self):
-        action1 = self.u1.actions_with_tasks()[0]
+        action1 = Action.objects.with_tasks_for_user(self.u1)[0]
         
         self.failUnlessEqual(action1.tasks, 3)
         self.failUnlessEqual(action1.get_number_of_tasks(), 3)

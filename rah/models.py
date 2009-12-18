@@ -22,13 +22,41 @@ class User(User):
 
     def __unicode__(self):
         return u'%s' % (self.email)
+    
+class DefaultModel(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        abstract = True
+    
+    def __unicode__(self):
+        return u'%s' % (self.name)
+
+class ActionCat(DefaultModel):
+    name = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
+    teaser = models.TextField()
+    content = models.TextField()
+
+class ActionManager(models.Manager):
+    def with_tasks_for_user(self, user):
+        """
+        get a queryset of action objects, the actions will have three additional attributes
+        attached: (1)'tasks': the number of tasks related to the action. (2)'user_completes':
+        the number of tasks the particular user has completed. (3)'total_points': the number
+        of points the action is worth.
         
-    def actions_with_tasks(self):
+        each action will also contain a reference to a set of action tasks via the
+        'action_tasks' attribute. Each action task in the set will have an additional attribute
+        to indicated whether or not the particular user has completed the task, this attribute
+        is called 'completed'
+        """
         actions = Action.objects.select_related().all().extra(
             select = { 'tasks': 'SELECT COUNT(at.id) \
                                  FROM rah_actiontask at \
                                  WHERE at.action_id = rah_action.id' }).extra(
-            select_params = (self.id,),
+            select_params = (user.id,),
             select = { 'user_completes': 'SELECT COUNT(uat.id) \
                                           FROM rah_useractiontask uat \
                                           JOIN rah_actiontask at ON uat.action_task_id = at.id \
@@ -38,7 +66,7 @@ class User(User):
                                         WHERE at.action_id = rah_action.id' })
 
         action_tasks = ActionTask.objects.all().extra(
-            select_params = (self.id,), 
+            select_params = (user.id,), 
             select = { 'completed': 'SELECT rah_useractiontask.completed \
                                      FROM rah_useractiontask \
                                      WHERE rah_useractiontask.user_id = %s AND \
@@ -51,26 +79,14 @@ class User(User):
                 action_task.completed = action_task_dict[action_task.id].completed
 
         return actions
-        
-    def completes_for_action(self, action):
-        return self.useractiontask_set.filter(action_task__action=action).count()
-    
-class DefaultModel(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        abstract = True
-    
-    def __unicode__(self):
-        return u'%s' % (self.name)
 
 class Action(DefaultModel):
     name = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
-    category = models.ForeignKey('ActionCat')
+    category = models.ForeignKey(ActionCat)
+    objects = ActionManager()
     
     def get_total_points(self):
         """
@@ -83,23 +99,23 @@ class Action(DefaultModel):
         retrieve the summation of all the points in related action tasks
         """
         return self.actiontask_set.count()
-
-class ActionCat(DefaultModel):
-    name = models.CharField(max_length=255)
-    slug = models.CharField(max_length=255)
-    teaser = models.TextField()
-    content = models.TextField()
+        
+    def completes_for_user(self, user):
+        """
+        return the number of tasks a user has completed for an action
+        """
+        return user.useractiontask_set.filter(action_task__action=self).count()
 
 class ActionTask(DefaultModel):
     """
     class representing the individual tasks (or steps) a user must complete
     in order to gain successful completion of the associated action
     """
-    action = models.ForeignKey(Action)
     name = models.CharField(max_length=255)
     content = models.TextField()
     points = models.IntegerField()
     sequence = models.PositiveIntegerField()
+    action = models.ForeignKey(Action)
     
     class Meta:
         ordering = ['action', 'sequence']
