@@ -77,6 +77,15 @@ var rah = {
     },
     
     /**
+    * Action Show page
+    **/
+    page_action_show: {
+        init: function(){
+            rah.mod_action_nugget.init();
+        },
+    },
+    
+    /**
     * Action Nugget
     */
     mod_action_nugget: {

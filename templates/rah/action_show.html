@@ -1,0 +1,25 @@
+{% extends "rah/base.html" %}
+{% block content %}
+	<div id="breadcrumbs">
+	    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+	    Actions
+	</div>
+
+	{% for category, actions in categories.items %}
+		<h2 id='action_category_{{ category.id }}' class='action_category_title'>{{ category.name }}</h2>
+		<p class='action_category_description'>{{ category.content }}</p>
+		{% for action in actions %}
+			{% include 'rah/action_nugget.html' %}
+		{% endfor %}
+		<div class='spacer' />
+	{% endfor %}
+{% endblock %}
+{% block minorcol %}
+	<h2>Categories</h2>
+	<ul>
+		{% for category, actions in categories.items %}
+			<li><a href='#action_category_{{ category.id }}'>{{ category.name }}</li>
+		{% endfor %}
+	</ul>
+{% endblock %}
+{% block js %}page_action_show{% endblock %}

@@ -17,7 +17,7 @@ def index(request):
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
         # get a list of actions with additinal attributes for tasks and user_completes
-        actions = request.user.actions_with_tasks()
+        actions = Action.objects.with_tasks_for_user(request.user)
         
         recommended = [action for action in actions if action.user_completes == 0][:5]
         in_progress = [action for action in actions if action.tasks > action.user_completes and action.user_completes > 0]
@@ -68,20 +68,14 @@ def register(request):
         'form': form,
     }, context_instance=RequestContext(request))
 
-def action_browse(request):
-    """Browse all actions by category"""
-    cats = ActionCat.objects.all()
-    return render_to_response('rah/action_browse.html', {'cats':cats}, context_instance=RequestContext(request))
+def action_show(request):
+    """Show all actions by Category"""
+    actions = Action.objects.with_tasks_for_user(request.user)
+    categories = dict([(action.category, []) for action in actions]) #create a new map of categories to empty lists
+    [categories[action.category].append(action) for action in actions] #append each action to the its assocaited categor list
+    return render_to_response('rah/action_show.html', {'categories': categories}, context_instance=RequestContext(request))
 
-def action_cat(request, cat_slug):
-    """View an action category page with links to actions in that category"""
-    cat     = get_object_or_404(ActionCat, slug=cat_slug)
-    actions = Action.objects.filter(category=cat.id)
-        
-    return render_to_response('rah/action_cat.html', {'cat': cat, 'actions': actions}, 
-                                context_instance=RequestContext(request))
-
-def action_detail(request, cat_slug, action_slug):
+def action_detail(request, action_slug):
     """Detail page for an action"""
     # Lookup the action
     action = get_object_or_404(Action, slug=action_slug)
@@ -105,7 +99,7 @@ def action_task(request, action_task_id):
             Points.take(user=request.user, reason=action_task)
             
     if request.is_ajax:
-        return HttpResponse(request.user.completes_for_action(action_task.action))
+        return HttpResponse(action_task.action.completes_for_user(request.user))
     else:
         return redirect('www.rah.views.action_detail', cat_slug=action_task.action.category.slug, action_slug=action_task.action.slug)
 
