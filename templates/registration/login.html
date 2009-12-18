@@ -9,5 +9,6 @@
         <input type="hidden" name="next" value="{{ next|escape }}" />
         {% csrf_token %}
     </form>
-    <a href="{% url django.contrib.auth.views.password_reset %}">Lost your password</a>
+    <a href="{% url rah.views.register %}">Register</a> | 
+    <a href="{% url django.contrib.auth.views.password_reset %}">Recover password</a>
 {% endblock %}

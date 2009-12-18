@@ -8,7 +8,8 @@
     </div>
     {% csrf_token %}
 </form>
-{# TODO Add links to register and login #}
+<a href="{% url django.contrib.auth.views.login %}">Log in</a> | 
+<a href="{% url django.contrib.auth.views.password_reset %}">Recover password</a>
 <div id="dialog">
     <form action="" method="post" id="profile_form">
         <div>
