@@ -1,23 +1,28 @@
 {% extends "rah/base.html" %}
 {% block content %}
-<div id="breadcrumbs">
-    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
-    <a href="{% url rah.views.action_show %}">Actions</a> &rsaquo;
-    {{action.name}}
-</div>
-<h1>{{action.name}}</h1>
-{{action.content|safe|linebreaks}}
-{% for task in action_tasks %}
-    <h2>{{ task.sequence }}) {{ task.name }} ({{ task.points }} points)</h2>
-    {% if user.is_authenticated %}
-    <form action="{% url rah.views.action_task task.id %}" class="action_task_submitter" method="post" accept-charset="utf-8">
-        <input type="checkbox" name="task_completed" {% if task.completed %}checked="checked"{% endif %}>Completed</input>
-        <input type="hidden" name="task_id" value="{{task.id}}"/>
-        <span><input type="submit" value="Update"/></span>
-        {% csrf_token %}
-    </form>
-    {% endif %}
-    {{task.content|safe|linebreaks}}
-{% endfor %}
+	<div id="breadcrumbs">
+	    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+	    <a href="{% url rah.views.action_show %}">Actions</a> &rsaquo;
+	    {{action.name}}
+	</div>
+	<h1>{{action.name}}</h1>
+	{{action.content|safe|linebreaks}}
+	{% for task in action_tasks %}
+	    <h2>{{ task.sequence }}) {{ task.name }} ({{ task.points }} points)</h2>
+	    {% if user.is_authenticated %}
+	    <form action="{% url rah.views.action_task task.id %}" class="action_task_submitter" method="post" accept-charset="utf-8">
+	        <input type="checkbox" name="task_completed" {% if task.completed %}checked="checked"{% endif %}>Completed</input>
+	        <input type="hidden" name="task_id" value="{{task.id}}"/>
+	        <span><input type="submit" value="Update"/></span>
+	        {% csrf_token %}
+	    </form>
+	    {% endif %}
+	{{task.content|safe|linebreaks}}
+	{% endfor %}
+{% endblock %}
+{% block minorcol %}
+	<h2>Who's doing this?</h2>
+	<p><span class='total_users'>{{ users_completed|length }}</span> pe{{ users_completed|length|pluralize:"rson has,ople have"}} completed this action.</p>
+	<p><span class='total_users'>{{ users_in_progress|length }}</span> pe{{ users_in_progress|length|pluralize:"rson is,ople are"}} working on it.</p>
 {% endblock %}
 {% block js %}page_action_detail{% endblock %}

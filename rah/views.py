@@ -5,7 +5,6 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.forms.formsets import formset_factory
-from django.db.models import Sum
 from rah.models import *
 from rah.forms import *
 import json
@@ -17,23 +16,15 @@ def index(request):
     """
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
-        # get a list of actions with additinal attributes for tasks and user_completes
-        actions = Action.objects.with_tasks_for_user(request.user)
-        
-        recommended = [action for action in actions if action.user_completes == 0][:5]
-        in_progress = [action for action in actions if action.tasks > action.user_completes and action.user_completes > 0]
-        completed = [action for action in actions if action.tasks == action.user_completes]
-        
-        # Get a list of points earned by this user and their total points
-        points = Points.objects.filter(user=request.user)[:10]
-        total_points = Points.objects.filter(user=request.user).aggregate(Sum('points'))['points__sum']
+        recommended, in_progress = Action.objects.with_tasks_for_user(request.user)[1:3]
+        points = request.user.get_latest_points(5)
+        total_points = request.user.get_total_points()
         
         return render_to_response('rah/home_logged_in.html', {
             'points': points,
             'total_points': total_points,
             'in_progress': in_progress,
             'recommended': recommended,
-            'completed': completed,
         }, context_instance=RequestContext(request))
     
     # Setup and handle email form on logged out home page
@@ -81,7 +72,7 @@ def register(request):
 
 def action_show(request):
     """Show all actions by Category"""
-    actions = Action.objects.with_tasks_for_user(request.user)
+    actions = Action.objects.with_tasks_for_user(request.user)[0]
     categories = dict([(action.category, []) for action in actions]) #create a new map of categories to empty lists
     [categories[action.category].append(action) for action in actions] #append each action to the its assocaited categor list
     return render_to_response('rah/action_show.html', {'categories': categories}, context_instance=RequestContext(request))
@@ -91,10 +82,13 @@ def action_detail(request, action_slug):
     # Lookup the action
     action = get_object_or_404(Action, slug=action_slug)
     action_tasks = ActionTask.get_action_tasks_by_action_and_user(action, request.user)
+    users_in_progress, users_completed = User.objects.with_completes_for_action(action)[1:3]
     
     return render_to_response('rah/action_detail.html', {
                                 'action': action,
-                                'action_tasks': action_tasks
+                                'action_tasks': action_tasks,
+                                'users_in_progress': users_in_progress,
+                                'users_completed': users_completed
                               }, context_instance=RequestContext(request))
                               
 def action_task(request, action_task_id):
@@ -103,16 +97,16 @@ def action_task(request, action_task_id):
     action_task = get_object_or_404(ActionTask, id=action_task_id)
     if request.method == 'POST' and request.user.is_authenticated():
         user_action_task, created = UserActionTask.objects.get_or_create(user=request.user, action_task=action_task)
-        Points.give(user=request.user, reason=action_task, points=action_task.points)
-        
-        if request.POST.get('task_completed') == None:
+        if request.POST.get('task_completed'):
+            Points.give(user=request.user, reason=action_task, points=action_task.points)
+        else:
             user_action_task.delete()
             Points.take(user=request.user, reason=action_task)
-            
-    if request.is_ajax:
+    
+    if request.is_ajax():
         return HttpResponse(action_task.action.completes_for_user(request.user))
     else:
-        return redirect('www.rah.views.action_detail', cat_slug=action_task.action.category.slug, action_slug=action_task.action.slug)
+        return redirect('www.rah.views.action_detail', action_slug=action_task.action.slug)
 
 def profile(request, user_id):
     """docstring for profile"""
@@ -120,15 +114,17 @@ def profile(request, user_id):
     if request.user <> user and user.get_profile().is_profile_private:
         return HttpResponseForbidden()
     profile = user.get_profile()
-    
-    # Get a list of points earned by this user and their total points
-    points = Points.objects.filter(user=user)[:10]
-    total_points = Points.objects.filter(user=user).aggregate(Sum('points'))['points__sum']
+    recommended, in_progress, completed = Action.objects.with_tasks_for_user(request.user)[1:4]
+    points = request.user.get_latest_points()
+    total_points = request.user.get_total_points()
     
     return render_to_response('rah/profile.html', {
         'profile': profile,
         'points': points,
         'total_points': total_points,
+        'in_progress': in_progress,
+        'recommended': recommended,
+        'completed': completed,
     }, context_instance=RequestContext(request))
 
 @login_required

@@ -1,0 +1,13 @@
+<h2>Your Points: {{ total_points }}</h2>
+<ul>
+    {% if points %}
+        {% for point in points %}
+            <li>
+				<span class='points'>{{ point.points }} points</span>
+				<span class='reason'>{{ point.get_reason }}</span>
+            </li>
+        {% endfor %}    
+    {% else %}
+        <li>You don't have any points. Do something!</li>
+    {% endif %}
+</ul>
