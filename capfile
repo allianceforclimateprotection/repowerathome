@@ -21,6 +21,7 @@ namespace :deploy do
     desc "Meta task that calls update and restart"
     task :default do
         update
+        minify
         syncdb
         restart
         add_deployment_to_codebase
@@ -29,6 +30,11 @@ namespace :deploy do
     desc "Update Repo"
     task :update, :roles => :app do
         run "cd #{deploy_to}; git pull"
+    end
+    
+    desc "Min JS and CSS files"
+    task :minify, :roles => :app do
+        run "cd #{deploy_to}/static/minify; ./minify.sh"
     end
     
     desc "Sync DB"
@@ -41,6 +47,7 @@ namespace :deploy do
         sudo "/etc/init.d/apache2 restart"
     end
     
+    desc "Tell Codebase about deployment"
     task :add_deployment_to_codebase do
       regex = /git\@(codebasehq-deploy):(.*)\/(.*)\/(.*)\.git/
       unless m = repository.match(regex)
