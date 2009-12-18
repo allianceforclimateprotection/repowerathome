@@ -82,10 +82,13 @@ def action_detail(request, action_slug):
     # Lookup the action
     action = get_object_or_404(Action, slug=action_slug)
     action_tasks = ActionTask.get_action_tasks_by_action_and_user(action, request.user)
+    users_in_progress, users_completed = User.objects.with_completes_for_action(action)[1:3]
     
     return render_to_response('rah/action_detail.html', {
                                 'action': action,
-                                'action_tasks': action_tasks
+                                'action_tasks': action_tasks,
+                                'users_in_progress': users_in_progress,
+                                'users_completed': users_completed
                               }, context_instance=RequestContext(request))
                               
 def action_task(request, action_task_id):

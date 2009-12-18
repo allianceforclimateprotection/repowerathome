@@ -3,7 +3,26 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 
+class UserManager(models.Manager):
+    def with_completes_for_action(self, action):
+        """
+        return a 3-tuple query set of user object lists, such that each user object has an additional attribute, completes,
+        which identifies how many tasks the user has completed for the given action.
+        
+        Note: only users that have began completeing task for the action will be listed
+        
+        The first list in the tuple is for all users that have made progress on the action, the second list is for all users
+        that are working on the action (in progress) and the final list is for all users that have completed the action
+        """
+        total_tasks = action.actiontask_set.all().count()
+        users = User.objects.filter(useractiontask__action_task__action=action).annotate(completes=models.Count('useractiontask'))
+        in_progress = [user for user in users if total_tasks > user.completes and user.completes > 0]
+        completed = [user for user in users if total_tasks == user.completes]
+
+        return (users, in_progress, completed)
+
 class User(User):
+    objects = UserManager()
     class Meta:
         proxy = True
 

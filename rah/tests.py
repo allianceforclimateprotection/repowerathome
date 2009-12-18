@@ -37,6 +37,37 @@ class UserTest(TestCase):
         self.u1.set_email('normal_email@test.com')
         self.failUnlessEqual(len(self.u1.username), 30)
         self.failUnlessEqual(self.u1.email, 'normal_email@test.com')
+        
+class UserManagerTest(TestCase):
+    def setUp(self):
+        create_test_users_and_action_tasks(self)
+
+    def test_with_completes_for_action(self):
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[0]), 0)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[1]), 0)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[2]), 0)
+
+        UserActionTask.objects.create(action_task=self.at1, user=self.u1)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[0]), 1)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[1]), 1)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[2]), 0)
+
+        UserActionTask.objects.create(action_task=self.at2, user=self.u1)
+        UserActionTask.objects.create(action_task=self.at1, user=self.u2)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[0]), 2)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[1]), 2)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[2]), 0)
+
+        UserActionTask.objects.create(action_task=self.at3, user=self.u1)
+        UserActionTask.objects.create(action_task=self.at2, user=self.u2)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[0]), 2)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[1]), 1)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[2]), 1)
+
+        UserActionTask.objects.create(action_task=self.at3, user=self.u2)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[0]), 2)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[1]), 0)
+        self.failUnlessEqual(len(User.objects.with_completes_for_action(self.a)[2]), 2)
 
 class ActionTest(TestCase):
     def setUp(self):
@@ -120,6 +151,3 @@ class ActionTaskTest(TestCase):
         self.failIfEqual(action_tasks[0].completed, None)
         self.failUnlessEqual(action_tasks[1].completed, None)
         self.failIfEqual(action_tasks[2].completed, None)
-        
-        
-    
