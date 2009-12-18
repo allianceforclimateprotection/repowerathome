@@ -19,6 +19,13 @@ class User(User):
         self.username = hashlib.md5(email).hexdigest()[:30]
         self.email = email
         return True
+        
+    def get_latest_points(self, quantity=None):
+        points = Points.objects.filter(user=self).order_by('-updated')
+        return points[:quantity] if quantity else points
+        
+    def get_total_points(self):
+        return Points.objects.filter(user=self).aggregate(models.Sum('points'))['points__sum']
 
     def __unicode__(self):
         return u'%s' % (self.email)
@@ -51,6 +58,10 @@ class ActionManager(models.Manager):
         'action_tasks' attribute. Each action task in the set will have an additional attribute
         to indicated whether or not the particular user has completed the task, this attribute
         is called 'completed'
+        
+        the return value is a 4-tuple of action lists; the first values is all the actions,
+        the second value is all completed actions, the third value is the in progress actions
+        and the last value is the completed actions
         """
         actions = Action.objects.select_related().all().extra(
             select = { 'tasks': 'SELECT COUNT(at.id) \
@@ -78,7 +89,11 @@ class ActionManager(models.Manager):
             for action_task in action.action_tasks:
                 action_task.completed = action_task_dict[action_task.id].completed
 
-        return actions
+        not_complete = [action for action in actions if action.user_completes == 0]
+        in_progress = [action for action in actions if action.tasks > action.user_completes and action.user_completes > 0]
+        completed = [action for action in actions if action.tasks == action.user_completes]
+
+        return (actions, not_complete, in_progress, completed)
 
 class Action(DefaultModel):
     name = models.CharField(max_length=255)
@@ -184,6 +199,9 @@ class Points(DefaultModel):
     task = models.ForeignKey(ActionTask, related_name="task", null=True)
     reason = models.IntegerField(choices=REASONS, null=True)
     
+    def get_reason(self):
+        return self.task.name if self.task else self.reason
+    
     # TODO: write unit test for give method
     @staticmethod
     def give(points, reason, user):
@@ -232,8 +250,8 @@ class Profile(models.Model):
         return u'%s' % (self.user.username)
 
     # TODO write get_gravatar_url unit test
-    def get_gravatar_url(self, size=200, default_icon='identicon'):
-        return 'http://www.gravatar.com/avatar/%s?r=g&s=%s&d=%s' % (self._email_hash(), size, default_icon)
+    def get_gravatar_url(self, default_icon='identicon'):
+        return 'http://www.gravatar.com/avatar/%s?r=g&d=%s' % (self._email_hash(), default_icon)
 
     def _email_hash(self):
         return (hashlib.md5(self.user.email.lower()).hexdigest())

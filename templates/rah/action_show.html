@@ -6,10 +6,10 @@
 	</div>
 
 	{% for category, actions in categories.items %}
-		<h2 id='action_category_{{ category.id }}' class='action_category_title'>{{ category.name }}</h2>
+		<h2 id='{{ category.slug }}' class='action_category_title'>{{ category.name }}</h2>
 		<p class='action_category_description'>{{ category.content }}</p>
 		{% for action in actions %}
-			{% include 'rah/action_nugget.html' %}
+			{% include 'rah/_action_nugget.html' %}
 		{% endfor %}
 		<div class='spacer' />
 	{% endfor %}
@@ -18,7 +18,7 @@
 	<h2>Categories</h2>
 	<ul>
 		{% for category, actions in categories.items %}
-			<li><a href='#action_category_{{ category.id }}'>{{ category.name }}</li>
+			<li><a href='#{{ category.slug }}'>{{ category.name }}</li>
 		{% endfor %}
 	</ul>
 {% endblock %}

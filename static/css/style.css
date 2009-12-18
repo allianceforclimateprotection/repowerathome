@@ -271,6 +271,14 @@ acronym {
 
 .spacer { clear: both; }
 
+/* @group profile */
+.gravatar {
+	float: left;
+	width: 75px;
+	height: 75px;
+}
+/* @end */
+
 /* @group action_nugget */
 .action_nugget {
 	width: 275px;

@@ -1,48 +1,21 @@
 {% extends "rah/base.html" %}
 {% block content %}
-<h1>Hello {{user.get_name}}!</h1>
-<p>Welcome to Repower@Home.</p>
-<hr/>
-<div class="actions_block">
-	<h2>In Progress Actions</h2>
-    <ul>
-    {% if in_progress %}        
+	<div class="actions_block">
+		<h2>In Progress Actions</h2>
         {% for action in in_progress %}
-			{% include 'rah/action_nugget.html' %}
+			{% include 'rah/_action_nugget.html' %}
         {% endfor %}
-    {% else %}
-        <li>You're not working on anything!</li>
-    {% endif %}
-    </ul>
-	<hr class="spacer" />
-</div>
-<div class="actions_block">
-	<h2>Recommended Actions</h2>
-	<ul>
-	{% if recommended %}
+		<div class="spacer" />
+	</div>
+	<div class="actions_block">
+		<h2>Recommended Actions</h2>
 	    {% for action in recommended %}
-	        {% include 'rah/action_nugget.html' %}
+	        {% include 'rah/_action_nugget.html' %}
 	    {% endfor %}
-	{% endif %}
-	</ul>
-	<hr class="spacer" />
-</div>
-<h2>Total Points: {% if total_points %} {{total_points}} {% else %} 0 {% endif %}</h2>
-<ul>
-    {% if points %}
-        {% for point in points %}
-            <li>
-                {{point.points}} points: 
-                {% if point.task %} 
-                    {{point.task.name}} ({{point.task.action.name}})
-                {% else %} 
-                    {{point.get_reason_display}}
-                {% endif %}
-            </li>
-        {% endfor %}    
-    {% else %}
-        <li>You don't have any points. Do something!</li>
-    {% endif %}
-</ul>
+		<div class="spacer" />
+	</div>
+{% endblock %}
+{% block minorcol %}
+	{% include 'rah/_points.html' %}
 {% endblock %}
 {% block js %}page_home_logged_in{% endblock %}
