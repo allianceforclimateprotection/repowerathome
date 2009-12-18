@@ -25,6 +25,7 @@ urlpatterns += patterns('www.rah.views',
     (r'^actiontasks/(?P<action_task_id>\d+)/$', 'action_task'),
     (r'^user/(?P<user_id>\d+)/$', 'profile'),
     (r'^user/edit/(?P<user_id>\d+)/$', 'profile_edit'),
+    (r'^validate/$', 'validate_field'),
 )
 
 if settings.DEBUG:

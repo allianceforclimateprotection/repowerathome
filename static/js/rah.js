@@ -43,13 +43,16 @@ var rah = {
                 autoOpen: false
             });
             
-            // Validate the form
+            // Validate the registration form
             $("#registration_form").validate({
                 rules: {
                     email: {
                         required: true,
                         email: true,
-                        // TODO add 'remote' check to confirm email is available
+                        remote: {
+                            url: "/validate/",
+                            type: "post",
+                        }
                     },
                     password1: {
         				required: true,
@@ -61,23 +64,56 @@ var rah = {
         				equalTo: "#id_password1"
         			},
                 },
+                messages: {
+                    email: {
+                        remote: "That email is already registered",
+                    },
+                },
+                
                 submitHandler: function(form) {
                     $(form).ajaxSubmit({
                         dataType: "json",
                         success: function(response, status){
-                            console.log("responseText" + response['valid']);
                             if(response['valid'] != true){
-                                // Get these errors inline insead of in an alert
+                                // TODO Get these errors inline insead of in an alert
                                 alert(response['errors']);
                                 return;
                             } else {
-                                // Set the value of the hidden user id field
+                                // Set the action of the profile form with the freshly minted user id
                                 $("#profile_form").attr("action", "/user/edit/" + response['userid'] + "/");
                                 
                                 // Show the dialog with profile form
                                 $('#dialog').dialog('open');                                
                             }
-                            
+                        }
+                    });
+                }
+            });
+            // Validate the post registration questions form
+            $("#profile_form").validate({
+                rules: {
+                    zipcode: {
+                        remote: {
+                            url: "/validate/",
+                            type: "post",
+                        }
+                    },
+                },
+                messages: {
+                    zipcode: {
+                        remote: "Please enter a valid 5 digit zipcode",
+                    },
+                },
+                submitHandler: function(form) {
+                    $(form).ajaxSubmit({
+                        dataType: "json",
+                        success: function(response, status){
+                            if(response === true){
+                                window.location = "/";
+                            } else {
+                                alert("Fail #0001");
+                                return false;
+                            }
                         }
                     });
                 }
