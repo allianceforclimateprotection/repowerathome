@@ -26,12 +26,30 @@ var rah = {
     **/
     page_register: {
         init: function(){
+            // Set up a dialog window for opening later
+            $('#dialog').dialog({ 
+                buttons: {
+                    "Finish Registration": function() { 
+                        $("#profile_form").submit();
+                        // TODO rewrite as ajax call
+                    },
+                    "Skip": function() { 
+                        window.location = "/"
+                    },
+                },
+                modal: true,
+                resizable: false,
+                draggable: false,
+                autoOpen: false
+            });
+            
             // Validate the form
             $("#registration_form").validate({
                 rules: {
                     email: {
                         required: true,
-                        // email: true
+                        email: true,
+                        // TODO add 'remote' check to confirm email is available
                     },
                     password1: {
         				required: true,
@@ -45,8 +63,21 @@ var rah = {
                 },
                 submitHandler: function(form) {
                     $(form).ajaxSubmit({
-                        success: function(responseText, statusText){
-                            console.log(responseText);
+                        dataType: "json",
+                        success: function(response, status){
+                            console.log("responseText" + response['valid']);
+                            if(response['valid'] != true){
+                                // Get these errors inline insead of in an alert
+                                alert(response['errors']);
+                                return;
+                            } else {
+                                // Set the value of the hidden user id field
+                                $("#profile_form").attr("action", "/user/edit/" + response['userid'] + "/");
+                                
+                                // Show the dialog with profile form
+                                $('#dialog').dialog('open');                                
+                            }
+                            
                         }
                     });
                 }

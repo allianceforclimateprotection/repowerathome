@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.forms.formsets import formset_factory
 from rah.models import *
 from rah.forms import *
+import json
 
 @csrf_protect
 def index(request):
@@ -52,11 +53,21 @@ def register(request):
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
             Profile.objects.create(user=user)
+            
+            # If this is an ajax request, then return the new user ID
+            if request.is_ajax:
+                return HttpResponse(json.dumps({'valid': True, 'userid': user.id }))
+            
             return redirect('www.rah.views.profile_edit', user_id=user.id)
+        elif request.is_ajax:
+            # This should never happen if the client side validation is working properly
+            return HttpResponse(json.dumps({'valid': False, 'errors': eval(repr(form.errors)) }))
     else:
         form = RegistrationForm()
+        profileForm = ProfileEditForm()
     return render_to_response("registration/register.html", {
         'form': form,
+        'profileForm': profileForm,
     }, context_instance=RequestContext(request))
 
 def action_show(request):

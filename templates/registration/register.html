@@ -1,12 +1,23 @@
 {% extends "rah/base.html" %}
 {% block content %}
-  <h1>Create an account</h1>
-  <form action="" method="post" id="registration_form">
-      <div>
-          {{ form.as_p }}          
-          <input type="submit" value="Register"/>
-      </div>
-      {% csrf_token %}
-  </form>
+<h1>Create an account</h1>
+<form action="" method="post" id="registration_form">
+    <div>
+        {{ form.as_p }}          
+        <input type="submit" value="Register"/>
+    </div>
+    {% csrf_token %}
+</form>
+{#
+    TODO Add links to register and login
+#}
+<div id="dialog">
+    <form action="" method="post" id="profile_form">
+        <div>
+            {{ profileForm.as_p }}
+        </div>
+        {% csrf_token %}
+    </form>
+</div>
 {% endblock %}
 {% block js %}page_register{% endblock %}
