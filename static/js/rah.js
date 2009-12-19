@@ -31,7 +31,6 @@ var rah = {
                 buttons: {
                     "Finish Registration": function() { 
                         $("#profile_form").submit();
-                        // TODO rewrite as ajax call
                     },
                     "Skip": function() { 
                         window.location = "/"
@@ -40,7 +39,7 @@ var rah = {
                 modal: true,
                 resizable: false,
                 draggable: false,
-                autoOpen: false
+                autoOpen: false, 
             });
             
             // Validate the registration form
@@ -69,7 +68,6 @@ var rah = {
                         remote: "That email is already registered",
                     },
                 },
-                
                 submitHandler: function(form) {
                     $(form).ajaxSubmit({
                         dataType: "json",
@@ -104,22 +102,7 @@ var rah = {
                         remote: "Please enter a valid 5 digit zipcode",
                     },
                 },
-                submitHandler: function(form) {
-                    $(form).ajaxSubmit({
-                        dataType: "json",
-                        success: function(response, status){
-                            if(response === true){
-                                window.location = "/";
-                            } else {
-                                alert("Fail #0001");
-                                return false;
-                            }
-                        }
-                    });
-                }
             });
-            // Submit the form with an AJAX request
-            // On successful valid submission, display post reg questions
         },
     },
     
@@ -153,11 +136,20 @@ var rah = {
     },
     
     /**
+    * Profile page
+    **/
+    page_profile: {
+        init: function(){
+            rah.mod_action_nugget.init();
+        },
+    },
+    
+    /**
     * Action Nugget
     */
     mod_action_nugget: {
         init: function(){
-            rah.mod_action_nugget.set_tasks_list_toggle();
+            this.set_tasks_list_toggle();
             rah.set_task_completion_submission.init($('.action_task_submitter :checkbox'));
         },
         

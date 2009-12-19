@@ -136,12 +136,12 @@ def profile_edit(request, user_id):
         form = ProfileEditForm(request.POST, instance=request.user.get_profile())
         if form.is_valid():
             form.save()
-            if request.is_ajax():
-                return HttpResponse(json.dumps(True))
+            # If the user just registered go to the home page
+            if "/register/" in str(request.META.get('HTTP_REFERER')):
+                return redirect('www.rah.views.index')
+            # Else we go to the profile view page
             else:
                 return redirect('www.rah.views.profile', user_id=request.user.id)
-        elif request.is_ajax():
-            return HttpResponse(json.dumps(False))
     else:
         profile = request.user.get_profile()
         initial = {'firstname': request.user.first_name,
@@ -166,17 +166,20 @@ def account(request):
     return render_to_response('rah/account.html', {'form': form,}, context_instance=RequestContext(request))
 
 def validate_field(request):
-    """Validates a given field. For use with JS form validation"""
+    """The jQuery Validation plugin will post a single form field to this view and expects a json response."""
+    # Must be called with an AJAX request
     if not request.is_ajax():
         return HttpResponseForbidden()
     
     valid = False
 
+    # Valid if there are no other users using that email address
     if request.POST.get("email"):
         from django.forms.fields import email_re # OPTIMIZE Is it ok to have imports at the function level?
         if email_re.search(request.POST.get("email")) and not User.objects.filter(email__exact = request.POST.get("email")):
             valid = True
     
+    # Valid if zipcode is in our location table
     elif request.POST.get("zipcode"):
         if request.POST.get("zipcode").isdigit() and len(request.POST.get("zipcode")) == 5:
             location = Location.objects.filter(zipcode__exact = request.POST.get("zipcode"))
@@ -184,14 +187,3 @@ def validate_field(request):
                 valid = True
     
     return HttpResponse(json.dumps(valid))
-
-
-
-
-
-
-
-
-
-
-
