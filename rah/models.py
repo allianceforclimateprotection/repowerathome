@@ -15,7 +15,7 @@ class UserManager(models.Manager):
         that are working on the action (in progress) and the final list is for all users that have completed the action
         """
         total_tasks = action.actiontask_set.all().count()
-        users = User.objects.filter(useractiontask__action_task__action=action).annotate(completes=models.Count('useractiontask'))
+        users = self.filter(useractiontask__action_task__action=action).annotate(completes=models.Count('useractiontask'))
         in_progress = [user for user in users if total_tasks > user.completes and user.completes > 0]
         completed = [user for user in users if total_tasks == user.completes]
 
@@ -82,7 +82,7 @@ class ActionManager(models.Manager):
         the second value is all completed actions, the third value is the in progress actions
         and the last value is the completed actions
         """
-        actions = Action.objects.select_related().all().extra(
+        actions = self.select_related().all().extra(
             select = { 'tasks': 'SELECT COUNT(at.id) \
                                  FROM rah_actiontask at \
                                  WHERE at.action_id = rah_action.id' }).extra(
@@ -187,14 +187,15 @@ class UserActionTask(models.Model):
 class Location(models.Model):
     name = models.CharField(max_length=200)
 	# OPTIMIZE: adding an index on zipcode should speed up the searches
-    zipcode = models.CharField(max_length=5)
-    county = models.CharField(max_length=100)
+    zipcode = models.CharField(max_length=5, db_index=True)
+    county = models.CharField(max_length=100, db_index=True)
     st = models.CharField(max_length=2)
     state = models.CharField(max_length=50)
     lon = models.CharField(max_length=50)
     lat = models.CharField(max_length=50)
     pop = models.PositiveIntegerField()
     timezone = models.CharField(max_length=100)
+    recruit = models.BooleanField()
     
     def __unicode__(self):
         return u'%s, %s (%s)' % (self.name, self.st, self.zipcode)
