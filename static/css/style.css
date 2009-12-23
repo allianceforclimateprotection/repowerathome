@@ -308,6 +308,11 @@ acronym {
 	background-color: #fff;
 	display: none;
 }
+/* @end */
+
+/* @group house_party */
+#house_party_dialog { display: none; }
+/* @end */
 
 
 /*

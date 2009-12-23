@@ -2,10 +2,15 @@ from django import forms
 from django.contrib import auth
 from www.rah.models import *
 from django.forms import ValidationError
+from django.core.mail import send_mail
 from django.core.urlresolvers import resolve, Resolver404
 from urlparse import urlparse
 from django.forms.widgets import CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _
+from smtplib import SMTPException
+from django.template import Context, loader
+
+import settings
 
 class RegistrationForm(forms.ModelForm):
     """
@@ -196,3 +201,21 @@ class AccountForm(forms.ModelForm):
         super(AccountForm, self).save()
         self.instance.get_profile().save()
         
+class HousePartyForm(forms.Form):
+    phone_number = forms.CharField()
+    call_time = forms.ChoiceField(choices=(('morning', 'Morning'), ('afternoon', 'Afternoon'), ('evening', 'Evening')))
+    
+    def send(self, user):
+        template = loader.get_template('rah/house_party_email.html')
+        context = {
+            'name': user.get_full_name(),
+            'email': user.email,
+            'call_time': self.cleaned_data['call_time'],
+            'phone_number': self.cleaned_data['phone_number'],
+        }
+        try:
+            send_mail('House Party Contact', template.render(Context(context)), None, 
+                ["feedback@repowerathome.com"], fail_silently=False)
+        except SMTPException, e:
+            return False
+        return True

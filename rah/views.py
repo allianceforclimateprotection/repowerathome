@@ -25,6 +25,7 @@ def index(request):
             'total_points': total_points,
             'in_progress': in_progress,
             'recommended': recommended,
+            'house_party_form': HousePartyForm(),
         }, context_instance=RequestContext(request))
     
     # Setup and handle email form on logged out home page
@@ -187,3 +188,16 @@ def validate_field(request):
                 valid = True
     
     return HttpResponse(json.dumps(valid))
+    
+def house_party(request):
+    if request.method == 'POST':
+        form = HousePartyForm(request.POST)
+        if form.is_valid() and form.send(request.user):
+            # TODO set some sort of success message
+            print "EMAIL WAS SENT"
+            pass
+        else:
+            # TODO set some sort of failure message
+            print "EMAIL WAS NOT SENT"
+            pass
+    return redirect('www.rah.views.index')

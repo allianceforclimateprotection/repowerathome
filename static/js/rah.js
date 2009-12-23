@@ -112,6 +112,7 @@ var rah = {
     page_home_logged_in: {
         init: function(){
             rah.mod_action_nugget.init();
+            rah.mod_house_party.init();
         },
     },
     
@@ -175,5 +176,28 @@ var rah = {
                 return false;
             });
         }
+    },
+    
+    mod_house_party: {
+        init: function(){
+            this.create_dialog();
+            $('.house_party').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
+        },
+        
+        create_dialog: function(){
+            $('#house_party_dialog').dialog({
+                title: 'House Parties',
+                buttons: {
+                    "Give me a call": function() {
+                        $(this).find('form').submit();
+                    },
+                },
+                modal: true,
+                resizable: false,
+                draggable: false,
+                autoOpen: false, 
+            });
+        }
+        
     },
 }
