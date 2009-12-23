@@ -51,10 +51,16 @@ var rah = {
     **/
     page_register: {
         init: function(){
+            // Funnel step 1: Start on registration page
+            _gaq.push(['_trackPageview', '/reg/start']);
+            
             // Set up a dialog window for opening later
             $('#dialog').dialog({ 
                 buttons: {
                     "Finish Registration": function() { 
+                        // Funnel step 3: Post registration questions submitted
+                        _gaq.push(['_trackPageview', '/reg/questions']);
+                        
                         $("#profile_form").submit();
                     },
                     "Skip": function() { 
@@ -94,12 +100,13 @@ var rah = {
                         remote: "That email is already registered",
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function(form) {                    
                     $(form).ajaxSubmit({
                         dataType: "json",
                         success: function(response, status){
                             if(response['valid'] != true){
-                                // TODO Get these errors inline insead of in an alert
+                                // TODO Get these errors inline insead of in an alert 
+                                // (idea from Eric: Replace form with new form markup from django that inlcudes the errors)
                                 alert(response['errors']);
                                 return;
                             } else {
@@ -107,7 +114,10 @@ var rah = {
                                 $("#profile_form").attr("action", "/user/edit/" + response['userid'] + "/");
                                 
                                 // Show the dialog with profile form
-                                $('#dialog').dialog('open');                                
+                                $('#dialog').dialog('open');
+                                
+                                // Funnel step 2: Post registration questions popped up
+                                _gaq.push(['_trackPageview', '/reg/questions']);
                             }
                         }
                     });

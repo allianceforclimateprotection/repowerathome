@@ -5,6 +5,16 @@
         <meta name="google-site-verification" content="LKUJZqwKMnEGjg_dQNKL-2eLLK3yvftU0RKv7SuymGQ" />
         <link rel="shortcut icon" href="{{ MEDIA_URL }}images/theme/favico.ico"/>
         <link rel="stylesheet" href="{{ MEDIA_URL }}css/style{%if not debug%}_min{%endif%}.css" type="text/css" media="screen" charset="utf-8"/>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-11623269-1']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+            })();
+        </script>
     </head>
     <body>
         <div id="header-container">
@@ -60,13 +70,6 @@
         <div id="feedback_dialog"></div>
         <script type="text/javascript" charset="utf-8"> var rah_name = "{% block js %}{% endblock %}";</script>
         <script type="text/javascript" src="{{ MEDIA_URL }}js/js_libs{%if not debug%}_min{%endif%}.js"></script>        
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/rah{%if not debug%}_min{%endif%}.js"></script>
-        <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-        </script>
-        <script type="text/javascript">
-            try { var pageTracker = _gat._getTracker("UA-11623269-1"); pageTracker._trackPageview(); } catch(err) {}
-        </script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}js/rah{%if not debug%}_min{%endif%}.js"></script>        
     </body>
 </html>
