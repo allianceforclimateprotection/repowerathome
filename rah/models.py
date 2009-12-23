@@ -38,11 +38,13 @@ class User(User):
         self.username = hashlib.md5(email).hexdigest()[:30]
         self.email = email
         return True
-        
+    
+    # TODO write unit tests for get latest points
     def get_latest_points(self, quantity=None):
         points = Points.objects.filter(user=self).order_by('-updated')
         return points[:quantity] if quantity else points
         
+    # TODO write unit tests for get total points
     def get_total_points(self):
         return Points.objects.filter(user=self).aggregate(models.Sum('points'))['points__sum']
 
@@ -133,7 +135,8 @@ class Action(DefaultModel):
         retrieve the summation of all the points in related action tasks
         """
         return self.actiontask_set.count()
-        
+    
+    # TODO write unit tests for action completes for user
     def completes_for_user(self, user):
         """
         return the number of tasks a user has completed for an action
@@ -155,12 +158,14 @@ class ActionTask(DefaultModel):
         ordering = ['action', 'sequence']
         unique_together = ('action', 'sequence',)
         
+    # TODO write unit tests for is action task completed by user
     def is_completed_by_user(self, user):
         """
         return whether or not the specific user has completed the task
         """
         return len(UserActionTask.objects.filter(action_task=self, user=user)) == 1
 
+    # OPTIMIZE pull this static method out and place in a manager
     @staticmethod
     def get_action_tasks_by_action_and_user(action, user):
         return ActionTask.objects.filter(action=action.id).extra(
