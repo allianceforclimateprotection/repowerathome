@@ -214,7 +214,7 @@ class AccountForm(forms.ModelForm):
         
 class HousePartyForm(forms.Form):
     phone_number = forms.CharField()
-    call_time = forms.ChoiceField(choices=(('morning', 'Morning'), ('afternoon', 'Afternoon'), ('evening', 'Evening')))
+    call_time = forms.ChoiceField(choices=(('anytime', 'Anytime'), ('morning', 'Morning'), ('afternoon', 'Afternoon'), ('evening', 'Evening')))
     
     def send(self, user):
         template = loader.get_template('rah/house_party_email.html')

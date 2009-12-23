@@ -223,10 +223,8 @@ def house_party(request):
         form = HousePartyForm(request.POST)
         if form.is_valid() and form.send(request.user):
             # TODO set some sort of success message
-            print "EMAIL WAS SENT"
             pass
         else:
             # TODO set some sort of failure message
-            print "EMAIL WAS NOT SENT"
             pass
     return redirect('www.rah.views.index')

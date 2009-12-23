@@ -217,6 +217,11 @@ var rah = {
     mod_house_party: {
         init: function(){
             this.create_dialog();
+            $("#house_party_form").validate({
+                rules: {
+                    phone_number: { required: true, },
+                },
+            });
             $('.house_party').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
         },
         
@@ -225,7 +230,7 @@ var rah = {
                 title: 'House Parties',
                 buttons: {
                     "Give me a call": function() {
-                        $(this).find('form').submit();
+                        $('#house_party_form').submit();
                     },
                 },
                 modal: true,
@@ -233,7 +238,7 @@ var rah = {
                 draggable: false,
                 autoOpen: false, 
             });
-        }
+        },
         
     },
 }
