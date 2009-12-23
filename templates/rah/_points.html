@@ -1,7 +1,7 @@
-{% if is_my_profile %}
-	<h2>Your Points: {{ total_points }}</h2>
-{% else %}
+{% if is_others_profile %}
 	<h2>Their Points: {{ total_points }}</h2>
+{% else %}
+	<h2>Your Points: {{ total_points }}</h2>
 {% endif %}
 <ul>
     {% if points %}
@@ -12,10 +12,10 @@
             </li>
         {% endfor %}    
     {% else %}
-		{% if is_my_profile %}
-			<li>You don't have any points. Do something!</li>
-		{% else %}
+		{% if is_others_profile %}
 			<li>They don't have any points.</li>
+		{% else %}
+			<li>You don't have any points. Do something!</li>
 		{% endif %}
     {% endif %}
 </ul>

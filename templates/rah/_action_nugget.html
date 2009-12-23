@@ -3,14 +3,15 @@
 	<a class='title' href='{% url rah.views.action_detail action.slug %}'>{{ action.name }}</a>
 	<p class='teaser'>{{ action.teaser }}</p>
 	{% if user.is_authenticated %}
-		<p class='completion'><span class='user_completes'>{{ action.user_completes }}</span> of {{ action.tasks }} tasks completed
+		<p class='completion'>
+			<span class='user_completes'>{{ action.user_completes }}</span> of {{ action.tasks }} tasks completed
 			<span class='tasks_link'>(<a href='{% url rah.views.action_detail action.slug %}'>show</a>)</span>
 		</p>
 		<div class='task_list'>
 			{% for action_task in action.action_tasks %}
 				<form action="{% url rah.views.action_task action_task.id %}" class="action_task_submitter" method='post'>
 					<p>
-						<input type='checkbox' name='task_completed' {% if action_task.completed %}checked='checked'{% endif %} {% if not is_my_profile %}disabled='disabled' {% endif %}/>{{ action_task.name }}
+						<input type='checkbox' name='task_completed' {% if action_task.completed %}checked='checked'{% endif %} {% if is_others_profile %}disabled='disabled' {% endif %}/>{{ action_task.name }}
 					</p>
 				</form>
 			{% endfor %}

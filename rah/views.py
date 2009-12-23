@@ -126,7 +126,7 @@ def profile(request, user_id):
         'in_progress': in_progress,
         'recommended': recommended,
         'completed': completed,
-        'is_my_profile': request.user == user,
+        'is_others_profile': request.user <> user,
     }, context_instance=RequestContext(request))
 
 @login_required
