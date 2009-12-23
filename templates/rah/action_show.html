@@ -7,7 +7,7 @@
 
 	{% for category, actions in categories.items %}
 		<h2 id='{{ category.slug }}' class='action_category_title'>{{ category.name }}</h2>
-		<p class='action_category_description'>{{ category.content|safe|linebreaks}}</p>
+		<div class='action_category_description'>{{ category.content|safe|linebreaks}}</div>
 		{% for action in actions %}
 			{% include 'rah/_action_nugget.html' %}
 		{% endfor %}
@@ -18,7 +18,7 @@
 	<h2>Categories</h2>
 	<ul>
 		{% for category, actions in categories.items %}
-			<li><a href='#{{ category.slug }}'>{{ category.name }}</li>
+			<li><a href='#{{ category.slug }}'>{{ category.name }}</a></li>
 		{% endfor %}
 	</ul>
 {% endblock %}

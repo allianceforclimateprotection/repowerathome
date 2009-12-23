@@ -1,16 +1,12 @@
 <h2>Magnify Your Impact</h2>
 <ul>
-	<li><a href='{% url rah.views.house_party %}' class='house_party'>Host a house party</span></li>
-	<div id='house_party_dialog'>
-		<form action="{% url rah.views.house_party %}" method="POST" id="house_party_form">
-	        <div>
-				<!--
-					FIXME note that the call time select element is working in Safari, but not in Firefox
-				-->
-	            {{ house_party_form.as_p }}
-	        </div>
-	        {% csrf_token %}
-	    </form>
-	</div>
-	<li><a href='invite-friend' class='invite_friend'>Invite a friend</span></li>
+	<li><a href='{% url rah.views.house_party %}' class='house_party'>Host a house party</a></li>
 </ul>
+<div id='house_party_dialog'>
+	<form action="{% url rah.views.house_party %}" method="post" id="house_party_form">
+		<div>
+		{{ house_party_form.as_p }}
+		</div>
+        {% csrf_token %}
+    </form>
+</div>
