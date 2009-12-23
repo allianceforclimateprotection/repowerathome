@@ -27,6 +27,7 @@
                     {% else %}
                         <a href="/login">Login</a> | <a href="/register">Sign Up</a>
                     {% endif %}
+                    | <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
                 </div>
                 <div id="nav">
                     <a href="{% url rah.views.index %}">Home</a>&nbsp;
