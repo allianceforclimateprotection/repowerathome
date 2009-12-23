@@ -10,7 +10,7 @@
 			{% endifequal %}
 		</h2>
 		<h5>{{ profile.location|default_if_none:"" }}</h5>
-		<div class='spacer' />
+		<br class="spacer" />
 	</div>
 	{% if in_progress %}
 		<div class="actions_block">
@@ -18,7 +18,7 @@
 		    {% for action in in_progress %}
 				{% include 'rah/_action_nugget.html' %}
 		    {% endfor %}
-			<div class="spacer" />
+			<br class="spacer" />
 		</div>
 	{% endif %}
 	{% if completed %}
@@ -27,7 +27,7 @@
 		    {% for action in completed %}
 		        {% include 'rah/_action_nugget.html' %}
 		    {% endfor %}
-			<div class="spacer" />
+			<br class="spacer" />
 		</div>
 	{% endif %}
 	{% if recommended %}
@@ -36,7 +36,7 @@
 		    {% for action in recommended %}
 		        {% include 'rah/_action_nugget.html' %}
 		    {% endfor %}
-			<div class="spacer" />
+			<br class="spacer" />
 		</div>
 	{% endif %}
 {% endblock %}
