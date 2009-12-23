@@ -12,27 +12,33 @@
 		<h5>{{ profile.location|default_if_none:"" }}</h5>
 		<div class='spacer' />
 	</div>
-	<div class="actions_block">
-		<h2>In Progress Actions</h2>
-	    {% for action in in_progress %}
-			{% include 'rah/_action_nugget.html' %}
-	    {% endfor %}
-		<div class="spacer" />
-	</div>
-	<div class="actions_block">
-		<h2>Completed Actions</h2>
-	    {% for action in completed %}
-	        {% include 'rah/_action_nugget.html' %}
-	    {% endfor %}
-		<div class="spacer" />
-	</div>
-	<div class="actions_block">
-		<h2>Recommended Actions</h2>
-	    {% for action in recommended %}
-	        {% include 'rah/_action_nugget.html' %}
-	    {% endfor %}
-		<div class="spacer" />
-	</div>
+	{% if in_progress %}
+		<div class="actions_block">
+			<h2>In Progress Actions</h2>
+		    {% for action in in_progress %}
+				{% include 'rah/_action_nugget.html' %}
+		    {% endfor %}
+			<div class="spacer" />
+		</div>
+	{% endif %}
+	{% if completed %}
+		<div class="actions_block">
+			<h2>Completed Actions</h2>
+		    {% for action in completed %}
+		        {% include 'rah/_action_nugget.html' %}
+		    {% endfor %}
+			<div class="spacer" />
+		</div>
+	{% endif %}
+	{% if recommended %}
+		<div class="actions_block">
+			<h2>Recommended Actions</h2>
+		    {% for action in recommended %}
+		        {% include 'rah/_action_nugget.html' %}
+		    {% endfor %}
+			<div class="spacer" />
+		</div>
+	{% endif %}
 {% endblock %}
 {% block minorcol %}
 	{% include 'rah/_points.html' %}

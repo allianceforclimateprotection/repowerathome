@@ -113,11 +113,11 @@ def profile(request, user_id):
     """docstring for profile"""
     user = get_object_or_404(User, id=user_id)
     if request.user <> user and user.get_profile().is_profile_private:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("Sorry, but you do not have permissions to view this profile.")
     profile = user.get_profile()
-    recommended, in_progress, completed = Action.objects.with_tasks_for_user(request.user)[1:4]
-    points = request.user.get_latest_points()
-    total_points = request.user.get_total_points()
+    recommended, in_progress, completed = Action.objects.with_tasks_for_user(user)[1:4]
+    points = user.get_latest_points()
+    total_points = user.get_total_points()
     
     return render_to_response('rah/profile.html', {
         'profile': profile,
@@ -126,13 +126,14 @@ def profile(request, user_id):
         'in_progress': in_progress,
         'recommended': recommended,
         'completed': completed,
+        'is_my_profile': request.user == user,
     }, context_instance=RequestContext(request))
 
 @login_required
 def profile_edit(request, user_id):
     """docstring for inquiry"""
     if request.user.id <> int(user_id):
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("Sorry, but you do not have permissions to edit this profile.")
     if request.method == 'POST':
         form = ProfileEditForm(request.POST, instance=request.user.get_profile())
         if form.is_valid():

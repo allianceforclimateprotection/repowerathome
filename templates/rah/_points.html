@@ -1,4 +1,8 @@
-<h2>Your Points: {{ total_points }}</h2>
+{% if is_my_profile %}
+	<h2>Your Points: {{ total_points }}</h2>
+{% else %}
+	<h2>Their Points: {{ total_points }}</h2>
+{% endif %}
 <ul>
     {% if points %}
         {% for point in points %}
@@ -8,6 +12,10 @@
             </li>
         {% endfor %}    
     {% else %}
-        <li>You don't have any points. Do something!</li>
+		{% if is_my_profile %}
+			<li>You don't have any points. Do something!</li>
+		{% else %}
+			<li>They don't have any points.</li>
+		{% endif %}
     {% endif %}
 </ul>

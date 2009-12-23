@@ -120,8 +120,8 @@ class FeedbackForm(forms.ModelForm):
     
         
 class ProfileEditForm(forms.ModelForm):
-    firstname = forms.CharField(label=_('First Name'), required=False)
-    lastname = forms.CharField(label=_('Last Name'), required=False)
+    firstname = forms.CharField(label='First Name', max_length=30, required=False)
+    lastname = forms.CharField(label='Last Name', max_length=30, required=False)
     zipcode = forms.CharField(max_length=5, required=False)
     
     class Meta:
