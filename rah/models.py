@@ -253,6 +253,15 @@ class Signup(models.Model):
     def __unicode__(self):
         return u'%s' % (self.email)
 
+class Feedback(DefaultModel):
+    user = models.ForeignKey(User, null=True)
+    url = models.CharField(max_length=255, default='')
+    comment = models.TextField(default='')
+    beta_group = models.BooleanField(default=0)
+
+    def __unicode__(self):
+        return u'%s...' % (self.comment[:15])
+
 class Profile(models.Model):
     """Profile"""
     # OPTIMIZE these choices can be tied to an IntegerField if the value is an integer: (1, 'Apartment'),
@@ -266,7 +275,7 @@ class Profile(models.Model):
     is_profile_private = models.BooleanField(default=0)
     
     def __unicode__(self):
-        return u'%s' % (self.user.username)
+        return u'%s' % (self.user.email)
 
     # TODO write get_gravatar_url unit test
     def get_gravatar_url(self, default_icon='identicon'):

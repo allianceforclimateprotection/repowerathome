@@ -18,6 +18,31 @@ var rah = {
     **/
     base: {
         init: function(){
+            // Setup Feedback dialog
+            $("#feedback_dialog").dialog({
+                modal:true,
+                buttons: {
+                    "Submit Feedback": function() { 
+                        $("#feedback_form").ajaxSubmit({
+                            success: function(){
+                                $("#feedback_dialog").dialog("close");
+                            }
+                        });
+                    },
+                },
+                title: "Feedback",
+                autoOpen: false,
+                width: 350,
+            });
+            // Attach functionality to feedback links
+            $(".feedback_link").click(function(){
+                $("#feedback_dialog").load("/feedback/", function(){ // Load the feedback form via ajax
+                    $("#feedback_submit").hide(); // We don't need this button when viewed inside dialog
+                    $("#id_url").val(location.href); // Set the url to the current url
+                    $("#feedback_dialog").dialog("open"); // Open the dialog with feedback form
+                });
+                return false;
+            });
         },
     },
     
@@ -39,7 +64,8 @@ var rah = {
                 modal: true,
                 resizable: false,
                 draggable: false,
-                autoOpen: false, 
+                autoOpen: false,
+                title: "Almost done...",
             });
             
             // Validate the registration form

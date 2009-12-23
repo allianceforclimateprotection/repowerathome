@@ -21,6 +21,10 @@
 	{% endfor %}
 {% endblock %}
 {% block minorcol %}
+    <h2>Action Tools</h2>
+    <ul>
+        <li><a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a></li>
+    </ul>
 	<h2>Who's doing this?</h2>
 	<p><span class='total_users'>{{ users_completed|length }}</span> pe{{ users_completed|length|pluralize:"rson has,ople have"}} completed this action.</p>
 	<p><span class='total_users'>{{ users_in_progress|length }}</span> pe{{ users_in_progress|length|pluralize:"rson is,ople are"}} working on it.</p>

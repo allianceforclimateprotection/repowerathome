@@ -8,7 +8,7 @@
 		</p>
 		<div class='task_list'>
 			{% for action_task in action.action_tasks %}
-				<form action="{% url rah.views.action_task action_task.id %}" class="action_task_submitter" method='POST' accept-charset='utf-8'>
+				<form action="{% url rah.views.action_task action_task.id %}" class="action_task_submitter" method='post' accept-charset='utf-8'>
 					<input type='checkbox' name='task_completed' {% if action_task.completed %}checked='checked'{% endif %}>{{ action_task.name }}</input>
 				</form>
 			{% endfor %}

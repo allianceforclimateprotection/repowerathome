@@ -138,8 +138,9 @@ p {
 	color: #333; 
 	padding-bottom: 15px; 
 	font-size: 12px; 
-	
 }
+strong, b { font-weight:bold; }
+em, i { font-style: italic; }
 acronym {
 	font-size: 13px;
 	border: none;
