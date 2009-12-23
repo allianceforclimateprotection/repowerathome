@@ -7,7 +7,7 @@
 
 	{% for category, actions in categories.items %}
 		<h2 id='{{ category.slug }}' class='action_category_title'>{{ category.name }}</h2>
-		<p class='action_category_description'>{{ category.content }}</p>
+		<p class='action_category_description'>{{ category.content|safe|linebreaks}}</p>
 		{% for action in actions %}
 			{% include 'rah/_action_nugget.html' %}
 		{% endfor %}

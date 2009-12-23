@@ -27,7 +27,7 @@ urlpatterns += patterns('www.rah.views',
     (r'^user/edit/(?P<user_id>\d+)/$', 'profile_edit'),
     (r'^validate/$', 'validate_field'),
     (r'^houseparty/$', 'house_party'),
-)
+    (r'^feedback/$', 'feedback'),
 
 if settings.DEBUG:
     urlpatterns += patterns('django.views.static',

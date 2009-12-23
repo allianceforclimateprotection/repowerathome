@@ -107,6 +107,18 @@ class SignupForm(forms.ModelForm):
 
         return data
 
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ("comment", "beta_group", "url")
+    
+    url = forms.CharField(widget=forms.HiddenInput, required=False)
+    comment = forms.CharField(widget=forms.Textarea, required=False, label="Your Comments")
+    beta_group = forms.BooleanField(help_text="""Check here if you would like to be a part 
+                                                of our alpha group and receive information 
+                                                on new features before they launch.""", label="", required=False)
+    
+        
 class ProfileEditForm(forms.ModelForm):
     firstname = forms.CharField(label=_('First Name'), required=False)
     lastname = forms.CharField(label=_('Last Name'), required=False)
@@ -118,7 +130,6 @@ class ProfileEditForm(forms.ModelForm):
         
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
-        # TODO Remove debug print statements before commiting 
         if not len(data):
             self.instance.location = None
             return

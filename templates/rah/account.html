@@ -1,7 +1,7 @@
 {% extends "rah/base.html" %}
 {% block content %}
     <h1>Edit your Account</h1>
-    <form action="" method="POST">
+    <form action="" method="post">
         <div>{{form.as_p}}</div>
         <div><a href="{% url django.contrib.auth.views.password_change %}">Change your password</a></div>
         <input type="submit" value="Submit" />

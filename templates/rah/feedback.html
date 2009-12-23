@@ -1,0 +1,11 @@
+{% extends "rah/base.html" %}
+{% block content %}
+    <h1>Give us Feedback</h1>
+    {% if success %}
+        <div class="success">
+            Thanks for the feedback!
+        </div>
+    {% else %}
+        {% include "rah/_feedback.html" %}
+    {% endif %}
+{% endblock %}

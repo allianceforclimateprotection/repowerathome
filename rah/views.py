@@ -166,6 +166,35 @@ def account(request):
         form = AccountForm(instance=request.user, initial={ 'make_profile_private': profile.is_profile_private, })
     return render_to_response('rah/account.html', {'form': form,}, context_instance=RequestContext(request))
 
+@csrf_protect
+def feedback(request):
+    """docstring for feedback"""
+    success = False
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback = form.save()
+            
+            # Add the logged in user to the record
+            if request.user.is_authenticated():
+                feedback.user = request.user
+                feedback.save()
+            
+            # TODO Replace this success business with a message when messaging is ready
+            success = True
+    else:
+        form = FeedbackForm(initial={ 'url': request.META.get('HTTP_REFERER'), })
+    
+    if request.is_ajax():
+        template = 'rah/_feedback.html'
+    else:
+        template = 'rah/feedback.html'
+        
+    return render_to_response(template, {
+        'feedback_form': form,
+        'success': success,
+    }, context_instance=RequestContext(request))
+
 def validate_field(request):
     """The jQuery Validation plugin will post a single form field to this view and expects a json response."""
     # Must be called with an AJAX request

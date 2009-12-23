@@ -43,9 +43,9 @@
                         <div class="footer-links">
                             <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> | 
                             <a href="http://www.climateprotectionactionfund.org/">Climate Protection Action Fund</a> | 
-                            <a href="http://acp.repoweramerica.org/page/s/recontact">Contact Us</a> | 
+                            <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a> | 
                             <a href="http://www.repoweramerica.org/terms-of-use">Terms of Use</a> | 
-                            <a href="/privacy-policy">Privacy Policy</a>
+                            <a href="http://www.repoweramerica.org/privacy-policy">Privacy Policy</a>
                         </div>
                         <div class="learn">
                             The Repower America Web site is shared by the Alliance for Climate Protection and the 
@@ -57,6 +57,7 @@
                 </div>
             </div>
         </div>
+        <div id="feedback_dialog"></div>
         <script type="text/javascript" charset="utf-8"> var rah_name = "{% block js %}{% endblock %}";</script>
         <script type="text/javascript" src="{{ MEDIA_URL }}js/js_libs{%if not debug%}_min{%endif%}.js"></script>        
         <script type="text/javascript" src="{{ MEDIA_URL }}js/rah{%if not debug%}_min{%endif%}.js"></script>
