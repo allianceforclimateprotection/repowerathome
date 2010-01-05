@@ -13,6 +13,8 @@ urlpatterns = patterns('',
     (r'^login/$', 'django.contrib.auth.views.login', { 'authentication_form': AuthenticationForm }),
     (r'^', include('django.contrib.auth.urls')),
     (r'^admin/', include(admin.site.urls)),
+    (r'^blog/', include('basic.blog.urls')),
+    (r'^blog/comments/', include('django.contrib.comments.urls')),
 )
 
 urlpatterns += patterns('rah.views',

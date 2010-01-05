@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <title>{% block title %}{% endblock %} | Repower@Home</title>
+        <meta name="google-site-verification" content="LKUJZqwKMnEGjg_dQNKL-2eLLK3yvftU0RKv7SuymGQ" />
+        <link rel="shortcut icon" href="{{ MEDIA_URL }}images/theme/favico.ico"/>
+        <link rel="stylesheet" href="{{ MEDIA_URL }}css/style{%if not debug%}_min{%endif%}.css" type="text/css" media="screen" charset="utf-8"/>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-11623269-1']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+            })();
+        </script>
+    </head>
+    <body>
+        <div id="header-container">
+            <div id="header">
+                <a href="/" title="Repower America" class="site-logo"></a>
+                <div id="header-links">
+                    {% if user.is_authenticated %}
+                        {{ user.get_welcome }} | <a href="{% url rah.views.profile user.id %}">Profile</a> | 
+                        <a href="{% url rah.views.account %}">Account</a> | <a href="/logout">Logout</a>
+                    {% else %}
+                        <a href="/login">Login</a> | <a href="/register">Sign Up</a>
+                    {% endif %}
+                    | <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
+                </div>
+                <div id="nav">
+                    <a href="{% url rah.views.index %}">Home</a>&nbsp;
+                    <a href="{% url rah.views.action_show %}">Actions</a>&nbsp;
+					<a href="{% url blog_index %}">Blog</a>
+                    {# <a href="">About us</a> #}
+                </div>
+            </div>
+        </div>
+        <div id="content-container">
+            <div id="major-col">
+                {% block content %}{% endblock %}
+            </div>
+            <div id="minor-col">
+                {% block minorcol %}{% endblock %}
+            </div>
+        </div>
+        <div id="footer-container">
+            <div id="footer">
+                <div class="search-container">
+                    <div class="copy">
+                        <div class="copyright">
+                            Copyright © The Alliance for Climate Protection 2009. All Rights Reserved.
+                        </div>
+                        <div class="footer-links">
+                            <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> | 
+                            <a href="http://www.climateprotectionactionfund.org/">Climate Protection Action Fund</a> | 
+                            <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a> | 
+                            <a href="http://www.repoweramerica.org/terms-of-use">Terms of Use</a> | 
+                            <a href="http://www.repoweramerica.org/privacy-policy">Privacy Policy</a>
+                        </div>
+                        <div class="learn">
+                            The Repower America Web site is shared by the Alliance for Climate Protection and the 
+                            Climate Protection Action Fund.<br/>
+                            <a href="/about/learn-more-about-repower-america/">Learn more</a> about the distinction 
+                            between the efforts of these two organizations through Repower America.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="feedback_dialog"></div>
+        <script type="text/javascript" charset="utf-8"> var rah_name = "{% block js %}{% endblock %}";</script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}js/js_libs{%if not debug%}_min{%endif%}.js"></script>        
+        <script type="text/javascript" src="{{ MEDIA_URL }}js/rah{%if not debug%}_min{%endif%}.js"></script>        
+    </body>
+</html>
