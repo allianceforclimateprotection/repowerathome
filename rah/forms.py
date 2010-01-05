@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import auth
-from www.rah.models import *
+from rah.models import *
 from django.forms import ValidationError
 from django.core.mail import send_mail
 from django.core.urlresolvers import resolve, Resolver404

@@ -1,7 +1,7 @@
 import settings
 from django.conf.urls.defaults import *
 from django.core.urlresolvers import reverse
-from www.rah.forms import AuthenticationForm
+from rah.forms import AuthenticationForm
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -15,7 +15,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 )
 
-urlpatterns += patterns('www.rah.views',
+urlpatterns += patterns('rah.views',
     (r'^$', 'index'),
     # OPTIMIZE: we can remove our custom register view altogether and just specify our custom from as a parameter in the url pattern
     (r'^register/$', 'register'),

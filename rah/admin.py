@@ -1,6 +1,6 @@
 from django.contrib import admin
-from www.rah.models import *
-from www.rah.forms import *
+from rah.models import *
+from rah.forms import *
 
 class SignupAdmin(admin.ModelAdmin):
     list_display = ('email', 'zipcode')

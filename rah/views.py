@@ -60,7 +60,7 @@ def register(request):
             if request.is_ajax:
                 return HttpResponse(json.dumps({'valid': True, 'userid': user.id }))
             
-            return redirect('www.rah.views.profile_edit', user_id=user.id)
+            return redirect('rah.views.profile_edit', user_id=user.id)
         elif request.is_ajax:
             # This should never happen if the client side validation is working properly
             return HttpResponse(json.dumps({'valid': False, 'errors': eval(repr(form.errors)) }))
@@ -108,7 +108,7 @@ def action_task(request, action_task_id):
     if request.is_ajax():
         return HttpResponse(action_task.action.completes_for_user(request.user))
     else:
-        return redirect('www.rah.views.action_detail', action_slug=action_task.action.slug)
+        return redirect('rah.views.action_detail', action_slug=action_task.action.slug)
 
 def profile(request, user_id):
     """docstring for profile"""
@@ -141,10 +141,10 @@ def profile_edit(request, user_id):
             form.save()
             # If the user just registered go to the home page
             if "/register/" in str(request.META.get('HTTP_REFERER')):
-                return redirect('www.rah.views.index')
+                return redirect('rah.views.index')
             # Else we go to the profile view page
             else:
-                return redirect('www.rah.views.profile', user_id=request.user.id)
+                return redirect('rah.views.profile', user_id=request.user.id)
     else:
         profile = request.user.get_profile()
         initial = {'firstname': request.user.first_name,
@@ -162,7 +162,7 @@ def account(request):
         form = AccountForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('www.rah.views.index')
+            return redirect('rah.views.index')
     else:
         profile = request.user.get_profile()
         form = AccountForm(instance=request.user, initial={ 'make_profile_private': profile.is_profile_private, })
@@ -229,4 +229,4 @@ def house_party(request):
         else:
             # TODO set some sort of failure message
             pass
-    return redirect('www.rah.views.index')
+    return redirect('rah.views.index')
