@@ -152,13 +152,6 @@ class ProfileEditForm(forms.ModelForm):
         super(ProfileEditForm, self).save()
         self.instance.user.save()
 
-class UserActionTaskForm(forms.Form):
-    is_done = forms.BooleanField(label='test')
-    
-    class Meta:
-        model = UserActionTask
-        fields = ("is_done",)
-
 class ActionAdminForm(forms.ModelForm):
     class Meta:
         model = Action
