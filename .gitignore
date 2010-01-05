@@ -2,5 +2,5 @@
 *.tmproj
 .DS_Store
 logs/*
-settings.py
+local_settings.py
 test_settings.py
