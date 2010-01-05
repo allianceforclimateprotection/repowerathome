@@ -178,9 +178,10 @@ acronym {
 
 /* Navigation */
 #nav {
-    width: 100%;
-    float:left;
-    font-size:20px;
+    position:absolute;
+    left:6px;
+    top:110px;
+    font-size:24px;
     font-weight:bold;
 }
 
@@ -200,19 +201,22 @@ acronym {
 	position:relative;
 }
 #header .site-logo {
-	float: left;
-	display: block;
-	height: 88px;
-	width: 500px;
-	margin-top:30px;
-	margin-left:8px;
-	background: transparent url(../images/theme/header-ratlogo.png) no-repeat left top;
+    position:absolute;
+    top:30px;
+    font-size:60px;
+    color:#000;
+}
+
+#header #cse-search-box{
+    position:absolute;
+    right:0px;
+    top:20px;
 }
 
 #header-links {
     position:absolute;
     right:0px;
-    top:20px;
+    top:110px;
 }
 
 /** Footer **/
