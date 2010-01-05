@@ -53,6 +53,7 @@ def register(request):
             # OPTIMIZE: authentication logic can be moved to the RegistrationForm
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
+            # OPTIMIZE: profile create can be abstracted as a post_save signal [eg. models.signals.post_save.connect(some_profile_create_func, sender=User)]
             Profile.objects.create(user=user)
             
             # If this is an ajax request, then return the new user ID
