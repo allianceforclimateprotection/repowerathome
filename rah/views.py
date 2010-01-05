@@ -230,3 +230,6 @@ def house_party(request):
             # TODO set some sort of failure message
             pass
     return redirect('rah.views.index')
+
+def search(request):
+    return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))

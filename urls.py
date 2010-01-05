@@ -37,6 +37,7 @@ urlpatterns += patterns('rah.views',
     (r'^validate/$', 'validate_field'),
     (r'^houseparty/$', 'house_party'),
     (r'^feedback/$', 'feedback'),
+    (r'^search/$', 'search'),
 )
 
 if settings.DEBUG:

@@ -20,7 +20,7 @@
     <body>
         <div id="header-container">
             <div id="header">
-                <a href="/" title="Repower America" class="site-logo"></a>
+                <a href="/" title="Repower America" class="site-logo">Repower @ Home</a>
                 <div id="header-links">
                     {% if user.is_authenticated %}
                         {{ user.get_welcome }} | <a href="{% url rah.views.profile user.id %}">Profile</a> | 
@@ -30,6 +30,15 @@
                     {% endif %}
                     | <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
                 </div>
+                <form action="/search" id="cse-search-box">
+                    <div>
+                        <input type="hidden" name="cx" value="004464471324017850671:spsjawaq-zy" />
+                        <input type="hidden" name="cof" value="FORID:10" />
+                        <input type="hidden" name="ie" value="UTF-8" />
+                        <input type="text" name="q" size="31" />
+                        <input type="submit" name="sa" value="Search" />
+                    </div>
+                </form>
                 <div id="nav">
                     <a href="{% url rah.views.index %}">Home</a>&nbsp;
                     <a href="{% url rah.views.action_show %}">Actions</a>&nbsp;
