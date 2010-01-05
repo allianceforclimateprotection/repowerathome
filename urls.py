@@ -2,10 +2,16 @@ import settings
 from django.conf.urls.defaults import *
 from django.core.urlresolvers import reverse
 from rah.forms import AuthenticationForm
+from basic.blog.feeds import BlogPostsFeed
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+
+feeds = {
+    'blog': BlogPostsFeed,
+}
+
 
 # OPTIMIZE: we can wrap the regex patterns in the url function to insure there are no reverse conflicts
 urlpatterns = patterns('',
@@ -15,6 +21,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     (r'^blog/', include('basic.blog.urls')),
     (r'^blog/comments/', include('django.contrib.comments.urls')),
+    url(r'^(?P<url>.*)/feed/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name='feed'),
 )
 
 urlpatterns += patterns('rah.views',
