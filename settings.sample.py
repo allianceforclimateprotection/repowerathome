@@ -83,7 +83,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 )
 
-AUTHENTICATION_BACKENDS = ('www.rah.backends.EmailBackend',)
+AUTHENTICATION_BACKENDS = ('rah.backends.EmailBackend',)
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/login"
 LOGOUT_URL = "/logout"

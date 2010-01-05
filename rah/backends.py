@@ -1,4 +1,4 @@
-from www.rah.models import User
+from rah.models import User
 from django.forms.fields import email_re
 
 class EmailBackend:
