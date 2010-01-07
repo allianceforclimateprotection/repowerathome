@@ -75,17 +75,25 @@ class User(AuthUser):
     # TODO: write unit test for method
     def get_chart_data(self):
         from time import mktime
-        points      = Points.objects.filter(user=self)
-        point_data  = [[int(mktime(self.date_joined.timetuple()) * 1000), 0]]
-        tooltips    = ['You joined Repower@Home']        
-        point_tally = 0
+        points       = Points.objects.filter(user=self).order_by('created')
+        point_data   = [[int(mktime(self.date_joined.timetuple()) * 1000), 0]]
+        tooltips     = ['<p>You joined Repower@Home</p>']
+        point_tally  = 0
+        last_ordinal = None
         
         # Loop through user's recorded points and create data points and tooltips
+        # 
         for point in points:
             point_tally += point.points
-            point_data.append([int(mktime(point.created.timetuple()) * 1000), point_tally])
-            tooltips.append(point.get_reason())
-        
+            if last_ordinal <> point.created.toordinal():
+                rounded_date = mktime(datetime.fromordinal(point.created.toordinal()).timetuple())
+                point_data.append([ int(rounded_date) * 1000 - 18000000, point_tally])
+                tooltips.append("<p>" + point.get_reason() + "</p>")
+            else:
+                tooltips[len(point_data)-1] += "<p>" + point.get_reason() + "</p>"
+            
+            last_ordinal = point.created.toordinal()
+            
         return json.dumps({"point_data": point_data, "tooltips": tooltips})
 
     def __unicode__(self):
