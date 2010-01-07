@@ -24,7 +24,7 @@ def index(request):
             'points': points,
             'total_points': total_points,
             'in_progress': in_progress,
-            'recommended': recommended,
+            'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
             'house_party_form': HousePartyForm(),
         }, context_instance=RequestContext(request))
     
@@ -125,7 +125,7 @@ def profile(request, user_id):
         'points': points,
         'total_points': total_points,
         'in_progress': in_progress,
-        'recommended': recommended,
+        'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'completed': completed,
         'is_others_profile': request.user <> user,
     }, context_instance=RequestContext(request))
