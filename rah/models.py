@@ -50,10 +50,6 @@ class User(AuthUser):
     # TODO write unit tests for get total points
     def get_total_points(self):
         return Points.objects.filter(user=self).aggregate(models.Sum('points'))['points__sum']
-        
-    def has_private_profile(self):
-        print "bam"
-        return 1 == 1
 
     def __unicode__(self):
         return u'%s' % (self.email)

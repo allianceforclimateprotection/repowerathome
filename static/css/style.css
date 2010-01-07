@@ -282,6 +282,7 @@ acronym {
 	width: 75px;
 	height: 75px;
 }
+.profile_attributes { margin-left: 85px; }
 /* @end */
 
 /* @group action_nugget */
@@ -320,11 +321,12 @@ acronym {
 /* @end */
 
 /* @group comments */
-.comment p {
-    
-}
+.comment .author { margin-top: -15px; }
 /* @end */
 
+/* @group blog */
+.post_body { font-size: 14px; }
+/* @end */
 
 /*
 * jQuery UI CSS Framework
