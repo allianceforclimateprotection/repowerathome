@@ -19,6 +19,11 @@
 	    {% endif %}
 	{{task.content|safe|linebreaks}}
 	{% endfor %}
+	<div id="comments">
+		{% with action as object %}
+			{% include 'comments/_comment_list.html' %}
+		{% endwith %}
+	</div>
 {% endblock %}
 {% block minorcol %}
     <h2>Action Tools</h2>

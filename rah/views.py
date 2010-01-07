@@ -1,8 +1,10 @@
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import auth
+from django.contrib.comments.views import comments
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 from django.forms.formsets import formset_factory
 from rah.models import *
@@ -113,8 +115,7 @@ def action_task(request, action_task_id):
 def profile(request, user_id):
     """docstring for profile"""
     user = get_object_or_404(User, id=user_id)
-    if request.user <> user and user.get_profile().is_profile_private:
-        return HttpResponseForbidden("Sorry, but you do not have permissions to view this profile.")
+    is_profile_viewable = request.user <> user and user.get_profile().is_profile_private
     profile = user.get_profile()
     recommended, in_progress, completed = Action.objects.with_tasks_for_user(user)[1:4]
     points = user.get_latest_points()
@@ -128,6 +129,7 @@ def profile(request, user_id):
         'recommended': recommended,
         'completed': completed,
         'is_others_profile': request.user <> user,
+        'is_profile_viewable': is_profile_viewable,
     }, context_instance=RequestContext(request))
 
 @login_required
@@ -233,3 +235,19 @@ def house_party(request):
 
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))
+
+@login_required
+@require_POST
+def post_comment(request, next=None, using=None):
+    """
+    wrapper view around the django.contrib.comments post_comment view, this way if a user specifies their name in a comment,
+    we can capture it and use it to update their profile
+    """
+    name = request.POST.get('name')
+    if name and request.user.get_full_name() == '':
+        request.user.first_name = name
+        request.user.save()
+    return comments.post_comment(request, next, using)
+    
+def forbidden(request, message="You do not have permissions."):
+    return render_to_response('403.html', {'message':message}, context_instance=RequestContext(request))

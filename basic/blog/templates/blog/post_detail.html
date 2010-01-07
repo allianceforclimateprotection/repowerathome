@@ -26,7 +26,7 @@
   <p class="date">{{ object.publish|date:"j F Y" }}</p>
 
   <div class="body">
-    {{ object.body|markdown:"safe"|render_inlines }}
+    {{ object.body_markup|render_inlines|safe }}
   </div>
 
   {% tags_for_object object as tag_list %}
