@@ -29,6 +29,9 @@
                         <a href="/login">Login</a> | <a href="/register">Sign Up</a>
                     {% endif %}
                     | <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
+					{% if user.is_staff %}
+						| <a href="{% url admin_root '' %}">Admin</a>
+					{% endif %}
                 </div>
                 <form action="/search" id="cse-search-box">
                     <div>

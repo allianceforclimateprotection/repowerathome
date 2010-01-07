@@ -1,45 +1,37 @@
 {% extends "blog/base_blog.html" %}
 
-{% load i18n %}
-
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{{ block.super }} post_detail{% endblock %}
 {% block body_id %}post_{{ object.id }}{% endblock %}
 
 
 {% block content_title %}
-  <h2>{{ object.title }}</h2>
-  <p class="other_posts">
-    {% if object.get_previous_by_publish %}
-    <a class="previous" href="{{ object.get_previous_post.get_absolute_url }}" title="{% trans "View previous post" %}">&laquo; {{ object.get_previous_post }}</a>
-    {% endif %}
-    {% if object.get_next_by_publish %}
-    | <a class="next" href="{{ object.get_next_post.get_absolute_url }}" title="{% trans "View next post" %}">{{ object.get_next_post }} &raquo;</a>
-    {% endif %}
-  </p>
+	<h2>{{ object.title }}</h2>
+	<p class="other_posts">
+		{% if object.get_previous_by_publish %}
+			<a class="previous" href="{{ object.get_previous_post.get_absolute_url }}" title="View previous post">&laquo; {{ object.get_previous_post }}</a>
+		{% endif %}
+		{% if object.get_next_by_publish %}
+			| <a class="next" href="{{ object.get_next_post.get_absolute_url }}" title="View next post">{{ object.get_next_post }} &raquo;</a>
+		{% endif %}
+	</p>
 {% endblock %}
 
 
 {% block content %}
-  {% load blog tagging_tags inlines markup %}
+	{% load blog markup %}
 
-  <p class="date">{{ object.publish|date:"j F Y" }}</p>
+	<div class="post">
+		{% with object as post %}
+			<div>
+				{% include 'blog/_post_header.html' %}
+				<div class="post_body">{{ post.body|markdown:"safe" }}</div>
+			</div>
+		{% endwith %}
+	</div>
 
-  <div class="body">
-    {{ object.body|markdown:"safe"|render_inlines }}
-  </div>
-
-  {% tags_for_object object as tag_list %}
-  {% if tag_list %}
-  <p class="inline_tag_list"><strong>{% trans "Related tags" %}:</strong>
-    {% for tag in tag_list %}
-    {{ tag }}{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-  </p>
-  {% endif %}
-
-  <div id="comments">
-	{% include 'comments/_comment_list.html' %}
-  </div>
+	<div id="comments">
+		{% include 'comments/_comment_list.html' %}
+	</div>
 {% endblock %}
 {% block js %}page_post_detail{% endblock %}

@@ -8,9 +8,9 @@
 			<p>{{ comment.comment|safe|linebreaks }}</p>
 			<p class="author">
 				{% if comment.user != user and comment.user.get_profile.is_profile_private %}
-					-- Posted by {{ comment.user.get_full_name }} on {{ comment.submit_date|date:"F j, Y" }}
+					-- Posted by {% firstof comment.user.get_full_name 'Repower@Home User' %} on {{ comment.submit_date|date:"F j, Y" }}
 				{% else %}
-					-- Posted by <a href="{% url profile comment.user.id %}">{{ comment.user.get_full_name }}</a> on {{ comment.submit_date|date:"F j, Y" }}
+					-- Posted by <a href="{% url profile comment.user.id %}">{% firstof comment.user.get_full_name 'Repower@Home User' %}</a> on {{ comment.submit_date|date:"F j, Y" }}
 				{% endif %}
 			</p>
 		</div>

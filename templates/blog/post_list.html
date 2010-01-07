@@ -1,40 +1,31 @@
 {% extends "blog/base_blog.html" %}
-{% load blog %}
+{% load blog comments %}
 
-{% load i18n %}
-
-{% block title %}{% trans "Post archive" %}{% endblock %}
+{% block title %}Post archive{% endblock %}
 {% block body_class %}{{ block.super }} post_list{% endblock %}
 
 
 {% block content_title %}
-  <h2>{% trans "Post archive" %}</h2>
+	<h2>Post archive</h2>
 {% endblock %}
 
 
 {% block content %}
-  <div class="post_list">
-    {% for post in object_list %}
-    <div>
-      <h3 class="title"><a href="{{ post.get_absolute_url }}" title="{% trans "View this post" %}">{{ post.title }}</a></h3>
-      <p class="date">{{ post.publish|date:"Y F d" }}</p>
-      <p class="tease">{{ post.tease|safe }}</p>
-    </div>
-    {% endfor %}
-  </div>
-  
-  {% if is_paginated %}
-  <p class="pagination">
-    {% if has_next %}
-    <a class="older" href="?page={{ next }}" title="{% trans "View older posts" %}">{% trans "Older" %}</a>
-    {% endif %}
-    {% if has_next and has_previous %} | {% endif %}
-    {% if has_previous %}
-    <a class="newer" href="?page={{ previous }}" title="{% trans "View newer posts" %}">{% trans "Newer" %}</a>
-    {% endif %}
-  </p>
-  {% endif %}
-
+	<div class="post_list">
+		{% for post in object_list %}
+			<div>
+				{% include 'blog/_post_header.html' %}
+				<p class="tease">{{ post.tease|safe }}</p>
+				{% get_comment_count for post as comment_count %}
+				<h4>
+					{{ comment_count }} comment{{ comment_count|pluralize }}
+					<span>(<a href="{{ post.get_absolute_url }}" title="View this post">read more</a>)</span>
+				</h4>
+			</div>
+			<div>------------------------------------------------------------</div>
+		{% endfor %}
+	</div>
+	
 	<a href="{% url feed "blog" %}">follow us</a>
 {% endblock %}
 
@@ -45,7 +36,9 @@
 		<ul>
 		{% for category in category_list %}
 			<li>
-				<a href="{% url blog_category_detail category %}">{{ category.title }}</a>
+				<a href="{% url blog_category_detail category %}">{{ category.title }}</a>&nbsp;
+				{% get_comment_count for category as comment_count %}
+				<span>({{ category.post_set.count }})</span>
 			</li>
 		{% endfor %}
 		</ul>
