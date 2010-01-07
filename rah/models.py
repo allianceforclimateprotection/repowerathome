@@ -2,6 +2,7 @@ import hashlib
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import datetime
+import json
 
 class UserManager(models.Manager):
     def with_completes_for_action(self, action):
@@ -54,6 +55,42 @@ class User(AuthUser):
     def has_private_profile(self):
         print "bam"
         return 1 == 1
+
+    # TODO: write unit test for method
+    def give_points(self, points, reason):
+        """
+        Gives a user a certain number of points. Check if we have an int or actiontask instance
+        If we have an actiontask, see if we've already given points for it. We don't give double
+        points for the same action task.
+
+        OPTIMIZE this seems open to concurrency issues. Maybe lock tables? 
+        """
+        if type(reason) == ActionTask:
+            self.take_points(reason=reason)
+            Points(user=self, points=points, task=reason).save()
+        else:
+            Points(user=self, points=points, reason=reason).save()
+
+    # TODO: write unit test for method
+    def take_points(self, reason):
+        """Take points away. Used for when a user unchecks an action task. Reason must be an ActionTask"""
+        Points.objects.filter(user=self, task=reason).delete()
+    
+    # TODO: write unit test for method
+    def get_chart_data(self):
+        from time import mktime
+        points      = Points.objects.filter(user=self)
+        point_data  = [[int(mktime(self.date_joined.timetuple()) * 1000), 0]]
+        tooltips    = ['You joined Repower@Home']        
+        point_tally = 0
+        
+        # Loop through user's recorded points and create data points and tooltips
+        for point in points:
+            point_tally += point.points
+            point_data.append([int(mktime(point.created.timetuple()) * 1000), point_tally])
+            tooltips.append(point.get_reason())
+        
+        return json.dumps({"point_data": point_data, "tooltips": tooltips})
 
     def __unicode__(self):
         return u'%s' % (self.email)
@@ -238,29 +275,7 @@ class Points(DefaultModel):
     
     def get_reason(self):
         return self.task.name if self.task else self.reason
-    
-    # TODO: write unit test for give method
-    @staticmethod
-    def give(points, reason, user):
-        """
-        Gives a user a certain number of points. Check if we have an int or actiontask instance
-        If we have an actiontask, see if we've already given points for it. We don't give double
-        points for the same action task.
-        
-        OPTIMIZE this seems open to concurrency issues. Maybe lock tables? 
-        """
-        if type(reason) == ActionTask:
-            Points.take(user=user, reason=reason)
-            Points(user=user, points=points, task=reason).save()
-        else:
-            Points(user=user, points=points, reason=reason).save()
-
-    # TODO: write unit test for take method
-    @staticmethod
-    def take(user, reason):
-        """Take points away. Used for when a user unchecks an action task. Reason must be an ActionTask"""
-        Points.objects.filter(user=user, task=reason).delete()
-        
+            
     def __unicode__(self):
         return u'%s points' % (self.points)
 

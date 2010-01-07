@@ -19,15 +19,14 @@ def index(request):
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
         recommended, in_progress = Action.objects.with_tasks_for_user(request.user)[1:3]
-        points = request.user.get_latest_points(5)
-        total_points = request.user.get_total_points()
         
         return render_to_response('rah/home_logged_in.html', {
-            'points': points,
-            'total_points': total_points,
+            'points': request.user.get_latest_points(5),
+            'total_points': request.user.get_total_points(),
             'in_progress': in_progress,
             'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
             'house_party_form': HousePartyForm(),
+            'chart_data': request.user.get_chart_data()
         }, context_instance=RequestContext(request))
     
     # Setup and handle email form on logged out home page
@@ -102,10 +101,10 @@ def action_task(request, action_task_id):
     if request.method == 'POST' and request.user.is_authenticated():
         user_action_task, created = UserActionTask.objects.get_or_create(user=request.user, action_task=action_task)
         if request.POST.get('task_completed'):
-            Points.give(user=request.user, reason=action_task, points=action_task.points)
+            request.user.give_points(reason=action_task, points=action_task.points)
         else:
             user_action_task.delete()
-            Points.take(user=request.user, reason=action_task)
+            request.user.take_points(reason=action_task)
     
     if request.is_ajax():
         return HttpResponse(action_task.action.completes_for_user(request.user))

@@ -81,7 +81,8 @@
         </div>
         <div id="feedback_dialog"></div>
         <script type="text/javascript" charset="utf-8"> var rah_name = "{% block js %}{% endblock %}";</script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/js_libs{%if not debug%}_min{%endif%}.js"></script>        
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/rah{%if not debug%}_min{%endif%}.js"></script>        
+        <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}js/js_libs{%if not debug%}_min{%endif%}.js"></script>
+        {% block extrajs %}{% endblock %}
+        <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}js/rah{%if not debug%}_min{%endif%}.js"></script>
     </body>
 </html>
