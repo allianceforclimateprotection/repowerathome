@@ -149,6 +149,73 @@ var rah = {
         init: function(){
             rah.mod_action_nugget.init();
             rah.mod_house_party.init();
+            
+            var sin = [], cos = [];
+            for (var i = 0; i < 14; i += 0.5) {
+                sin.push([i, Math.sin(i)]);
+                cos.push([i, Math.cos(i)]);
+            }
+            
+            var userData = [
+                [1261575504000, 0],
+                [1262434528000, 10],
+                [1262736000000, 25],
+                [1262736000000, 30],
+            ];
+            
+            var tips = [
+                ["You joined Repower@Home"],
+                ["Install the shower head"],
+                ["Buy a low-flow shower head"],
+                ["Size your water heater" + "Buy a low-flow shower head"],
+            ];
+
+            var plot = $.plot($("#placeholder"),
+                   [ { data: userData }], {
+                       series: {
+                           lines: { show: true },
+                           points: { show: true, radius: 10 },
+                           shadowSize: 5,
+                       },
+                       grid: { hoverable: true, clickable: true, backgroundColor: { colors: ["#DDD", "#FFF"] } },
+                       legend: {show: false},
+                       xaxis: {mode: "time", max: 1262982147000}
+                     });
+
+            function showTooltip(x, y, index) {
+                console.log(index);
+                $('<div id="tooltip">' + tips[index] + '</div>').css( {
+                    position: 'absolute',
+                    display: 'none',
+                    width: 200,
+                    top: y - 18,
+                    left: x + 25 ,
+                    border: '2px solid #000',
+                    padding: '5px',
+                    'background-color': '#fee',
+                }).appendTo("body").fadeIn(300);
+            }
+
+            // var previousPoint = null;
+            $("#placeholder").bind("plothover", function (event, pos, item) {
+                // console.log(item.toSource());
+                if (item) {
+                    // if (previousPoint != item.datapoint) {
+                    //     previousPoint = item.datapoint;
+
+                        // $("#tooltip").remove();
+                        
+                    // }
+                    showTooltip(item.pageX, item.pageY, item.dataIndex);
+                }
+                else {
+                    $("#tooltip").remove();
+                    previousPoint = null;            
+                }
+            });
+
+
+            
         },
     },
     
