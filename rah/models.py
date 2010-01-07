@@ -1,6 +1,6 @@
 import hashlib
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User as AuthUser
 from datetime import datetime
 
 class UserManager(models.Manager):
@@ -20,8 +20,11 @@ class UserManager(models.Manager):
         completed = [user for user in users if total_tasks == user.completes]
 
         return (users, in_progress, completed)
+        
+    def get_user_by_comment(self, comment):
+        return self.get(id=comment.user.id)
 
-class User(User):
+class User(AuthUser): 
     objects = UserManager()
     class Meta:
         proxy = True
@@ -47,6 +50,10 @@ class User(User):
     # TODO write unit tests for get total points
     def get_total_points(self):
         return Points.objects.filter(user=self).aggregate(models.Sum('points'))['points__sum']
+        
+    def has_private_profile(self):
+        print "bam"
+        return 1 == 1
 
     def __unicode__(self):
         return u'%s' % (self.email)
@@ -142,6 +149,11 @@ class Action(DefaultModel):
         return the number of tasks a user has completed for an action
         """
         return user.useractiontask_set.filter(action_task__action=self).count()
+        
+    @models.permalink
+    def get_absolute_url(self):
+        return ('rah.views.action_detail', [str(self.slug)])
+        
 
 class ActionTask(DefaultModel):
     """
@@ -275,7 +287,7 @@ class Profile(models.Model):
         ('A', 'Apartment'),
         ('S', 'Single Family Home'),
     )
-    user = models.ForeignKey(User, unique=True)
+    user = models.ForeignKey(AuthUser, unique=True)
     location = models.ForeignKey(Location, null=True)
     building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES, blank=True)
     is_profile_private = models.BooleanField(default=0)

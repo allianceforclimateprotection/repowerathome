@@ -319,6 +319,12 @@ acronym {
 #house_party_dialog { display: none; }
 /* @end */
 
+/* @group comments */
+.comment p {
+    
+}
+/* @end */
+
 
 /*
 * jQuery UI CSS Framework

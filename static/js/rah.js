@@ -227,6 +227,7 @@ var rah = {
             var checkboxes = $(".action_task_submitter :checkbox");
             checkboxes.parents('form').find(':submit').remove();
             rah.set_task_completion_submission.init(checkboxes);
+            rah.mod_comment_form.init();
         },
     },
     
@@ -249,6 +250,15 @@ var rah = {
     },
     
     /**
+    * Post (Blog) Detail page
+    **/
+    page_post_detail: {
+        init: function(){
+            rah.mod_comment_form.init();
+        },
+    },
+    
+    /**
     * Action Nugget
     */
     mod_action_nugget: {
@@ -264,7 +274,7 @@ var rah = {
             });
         },
     },
-    
+   
     set_task_completion_submission: {
         init: function(checkboxes){
             checkboxes.click(function(){
@@ -307,5 +317,15 @@ var rah = {
             });
         },
         
+    },
+    
+    mod_comment_form: {
+        init: function() {
+            $("#comment_form").validate({
+                rules: {
+                    name: { required: true, },
+                },
+            });
+        },
     },
 }
