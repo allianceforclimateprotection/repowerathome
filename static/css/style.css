@@ -134,10 +134,8 @@ th {
 	border-right: 1px solid #ddd;
 }
 p { 
-	font-family: Arial, sans-serif; 
 	color: #333; 
-	padding-bottom: 15px; 
-	font-size: 12px; 
+	padding-bottom: 15px;
 }
 strong, b { font-weight:bold; }
 em, i { font-style: italic; }
@@ -186,7 +184,7 @@ acronym {
 }
 
 /* Breadcrumbs */
-#breadcrumbs {font-size:11px; margin-bottom:20px;}
+#breadcrumbs {font-size:12px; margin-bottom:20px;}
 
 /** Header **/
 #header-container {
@@ -275,6 +273,24 @@ acronym {
 #footer .footer-links a, #footer .learn a { font-style: normal; }
 
 .spacer { clear: both; }
+
+/* Action Detail page */
+.action_detail_task_container {
+    position:relative;
+}
+.action_task_submitter {
+/*    float:left;*/
+}
+.action_detail_task_checkbox {
+    width:30px;
+    height:30px;
+    position: absolute;
+    top:-5px;
+    left:0px;
+}
+.action_detail_task {
+    margin-left:40px;
+}
 
 /* @group profile */
 .gravatar {

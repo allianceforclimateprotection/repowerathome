@@ -45,7 +45,7 @@ class User(AuthUser):
     
     # TODO write unit tests for get latest points
     def get_latest_points(self, quantity=None):
-        points = Points.objects.filter(user=self).order_by('-updated')
+        points = Points.objects.filter(user=self).order_by('task__action' )
         return points[:quantity] if quantity else points
         
     # TODO write unit tests for get total points

@@ -32,7 +32,7 @@ var rah = {
                 },
                 title: "Feedback",
                 autoOpen: false,
-                width: 350,
+                width: 475,
             });
             // Attach functionality to feedback links
             $(".feedback_link").click(function(){
@@ -164,7 +164,6 @@ var rah = {
                      });
 
             function showTooltip(x, y, index) {
-                console.log(index);
                 $('<div id="tooltip">' + chart_data["tooltips"][index] + '</div>').css( {
                     position: 'absolute',
                     display: 'none',

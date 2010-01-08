@@ -8,16 +8,20 @@
 	<h1>{{action.name}}</h1>
 	{{action.content|safe|linebreaks}}
 	{% for task in action_tasks %}
-	    <h2>{{ task.sequence }}) {{ task.name }} ({{ task.points }} points)</h2>
-	    {% if user.is_authenticated %}
-	    <form action="{% url rah.views.action_task task.id %}" class="action_task_submitter" method="post" accept-charset="utf-8">
-	        <div><input type="checkbox" name="task_completed" {% if task.completed %}checked="checked"{% endif %} />Completed</div>
-	        <div><input type="hidden" name="task_id" value="{{task.id}}" /></div>
-	        <div><input type="submit" value="Update" /></div>
-	        {% csrf_token %}
-	    </form>
-	    {% endif %}
-	{{task.content|safe|linebreaks}}
+	<div class="action_detail_task_container">
+    	<form action="{% url rah.views.action_task task.id %}" class="action_task_submitter" method="post" accept-charset="utf-8">
+            <div>
+                <input type="checkbox" name="task_completed" {% if task.completed %}checked="checked"{% endif %} class="action_detail_task_checkbox"/>
+                <input type="hidden" name="task_id" value="{{task.id}}" />
+                <input type="submit" value="Update" style="display:none"/>
+                {% csrf_token %}
+            </div>
+        </form>
+        <div class="action_detail_task">
+            <b>{{ task.sequence }}) {{ task.name }} ({{ task.points }} points)</b>
+        	{{task.content|safe|linebreaks}}        
+        </div>
+    </div>
 	{% endfor %}
 	<div id="comments">
 		{% with action as object %}
@@ -27,11 +31,9 @@
 {% endblock %}
 {% block minorcol %}
     <h2>Action Tools</h2>
-    <ul>
-        <li><a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a></li>
-    </ul>
+    <p><a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a></p>
 	<h2>Who's doing this?</h2>
-	<p><span class='total_users'>{{ users_completed|length }}</span> pe{{ users_completed|length|pluralize:"rson has,ople have"}} completed this action.</p>
-	<p><span class='total_users'>{{ users_in_progress|length }}</span> pe{{ users_in_progress|length|pluralize:"rson is,ople are"}} working on it.</p>
+	<span class='total_users'>{{ users_completed|length }}</span> pe{{ users_completed|length|pluralize:"rson has,ople have"}} completed this action.<br/>
+	<span class='total_users'>{{ users_in_progress|length }}</span> pe{{ users_in_progress|length|pluralize:"rson is,ople are"}} working on it.
 {% endblock %}
 {% block js %}page_action_detail{% endblock %}

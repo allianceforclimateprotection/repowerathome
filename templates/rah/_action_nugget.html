@@ -11,7 +11,11 @@
 			{% for action_task in action.action_tasks %}
 				<form action="{% url rah.views.action_task action_task.id %}" class="action_task_submitter" method='post'>
 					<p>
-						<input type='checkbox' name='task_completed' {% if action_task.completed %}checked='checked'{% endif %} {% if is_others_profile %}disabled='disabled' {% endif %}/>{{ action_task.name }}
+						<input type='checkbox' name='task_completed' 
+						{% if action_task.completed %}checked='checked'{% endif %} 
+						{% if is_others_profile %}disabled='disabled' {% endif %}/>
+						{{ action_task.name }}
+						({{ action_task.points }} points)
 					</p>
 				</form>
 			{% endfor %}
