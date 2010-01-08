@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import datetime
 import json
+from django.template import Context, loader
 
 class UserManager(models.Manager):
     def with_completes_for_action(self, action):
@@ -76,8 +77,8 @@ class User(AuthUser):
     def get_chart_data(self):
         from time import mktime
         points       = Points.objects.filter(user=self).order_by('created')
-        point_data   = [[int(mktime(self.date_joined.timetuple()) * 1000), 0]]
-        tooltips     = ['<p>You joined Repower@Home</p>']
+        point_data   = []
+        tooltips     = []
         point_tally  = 0
         last_ordinal = None
         
@@ -88,13 +89,34 @@ class User(AuthUser):
             if last_ordinal <> point.created.toordinal():
                 rounded_date = mktime(datetime.fromordinal(point.created.toordinal()).timetuple())
                 point_data.append([ int(rounded_date) * 1000 - 18000000, point_tally])
-                tooltips.append("<p>" + point.get_reason() + "</p>")
+                tooltips.append([point])
             else:
-                tooltips[len(point_data)-1] += "<p>" + point.get_reason() + "</p>"
-            
+                tooltips[len(point_data)-1] += [point]
+                point_data[len(point_data)-1][1] = point_tally
+                
             last_ordinal = point.created.toordinal()
-            
-        return json.dumps({"point_data": point_data, "tooltips": tooltips})
+        
+        structured_tooltips = []
+        for day in tooltips:
+            daytips = {'loose': [], 'actions': {}}
+            for p in day:
+                if p.reason:
+                    daytips['loose'].append(p)
+                else:
+                    key = str(p.task.action.id)
+                    if(key in daytips['actions'].keys()):
+                        daytips['actions'][key][1] += [p]
+                    else:
+                        daytips['actions'][key] = [p.task.action, [p]]
+                    
+            structured_tooltips.append(daytips)
+        
+        template = loader.get_template('rah/_chart_tooltip.html')
+        rendered_tooltips = []
+        for day in structured_tooltips:
+             rendered_tooltips.append(template.render(Context(day)))
+        
+        return json.dumps({"point_data": point_data, "tooltips": rendered_tooltips})
 
     def __unicode__(self):
         return u'%s' % (self.email)
@@ -265,7 +287,7 @@ class Points(DefaultModel):
     """
     
     REASONS = (
-        (1, "Because we like you"),
+        (1, "You joined Repower@Home"),
         (2, "Because we don't like you"),
     )
     
