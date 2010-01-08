@@ -82,7 +82,7 @@ class User(AuthUser):
         last_ordinal = None
         
         # Loop through user's recorded points and create data points and tooltips
-        # 
+        # Events are rounded to the nearest day and tooltips are grouped by day
         for point in points:
             point_tally += point.points
             if last_ordinal <> point.created.toordinal():

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import auth
 from rah.models import *
 from django.forms import ValidationError
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.core.urlresolvers import resolve, Resolver404
 from urlparse import urlparse
 from django.forms.widgets import CheckboxSelectMultiple
@@ -117,6 +117,12 @@ class FeedbackForm(forms.ModelForm):
     beta_group = forms.BooleanField(help_text="""Check here if you would like to be a part 
                                                 of our alpha group and receive information 
                                                 on new features before they launch.""", label="", required=False)
+    def send(self, user):
+        template = loader.get_template('rah/feedback_email.html')
+        context  = { 'feedback': self.cleaned_data, 'user': user, }
+        msg = EmailMessage('Feedback Form', template.render(Context(context)), None, ["feedback@repowerathome.com"])
+        msg.content_subtype = "html"
+        msg.send()
     
         
 class ProfileEditForm(forms.ModelForm):

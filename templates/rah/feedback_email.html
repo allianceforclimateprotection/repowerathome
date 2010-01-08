@@ -1,0 +1,6 @@
+<b>User: </b>{% if user.is_authenticated %}{{user.get_name}}{% else %}Anonymous{% endif %} <br/>
+<b>URL: </b>{{feedback.url}} <br/>
+<b>Beta Group: </b>{{feedback.beta_group}} <br/>
+<h3>Comment</h3>
+{{feedback.comment|linebreaks}}
+
