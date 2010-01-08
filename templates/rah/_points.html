@@ -7,8 +7,9 @@
     {% if points %}
         {% for point in points %}
             <li>
+                <p><b>{{point.task.action.name}}</b><br/>
 				<span class='points'>{{ point.points }} points</span>
-				<span class='reason'>{{ point.get_reason }}</span>
+				<span class='reason'>{{ point.get_reason }}</span></p>
             </li>
         {% endfor %}    
     {% else %}

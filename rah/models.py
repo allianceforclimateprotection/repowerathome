@@ -45,7 +45,7 @@ class User(AuthUser):
     
     # TODO write unit tests for get latest points
     def get_latest_points(self, quantity=None):
-        points = Points.objects.filter(user=self).order_by('-updated')
+        points = Points.objects.filter(user=self).order_by('task__action' )
         return points[:quantity] if quantity else points
         
     # TODO write unit tests for get total points
@@ -82,7 +82,7 @@ class User(AuthUser):
         last_ordinal = None
         
         # Loop through user's recorded points and create data points and tooltips
-        # 
+        # Events are rounded to the nearest day and tooltips are grouped by day
         for point in points:
             point_tally += point.points
             if last_ordinal <> point.created.toordinal():
