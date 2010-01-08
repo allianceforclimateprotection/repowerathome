@@ -24,8 +24,9 @@ var rah = {
                 buttons: {
                     "Submit Feedback": function() { 
                         $("#feedback_form").ajaxSubmit({
-                            success: function(){
+                            success: function(messages_html) {
                                 $("#feedback_dialog").dialog("close");
+                                rah.mod_messages.init(messages_html);
                             }
                         });
                     },
@@ -311,8 +312,8 @@ var rah = {
           $("#message_box ul").each(function() {
               var elem = $(this);
               setTimeout(function() {
-                  elem.slideUp(500, function(){ elem.remove(); });
-              }, 4000);
+                  elem.slideUp(400, function(){ elem.remove(); });
+              }, 3000);
           });
       },
     },
