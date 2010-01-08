@@ -1,12 +1,13 @@
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import auth
 from django.contrib.comments.views import comments
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from django.template import RequestContext
+from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 from django.forms.formsets import formset_factory
+from django.contrib import messages
 from rah.models import *
 from rah.forms import *
 import json
@@ -56,6 +57,7 @@ def register(request):
             auth.login(request, user)
             # OPTIMIZE: profile create can be abstracted as a post_save signal [eg. models.signals.post_save.connect(some_profile_create_func, sender=User)]
             Profile.objects.create(user=user)
+            messages.success(request, 'Thanks for registering.')
             
             # If this is an ajax request, then return the new user ID
             if request.is_ajax:
@@ -102,19 +104,24 @@ def action_task(request, action_task_id):
         user_action_task, created = UserActionTask.objects.get_or_create(user=request.user, action_task=action_task)
         if request.POST.get('task_completed'):
             request.user.give_points(reason=action_task, points=action_task.points)
+            messages.success(request, 'Great work, we have updated our records to show you completed %s' % (action_task))
         else:
             user_action_task.delete()
             request.user.take_points(reason=action_task)
+            messages.success(request, 'We have updated our records to show you have not completed %s' % (action_task))
     
     if request.is_ajax():
-        return HttpResponse(action_task.action.completes_for_user(request.user))
+        message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))
+        dict = { 'completed_tasks': action_task.action.completes_for_user(request.user), 'message_html': message_html }
+        return HttpResponse(json.dumps(dict))
     else:
         return redirect('rah.views.action_detail', action_slug=action_task.action.slug)
 
 def profile(request, user_id):
     """docstring for profile"""
     user = get_object_or_404(User, id=user_id)
-    is_profile_viewable = request.user <> user and user.get_profile().is_profile_private
+    if request.user <> user and user.get_profile().is_profile_private:
+        return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
     profile = user.get_profile()
     recommended, in_progress, completed = Action.objects.with_tasks_for_user(user)[1:4]
     points = user.get_latest_points()
@@ -128,18 +135,18 @@ def profile(request, user_id):
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'completed': completed,
         'is_others_profile': request.user <> user,
-        'is_profile_viewable': is_profile_viewable,
     }, context_instance=RequestContext(request))
 
 @login_required
 def profile_edit(request, user_id):
     """docstring for inquiry"""
     if request.user.id <> int(user_id):
-        return HttpResponseForbidden("Sorry, but you do not have permissions to edit this profile.")
+        return forbidden(request, "Sorry, but you do not have permissions to edit this profile.")
     if request.method == 'POST':
         form = ProfileEditForm(request.POST, instance=request.user.get_profile())
         if form.is_valid():
             form.save()
+            messages.add_message(request, messages.SUCCESS, 'Your profile has been updated.')
             # If the user just registered go to the home page
             if "/register/" in str(request.META.get('HTTP_REFERER')):
                 return redirect('rah.views.index')
@@ -163,6 +170,7 @@ def account(request):
         form = AccountForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            messages.add_message(request, messages.SUCCESS, 'Your account has been updated.')
             return redirect('rah.views.index')
     else:
         profile = request.user.get_profile()
@@ -184,26 +192,27 @@ def feedback(request):
                 feedback.user = request.user
                 feedback.save()
             
-            # TODO Replace this success business with a message when messaging is ready
+            messages.success(request, 'Thank you for the feedback.')
             success = True
     else:
         form = FeedbackForm(initial={ 'url': request.META.get('HTTP_REFERER'), })
     
+    
     if request.is_ajax():
+        if request.method == 'POST':
+            message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))
+            return HttpResponse(message_html)
         template = 'rah/_feedback.html'
     else:
         template = 'rah/feedback.html'
         
-    return render_to_response(template, {
-        'feedback_form': form,
-        'success': success,
-    }, context_instance=RequestContext(request))
+    return render_to_response(template, { 'feedback_form': form, 'success': success, }, context_instance=RequestContext(request))
 
 def validate_field(request):
     """The jQuery Validation plugin will post a single form field to this view and expects a json response."""
     # Must be called with an AJAX request
     if not request.is_ajax():
-        return HttpResponseForbidden()
+        return forbidden(request)
     
     valid = False
 
@@ -226,8 +235,7 @@ def house_party(request):
     if request.method == 'POST':
         form = HousePartyForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            # TODO set some sort of success message
-            pass
+            messages.add_message(request, messages.SUCCESS, 'Thanks for letting us know, someone should get back to you shortly.')
         else:
             # TODO set some sort of failure message
             pass
@@ -247,7 +255,10 @@ def post_comment(request, next=None, using=None):
     if name and request.user.get_full_name() == '':
         request.user.first_name = name
         request.user.save()
-    return comments.post_comment(request, next, using)
+    response = comments.post_comment(request, next, using)
+    messages.add_message(request, messages.SUCCESS, 'Thanks for the comment.')
+    return response
     
 def forbidden(request, message="You do not have permissions."):
-    return render_to_response('403.html', {'message':message}, context_instance=RequestContext(request))
+    from django.http import HttpResponseForbidden
+    return HttpResponseForbidden(loader.render_to_string('403.html', { 'message':message, }, RequestContext(request)))

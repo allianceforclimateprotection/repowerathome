@@ -24,8 +24,9 @@ var rah = {
                 buttons: {
                     "Submit Feedback": function() { 
                         $("#feedback_form").ajaxSubmit({
-                            success: function(){
+                            success: function(messages_html) {
                                 $("#feedback_dialog").dialog("close");
+                                rah.mod_messages.init(messages_html);
                             }
                         });
                     },
@@ -43,6 +44,7 @@ var rah = {
                 });
                 return false;
             });
+            rah.mod_messages.init();
         },
     },
     
@@ -243,13 +245,14 @@ var rah = {
         init: function(checkboxes){
             checkboxes.click(function(){
                 var form = $(this).parents('form');
-                $.post(form.attr('action'), form.serialize(), function(completed_tasks){
+                $.post(form.attr('action'), form.serialize(), function(data){
+                    rah.mod_messages.init(data['message_html']);
                     try{
-                        form.parents('.action_nugget').find('.user_completes').text(completed_tasks);
+                        form.parents('.action_nugget').find('.user_completes').text(data['completed_tasks']);
                     } catch(err){}
                     var box = form.find(':checkbox');
                     box.attr('checked', !box.attr('checked'));
-                });
+                }, 'json');
                 return false;
             });
         }
@@ -291,5 +294,20 @@ var rah = {
                 },
             });
         },
+    },
+    
+    /**
+    * mod_messages: call this method to attach message html, if no html is passed it will just set a timer on any existing messages
+    **/
+    mod_messages: {
+      init: function(html) {
+          if(html) { $('#message_box').append(html); }
+          $("#message_box ul").each(function() {
+              var elem = $(this);
+              setTimeout(function() {
+                  elem.slideUp(400, function(){ elem.remove(); });
+              }, 3000);
+          });
+      },
     },
 }

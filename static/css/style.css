@@ -145,6 +145,8 @@ acronym {
 }
 
 /* Messages */
+#message_box { text-align: center; }
+
 .info, .success, .warning, .error, .validation {
     border: 2px solid;
     margin: 10px 0px;

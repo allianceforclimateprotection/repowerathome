@@ -48,6 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 )
 
 ROOT_URLCONF = 'www.urls'
@@ -69,6 +70,7 @@ INSTALLED_APPS = (
     'django.contrib.comments',
     'django.contrib.markup',
     'django.contrib.sites',
+    'django.contrib.messages',
     'rah',
     'basic.blog',
     'basic.inlines',
@@ -83,6 +85,8 @@ AUTH_PROFILE_MODULE = 'rah.Profile'
 
 # MISC
 SEND_BROKEN_LINK_EMAILS = not DEBUG
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
 
 try:
     from local_settings import *
