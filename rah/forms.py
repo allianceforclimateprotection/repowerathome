@@ -6,7 +6,6 @@ from django.core.mail import send_mail, EmailMessage
 from django.core.urlresolvers import resolve, Resolver404
 from urlparse import urlparse
 from django.forms.widgets import CheckboxSelectMultiple
-from django.utils.translation import ugettext_lazy as _
 from smtplib import SMTPException
 from django.template import Context, loader
 
@@ -16,10 +15,9 @@ class RegistrationForm(forms.ModelForm):
     """
     A form that creates a user, with no privileges, from the given email and password.
     """
-    # OPTIMIZE remove _
-    email = forms.EmailField(label=_('Email'))
-    password1 = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
-    password2 = forms.CharField(label=_('Password confirmation'), widget=forms.PasswordInput)
+    email = forms.EmailField(label='Email')
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
 
     class Meta:
         model = User
@@ -29,7 +27,7 @@ class RegistrationForm(forms.ModelForm):
         password1 = self.cleaned_data.get('password1', '')
         password2 = self.cleaned_data['password2']
         if password1 != password2:
-            raise forms.ValidationError(_("The two password fields didn't match."))
+            raise forms.ValidationError("The two password fields didn't match.")
         return password2
 
     def save(self, commit=True):
@@ -47,15 +45,15 @@ class RegistrationForm(forms.ModelForm):
         if self.instance.set_email(email):
             return email
         else:
-             raise ValidationError(_('This email address has already been registered in our system.  If you have forgotten your password, please use the password reset link.'))
+             raise ValidationError('This email address has already been registered in our system. If you have forgotten your password, please use the password reset link.')
 
 class AuthenticationForm(forms.Form):
    """
    Base class for authenticating users. Extend this to get a form that accepts
    username/password logins.
    """
-   email = forms.EmailField(label=_("Email"))
-   password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+   email = forms.EmailField(label="Email")
+   password = forms.CharField(label="Password", widget=forms.PasswordInput)
 
    def __init__(self, request=None, *args, **kwargs):
        """
@@ -76,14 +74,14 @@ class AuthenticationForm(forms.Form):
            self.user_cache = auth.authenticate(username=email, password=password)
            if self.user_cache is None:
                # FIXME: email should not be case sensitive
-               raise forms.ValidationError(_("Please enter a correct email and password. Note that both fields are case-sensitive."))
+               raise forms.ValidationError("Please enter a correct email and password. Note that both fields are case-sensitive.")
            elif not self.user_cache.is_active:
-               raise forms.ValidationError(_("This account is inactive."))
+               raise forms.ValidationError("This account is inactive.")
 
        # TODO: determine whether this should move to its own method.
        if self.request:
            if not self.request.session.test_cookie_worked():
-               raise forms.ValidationError(_("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
+               raise forms.ValidationError("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in.")
 
        return self.cleaned_data
 
@@ -187,7 +185,7 @@ class ActionCatAdminForm(forms.ModelForm):
 
 class AccountForm(forms.ModelForm):
     """docstring for AccountForm"""
-    make_profile_private = forms.BooleanField(label=_("Make Profile Private"), required=False)
+    make_profile_private = forms.BooleanField(label="Make Profile Private", required=False)
     
     class Meta:
         model = User
@@ -196,12 +194,12 @@ class AccountForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data['email'].strip()
         if not len(email):
-            raise ValidationError(_('Email can not be blank'))
+            raise ValidationError('Email can not be blank')
         
         if self.instance.email == email or self.instance.set_email(email):
             return email
         else:
-             raise ValidationError(_('This email address has already been registered in our system.'))
+             raise ValidationError('This email address has already been registered in our system.')
              
     def clean_make_profile_private(self):
         make_profile_private = self.cleaned_data['make_profile_private']
