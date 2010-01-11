@@ -27,7 +27,8 @@ def index(request):
             'completed': completed,
             'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
             'house_party_form': HousePartyForm(),
-            'chart_data': request.user.get_chart_data()
+            'chart_data': request.user.get_chart_data(),
+            'profile': request.user.get_profile(),
         }, context_instance=RequestContext(request))
     
     # Setup and handle email form on logged out home page

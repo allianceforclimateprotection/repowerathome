@@ -22,13 +22,25 @@
 	{% endif %}
 {% endblock %}
 {% block minorcol %}
-	{% include 'rah/_magnify.html' %}
+    <div>
+		<img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar" />
+		<h2>{{ profile.user.get_name }}</h2>
+		<p>
+		{{ profile.location|default_if_none:"" }}<br/>
+		{% ifequal user.id profile.user.id %}
+			<a href="{% url rah.views.profile_edit profile.user.id %}">Edit your profile</a>
+		{% endifequal %}
+		</p>
+	</div>
 	{% if completed %}
 	    <h2>Completed Actions</h2>
+        <p>
 	    {% for action in completed %}
             <a href="{% url rah.views.action_detail action.slug %}">{{action.name}}</a> ({{action.total_points}} points)<br/>
 	    {% endfor %}
+	    </p>
 	{% endif %}
+	{% include 'rah/_magnify.html' %}
 {% endblock %}
 
 {% block extrajs %}

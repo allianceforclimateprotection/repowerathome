@@ -312,8 +312,9 @@ acronym {
 /* @group profile */
 .gravatar {
 	float: left;
-	width: 75px;
-	height: 75px;
+	width: 60px;
+	height: 60px;
+	margin-right:5px;
 }
 .profile_attributes { margin-left: 85px; }
 /* @end */
