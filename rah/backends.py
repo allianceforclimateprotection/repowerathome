@@ -1,5 +1,5 @@
 from rah.models import User
-from django.forms.fields import email_re
+from django.core.validators import email_re
 
 class EmailBackend:
     def get_user(self, user_id):

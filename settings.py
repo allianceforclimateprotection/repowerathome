@@ -75,6 +75,7 @@ INSTALLED_APPS = (
     'basic.blog',
     'basic.inlines',
     'tagging',
+    'twitter_app',
 )
 
 AUTHENTICATION_BACKENDS = ('www.rah.backends.EmailBackend',)
