@@ -70,7 +70,7 @@ h5 { font-size: 16px; }
 h6 { font-size: 15px; }
 ul { list-style: square; }
 ol { list-style: decimal; }
-.generic-list {
+.generic_list {
 	font-size: 12px;
 	color: #333;
 	list-style: none;
@@ -280,9 +280,6 @@ acronym {
 .action_detail_task_container {
     position:relative;
 }
-.action_task_submitter {
-/*    float:left;*/
-}
 .action_detail_task_checkbox {
     width:30px;
     height:30px;
@@ -292,6 +289,24 @@ acronym {
 }
 .action_detail_task {
     margin-left:40px;
+}
+
+/* Logged in Homepage */
+#actions_recommended .task_list{
+    display:none;
+}
+
+/* Chart */
+#chart{
+    width:600px;
+    height:300px;
+}
+.chart_tooltip {
+    width:250px;
+    font-size:12px;
+    border: 2px solid #000;
+    padding: 5px;
+    background-color: #fee;
 }
 
 /* @group profile */
@@ -305,15 +320,9 @@ acronym {
 
 /* @group action_nugget */
 .action_nugget {
-	width: 275px;
-	height: 100px;
-	float: left;
-	margin-right: 23px;
-	border: 1px solid #000;
-	padding: 5px;
 	margin-bottom: 5px;
 	margin-top: 5px;
-	position: relative;
+    position: relative;
 }
 .action_nugget .title { color: #407cf3; font-weight: bold; }
 .action_nugget .total_points {
@@ -322,16 +331,6 @@ acronym {
 	font-size: larger;
 }
 .action_nugget .completion { font-weight: bold; }
-.action_nugget .task_list {
-	z-index: 1;
-	position: absolute;
-	border: 1px solid #000;
-	top: 110px;
-	left: 20px;
-	width: 235px;
-	background-color: #fff;
-	display: none;
-}
 /* @end */
 
 /* @group house_party */

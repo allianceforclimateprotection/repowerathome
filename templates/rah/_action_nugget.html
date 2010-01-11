@@ -1,24 +1,19 @@
 <div class='action_nugget'>
-	<span class='total_points'>{{ action.total_points }}</span>
+	<span class='total_points'>{{ action.total_points }} Points</span>
 	<a class='title' href='{% url rah.views.action_detail action.slug %}'>{{ action.name }}</a>
-	<p class='teaser'>{{ action.teaser }}</p>
-	{% if user.is_authenticated %}
-		<p class='completion'>
-			<span class='user_completes'>{{ action.user_completes }}</span> of {{ action.tasks }} tasks completed
-			<span class='tasks_link'>(<a href='{% url rah.views.action_detail action.slug %}'>show</a>)</span>
-		</p>
-		<div class='task_list'>
-			{% for action_task in action.action_tasks %}
-				<form action="{% url rah.views.action_task action_task.id %}" class="action_task_submitter" method='post'>
-					<p>
-						<input type='checkbox' name='task_completed' 
-						{% if action_task.completed %}checked='checked'{% endif %} 
-						{% if is_others_profile %}disabled='disabled' {% endif %}/>
-						{{ action_task.name }}
-						({{ action_task.points }} points)
-					</p>
-				</form>
-			{% endfor %}
-		</div>
-	{% endif %}
+	<p class='content'>{{ action.content }} (<a href='{% url rah.views.action_detail action.slug %}' class='tasks_link'>toggle steps</a>)</p>
+    <div class='task_list'>
+    	{% for action_task in action.action_tasks %}
+    		<form action="{% url rah.views.action_task action_task.id %}" class="action_task_submitter" method='post'>
+    			<p>
+    				<input type='checkbox' name='task_completed' 
+    				{% if action_task.completed %}checked='checked'{% endif %} 
+    				{% if is_others_profile %}disabled='disabled' {% endif %}/>
+    				{{ action_task.sequence }}) 
+    				{{ action_task.name }}
+    				({{ action_task.points }} points)
+    			</p>
+    		</form>
+    	{% endfor %}
+    </div>
 </div>

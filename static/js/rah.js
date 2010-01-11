@@ -152,7 +152,7 @@ var rah = {
             rah.mod_action_nugget.init();
             rah.mod_house_party.init();
             
-            var plot = $.plot($("#placeholder"),
+            var plot = $.plot($("#chart"),
                    [ { data: chart_data['point_data'] }], {
                        series: {
                            lines: { show: true },
@@ -166,29 +166,22 @@ var rah = {
                      });
 
             function showTooltip(x, y, index) {
-                $('<div id="tooltip">' + chart_data["tooltips"][index] + '</div>').css( {
+                $('<div class="chart_tooltip">' + chart_data["tooltips"][index] + '</div>').css( {
                     position: 'absolute',
                     display: 'none',
-                    width: 200,
                     top: y - 18,
-                    left: x + 25 ,
-                    border: '2px solid #000',
-                    padding: '5px',
-                    'background-color': '#fee',
+                    left: x + 5 ,
                 }).appendTo("body").fadeIn(300);
             }
 
-            $("#placeholder").bind("plothover", function (event, pos, item) {
+            $("#chart").bind("plothover", function (event, pos, item) {
                 if (item) {
                     showTooltip(item.pageX, item.pageY, item.dataIndex);
                 }
                 else {
-                    $("#tooltip").remove();
+                    $(".chart_tooltip").remove();
                 }
-            });
-
-
-            
+            });            
         },
     },
     

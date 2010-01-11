@@ -1,0 +1,15 @@
+{% if actions.items %}
+    {% for key, value in actions.items %}
+        <b><a href="{% url rah.views.action_detail value.0.slug %}">{{value.0}}</a></b><br/>
+        <ul class="generic_list">
+        {% for point in value.1 %}
+            <li>{{point.task.sequence}}) {{point.task.name}} ({{point.points}} points)</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+{% endif %}
+{% if loose %}
+    {% for point in loose %}
+        <b>{{point.get_reason_display}} ({{point.points}} points)</b><br/>
+    {% endfor %}
+{% endif %}
