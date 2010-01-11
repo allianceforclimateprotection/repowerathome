@@ -38,6 +38,7 @@ urlpatterns += patterns('',
     (r'^blog/', include('basic.blog.urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
     url(r'^(?P<url>.*)/feed/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name='feed'),
+    url(r'^twitter/', include('twitter_app.urls')),
 )
 
 if settings.DEBUG:
