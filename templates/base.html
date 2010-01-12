@@ -23,9 +23,9 @@
                 <a href="/" title="Repower America" class="site-logo">Repower @ Home</a>
                 <div id="header-links">
                     {% if user.is_authenticated %}
-                        {{ user.get_welcome }} | <a href="/logout">Logout</a>
+                        {{ user.get_welcome }} | <a href="{% url logout %}">Logout</a>
                     {% else %}
-                        <a href="/login">Login</a> | <a href="/register">Sign Up</a>
+                        <a href="{% url login %}">Login</a> | <a href="{% url register %}">Sign Up</a>
                     {% endif %}
                     | <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
 					{% if user.is_staff %}

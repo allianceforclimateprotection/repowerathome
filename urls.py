@@ -16,7 +16,8 @@ feeds = {
 urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
     # OPTIMIZE: we can remove our custom register view altogether and just specify our custom from as a parameter in the url pattern
-    (r'^register/$', 'register'),
+    url(r'^register/$', 'register', name='register'),
+    url(r'^logout/$', 'logout', name='logout'),
     (r'^actions/$', 'action_show'),
     (r'^actions/(?P<action_slug>[a-z0-9-]+)/$', 'action_detail'),
     (r'^actiontasks/(?P<action_task_id>\d+)/$', 'action_task'),
@@ -32,7 +33,7 @@ urlpatterns = patterns('rah.views',
 
 urlpatterns += patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    (r'^login/$', 'django.contrib.auth.views.login', { 'authentication_form': AuthenticationForm }),
+    url(r'^login/$', 'django.contrib.auth.views.login', { 'authentication_form': AuthenticationForm }, name='login'),
     (r'^', include('django.contrib.auth.urls')),
     url(r'^admin/(.*)', admin.site.root, name='admin_root'),
     (r'^blog/', include('basic.blog.urls')),

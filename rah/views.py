@@ -35,6 +35,11 @@ def index(request):
         'form': form,
         'success': success
     }, context_instance=RequestContext(request))
+    
+def logout(request):
+    auth.views.logout(request)
+    messages.success(request, "You have successfully logged out.")
+    return redirect("index")
 
 @csrf_protect
 def register(request):
