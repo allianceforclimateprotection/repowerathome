@@ -17,7 +17,6 @@ urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
     # OPTIMIZE: we can remove our custom register view altogether and just specify our custom from as a parameter in the url pattern
     (r'^register/$', 'register'),
-    (r'^account/$', 'account'),
     (r'^actions/$', 'action_show'),
     (r'^actions/(?P<action_slug>[a-z0-9-]+)/$', 'action_detail'),
     (r'^actiontasks/(?P<action_task_id>\d+)/$', 'action_task'),

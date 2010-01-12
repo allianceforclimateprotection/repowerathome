@@ -145,9 +145,9 @@ var rah = {
     },
     
     /**
-    * Home Logged In page
+    * Profile page
     **/
-    page_home_logged_in: {
+    page_profile: {
         init: function(){
             rah.mod_action_nugget.init();
             rah.mod_house_party.init();
@@ -201,15 +201,6 @@ var rah = {
     * Action Show page
     **/
     page_action_show: {
-        init: function(){
-            rah.mod_action_nugget.init();
-        },
-    },
-    
-    /**
-    * Profile page
-    **/
-    page_profile: {
         init: function(){
             rah.mod_action_nugget.init();
         },

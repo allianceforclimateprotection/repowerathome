@@ -4,15 +4,16 @@
 	    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
 	    Actions
 	</div>
-
-	{% for category, actions in categories.items %}
-		<h2 id='{{ category.slug }}' class='action_category_title'>{{ category.name }}</h2>
-		<div class='action_category_description'>{{ category.content|safe|linebreaks}}</div>
-		{% for action in actions %}
-			{% include 'rah/_action_nugget.html' %}
-		{% endfor %}
-		<br class='spacer' />
-	{% endfor %}
+    <div id="action_show">    
+    	{% for category, actions in categories.items %}
+    		<h2 id='{{ category.slug }}' class='action_category_title'>{{ category.name }}</h2>
+    		<div class='action_category_description'>{{ category.content|safe|linebreaks}}</div>
+    		{% for action in actions %}
+    			{% include 'rah/_action_nugget.html' %}
+    		{% endfor %}
+    		<br class='spacer' />
+    	{% endfor %}
+	</div>
 {% endblock %}
 {% block minorcol %}
 	<h2>Categories</h2>

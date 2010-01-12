@@ -96,6 +96,9 @@ code {
 	color: #444;
 	background: #eee;
 }
+cite {
+    display:none;
+}
 pre {
 	overflow: auto;
 	padding: 20px;
@@ -296,6 +299,12 @@ acronym {
     display:none;
 }
 
+/* Action Show page */
+#action_show .task_list{
+    display:none;
+}
+
+
 /* Chart */
 #chart{
     width:600px;
@@ -323,7 +332,9 @@ acronym {
 .action_nugget {
 	margin-bottom: 5px;
 	margin-top: 5px;
+	padding-top:10px;
     position: relative;
+    border-top: 2px solid #333;
 }
 .action_nugget .title { color: #407cf3; font-weight: bold; }
 .action_nugget .total_points {

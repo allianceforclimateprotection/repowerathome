@@ -1,12 +1,17 @@
 {% extends "rah/base.html" %}
 {% block content %}
     <h1>Edit your Profile</h1>
-    <a href="http://en.gravatar.com/">Change your image on gravatar.com</a>
+    <p>
+        <a href="http://en.gravatar.com/">Change your image on gravatar.com</a><br/>
+        <a href="{% url django.contrib.auth.views.password_change %}">Change your password</a>
+    </p>
     <form action="" method="post">
-        <div>{{form.as_p}}</div>
-        <input type="submit" value="Submit" />
-        <input type="hidden" name="next" value="{{ next|escape }}" />
-        {% csrf_token %}
+        <div>
+            {{account_form.as_p}}
+            {{profile_form.as_p}}
+            <input type="submit" value="Save profile" />
+            <input type="hidden" name="next" value="{{ next|escape }}" />
+            {% csrf_token %}
+        </div>
     </form>
-    
 {% endblock %}
