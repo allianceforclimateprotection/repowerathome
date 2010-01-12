@@ -333,8 +333,8 @@ acronym {
 .action_nugget .completion { font-weight: bold; }
 /* @end */
 
-/* @group house_party */
-#house_party_dialog { display: none; }
+/* @group magnify_your_impact */
+#house_party_dialog, #twitter_post_dialog { display: none; }
 /* @end */
 
 /* @group comments */

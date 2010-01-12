@@ -10,6 +10,7 @@ from django.forms.formsets import formset_factory
 from django.contrib import messages
 from rah.models import *
 from rah.forms import *
+from twitter_app.forms import StatusForm as TwitterStatusForm
 import json
 
 @csrf_protect
@@ -27,6 +28,7 @@ def index(request):
             'completed': completed,
             'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
             'house_party_form': HousePartyForm(),
+            'twitter_status_form': TwitterStatusForm(),
             'chart_data': request.user.get_chart_data()
         }, context_instance=RequestContext(request))
     
@@ -159,7 +161,7 @@ def profile_edit(request, user_id):
             'lastname': request.user.last_name,
             'zipcode': profile.location.zipcode if profile.location else ''}
         form = ProfileEditForm(instance=profile, initial=initial)
-    return render_to_response('rah/profile_edit.html', {'form': form,}, context_instance=RequestContext(request))
+    return render_to_response('rah/profile_edit.html', {'form': form,'profile':profile}, context_instance=RequestContext(request))
     
 @login_required
 def account(request):

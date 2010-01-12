@@ -151,6 +151,7 @@ var rah = {
         init: function(){
             rah.mod_action_nugget.init();
             rah.mod_house_party.init();
+            rah.mod_twitter_status.init();
             
             var plot = $.plot($("#chart"),
                    [ { data: chart_data['point_data'] }], {
@@ -283,7 +284,31 @@ var rah = {
                 autoOpen: false, 
             });
         },
+    },
+    
+    mod_twitter_status: {
+        init: function(){
+            this.create_dialog();
+            $("#twitter_post_dialog").validate({
+                rules: {
+                    status: { required: true, },
+                },
+            });
+            $('.twitter_status').click(function(){ $('#twitter_post_dialog').dialog('open'); return false; });
+        },
         
+        create_dialog: function(){
+            var form = $('#twitter_status_form');
+            $('#twitter_post_dialog').dialog({
+                title: 'Update Twitter Status',
+                buttons: (form.size() > 0 ? { "Update": function() { form.submit(); } } : { }),
+                modal: true,
+                resizable: false,
+                draggable: false,
+                autoOpen: false,
+                width: 475,
+            });
+        },
     },
     
     mod_comment_form: {

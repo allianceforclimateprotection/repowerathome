@@ -1,12 +1,19 @@
 {% extends "rah/base.html" %}
 {% block content %}
     <h1>Edit your Profile</h1>
-    <a href="http://en.gravatar.com/">Change your image on gravatar.com</a>
+	<p><a href="http://en.gravatar.com/">Change your image on gravatar.com</a></p>
     <form action="" method="post">
         <div>{{form.as_p}}</div>
         <input type="submit" value="Submit" />
         <input type="hidden" name="next" value="{{ next|escape }}" />
         {% csrf_token %}
     </form>
-    
+	<p>
+		{% if profile.twitter_access_token %}
+			Your account is linked with twitter (<a href="{% url twitter_oauth_unauth %}">unlink</a>)
+		{% else %}
+			<a id="link_with_twitter" href="{% url twitter_oauth_auth %}">Link your account with twitter</a>
+		{% endif %}
+	</p>
 {% endblock %}
+{% block js %}page_profile_edit{% endblock %}

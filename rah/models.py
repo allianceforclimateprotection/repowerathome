@@ -1,9 +1,11 @@
+import json
 import hashlib
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import datetime
-import json
 from django.template import Context, loader
+
+import twitter_app.utils as twitter_app
 
 class UserManager(models.Manager):
     def with_completes_for_action(self, action):

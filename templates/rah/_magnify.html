@@ -1,10 +1,19 @@
 <h2>Magnify Your Impact</h2>
-<p><a href='{% url rah.views.house_party %}' class='house_party'>Host a house party</a></p>
+<div><a href='{% url rah.views.house_party %}' class='house_party'>Host a house party</a></div>
 <div id='house_party_dialog'>
 	<form action="{% url rah.views.house_party %}" method="post" id="house_party_form">
-		<div>
-		{{ house_party_form.as_p }}
-		</div>
+		<div>{{ house_party_form.as_p }}</div>
         {% csrf_token %}
     </form>
+</div>
+<div><a href='{% url twitter_oauth_post_status %}' class='twitter_status'>Update your Twitter status</a></div>
+<div id='twitter_post_dialog'>
+	{% if user.get_profile.twitter_access_token %}
+		<form action="{% url twitter_oauth_post_status %}" method="post" id="twitter_status_form">
+			<div>{{ twitter_status_form.as_p }}</div>
+			{% csrf_token %}
+		</form>
+	{% else %}
+		<a href='{% url profile_edit user.id %}'>Please link your account with Twitter first.</a>
+	{% endif %}
 </div>
