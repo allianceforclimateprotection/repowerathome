@@ -33,8 +33,9 @@ def return_(request):
         token = oauth.OAuthToken.from_string(unauthed_token)
         if token.key == request.GET.get('oauth_token', 'no-token'):
             access_token = exchange_request_token_for_access_token(token)
-            request.user.get_profile().twitter_access_token = access_token.to_string()
-            request.user.get_profile().save()
+            profile = request.user.get_profile()
+            profile.twitter_access_token = access_token.to_string()
+            profile.save()
             messages.success(request, "Your account is now linked with twitter.")
             return redirect('profile_edit', request.user.id)
         else:
@@ -51,8 +52,11 @@ def post_status(request):
     """
     form = StatusForm(request.POST)
     if form.is_valid():
-        if form.save(request.user.get_profile()):
+        profile = request.user.get_profile()
+        if form.save(profile):
             messages.success(request, "Your tweet has been posted.")
         else:
-            messages.error(request, "Your tweet could not be posted.")
+            profile.twitter_access_token = None
+            profile.save()
+            messages.error(request, "Your tweet could not be posted, please link your account.")
     return redirect('index')
