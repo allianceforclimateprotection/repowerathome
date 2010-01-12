@@ -203,3 +203,22 @@ class HousePartyForm(forms.Form):
         except SMTPException, e:
             return False
         return True
+
+class InviteFriendForm(forms.Form):
+    to_email = forms.EmailField(min_length=5, max_length=255, label="To email")
+    note = forms.CharField(widget=forms.Textarea, label="Personal note (optional)", required=False)
+        
+    def send(self, from_user):
+        template = loader.get_template('rah/invite_friend_email.html')
+        context = { 'from_user': from_user, 'note': self.cleaned_data['note'] }
+        try:
+            send_mail(
+                'Invitation from %s to Repower@Home' % from_user.get_full_name(), 
+                template.render(Context(context)),
+                None, 
+                [self.cleaned_data['to_email']], 
+                fail_silently=False
+            )
+        except SMTPException, e:
+            return False
+        return True

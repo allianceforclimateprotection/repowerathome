@@ -118,6 +118,7 @@ def profile(request, user_id):
         'completed': completed,
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'house_party_form': HousePartyForm(),
+        'invite_friend_form': InviteFriendForm(),
         'chart_data': user.get_chart_data(),
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
@@ -213,11 +214,24 @@ def house_party(request):
     if request.method == 'POST':
         form = HousePartyForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            messages.add_message(request, messages.SUCCESS, 'Thanks for letting us know, someone should get back to you shortly.')
+            # TODO give some points
+            messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
         else:
             # TODO set some sort of failure message
             pass
     return redirect('rah.views.index')
+
+def invite_friend(request):
+    if request.method == 'POST':
+        form = InviteFriendForm(request.POST)
+        if form.is_valid() and form.send(request.user):
+            # TODO give some points
+            messages.add_message(request, messages.SUCCESS, 'Invitation sent. Thanks!')
+        else:
+            # TODO set some sort of failure message
+            pass
+    return redirect('rah.views.index')
+
 
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))

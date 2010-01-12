@@ -1,9 +1,22 @@
 <h2>Magnify Your Impact</h2>
-<p><a href='{% url rah.views.house_party %}' class='house_party'>Host a house party</a></p>
+<p>
+    <a href='{% url rah.views.house_party %}' id='house_party_link'>Host a house party</a><br/>
+    <a href='{% url rah.views.invite_friend %}' id='invite_friend_link'>Invite a friend</a>
+</p>
 <div id='house_party_dialog'>
 	<form action="{% url rah.views.house_party %}" method="post" id="house_party_form">
+	    <p>We'd love to talk to you about hosting a house party.</p>
 		<div>
 		{{ house_party_form.as_p }}
+		</div>
+        {% csrf_token %}
+    </form>
+</div>
+<div id='invite_friend_dialog'>
+	<form action="{% url rah.views.invite_friend %}" method="post" id="invite_friend_form">
+	    <p>Share the magic with your friends.</p>
+		<div>
+		{{ invite_friend_form.as_p }}
 		</div>
         {% csrf_token %}
     </form>

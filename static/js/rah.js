@@ -253,30 +253,22 @@ var rah = {
     
     mod_house_party: {
         init: function(){
-            this.create_dialog();
-            $("#house_party_form").validate({
-                rules: {
-                    phone_number: { required: true, },
-                },
-            });
-            $('.house_party').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
-        },
-        
-        create_dialog: function(){
+            // Setup house party form, link, and dialog
+            $("#house_party_form").validate({rules: {phone_number: { required: true }}});
+            $('#house_party_link').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
             $('#house_party_dialog').dialog({
-                title: 'House Parties',
-                buttons: {
-                    "Give me a call": function() {
-                        $('#house_party_form').submit();
-                    },
-                },
-                modal: true,
-                resizable: false,
-                draggable: false,
-                autoOpen: false, 
+                title: 'House Party', modal: true, resizable: false, draggable: false, autoOpen: false, 
+                buttons: { "Give me a call": function() { $('#house_party_form').submit(); }},
+            });
+            
+            // Setup invite friend form, link, and dialog
+            $("#invite_friend_form").validate({rules: {to_email: { required: true, email: true }}});
+            $('#invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
+            $('#invite_friend_dialog').dialog({
+                title: 'Invite a friend', modal: true, autoOpen: false, 
+                buttons: { "Send Invitation": function() { $('#invite_friend_form').submit(); }},
             });
         },
-        
     },
     
     mod_comment_form: {
