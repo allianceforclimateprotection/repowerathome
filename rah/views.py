@@ -10,6 +10,7 @@ from django.forms.formsets import formset_factory
 from django.contrib import messages
 from rah.models import *
 from rah.forms import *
+from twitter_app.forms import StatusForm as TwitterStatusForm
 import json
 
 @csrf_protect
@@ -112,6 +113,9 @@ def profile(request, user_id):
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
         
     recommended, in_progress, completed = Action.objects.with_tasks_for_user(user)[1:4]
+    twitter_form = TwitterStatusForm(initial={
+        "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
+    })
     return render_to_response('rah/profile.html', {
         'total_points': user.get_total_points(),
         'in_progress': in_progress,
@@ -119,6 +123,7 @@ def profile(request, user_id):
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'house_party_form': HousePartyForm(),
         'invite_friend_form': InviteFriendForm(),
+        'twitter_status_form': twitter_form,
         'chart_data': user.get_chart_data(),
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
@@ -132,16 +137,13 @@ def profile_edit(request, user_id):
     if request.method == 'POST':
         # If the user just registered go to the home page
         post_reg = True if ("/register/" in str(request.META.get('HTTP_REFERER'))) else False
-
         profile_form = ProfileEditForm(request.POST, instance=request.user.get_profile())
         account_form = AccountForm(request.POST, instance=request.user)
         if profile_form.is_valid() and (account_form.is_valid() or post_reg):
             profile_form.save()
             account_form.save() if not post_reg else False
-            
             if post_reg:
                 return redirect('rah.views.index')
-                
             messages.add_message(request, messages.SUCCESS, 'Your profile has been updated.')
             return redirect('rah.views.profile_edit', user_id=request.user.id)
     else:
@@ -154,6 +156,7 @@ def profile_edit(request, user_id):
     return render_to_response('rah/profile_edit.html', {
         'profile_form': profile_form,
         'account_form': account_form,
+        'profile': profile,
     }, context_instance=RequestContext(request))
 
 @csrf_protect

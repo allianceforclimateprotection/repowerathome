@@ -3,7 +3,13 @@
     <h1>Edit your Profile</h1>
     <p>
         <a href="http://en.gravatar.com/">Change your image on gravatar.com</a><br/>
-        <a href="{% url django.contrib.auth.views.password_change %}">Change your password</a>
+        <a href="{% url django.contrib.auth.views.password_change %}">Change your password</a><br/>
+		{% if profile.twitter_access_token %}
+
+			Your account is linked with twitter (<a href="{% url twitter_oauth_unauth %}">unlink</a>)
+		{% else %}
+			<a id="link_with_twitter" href="{% url twitter_oauth_auth %}">Link your account with twitter</a>
+		{% endif %}
     </p>
     <form action="" method="post">
         <div>

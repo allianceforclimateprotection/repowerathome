@@ -150,8 +150,8 @@ var rah = {
     page_profile: {
         init: function(){
             rah.mod_action_nugget.init();
-            rah.mod_house_party.init();
             
+            // Setup the chart
             if (!chart_data['point_data'].length) {
                 $("#chart").html('<img src="' + media_url + 'images/theme/chart_demo.png" alt="sample chart"/>');
             } else {
@@ -184,6 +184,31 @@ var rah = {
                     }).appendTo("body").fadeIn(300);
                 }
             }
+            
+            // Setup house party form, link, and dialog
+            $("#house_party_form").validate({rules: {phone_number: { required: true }}});
+            $('#house_party_link').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
+            $('#house_party_dialog').dialog({
+                title: 'House Party', modal: true, resizable: false, draggable: false, autoOpen: false, 
+                buttons: { "Give me a call": function() { $('#house_party_form').submit(); }},
+            });
+            
+            // Setup invite friend form, link, and dialog
+            $("#invite_friend_form").validate({rules: {to_email: { required: true, email: true }}});
+            $('#invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
+            $('#invite_friend_dialog').dialog({
+                title: 'Invite a friend', modal: true, autoOpen: false, 
+                buttons: { "Send Invitation": function() { $('#invite_friend_form').submit(); }},
+            });
+            
+            // Setup twitter update form, link, and dialog
+            $("#twitter_post_dialog").validate({ rules: {status: { required: true, }}});
+            $('.twitter_status').click(function(){ $('#twitter_post_dialog').dialog('open'); return false; });
+            var form = $('#twitter_status_form');
+            $('#twitter_post_dialog').dialog({
+                title: 'Tell your tweeps about us', modal: true, autoOpen: false,
+                buttons: (form.size() > 0 ? { "Update status": function() { form.submit(); } } : { }),
+            });
         },
     },
     
@@ -249,26 +274,6 @@ var rah = {
                 return false;
             });
         }
-    },
-    
-    mod_house_party: {
-        init: function(){
-            // Setup house party form, link, and dialog
-            $("#house_party_form").validate({rules: {phone_number: { required: true }}});
-            $('#house_party_link').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
-            $('#house_party_dialog').dialog({
-                title: 'House Party', modal: true, resizable: false, draggable: false, autoOpen: false, 
-                buttons: { "Give me a call": function() { $('#house_party_form').submit(); }},
-            });
-            
-            // Setup invite friend form, link, and dialog
-            $("#invite_friend_form").validate({rules: {to_email: { required: true, email: true }}});
-            $('#invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
-            $('#invite_friend_dialog').dialog({
-                title: 'Invite a friend', modal: true, autoOpen: false, 
-                buttons: { "Send Invitation": function() { $('#invite_friend_form').submit(); }},
-            });
-        },
     },
     
     mod_comment_form: {
