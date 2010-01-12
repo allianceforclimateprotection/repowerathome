@@ -23,8 +23,7 @@
                 <a href="/" title="Repower America" class="site-logo">Repower @ Home</a>
                 <div id="header-links">
                     {% if user.is_authenticated %}
-                        {{ user.get_welcome }} | <a href="{% url rah.views.profile user.id %}">Profile</a> | 
-                        <a href="{% url rah.views.account %}">Account</a> | <a href="/logout">Logout</a>
+                        {{ user.get_welcome }} | <a href="/logout">Logout</a>
                     {% else %}
                         <a href="/login">Login</a> | <a href="/register">Sign Up</a>
                     {% endif %}
@@ -88,7 +87,10 @@
             </div>
         </div>
         <div id="feedback_dialog"></div>
-        <script type="text/javascript" charset="utf-8"> var rah_name = "{% block js %}{% endblock %}";</script>
+        <script type="text/javascript" charset="utf-8">
+            var rah_name = "{% block js %}{% endblock %}";
+            var media_url = "{{ MEDIA_URL }}"; // contains trailing slash
+        </script>
         <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}js/js_libs{%if not debug%}_min{%endif%}.js"></script>
         {% block extrajs %}{% endblock %}
         <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}js/rah{%if not debug%}_min{%endif%}.js"></script>

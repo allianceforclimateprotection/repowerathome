@@ -1,19 +1,23 @@
 {% extends "rah/base.html" %}
 {% block content %}
     <h1>Edit your Profile</h1>
-	<p><a href="http://en.gravatar.com/">Change your image on gravatar.com</a></p>
-    <form action="" method="post">
-        <div>{{form.as_p}}</div>
-        <input type="submit" value="Submit" />
-        <input type="hidden" name="next" value="{{ next|escape }}" />
-        {% csrf_token %}
-    </form>
-	<p>
+    <p>
+        <a href="http://en.gravatar.com/">Change your image on gravatar.com</a><br/>
+        <a href="{% url django.contrib.auth.views.password_change %}">Change your password</a><br/>
 		{% if profile.twitter_access_token %}
+
 			Your account is linked with twitter (<a href="{% url twitter_oauth_unauth %}">unlink</a>)
 		{% else %}
 			<a id="link_with_twitter" href="{% url twitter_oauth_auth %}">Link your account with twitter</a>
 		{% endif %}
-	</p>
+    </p>
+    <form action="" method="post">
+        <div>
+            {{account_form.as_p}}
+            {{profile_form.as_p}}
+            <input type="submit" value="Save profile" />
+            <input type="hidden" name="next" value="{{ next|escape }}" />
+            {% csrf_token %}
+        </div>
+    </form>
 {% endblock %}
-{% block js %}page_profile_edit{% endblock %}

@@ -20,17 +20,7 @@ def index(request):
     """
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
-        recommended, in_progress, completed = Action.objects.with_tasks_for_user(request.user)[1:4]
-        
-        return render_to_response('rah/home_logged_in.html', {
-            'total_points': request.user.get_total_points(),
-            'in_progress': in_progress,
-            'completed': completed,
-            'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
-            'house_party_form': HousePartyForm(),
-            'twitter_status_form': TwitterStatusForm(),
-            'chart_data': request.user.get_chart_data()
-        }, context_instance=RequestContext(request))
+        return profile(request, request.user.id)
     
     # Setup and handle email form on logged out home page
     success = False
@@ -45,8 +35,6 @@ def index(request):
         'form': form,
         'success': success
     }, context_instance=RequestContext(request))
-        
-    return render_to_response('rah/home_logged_in.html', {}, context_instance=RequestContext(request))
 
 @csrf_protect
 def register(request):
@@ -54,7 +42,6 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
-            # OPTIMIZE: authentication logic can be moved to the RegistrationForm
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
             # OPTIMIZE: profile create can be abstracted as a post_save signal [eg. models.signals.post_save.connect(some_profile_create_func, sender=User)]
@@ -121,21 +108,20 @@ def action_task(request, action_task_id):
 
 def profile(request, user_id):
     """docstring for profile"""
-    user = get_object_or_404(User, id=user_id)
+    user = request.user if request.user.id is user_id else get_object_or_404(User, id=user_id)
     if request.user <> user and user.get_profile().is_profile_private:
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
-    profile = user.get_profile()
+        
     recommended, in_progress, completed = Action.objects.with_tasks_for_user(user)[1:4]
-    points = user.get_latest_points()
-    total_points = user.get_total_points()
-    
     return render_to_response('rah/profile.html', {
-        'profile': profile,
-        'points': points,
-        'total_points': total_points,
+        'total_points': user.get_total_points(),
         'in_progress': in_progress,
-        'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'completed': completed,
+        'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
+        'house_party_form': HousePartyForm(),
+        'twitter_status_form': TwitterStatusForm(),
+        'chart_data': user.get_chart_data(),
+        'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
     }, context_instance=RequestContext(request))
 
@@ -145,39 +131,29 @@ def profile_edit(request, user_id):
     if request.user.id <> int(user_id):
         return forbidden(request, "Sorry, but you do not have permissions to edit this profile.")
     if request.method == 'POST':
-        form = ProfileEditForm(request.POST, instance=request.user.get_profile())
-        if form.is_valid():
-            form.save()
-            messages.add_message(request, messages.SUCCESS, 'Your profile has been updated.')
-            # If the user just registered go to the home page
-            if "/register/" in str(request.META.get('HTTP_REFERER')):
+        # If the user just registered go to the home page
+        post_reg = True if ("/register/" in str(request.META.get('HTTP_REFERER'))) else False
+        profile_form = ProfileEditForm(request.POST, instance=request.user.get_profile())
+        account_form = AccountForm(request.POST, instance=request.user)
+        if profile_form.is_valid() and (account_form.is_valid() or post_reg):
+            profile_form.save()
+            account_form.save() if not post_reg else False
+            if post_reg:
                 return redirect('rah.views.index')
-            # Else we go to the profile view page
-            else:
-                return redirect('rah.views.profile', user_id=request.user.id)
+            messages.add_message(request, messages.SUCCESS, 'Your profile has been updated.')
+            return redirect('rah.views.profile_edit', user_id=request.user.id)
     else:
-        profile = request.user.get_profile()
-        initial = {'firstname': request.user.first_name,
-            'lastname': request.user.last_name,
-            'zipcode': profile.location.zipcode if profile.location else ''}
-        form = ProfileEditForm(instance=profile, initial=initial)
-    return render_to_response('rah/profile_edit.html', {'form': form,'profile':profile}, context_instance=RequestContext(request))
-    
-@login_required
-def account(request):
-    """
-    The account view is used to generate and accept a form used by the user to update their registration specific details
-    """
-    if request.method == 'POST':
-        form = AccountForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.add_message(request, messages.SUCCESS, 'Your account has been updated.')
-            return redirect('rah.views.index')
-    else:
-        profile = request.user.get_profile()
-        form = AccountForm(instance=request.user, initial={ 'make_profile_private': profile.is_profile_private, })
-    return render_to_response('rah/account.html', {'form': form,}, context_instance=RequestContext(request))
+        profile      = request.user.get_profile()
+        account_form = AccountForm(instance=request.user)
+        profile_form = ProfileEditForm(instance=profile, initial={
+            'zipcode': profile.location.zipcode if profile.location else '',
+        })
+
+    return render_to_response('rah/profile_edit.html', {
+        'profile_form': profile_form,
+        'account_form': account_form,
+        'profile': profile,
+    }, context_instance=RequestContext(request))
 
 @csrf_protect
 def feedback(request):
@@ -220,7 +196,7 @@ def validate_field(request):
 
     # Valid if there are no other users using that email address
     if request.POST.get("email"):
-        from django.forms.fields import email_re # OPTIMIZE Is it ok to have imports at the function level?
+        from django.core.validators import email_re # OPTIMIZE Is it ok to have imports at the function level?
         if email_re.search(request.POST.get("email")) and not User.objects.filter(email__exact = request.POST.get("email")):
             valid = True
     

@@ -6,9 +6,9 @@ from django.core.mail import send_mail, EmailMessage
 from django.core.urlresolvers import resolve, Resolver404
 from urlparse import urlparse
 from django.forms.widgets import CheckboxSelectMultiple
-from django.utils.translation import ugettext_lazy as _
 from smtplib import SMTPException
 from django.template import Context, loader
+import hashlib
 
 import settings
 
@@ -16,28 +16,26 @@ class RegistrationForm(forms.ModelForm):
     """
     A form that creates a user, with no privileges, from the given email and password.
     """
-    # OPTIMIZE remove _
-    email = forms.EmailField(label=_('Email'))
-    password1 = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
-    password2 = forms.CharField(label=_('Password confirmation'), widget=forms.PasswordInput)
+    email = forms.EmailField(label='Email')
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
 
     class Meta:
         model = User
         fields = ("email",)
 
     def clean_password2(self):
-        password1 = self.cleaned_data.get('password1', '')
-        password2 = self.cleaned_data['password2']
+        password1 = self.cleaned_data.get("password1", "")
+        password2 = self.cleaned_data["password2"]
         if password1 != password2:
-            raise forms.ValidationError(_("The two password fields didn't match."))
+            raise forms.ValidationError("The two password fields didn't match.")
+        self.instance.set_password(password1)
         return password2
 
-    def save(self, commit=True):
-        user = super(RegistrationForm, self).save(commit=False)
-        user.set_password(self.cleaned_data['password1'])
-        if commit:
-            user.save()
-        return user
+    def clean(self):
+        self.instance.username = hashlib.md5(self.cleaned_data['email']).hexdigest()[:30]
+        super(RegistrationForm, self).clean()
+        return self.cleaned_data
 
     def clean_email(self):
         """
@@ -47,15 +45,15 @@ class RegistrationForm(forms.ModelForm):
         if self.instance.set_email(email):
             return email
         else:
-             raise ValidationError(_('This email address has already been registered in our system.  If you have forgotten your password, please use the password reset link.'))
+             raise ValidationError('This email address has already been registered in our system. If you have forgotten your password, please use the password reset link.')
 
 class AuthenticationForm(forms.Form):
    """
    Base class for authenticating users. Extend this to get a form that accepts
    username/password logins.
    """
-   email = forms.EmailField(label=_("Email"))
-   password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+   email = forms.EmailField(label="Email")
+   password = forms.CharField(label="Password", widget=forms.PasswordInput)
 
    def __init__(self, request=None, *args, **kwargs):
        """
@@ -76,14 +74,14 @@ class AuthenticationForm(forms.Form):
            self.user_cache = auth.authenticate(username=email, password=password)
            if self.user_cache is None:
                # FIXME: email should not be case sensitive
-               raise forms.ValidationError(_("Please enter a correct email and password. Note that both fields are case-sensitive."))
+               raise forms.ValidationError("Please enter a correct email and password. Note that both fields are case-sensitive.")
            elif not self.user_cache.is_active:
-               raise forms.ValidationError(_("This account is inactive."))
+               raise forms.ValidationError("This account is inactive.")
 
        # TODO: determine whether this should move to its own method.
        if self.request:
            if not self.request.session.test_cookie_worked():
-               raise forms.ValidationError(_("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
+               raise forms.ValidationError("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in.")
 
        return self.cleaned_data
 
@@ -123,17 +121,15 @@ class FeedbackForm(forms.ModelForm):
         msg = EmailMessage('Feedback Form', template.render(Context(context)), None, ["feedback@repowerathome.com"])
         msg.content_subtype = "html"
         msg.send()
-    
         
 class ProfileEditForm(forms.ModelForm):
-    firstname = forms.CharField(label='First Name', max_length=30, required=False)
-    lastname = forms.CharField(label='Last Name', max_length=30, required=False)
-    zipcode = forms.CharField(max_length=5, required=False)
-    
     class Meta:
         model = Profile
-        fields = ("firstname", "lastname", "zipcode", "building_type",)
+        fields = ("zipcode", "building_type", "is_profile_private")
         
+    zipcode = forms.CharField(max_length=5, required=False)
+    is_profile_private = forms.BooleanField(label="Make Profile Private", required=False)
+    
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
         if not len(data):
@@ -145,18 +141,22 @@ class ProfileEditForm(forms.ModelForm):
             self.instance.location = Location.objects.get(zipcode=data)
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
-            
-    def clean_firstname(self):
-        data = self.cleaned_data['firstname'].strip()
-        self.instance.user.first_name = data
-        
-    def clean_lastname(self):
-        data = self.cleaned_data['lastname'].strip()
-        self.instance.user.last_name = data
-        
-    def save(self):
-        super(ProfileEditForm, self).save()
-        self.instance.user.save()
+
+class AccountForm(forms.ModelForm):
+    """docstring for AccountForm"""
+    class Meta:
+        model = User
+        fields = ('email', 'first_name', 'last_name')
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].strip()
+        if not len(email):
+            raise ValidationError('Email can not be blank')
+
+        if self.instance.email == email or self.instance.set_email(email):
+            return email
+        else:
+             raise ValidationError('This email address has already been registered in our system.')
 
 class ActionAdminForm(forms.ModelForm):
     class Meta:
@@ -184,32 +184,6 @@ class ActionCatAdminForm(forms.ModelForm):
             raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
 
         return data
-
-class AccountForm(forms.ModelForm):
-    """docstring for AccountForm"""
-    make_profile_private = forms.BooleanField(label=_("Make Profile Private"), required=False)
-    
-    class Meta:
-        model = User
-        fields = ('email', 'make_profile_private')
-        
-    def clean_email(self):
-        email = self.cleaned_data['email'].strip()
-        if not len(email):
-            raise ValidationError(_('Email can not be blank'))
-        
-        if self.instance.email == email or self.instance.set_email(email):
-            return email
-        else:
-             raise ValidationError(_('This email address has already been registered in our system.'))
-             
-    def clean_make_profile_private(self):
-        make_profile_private = self.cleaned_data['make_profile_private']
-        self.instance.get_profile().is_profile_private = make_profile_private
-        
-    def save(self):
-        super(AccountForm, self).save()
-        self.instance.get_profile().save()
         
 class HousePartyForm(forms.Form):
     phone_number = forms.CharField()

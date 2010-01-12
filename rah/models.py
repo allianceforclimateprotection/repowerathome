@@ -42,7 +42,6 @@ class User(AuthUser):
     def set_email(self, email):
         if User.objects.filter(email=email):
             return False
-        self.username = hashlib.md5(email).hexdigest()[:30]
         self.email = email
         return True
     
@@ -331,11 +330,11 @@ class Profile(models.Model):
         ('S', 'Single Family Home'),
     )
     user = models.ForeignKey(AuthUser, unique=True)
-    location = models.ForeignKey(Location, null=True)
+    location = models.ForeignKey(Location, null=True, blank=True)
     building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES, blank=True)
     is_profile_private = models.BooleanField(default=0)
     # TODO: does the twitter access token need to be encrypted in the database?
-    twitter_access_token = models.CharField(null=True, max_length=255)
+    twitter_access_token = models.CharField(null=True, max_length=255, blank=True)
     
     def __unicode__(self):
         return u'%s' % (self.user.email)
