@@ -41,11 +41,16 @@ class RegistrationForm(forms.ModelForm):
         """
         Ensure that the email address is valid and unique
         """
+        print "cleaning email"
         email = self.cleaned_data['email']
-        if self.instance.set_email(email):
+        print "checking email taken"
+        if not User.objects.is_email_taken(email):
+            print "setting email"
+            self.instance.email = email
             return email
         else:
-             raise ValidationError('This email address has already been registered in our system. If you have forgotten your password, please use the password reset link.')
+            print "should be raising validation error"
+            raise ValidationError('This email address has already been registered in our system. If you have forgotten your password, please use the password reset link.')
 
 class AuthenticationForm(forms.Form):
    """

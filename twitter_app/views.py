@@ -58,5 +58,5 @@ def post_status(request):
         else:
             profile.twitter_access_token = None
             profile.save()
-            messages.error(request, "Your tweet could not be posted, please link your account.")
+            messages.error(request, "There was a problem posting your tweet, please relink your account.")
     return redirect('index')

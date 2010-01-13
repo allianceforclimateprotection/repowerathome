@@ -1,0 +1,4 @@
+twitter_app is based on the django-twitter-oauth app found on github.
+author: Henrik Kied <henriklied@gmail.com>
+author website: http://henriklied.no/
+url: http://github.com/henriklied/django-twitter-oauth

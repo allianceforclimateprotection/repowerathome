@@ -27,6 +27,11 @@ class UserManager(models.Manager):
         
     def get_user_by_comment(self, comment):
         return self.get(id=comment.user.id)
+        
+    def is_email_taken(self, email):
+        some = self.filter(email=email)
+        print ("taken" if some else "not taken")
+        return self.filter(email=email)
 
 class User(AuthUser): 
     objects = UserManager()
@@ -38,12 +43,6 @@ class User(AuthUser):
 
     def get_welcome(self):
         return 'Welcome, %s' % (self.get_full_name()) if self.get_full_name() else 'Logged in as, %s' % (self.email)
-        
-    def set_email(self, email):
-        if User.objects.filter(email=email):
-            return False
-        self.email = email
-        return True
     
     # TODO write unit tests for get latest points
     def get_latest_points(self, quantity=None):
