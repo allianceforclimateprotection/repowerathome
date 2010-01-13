@@ -9,8 +9,8 @@ ACCESS_TOKEN_URL = getattr(settings, 'OAUTH_ACCESS_TOKEN_URL', 'https://%s/oauth
 AUTHORIZATION_URL = getattr(settings, 'OAUTH_AUTHORIZATION_URL', 'http://%s/oauth/authorize' % SERVER)
 
 #TODO: set new values in our settings file
-CONSUMER_KEY = getattr(settings, 'CONSUMER_KEY', 'lh7uRHrLShPBKBPNMCojw')
-CONSUMER_SECRET = getattr(settings, 'CONSUMER_SECRET', 'EYYdrqLlO0wvq4tmwbAacNrEHUxYJLkBqnABBOyE0')
+CONSUMER_KEY = getattr(settings, 'TWITTER_CONSUMER_KEY', '')
+CONSUMER_SECRET = getattr(settings, 'TWITTER_CONSUMER_SECRET', '')
 
 CONSUMER = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
 CONNECTION = httplib.HTTPSConnection(SERVER)
@@ -25,6 +25,7 @@ def request_oauth_resource(url, access_token, parameters=None, signature_method=
     usage: request_oauth_resource('/url/', your_access_token, parameters=dict() )
     Returns a OAuthRequest object
     """
+    print CONSUMER_KEY
     oauth_request = oauth.OAuthRequest.from_consumer_and_token(
         CONSUMER, token=access_token, http_method=http_method, http_url=url, parameters=parameters,
     )

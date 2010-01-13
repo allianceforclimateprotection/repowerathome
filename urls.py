@@ -15,7 +15,6 @@ feeds = {
 # OPTIMIZE: we can wrap the regex patterns in the url function to insure there are no reverse conflicts
 urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
-    # OPTIMIZE: we can remove our custom register view altogether and just specify our custom from as a parameter in the url pattern
     url(r'^register/$', 'register', name='register'),
     url(r'^logout/$', 'logout', name='logout'),
     url(r'^password_changed/$', 'password_changed', name='password_changed'),

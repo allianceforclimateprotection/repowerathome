@@ -35,7 +35,6 @@ class RegistrationForm(forms.ModelForm):
         Ensure that the email address is valid and unique
         """
         email = self.cleaned_data['email']
-        print email
         try:
             User.objects.get(email=email)
         except User.DoesNotExist:
