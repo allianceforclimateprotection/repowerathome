@@ -38,12 +38,6 @@ class User(AuthUser):
 
     def get_welcome(self):
         return 'Welcome, %s' % (self.get_full_name()) if self.get_full_name() else 'Logged in as, %s' % (self.email)
-        
-    def set_email(self, email):
-        if User.objects.filter(email=email):
-            return False
-        self.email = email
-        return True
     
     # TODO write unit tests for get latest points
     def get_latest_points(self, quantity=None):
@@ -267,7 +261,6 @@ class UserActionTask(models.Model):
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
-	# OPTIMIZE: adding an index on zipcode should speed up the searches
     zipcode = models.CharField(max_length=5, db_index=True)
     county = models.CharField(max_length=100, db_index=True)
     st = models.CharField(max_length=2)

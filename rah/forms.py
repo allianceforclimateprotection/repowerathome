@@ -24,17 +24,10 @@ class RegistrationForm(forms.ModelForm):
         model = User
         fields = ("email",)
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1", "")
-        password2 = self.cleaned_data["password2"]
-        if password1 != password2:
-            raise forms.ValidationError("The two password fields didn't match.")
-        self.instance.set_password(password1)
-        return password2
-
     def clean(self):
-        self.instance.username = hashlib.md5(self.cleaned_data['email']).hexdigest()[:30]
-        super(RegistrationForm, self).clean()
+        self.instance.username = hashlib.md5(self.cleaned_data.get("email", "")).hexdigest()[:30] 
+        self.instance.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
+        super(RegistrationForm, self).clean()        
         return self.cleaned_data
 
     def clean_email(self):
@@ -42,10 +35,21 @@ class RegistrationForm(forms.ModelForm):
         Ensure that the email address is valid and unique
         """
         email = self.cleaned_data['email']
-        if self.instance.set_email(email):
+        print email
+        try:
+            User.objects.get(email=email)
+        except User.DoesNotExist:
             return email
-        else:
-             raise ValidationError('This email address has already been registered in our system. If you have forgotten your password, please use the password reset link.')
+        raise forms.ValidationError('This email address has already been registered in our system. If you have forgotten your password, please use the password reset link.')
+        
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1", "")
+        password2 = self.cleaned_data["password2"]
+        if password1 != password2:
+            raise forms.ValidationError("The two password fields didn't match.")
+        if len(password2) < 5:
+            raise forms.ValidationError("Your password must contain at least 5 characters.")
+        return password2
 
 class AuthenticationForm(forms.Form):
    """
@@ -73,7 +77,6 @@ class AuthenticationForm(forms.Form):
        if email and password:
            self.user_cache = auth.authenticate(username=email, password=password)
            if self.user_cache is None:
-               # FIXME: email should not be case sensitive
                raise forms.ValidationError("Please enter a correct email and password. Note that both fields are case-sensitive.")
            elif not self.user_cache.is_active:
                raise forms.ValidationError("This account is inactive.")
