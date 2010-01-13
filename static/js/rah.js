@@ -33,7 +33,7 @@ var rah = {
                 },
                 title: "Feedback",
                 autoOpen: false,
-                width: 475,
+                width: 400,
             });
             // Attach functionality to feedback links
             $(".feedback_link").click(function(){
