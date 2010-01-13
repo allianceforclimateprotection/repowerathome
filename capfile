@@ -22,6 +22,7 @@ namespace :deploy do
     task :default do
         update
         minify
+        staticupload
         syncdb
         restart
         add_deployment_to_codebase
@@ -34,7 +35,12 @@ namespace :deploy do
     
     desc "Min JS and CSS files"
     task :minify, :roles => :app do
-        run "cd #{deploy_to}/static/minify; ./minify.sh"
+        `cd static/minify; ./minify.sh`
+    end
+    
+    desc "Update static bucket"
+    task :staticupload, :roles => :app do
+        `python manage.py sync_media_s3 --gzip --force`
     end
     
     desc "Sync DB"

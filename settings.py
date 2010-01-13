@@ -71,6 +71,7 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django_extensions',
     'rah',
     'basic.blog',
     'basic.inlines',
@@ -88,6 +89,17 @@ AUTH_PROFILE_MODULE = 'rah.Profile'
 SEND_BROKEN_LINK_EMAILS = not DEBUG
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
+
+# sync media s3
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+AWS_BUCKET_NAME = 'rahstatic'
+FILTER_LIST = ['.DS_Store', '.svn', '.hg', '.git', 'Thumbs.db', 'minify']
+GZIP_CONTENT_TYPES = (
+    'text/css',
+    'application/javascript',
+    'application/x-javascript'
+)
 
 try:
     from local_settings import *
