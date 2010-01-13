@@ -24,33 +24,31 @@ class RegistrationForm(forms.ModelForm):
         model = User
         fields = ("email",)
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1", "")
-        password2 = self.cleaned_data["password2"]
-        if password1 != password2:
-            raise forms.ValidationError("The two password fields didn't match.")
-        self.instance.set_password(password1)
-        return password2
-
     def clean(self):
-        self.instance.username = hashlib.md5(self.cleaned_data['email']).hexdigest()[:30]
-        super(RegistrationForm, self).clean()
+        self.instance.username = hashlib.md5(self.cleaned_data.get("email", "")).hexdigest()[:30] 
+        self.instance.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
+        super(RegistrationForm, self).clean()        
         return self.cleaned_data
 
     def clean_email(self):
         """
         Ensure that the email address is valid and unique
         """
-        print "cleaning email"
         email = self.cleaned_data['email']
-        print "checking email taken"
-        if not User.objects.is_email_taken(email):
-            print "setting email"
-            self.instance.email = email
+        try:
+            User.objects.get(email=email)
+        except User.DoesNotExist:
             return email
-        else:
-            print "should be raising validation error"
-            raise ValidationError('This email address has already been registered in our system. If you have forgotten your password, please use the password reset link.')
+        raise forms.ValidationError('This email address has already been registered in our system. If you have forgotten your password, please use the password reset link.')
+        
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1", "")
+        password2 = self.cleaned_data["password2"]
+        if password1 != password2:
+            raise forms.ValidationError("The two password fields didn't match.")
+        if len(password2) < 5:
+            raise forms.ValidationError("Your password must contain at least 5 characters.")
+        return password2
 
 class AuthenticationForm(forms.Form):
    """

@@ -27,11 +27,6 @@ class UserManager(models.Manager):
         
     def get_user_by_comment(self, comment):
         return self.get(id=comment.user.id)
-        
-    def is_email_taken(self, email):
-        some = self.filter(email=email)
-        print ("taken" if some else "not taken")
-        return self.filter(email=email)
 
 class User(AuthUser): 
     objects = UserManager()

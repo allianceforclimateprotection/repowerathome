@@ -37,12 +37,13 @@ def index(request):
     }, context_instance=RequestContext(request))
     
 def logout(request):
-    auth.views.logout(request)
+    response = auth.logout(request)
     messages.success(request, "You have successfully logged out.")
     return redirect("index")
 
 @csrf_protect
 def register(request):
+    profileForm = ProfileEditForm()
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -54,16 +55,15 @@ def register(request):
             messages.success(request, 'Thanks for registering.')
             
             # If this is an ajax request, then return the new user ID
-            if request.is_ajax:
+            if request.is_ajax():
                 return HttpResponse(json.dumps({'valid': True, 'userid': user.id }))
             
             return redirect('rah.views.profile_edit', user_id=user.id)
-        elif request.is_ajax:
+        elif request.is_ajax():
             # This should never happen if the client side validation is working properly
             return HttpResponse(json.dumps({'valid': False, 'errors': eval(repr(form.errors)) }))
     else:
         form = RegistrationForm()
-        profileForm = ProfileEditForm()
     return render_to_response("registration/register.html", {
         'form': form,
         'profileForm': profileForm,
