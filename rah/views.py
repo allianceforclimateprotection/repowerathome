@@ -40,6 +40,10 @@ def logout(request):
     response = auth.logout(request)
     messages.success(request, "You have successfully logged out.")
     return redirect("index")
+    
+def password_changed(request):
+    messages.success(request, "Your password was changed successfully.")
+    return redirect("profile_edit", user_id=request.user.id)
 
 @csrf_protect
 def register(request):
@@ -58,7 +62,7 @@ def register(request):
             if request.is_ajax():
                 return HttpResponse(json.dumps({'valid': True, 'userid': user.id }))
             
-            return redirect('rah.views.profile_edit', user_id=user.id)
+            return redirect("profile_edit", user_id=user.id)
         elif request.is_ajax():
             # This should never happen if the client side validation is working properly
             return HttpResponse(json.dumps({'valid': False, 'errors': eval(repr(form.errors)) }))

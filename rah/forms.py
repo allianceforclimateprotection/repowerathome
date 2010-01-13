@@ -35,6 +35,7 @@ class RegistrationForm(forms.ModelForm):
         Ensure that the email address is valid and unique
         """
         email = self.cleaned_data['email']
+        print email
         try:
             User.objects.get(email=email)
         except User.DoesNotExist:
@@ -76,7 +77,6 @@ class AuthenticationForm(forms.Form):
        if email and password:
            self.user_cache = auth.authenticate(username=email, password=password)
            if self.user_cache is None:
-               # FIXME: email should not be case sensitive
                raise forms.ValidationError("Please enter a correct email and password. Note that both fields are case-sensitive.")
            elif not self.user_cache.is_active:
                raise forms.ValidationError("This account is inactive.")

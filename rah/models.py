@@ -261,7 +261,6 @@ class UserActionTask(models.Model):
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
-	# OPTIMIZE: adding an index on zipcode should speed up the searches
     zipcode = models.CharField(max_length=5, db_index=True)
     county = models.CharField(max_length=100, db_index=True)
     st = models.CharField(max_length=2)
