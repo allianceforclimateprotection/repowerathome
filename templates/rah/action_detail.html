@@ -11,7 +11,9 @@
 	<div class="action_detail_task_container">
     	<form action="{% url rah.views.action_task task.id %}" class="action_task_submitter" method="post" accept-charset="utf-8">
             <div>
-                <input type="checkbox" name="task_completed" {% if task.completed %}checked="checked"{% endif %} class="action_detail_task_checkbox"/>
+                <input type="checkbox" name="task_completed" class="action_detail_task_checkbox"
+					{% if task.completed %}checked="checked"{% endif %}
+					{% if not user.is_authenticated %}disabled="disabled"{% endif %} />
                 <input type="hidden" name="task_id" value="{{task.id}}" />
                 <input type="submit" value="Update" style="display:none"/>
                 {% csrf_token %}
