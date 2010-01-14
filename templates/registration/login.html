@@ -10,5 +10,5 @@
         {% csrf_token %}
     </form>
     <a href="{% url rah.views.register %}">Register</a> | 
-    <a href="{% url django.contrib.auth.views.password_reset %}">Recover password</a>
+    <a href="{% url password_reset %}">Recover password</a>
 {% endblock %}

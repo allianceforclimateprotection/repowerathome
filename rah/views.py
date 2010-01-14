@@ -41,9 +41,13 @@ def logout(request):
     messages.success(request, "You have successfully logged out.")
     return redirect("index")
     
-def password_changed(request):
+def password_change_done(request):
     messages.success(request, "Your password was changed successfully.")
     return redirect("profile_edit", user_id=request.user.id)
+    
+def password_reset_done(request):
+    messages.success(request, "We just sent you an email with instructions for resetting your password.")
+    return redirect("index")
 
 @csrf_protect
 def register(request):
