@@ -298,6 +298,8 @@ var rah = {
                   elem.slideUp(400, function(){ elem.remove(); });
               }, 3000);
           });
+          
+          $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").remove(); });
       },
     },
 }

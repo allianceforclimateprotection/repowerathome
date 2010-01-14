@@ -150,6 +150,7 @@ acronym {
 /* Messages */
 #message_box { text-align: center; width: 960px; margin-left: auto; margin-right: auto;}
 #message_box ul { list-style-type: none; }
+#message_box .dismiss { float: right; margin-right: 6px; font-size: 0.8em; }
 
 #message_box .info, #message_box .success, #message_box .warning, #message_box .error, #message_box .validation {
     border: 2px solid;
