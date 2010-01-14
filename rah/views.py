@@ -48,6 +48,10 @@ def password_change_done(request):
 def password_reset_done(request):
     messages.success(request, "We just sent you an email with instructions for resetting your password.")
     return redirect("index")
+    
+def password_reset_complete(request):
+    messages.success(request, "Password reset successfully!")
+    return redirect("index")
 
 @csrf_protect
 def register(request):
