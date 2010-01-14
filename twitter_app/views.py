@@ -11,7 +11,6 @@ from twitter_app.forms import StatusForm
 
 @login_required
 def unauth(request):
-    #TODO: is there an easy way to unauthorize on twitters end as well?
     request.user.get_profile().twitter_access_token = None
     request.user.get_profile().save()
     messages.success(request, "We have unlinked your account with twitter.")

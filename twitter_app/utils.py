@@ -8,7 +8,6 @@ REQUEST_TOKEN_URL = getattr(settings, 'OAUTH_REQUEST_TOKEN_URL', 'https://%s/oau
 ACCESS_TOKEN_URL = getattr(settings, 'OAUTH_ACCESS_TOKEN_URL', 'https://%s/oauth/access_token' % SERVER)
 AUTHORIZATION_URL = getattr(settings, 'OAUTH_AUTHORIZATION_URL', 'http://%s/oauth/authorize' % SERVER)
 
-#TODO: set new values in our settings file
 CONSUMER_KEY = getattr(settings, 'TWITTER_CONSUMER_KEY', '')
 CONSUMER_SECRET = getattr(settings, 'TWITTER_CONSUMER_SECRET', '')
 

@@ -13,7 +13,6 @@ class StatusForm(forms.Form):
         token = oauth.OAuthToken.from_string(access_token)
         if token:
             response = json.loads(update_status(token, status))
-            #FIXME: really check the validity of the json response to see if the twitter status was posted
             # TODO Give some points for this
             if not response.has_key("error"):
                 return True
