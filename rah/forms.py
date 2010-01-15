@@ -80,7 +80,6 @@ class AuthenticationForm(forms.Form):
            elif not self.user_cache.is_active:
                raise forms.ValidationError("This account is inactive.")
 
-       # TODO: determine whether this should move to its own method.
        if self.request:
            if not self.request.session.test_cookie_worked():
                raise forms.ValidationError("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in.")
@@ -163,8 +162,7 @@ class AccountForm(forms.ModelForm):
 class ActionAdminForm(forms.ModelForm):
     class Meta:
         model = Action
-    
-    #OPTIMIZE: make function reusable by creating an abstract sluggable form
+
     def clean_slug(self):
         import re
         data = self.cleaned_data['slug']
