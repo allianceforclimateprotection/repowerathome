@@ -1,7 +1,7 @@
 <div class='action_nugget'>
 	<span class='total_points'>{{ action.total_points }} Points</span>
 	<a class='title' href='{% url rah.views.action_detail action.slug %}'>{{ action.name }}</a>
-	<p class='content'>{{ action.content|safe|linebreaks }} (<a href='{% url rah.views.action_detail action.slug %}' class='tasks_link'>toggle steps</a>)</p>
+	<div class='content'>{{ action.content|safe|linebreaks }} (<a href='{% url rah.views.action_detail action.slug %}' class='tasks_link'>toggle steps</a>)</div>
     <div class='task_list'>
     	{% for action_task in action.action_tasks %}
     		<form action="{% url rah.views.action_task action_task.id %}" class="action_task_submitter" method='post'>
