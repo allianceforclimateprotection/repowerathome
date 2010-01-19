@@ -47,6 +47,7 @@ namespace :deploy do
     desc "Min JS and CSS files"
     task :minify, :roles => :app do
         `cd static/minify; ./minify.sh`
+        run "cd #{deploy_to}/static/minify; ./minify.sh"
     end
     
     desc "Update static bucket"
