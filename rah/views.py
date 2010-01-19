@@ -234,10 +234,10 @@ def house_party(request):
     if request.method == 'POST':
         form = HousePartyForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            # TODO give some points
+            # TODO: give some points for hosting a house party
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
         else:
-            # TODO set some sort of failure message
+            # TODO: set some sort of failure message when house party form doesn't validate
             pass
     return redirect('rah.views.index')
 
@@ -245,10 +245,10 @@ def invite_friend(request):
     if request.method == 'POST':
         form = InviteFriendForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            # TODO give some points
+            # TODO: give some points for inviting a friend
             messages.add_message(request, messages.SUCCESS, 'Invitation sent. Thanks!')
         else:
-            # TODO set some sort of failure message
+            # TODO: set some sort of failure message when invite friend form doesn't validate
             pass
     return redirect('rah.views.index')
 
