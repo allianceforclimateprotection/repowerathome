@@ -1,8 +1,8 @@
 ssh_options[:keys] = %w(~/.ec2/acp-ec2-pk.pem)  
 
-set :deploy_to, "/scripts/www"
 set :application, "rah"
 set :user, "ubuntu"
+set :deploy_to, "/scripts/dev"
 
 # These things are not used at the moment
 set :scm, :git
@@ -17,9 +17,20 @@ role :app, "repowerathome.com"
 # role :web, "repowerathome.com"
 # role :db, "repowerathome.com", :primary => true
 
-namespace :deploy do
+namespace :deploy do    
+    task :staging do
+        set :deploy_to, "/scripts/staging"
+        default
+    end
+    
+    task :prod do
+        set :deploy_to, "/scripts/prod"
+        default
+    end
+    
     desc "Meta task that calls update and restart"
     task :default do
+        puts "Deploying to #{deploy_to}"
         update
         minify
         staticupload
@@ -40,7 +51,12 @@ namespace :deploy do
     
     desc "Update static bucket"
     task :staticupload, :roles => :app do
-        `python manage.py sync_media_s3 --gzip --force`
+        if deploy_to == "/scripts/prod"
+            p "Syncing media with prod s3 account"
+            `python manage.py sync_media_s3 --gzip --force`
+        else
+            p "Skipping s3 sync because target is not 'prod'"
+        end
     end
     
     desc "Sync DB"
@@ -67,36 +83,21 @@ namespace :deploy do
         puts "      -  Account......: #{url}"
         puts "      -  Username.....: #{username}"
         puts "      -  API Key......: #{api_key[0,10]}..."
-
         puts "      -  Project......: #{project}"
         puts "      -  Repository...: #{repository}"
-
-        environment_to_send = begin
-          env = (self.environment rescue self.rails_env).dup
-          env.gsub!(/\W+/, ' ')
-          env.strip!
-          env.downcase!
-          env.gsub!(/\ +/, '-')
-
-          puts "      -  Environment..: #{env}" unless env.blank?
-
-          env
-        rescue
-          ''
-        end
 
         servers = roles.values.collect{|r| r.servers}.flatten.collect{|s| s.host}.uniq.join(', ') rescue ''
 
         puts "      -  Servers......: #{servers}"
         puts "      -  Revision.....: #{revision}"
         puts "      -  Branch.......: #{branch}"
-        puts "      -  Environment..: #{environment_to_send}"
+        puts "      -  Environment..: #{deploy_to}"
 
         xml = []
         xml << "<deployment>"
         xml << "<servers>#{servers}</servers>"
         xml << "<revision>#{revision}</revision>"
-        xml << "<environment>#{environment_to_send}</environment>"
+        xml << "<environment>#{deploy_to}</environment>"
         xml << "<branch>#{branch}</branch>"
         xml << "</deployment>"
 

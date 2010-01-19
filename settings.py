@@ -1,9 +1,6 @@
 import os
 CURRENT_DIR = os.path.dirname(__file__)
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -51,7 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'www.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     #'/Users/buckley/projects/repower/www/templates',
@@ -84,9 +81,6 @@ LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/login"
 LOGOUT_URL = "/logout"
 AUTH_PROFILE_MODULE = 'rah.Profile'
-
-# MISC
-SEND_BROKEN_LINK_EMAILS = not DEBUG
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
 
