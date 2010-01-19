@@ -38,12 +38,20 @@ def index(request):
     
 def logout(request):
     response = auth.logout(request)
-    messages.success(request, "You have successfully logged out.")
+    messages.success(request, "You have successfully logged out.", extra_tags="sticky")
     return redirect("index")
     
-def password_changed(request):
-    messages.success(request, "Your password was changed successfully.")
+def password_change_done(request):
+    messages.success(request, "Your password was changed successfully.", extra_tags="sticky")
     return redirect("profile_edit", user_id=request.user.id)
+    
+def password_reset_done(request):
+    messages.success(request, "We just sent you an email with instructions for resetting your password.", extra_tags="sticky")
+    return redirect("index")
+    
+def password_reset_complete(request):
+    messages.success(request, "Password reset successfully!", extra_tags="sticky")
+    return redirect("index")
 
 @csrf_protect
 def register(request):

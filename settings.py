@@ -50,6 +50,14 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'urls'
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.request',
+    'django.core.context_processors.media',
+    'django.contrib.messages.context_processors.messages',
+)
+
 TEMPLATE_DIRS = (
     #'/Users/buckley/projects/repower/www/templates',
     os.path.join(CURRENT_DIR, 'templates'),
