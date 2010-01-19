@@ -39,16 +39,16 @@ class User(AuthUser):
     def get_welcome(self):
         return 'Welcome, %s' % (self.get_full_name()) if self.get_full_name() else 'Logged in as, %s' % (self.email)
     
-    # TODO write unit tests for get latest points
+    # TODO: write unit tests for get latest points
     def get_latest_points(self, quantity=None):
         points = Points.objects.filter(user=self).order_by('task__action' )
         return points[:quantity] if quantity else points
         
-    # TODO write unit tests for get total points
+    # TODO: write unit tests for get total points
     def get_total_points(self):
         return Points.objects.filter(user=self).aggregate(models.Sum('points'))['points__sum']
 
-    # TODO: write unit test for method
+    # TODO: write unit test for give points method
     def give_points(self, points, reason):
         """
         Gives a user a certain number of points. Check if we have an int or actiontask instance
@@ -63,12 +63,12 @@ class User(AuthUser):
         else:
             Points(user=self, points=points, reason=reason).save()
 
-    # TODO: write unit test for method
+    # TODO: write unit test for take points method
     def take_points(self, reason):
         """Take points away. Used for when a user unchecks an action task. Reason must be an ActionTask"""
         Points.objects.filter(user=self, task=reason).delete()
     
-    # TODO: write unit test for method
+    # TODO: write unit test for get chart data method
     def get_chart_data(self):
         from time import mktime
         points       = Points.objects.filter(user=self).order_by('created')
@@ -203,7 +203,7 @@ class Action(DefaultModel):
         """
         return self.actiontask_set.count()
     
-    # TODO write unit tests for action completes for user
+    # TODO: write unit tests for action completes for user
     def completes_for_user(self, user):
         """
         return the number of tasks a user has completed for an action
@@ -230,7 +230,7 @@ class ActionTask(DefaultModel):
         ordering = ['action', 'sequence']
         unique_together = ('action', 'sequence',)
         
-    # TODO write unit tests for is action task completed by user
+    # TODO: write unit tests for is action task completed by user
     def is_completed_by_user(self, user):
         """
         return whether or not the specific user has completed the task
@@ -324,17 +324,17 @@ class Profile(models.Model):
         ('A', 'Apartment'),
         ('S', 'Single Family Home'),
     )
+
     user = models.ForeignKey(AuthUser, unique=True)
     location = models.ForeignKey(Location, null=True, blank=True)
     building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES, blank=True)
     is_profile_private = models.BooleanField(default=0)
-    # TODO: does the twitter access token need to be encrypted in the database?
     twitter_access_token = models.CharField(null=True, max_length=255, blank=True)
     
     def __unicode__(self):
         return u'%s' % (self.user.email)
 
-    # TODO write get_gravatar_url unit test
+    # TODO: write get_gravatar_url unit test
     def get_gravatar_url(self, default_icon='identicon'):
         return 'http://www.gravatar.com/avatar/%s?r=g&d=%s' % (self._email_hash(), default_icon)
 

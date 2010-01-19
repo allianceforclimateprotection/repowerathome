@@ -13,7 +13,7 @@ class StatusForm(forms.Form):
         token = oauth.OAuthToken.from_string(access_token)
         if token:
             response = json.loads(update_status(token, status))
-            # TODO Give some points for this
+            # TODO: Give some points for posting to twitter
             if not response.has_key("error"):
                 return True
         return False
