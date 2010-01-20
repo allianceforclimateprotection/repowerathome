@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import auth
+from django.contrib.auth import forms as auth_forms
 from rah.models import *
 from django.forms import ValidationError
 from django.core.mail import send_mail, EmailMessage
@@ -17,7 +18,7 @@ class RegistrationForm(forms.ModelForm):
     A form that creates a user, with no privileges, from the given email and password.
     """
     email = forms.EmailField(label='Email')
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
 
     class Meta:
@@ -222,3 +223,20 @@ class InviteFriendForm(forms.Form):
         except SMTPException, e:
             return False
         return True
+        
+class SetPasswordForm(auth_forms.SetPasswordForm):
+    new_password1 = forms.CharField(min_length=5, label="New password", widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label="New password confirmation", widget=forms.PasswordInput)
+        
+class PasswordChangeForm(auth_forms.PasswordChangeForm):
+    """
+    A form that lets a user change his/her password by entering
+    their old password.
+    """
+    old_password = forms.CharField(label="Old password", widget=forms.PasswordInput)
+    new_password1 = forms.CharField(min_length=5, label="New password", widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label="New password confirmation", widget=forms.PasswordInput)
+    
+    def clean_old_password(self):
+        return super(PasswordChangeForm, self).clean_old_password()
+PasswordChangeForm.base_fields.keyOrder = ['old_password', 'new_password1', 'new_password2']

@@ -290,7 +290,7 @@ var rah = {
     mod_messages: {
       init: function(html) {
           if(html) { $('#message_box').append(html); }
-          $("#message_box ul li:not(.sticky)").each(function() {
+          $(".messages:not(.sticky)").each(function() {
               var elem = $(this).parents("ul");
               setTimeout(function() {
                   elem.slideUp(400, function(){ elem.remove(); });
@@ -299,5 +299,46 @@ var rah = {
           
           $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").remove(); });
       },
+    },
+    
+    page_password_change: {
+        init: function(){            
+            // Validate the password form
+            $("#password_change_form").validate({
+                rules: {
+                    old_password: {
+                        required: true,
+                    },
+                    new_password1: {
+        				required: true,
+        				minlength: 5
+        			},
+        			new_password2: {
+        				required: true,
+        				minlength: 5,
+        				equalTo: "#id_new_password1"
+        			},
+                },
+            });
+        },
+    },
+    
+    page_password_reset_confirm: {
+        init: function(){            
+            // Validate the password form
+            $("#password_reset_confirm").validate({
+                rules: {
+                    new_password1: {
+        				required: true,
+        				minlength: 5
+        			},
+        			new_password2: {
+        				required: true,
+        				minlength: 5,
+        				equalTo: "#id_new_password1"
+        			},
+                },
+            });
+        },
     },
 }

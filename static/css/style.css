@@ -349,7 +349,7 @@ acronym {
 
 /* Magnify stuff*/
 #twitter_post_dialog, #invite_friend_dialog, #house_party_dialog { display: none; }
-#invite_friend_dialog textarea, #twitter_post_dialog textarea, #feedback_dialog textarea{ width:100%; height: 100px;}
+#invite_friend_dialog textarea, #twitter_post_dialog textarea, #feedback_dialog textarea{ width:100%; height: 100px; }
 
 /* @group comments */
 .comment .author { margin-top: -15px; }
@@ -358,6 +358,9 @@ acronym {
 /* @group blog */
 .post_body { font-size: 14px; }
 /* @end */
+
+/* dialogs */
+.dialog { display: none; }
 
 /*
 * jQuery UI CSS Framework

@@ -1,6 +1,6 @@
 import settings
 from django.conf.urls.defaults import *
-from rah.forms import AuthenticationForm
+from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
 from basic.blog.feeds import BlogPostsFeed
 
 # Uncomment the next two lines to enable the admin:
@@ -35,9 +35,9 @@ urlpatterns += patterns('',
     url(r'^(?P<url>.*)/feed/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name='feed'),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^login/$', 'django.contrib.auth.views.login', { 'authentication_form': AuthenticationForm }, name='login'),
-    url(r'^password_change/$', 'django.contrib.auth.views.password_change', { 'post_change_redirect': '/password_change_done/' }, name='password_change'),
+    url(r'^password_change/$', 'django.contrib.auth.views.password_change', { 'post_change_redirect': '/password_change_done/', 'password_change_form': PasswordChangeForm }, name='password_change'),
     url(r'^password_reset/$', 'django.contrib.auth.views.password_reset', { 'post_reset_redirect': '/password_reset_done/' }, name='password_reset'),
-    url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', { 'post_reset_redirect': '/reset/done/' }, name='password_reset_confirm'),
+    url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', { 'post_reset_redirect': '/reset/done/', 'set_password_form': SetPasswordForm }, name='password_reset_confirm'),
     (r'^', include('django.contrib.auth.urls')),
     url(r'^admin/(.*)', admin.site.root, name='admin_root'),
     (r'^blog/', include('basic.blog.urls')),
