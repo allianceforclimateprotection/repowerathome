@@ -39,16 +39,13 @@ class User(AuthUser):
     def get_welcome(self):
         return 'Welcome, %s' % (self.get_full_name()) if self.get_full_name() else 'Logged in as, %s' % (self.email)
     
-    # TODO: write unit tests for get latest points
     def get_latest_points(self, quantity=None):
         points = Points.objects.filter(user=self).order_by('task__action' )
         return points[:quantity] if quantity else points
         
-    # TODO: write unit tests for get total points
     def get_total_points(self):
         return Points.objects.filter(user=self).aggregate(models.Sum('points'))['points__sum']
 
-    # TODO: write unit test for give points method
     def give_points(self, points, reason):
         """
         Gives a user a certain number of points. Check if we have an int or actiontask instance
@@ -63,12 +60,10 @@ class User(AuthUser):
         else:
             Points(user=self, points=points, reason=reason).save()
 
-    # TODO: write unit test for take points method
     def take_points(self, reason):
         """Take points away. Used for when a user unchecks an action task. Reason must be an ActionTask"""
         Points.objects.filter(user=self, task=reason).delete()
     
-    # TODO: write unit test for get chart data method
     def get_chart_data(self):
         from time import mktime
         points       = Points.objects.filter(user=self).order_by('created')
@@ -230,7 +225,6 @@ class ActionTask(DefaultModel):
         ordering = ['action', 'sequence']
         unique_together = ('action', 'sequence',)
         
-    # TODO: write unit tests for is action task completed by user
     def is_completed_by_user(self, user):
         """
         return whether or not the specific user has completed the task
@@ -334,7 +328,6 @@ class Profile(models.Model):
     def __unicode__(self):
         return u'%s' % (self.user.email)
 
-    # TODO: write get_gravatar_url unit test
     def get_gravatar_url(self, default_icon='identicon'):
         return 'http://www.gravatar.com/avatar/%s?r=g&d=%s' % (self._email_hash(), default_icon)
 
