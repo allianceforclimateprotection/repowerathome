@@ -123,7 +123,6 @@ class DefaultModel(models.Model):
 
 class ActionCat(DefaultModel):
     name = models.CharField(max_length=255)
-    #OPTIMIZE: we could make ActionCat.slug of type SlugField
     slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
@@ -179,7 +178,6 @@ class ActionManager(models.Manager):
 
 class Action(DefaultModel):
     name = models.CharField(max_length=255)
-    #OPTIMIZE: we could make Action.slug of type SlugField
     slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
@@ -198,7 +196,6 @@ class Action(DefaultModel):
         """
         return self.actiontask_set.count()
     
-    # TODO: write unit tests for action completes for user
     def completes_for_user(self, user):
         """
         return the number of tasks a user has completed for an action

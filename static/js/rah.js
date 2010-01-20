@@ -107,8 +107,6 @@ var rah = {
                         dataType: "json",
                         success: function(response, status){
                             if(response['valid'] != true){
-                                // TODO: Show errors for post registration form inline insead of in an alert 
-                                // (idea from Eric: Replace form with new form markup from django that inlcudes the errors)
                                 alert(response['errors']);
                                 return;
                             } else {

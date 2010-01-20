@@ -12,7 +12,6 @@ feeds = {
     'blog': BlogPostsFeed,
 }
 
-# OPTIMIZE: we can wrap the regex patterns in the url function to insure there are no reverse conflicts
 urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
     url(r'^register/$', 'register', name='register'),
