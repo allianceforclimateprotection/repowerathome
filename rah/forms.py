@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import auth
+from django.contrib.auth import forms as auth_forms
 from rah.models import *
 from django.forms import ValidationError
 from django.core.mail import send_mail, EmailMessage
@@ -17,7 +18,7 @@ class RegistrationForm(forms.ModelForm):
     A form that creates a user, with no privileges, from the given email and password.
     """
     email = forms.EmailField(label='Email')
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
 
     class Meta:
@@ -80,7 +81,6 @@ class AuthenticationForm(forms.Form):
            elif not self.user_cache.is_active:
                raise forms.ValidationError("This account is inactive.")
 
-       # TODO: determine whether this should move to its own method.
        if self.request:
            if not self.request.session.test_cookie_worked():
                raise forms.ValidationError("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in.")
@@ -164,8 +164,7 @@ class AccountForm(forms.ModelForm):
 class ActionAdminForm(forms.ModelForm):
     class Meta:
         model = Action
-    
-    #OPTIMIZE: make function reusable by creating an abstract sluggable form
+
     def clean_slug(self):
         import re
         data = self.cleaned_data['slug']
@@ -225,3 +224,20 @@ class InviteFriendForm(forms.Form):
         except SMTPException, e:
             return False
         return True
+        
+class SetPasswordForm(auth_forms.SetPasswordForm):
+    new_password1 = forms.CharField(min_length=5, label="New password", widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label="New password confirmation", widget=forms.PasswordInput)
+        
+class PasswordChangeForm(auth_forms.PasswordChangeForm):
+    """
+    A form that lets a user change his/her password by entering
+    their old password.
+    """
+    old_password = forms.CharField(label="Old password", widget=forms.PasswordInput)
+    new_password1 = forms.CharField(min_length=5, label="New password", widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label="New password confirmation", widget=forms.PasswordInput)
+    
+    def clean_old_password(self):
+        return super(PasswordChangeForm, self).clean_old_password()
+PasswordChangeForm.base_fields.keyOrder = ['old_password', 'new_password1', 'new_password2']

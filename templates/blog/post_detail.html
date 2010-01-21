@@ -19,13 +19,11 @@
 
 
 {% block content %}
-	{% load blog markup %}
-
 	<div class="post">
 		{% with object as post %}
 			<div>
 				{% include 'blog/_post_header.html' %}
-				<div class="post_body">{{ post.body|markdown:"safe" }}</div>
+				<div class="post_body">{{ post.body|safe }}</div>
 			</div>
 		{% endwith %}
 	</div>

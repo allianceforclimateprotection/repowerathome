@@ -27,7 +27,7 @@ var rah = {
                             success: function(messages_html) {
                                 $("#feedback_dialog").dialog("close");
                                 rah.mod_messages.init(messages_html);
-                            }
+                            },
                         });
                     },
                 },
@@ -38,6 +38,7 @@ var rah = {
             // Attach functionality to feedback links
             $(".feedback_link").click(function(){
                 $("#feedback_dialog").load("/feedback/", function(){ // Load the feedback form via ajax
+                    $("#loading").hide();
                     $("#feedback_submit").hide(); // We don't need this button when viewed inside dialog
                     $("#id_url").val(location.href); // Set the url to the current url
                     $("#feedback_dialog").dialog("open"); // Open the dialog with feedback form
@@ -45,6 +46,7 @@ var rah = {
                 return false;
             });
             rah.mod_messages.init();
+            rah.mod_ajax_setup.init();
         },
     },
     
@@ -107,8 +109,6 @@ var rah = {
                         dataType: "json",
                         success: function(response, status){
                             if(response['valid'] != true){
-                                // TODO: Show errors for post registration form inline insead of in an alert 
-                                // (idea from Eric: Replace form with new form markup from django that inlcudes the errors)
                                 alert(response['errors']);
                                 return;
                             } else {
@@ -292,7 +292,7 @@ var rah = {
     mod_messages: {
       init: function(html) {
           if(html) { $('#message_box').append(html); }
-          $("#message_box ul li:not(.sticky)").each(function() {
+          $(".messages:not(.sticky)").each(function() {
               var elem = $(this).parents("ul");
               setTimeout(function() {
                   elem.slideUp(400, function(){ elem.remove(); });
@@ -301,5 +301,59 @@ var rah = {
           
           $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").remove(); });
       },
+    },
+    
+    page_password_change: {
+        init: function(){            
+            // Validate the password form
+            $("#password_change_form").validate({
+                rules: {
+                    old_password: {
+                        required: true,
+                    },
+                    new_password1: {
+        				required: true,
+        				minlength: 5
+        			},
+        			new_password2: {
+        				required: true,
+        				minlength: 5,
+        				equalTo: "#id_new_password1"
+        			},
+                },
+            });
+        },
+    },
+    
+    page_password_reset_confirm: {
+        init: function(){            
+            // Validate the password form
+            $("#password_reset_confirm").validate({
+                rules: {
+                    new_password1: {
+        				required: true,
+        				minlength: 5
+        			},
+        			new_password2: {
+        				required: true,
+        				minlength: 5,
+        				equalTo: "#id_new_password1"
+        			},
+                },
+            });
+        },
+    },
+    
+    mod_ajax_setup: {
+        init: function() {
+            $.ajaxSetup({
+                beforeSend: function() { $("#loading").show(); },
+                complete: function() { $("#loading").hide(); },
+                error: function(XMLHttpRequest, textStatus) { 
+                    var error_html = "<ul class='messages'><li class='messages error'>" + textStatus + "<a href='#' class='dismiss'>close</a></li></ul>"
+                    rah.mod_messages.init(error_html);
+                },
+            });
+        },
     },
 }

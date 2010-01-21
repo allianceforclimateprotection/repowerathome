@@ -8,7 +8,6 @@ set :deploy_to, "/scripts/dev"
 set :scm, :git
 set :repository, "git@codebasehq-deploy:rah/rah/rah.git"
 set :branch, "master"
-# TODO: replace awk command with ruby processing
 set :revision, `git ls-remote origin #{branch} | awk 'BEGIN { FS = " " } ; { print $1 }'`.chomp.strip
 set :username, `git config codebase.username`.chomp.strip
 set :api_key, `git config codebase.apikey`.chomp.strip
