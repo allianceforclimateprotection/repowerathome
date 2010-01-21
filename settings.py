@@ -20,7 +20,6 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-#MEDIA_ROOT = '/Users/buckley/projects/repower/www/static'
 MEDIA_ROOT = os.path.join(CURRENT_DIR, 'static')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
@@ -46,6 +45,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -82,6 +82,7 @@ INSTALLED_APPS = (
     'basic.inlines',
     'tagging',
     'twitter_app',
+    # 'debug_toolbar',
 )
 
 AUTHENTICATION_BACKENDS = ('rah.backends.EmailBackend',)

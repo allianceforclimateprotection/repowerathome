@@ -23,15 +23,18 @@
 {% endblock %}
 {% block minorcol %}
     <div>
-		<img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar" />
-		<h2>{{ profile.user.get_name }}</h2>
+		<img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
+		<h2>{{ profile.user.get_name }}</h2><br class="spacer"/>
 		<p>
 		{% if profile.location %}
-            {{ profile.location }}<br/>
+            <b>Location: </b>{{ profile.location }}<br/>
 		{% endif %}
-		{% ifequal user.id profile.user.id %}
-			<a href="{% url rah.views.profile_edit profile.user.id %}">Edit your profile</a>
-		{% endifequal %}
+		{% if profile.building_type %}
+            <b>Home:</b> {{ profile.get_building_type_display }}<br/>
+		{% endif %}
+		{% if profile.about %}
+            <b>About: </b>{{ profile.about }}<br/>
+		{% endif %}
 		</p>
 	</div>
 	{% if completed %}

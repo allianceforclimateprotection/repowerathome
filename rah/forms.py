@@ -127,8 +127,9 @@ class FeedbackForm(forms.ModelForm):
 class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ("zipcode", "building_type", "is_profile_private")
-        
+        fields = ("zipcode", "building_type", "about", "is_profile_private")
+    
+    about = forms.CharField(max_length=255, required=False, label="About you")   
     zipcode = forms.CharField(max_length=5, required=False)
     is_profile_private = forms.BooleanField(label="Make Profile Private", required=False)
     
