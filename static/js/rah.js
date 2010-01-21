@@ -27,7 +27,7 @@ var rah = {
                             success: function(messages_html) {
                                 $("#feedback_dialog").dialog("close");
                                 rah.mod_messages.init(messages_html);
-                            }
+                            },
                         });
                     },
                 },
@@ -38,6 +38,7 @@ var rah = {
             // Attach functionality to feedback links
             $(".feedback_link").click(function(){
                 $("#feedback_dialog").load("/feedback/", function(){ // Load the feedback form via ajax
+                    $("#loading").hide();
                     $("#feedback_submit").hide(); // We don't need this button when viewed inside dialog
                     $("#id_url").val(location.href); // Set the url to the current url
                     $("#feedback_dialog").dialog("open"); // Open the dialog with feedback form
@@ -45,6 +46,7 @@ var rah = {
                 return false;
             });
             rah.mod_messages.init();
+            rah.mod_ajax_setup.init();
         },
     },
     
@@ -337,6 +339,19 @@ var rah = {
         				minlength: 5,
         				equalTo: "#id_new_password1"
         			},
+                },
+            });
+        },
+    },
+    
+    mod_ajax_setup: {
+        init: function() {
+            $.ajaxSetup({
+                beforeSend: function() { $("#loading").show(); },
+                complete: function() { $("#loading").hide(); },
+                error: function(XMLHttpRequest, textStatus) { 
+                    var error_html = "<ul class='messages'><li class='messages error'>" + textStatus + "<a href='#' class='dismiss'>close</a></li></ul>"
+                    rah.mod_messages.init(error_html);
                 },
             });
         },

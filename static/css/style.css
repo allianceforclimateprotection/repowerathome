@@ -147,6 +147,16 @@ acronym {
 	border: none;
 }
 
+#loading {
+    position: fixed;
+    top: 0;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: none;
+    padding: 10px;
+}
+
 /* Messages */
 #message_box { text-align: center; width: 960px; margin-left: auto; margin-right: auto;}
 #message_box ul { list-style-type: none; }
