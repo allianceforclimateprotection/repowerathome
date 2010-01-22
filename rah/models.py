@@ -318,6 +318,7 @@ class Profile(models.Model):
     user = models.ForeignKey(AuthUser, unique=True)
     location = models.ForeignKey(Location, null=True, blank=True)
     building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES, blank=True)
+    about = models.CharField(null=True, blank=True, max_length=255)
     is_profile_private = models.BooleanField(default=0)
     twitter_access_token = models.CharField(null=True, max_length=255, blank=True)
     
