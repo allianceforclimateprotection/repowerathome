@@ -1,5 +1,4 @@
-import json
-import hashlib
+import json, hashlib
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import datetime

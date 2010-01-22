@@ -4,7 +4,6 @@
 {% block body_class %}{{ block.super }} post_detail{% endblock %}
 {% block body_id %}post_{{ object.id }}{% endblock %}
 
-
 {% block content_title %}
 	<h2>{{ object.title }}</h2>
 	<p class="other_posts">
@@ -16,7 +15,6 @@
 		{% endif %}
 	</p>
 {% endblock %}
-
 
 {% block content %}
 	<div class="post">
