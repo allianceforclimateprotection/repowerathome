@@ -1,0 +1,9 @@
+{% if records %}
+    {% for record in records %}
+		{% if record.activity.actiontask %}
+			<b>{{ record.activity.name }} ({{ record.points }} points)</b><br/>
+		{% else %}
+			<b>{{ record.activity.name }} ({{ record.points }} points)</b><br/>
+		{% endif %}
+    {% endfor %}
+{% endif %}
