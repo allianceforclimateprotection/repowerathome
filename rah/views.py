@@ -147,7 +147,6 @@ def profile(request, user_id):
 
 @login_required
 def profile_edit(request, user_id):
-    """docstring for inquiry"""
     if request.user.id <> int(user_id):
         return forbidden(request, "Sorry, but you do not have permissions to edit this profile.")
     if request.method == 'POST':
