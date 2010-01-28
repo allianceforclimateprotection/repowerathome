@@ -1,3 +1,4 @@
+import json, logging
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import auth
 from django.contrib.comments.views import comments
@@ -11,7 +12,6 @@ from django.contrib import messages
 from rah.models import *
 from rah.forms import *
 from twitter_app.forms import StatusForm as TwitterStatusForm
-import json
 
 @csrf_protect
 def index(request):
@@ -90,16 +90,20 @@ def action_show(request):
 def action_detail(request, action_slug):
     """Detail page for an action"""
     # Lookup the action
-    action = get_object_or_404(Action, slug=action_slug)
-    action_tasks = ActionTask.get_action_tasks_by_action_and_user(action, request.user)
-    users_in_progress, users_completed = User.objects.with_completes_for_action(action)[1:3]
+    dict = {}
+    dict['action'] = get_object_or_404(Action, slug=action_slug)
+    dict['action_tasks'] = ActionTask.get_action_tasks_by_action_and_user(dict['action'], request.user)
+    users_in_progress, users_completed = User.objects.with_completes_for_action(dict['action'])[1:3]
     
-    return render_to_response('rah/action_detail.html', {
-                                'action': action,
-                                'action_tasks': action_tasks,
-                                'users_in_progress': users_in_progress,
-                                'users_completed': users_completed
-                              }, context_instance=RequestContext(request))
+    dict['num_users_in_progress'] = len(users_in_progress)
+    dict['show_users_in_progress'] = [user for user in users_in_progress if not user.get_profile().is_profile_private][:5]
+    dict['num_noshow_users_in_progress'] = dict['num_users_in_progress'] - len(dict['show_users_in_progress'])
+    
+    dict['num_users_completed'] = len(users_completed)
+    dict['show_users_completed'] = [user for user in users_completed if not user.get_profile().is_profile_private][:5]
+    dict['num_noshow_users_completed'] = dict['num_users_completed'] - len(dict['show_users_completed'])
+    
+    return render_to_response('rah/action_detail.html', dict, context_instance=RequestContext(request))
                               
 def action_task(request, action_task_id):
     #  Handle the POST if a task is being completed

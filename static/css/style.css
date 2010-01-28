@@ -373,6 +373,8 @@ acronym {
 /* dialogs */
 .dialog { display: none; }
 
+.whos_working { margin-left: 25px; font-size: 0.9em; }
+
 /*
 * jQuery UI CSS Framework
 * Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)

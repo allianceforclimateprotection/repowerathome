@@ -1,5 +1,4 @@
-import json
-import hashlib
+import json, hashlib
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import datetime
@@ -221,12 +220,6 @@ class ActionTask(DefaultModel):
     class Meta:
         ordering = ['action', 'sequence']
         unique_together = ('action', 'sequence',)
-        
-    def is_completed_by_user(self, user):
-        """
-        return whether or not the specific user has completed the task
-        """
-        return len(UserActionTask.objects.filter(action_task=self, user=user)) == 1
 
     # OPTIMIZE pull this static method out and place in a manager
     @staticmethod

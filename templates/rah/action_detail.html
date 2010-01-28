@@ -35,7 +35,27 @@
     <h2>Action Tools</h2>
     <p><a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a></p>
 	<h2>Who's doing this?</h2>
-	<span class='total_users'>{{ users_completed|length }}</span> pe{{ users_completed|length|pluralize:"rson has,ople have"}} completed this action.<br/>
-	<span class='total_users'>{{ users_in_progress|length }}</span> pe{{ users_in_progress|length|pluralize:"rson is,ople are"}} working on it.
+	<span class='total_users'>{{ num_users_completed }}</span> pe{{ num_users_completed|pluralize:"rson has,ople have" }} completed this action.
+	{% if num_users_completed %}
+		<ul class="whos_working">
+			{% for user in show_users_completed %}
+				<li><a href="{% url profile user.id %}">{{ user.get_name }}</a> has completed this.</li>
+			{% endfor %}
+			{% if num_noshow_users_completed > 0 %}
+				{{ num_noshow_users_completed }} additional user{{ num_noshow_users_completed|pluralize:" has,s have" }} completed this.
+			{% endif %}
+		</ul>
+	{% endif %}
+	<span class='total_users'>{{ num_users_in_progress }}</span> pe{{ num_users_in_progress|pluralize:"rson is,ople are" }} working on it.
+	{% if num_users_in_progress %}
+		<ul class="whos_working">
+			{% for user in show_users_in_progress %}
+				<li><a href="{% url profile user.id %}">{{ user.get_name }}</a> is working on this.</li>
+			{% endfor %}
+			{% if num_noshow_users_in_progress > 0 %}
+				{{ num_noshow_users_in_progress }} additional user{{ num_noshow_users_in_progress|pluralize:" has,s have" }} completed this.
+			{% endif %}
+		</ul>
+	{% endif %}
 {% endblock %}
 {% block js %}page_action_detail{% endblock %}
