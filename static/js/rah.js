@@ -58,26 +58,6 @@ var rah = {
             // Funnel step 1: Start on registration page
             _gaq.push(['_trackPageview', '/reg/start']);
             
-            // Set up a dialog window for opening later
-            $('#dialog').dialog({ 
-                buttons: {
-                    "Finish Registration": function() { 
-                        // Funnel step 3: Post registration questions submitted
-                        _gaq.push(['_trackPageview', '/reg/questions']);
-                        
-                        $("#profile_form").submit();
-                    },
-                    "Skip": function() { 
-                        window.location = "/"
-                    },
-                },
-                modal: true,
-                resizable: false,
-                draggable: false,
-                autoOpen: false,
-                title: "Almost done...",
-            });
-            
             // Validate the registration form
             $("#registration_form").validate({
                 rules: {
@@ -89,6 +69,10 @@ var rah = {
                             type: "post",
                         }
                     },
+                    first_name: {
+        				required: true,
+        				minlength: 2
+        			},
                     password1: {
         				required: true,
         				minlength: 5
