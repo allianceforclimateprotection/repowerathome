@@ -1,4 +1,5 @@
 from django.db import models
+from utils import profileit, progressBar
 
 class DefaultModel(models.Model):
     name = models.CharField(max_length=50)
@@ -9,11 +10,62 @@ class DefaultModel(models.Model):
     def __unicode__(self):
         return self.name
         
+class GroupManager(models.Manager):
+    def create_test_group(self, number):
+        """create 1 group with x random users"""
+        import random
+        id = self.all().aggregate(models.Max("id"))["id__max"]
+        next_id = id + 1 if id else 1
+        name = "group_%s_%s" % (number, next_id)
+        group = Group(name=name)
+        group.save()
+        user_id_list = [user["id"] for user in User.objects.all().values("id")]
+        for i in range(number):
+            user_id = user_id_list.pop(random.randint(0, len(user_id_list)-1))
+            group.user_set.add(User.objects.get(id=user_id))
+        return group
+        
 class Group(DefaultModel):
-    pass
+    objects = GroupManager()
+    
+    def how_many_members(self):
+        return self.user_set.all().count()
+      
+    def completed_actions_by_user(self):
+        """
+        what actions have been completed by users in this group and how many users have completed each action
+        """
+        actions = Action.objects.filter(actiontask__record__user__groups=self).extra(select={'user_id': 'demo_user.id'}).annotate(user_completes=models.Count("actiontask__record__user"))        
+        completed = dict([(action, []) for action in actions if action.total_tasks == action.user_completes])
+        [completed[action].append(action.user_id) for action in actions if action.total_tasks == action.user_completes]
+        
+        return completed
+        
+    def completed_actions_by_user_denorm(self):
+        """
+        what actions have been completed by users in this group and how many users have completed each action
+        """
+        return list(Action.objects.filter(useractionprogress__user__groups=self, useractionprogress__completes=models.F("total_tasks")))
+        
+    def members_with_points(self):
+        return list(User.objects.filter(groups=self).annotate(total_points=models.Sum("record__points")))
+        
+    def get_latest_records(self, quantity=None):
+        records = Record.objects.filter(user__groups=self)
+        return records[:quantity] if quantity else list(records)
+        
+class UserManager(models.Manager):
+    def create_test_users(self, number):
+        """create x number of users with incremental names"""
+        id = self.all().aggregate(models.Max("id"))["id__max"]
+        next_id = id + 1 if id else 1
+        for id in range(number):
+            name = "user_%s" % (id+next_id)
+            User(name=name).save()
         
 class User(DefaultModel):
     groups = models.ManyToManyField(Group)
+    objects = UserManager()
     
     def get_latest_records(self, quantity=None):
         records = self.record_set.all()
@@ -22,6 +74,12 @@ class User(DefaultModel):
     def get_total_points(self):
         return self.record_set.all().aggregate(models.Sum("points"))["points__sum"]
         
+    def record_activity(self, activity):
+        return Record(user=self, activity=activity, points=activity.points).save()
+        
+    def unrecord_activity(self, activity):
+        Record.objects.filter(user=self, activity=activity).delete()
+     
     def actions_with_additions(self):
         """
         get a queryset of action objects, the actions will have three additional attributes
@@ -60,22 +118,18 @@ class User(DefaultModel):
 
         return (actions, not_complete, in_progress, completed)
         
-    def record_activity(activity):
-        Record(user=self, activity=activity, points=activity.points).save()
-    
-    def unrecord_activity(activity):
-        Record.objects.filter(user=self, activity=activity).delete()
-        
     def get_chart_data(self):
-        tooltip_template = loader.get_template("rah/_chart_tooltip.html")
         records = self.get_latest_records().select_related().order_by("created")
         
-        dates = dict([(action.created.date, ChartPoint(action.created.date, tooltip_template)) for record in records]) #create a new dict of dates to ChartPoints
+        dates = dict([(record.created.date, ChartPoint(record.created.date)) for record in records]) #create a new dict of dates to ChartPoints
         [dates[record.created.date].add_record(record) for record in records] #for each record add it to its cooresponding ChartPoint
         
-        return json.dumps({ "point_data": [(date.date, date.points) for date in dates], "tooltips": [(date.render_tooltip()) for date in dates] })
+        return dates
     
 class Action(DefaultModel):
+    total_tasks = models.IntegerField(default=0)
+    total_points = models.IntegerField(default=0)
+    user_progress = models.ManyToManyField(User, through="UserActionProgress")
     
     def users_with_completes(self):
         """
@@ -93,6 +147,22 @@ class Action(DefaultModel):
         completed = [user for user in users if total_tasks == user.completes]
 
         return (users, in_progress, completed)
+        
+    def users_with_completes_denorm(self):
+        """
+        return a 3-tuple query set of user object lists, such that each user object has an additional attribute, completes,
+        which identifies how many tasks the user has completed for the given action.
+
+        Note: only users that have began completeing task for the action will be listed
+
+        The first list in the tuple is for all users that have made progress on the action, the second list is for all users
+        that are working on the action (in progress) and the final list is for all users that have completed the action
+        """
+        users = User.objects.filter(useractionprogress__action=self).extra(select={"completes": "completes"})
+        in_progress = [user for user in users if self.total_tasks > user.completes and user.completes > 0]
+        completed = [user for user in users if self.total_tasks == user.completes]
+
+        return (users, in_progress, completed)
     
 class Activity(DefaultModel):
     points = models.IntegerField(blank=True, null=True)
@@ -101,28 +171,100 @@ class Activity(DefaultModel):
 class ActionTask(Activity):
     action = models.ForeignKey(Action)
     
+class RecordManager(models.Manager):
+    def create_random_records(self, mean, sigma=3.5):
+        import math, random
+        users = [user["id"] for user in User.objects.all().values("id")]
+        activities = Activity.objects.all()
+        activities_list = [act.id for act in activities]
+        activities_dict = dict([(act.id, act) for act in activities])
+        activities_len = len(activities_list)
+        prog = progressBar(0, len(users), 50)
+        oldprog = str(prog)
+        for idx, user_id in enumerate(users):
+            prog.updateAmount(idx)
+            if oldprog != str(prog):
+                print prog
+                oldprog = str(prog)
+            acopy = list(activities_list)
+            records_to_create = int((random.gauss(mean, sigma) / 100) * activities_len)
+            for i in range(records_to_create):
+                activity_id = acopy.pop(random.randint(0, len(acopy)-1))
+                Record(user_id=user_id, activity_id=activity_id, points=activities_dict[activity_id].points).save()
+        print
+
 class Record(models.Model):
     user = models.ForeignKey(User)
     activity = models.ForeignKey(Activity)
     points = models.IntegerField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
+    objects = RecordManager()
+    
+    class Meta:
+        ordering = ["user", "activity", "created"]
     
     def __unicode__(self):
         return "%s records %s at %s" % (self.user, self.activity, self.created)
         
+    # def __cmp__(self, other):
+    #     if self.user != other.user:
+    #         return cmp(self.user, other.user)
+    #     try:
+    #         action = self.activity.actiontask.action
+    #     except Exception:
+    #         action = None
+    #     try:
+    #         oaction = other.activity.actiontask.action
+    #     except Exception:
+    #         oaction = None
+    #     return cmp(action, oaction) if action != oaction else cmp(self.created, other.created)
+    
+class UserActionProgress(models.Model):
+        user = models.ForeignKey(User)
+        action = models.ForeignKey(Action)
+        completes = models.IntegerField(default=0)
+        
 class ChartPoint(object):
     """docstring for ChartPoint"""
-    def __init__(self, date, tooltip_template):
+    def __init__(self, date):
         super(ChartPoint, self).__init__()
         self.date = date
-        self.tooltip_template = tooltip_template
         self.points = 0
         self.records = []
         
     def add_record(self, record):
         self.points += record.points
         self.records.append(record)
+
+def actiontask_added(sender, **kwargs):
+    actiontask_table_changed(sender, increase=True, **kwargs)
+    
+def actiontask_removed(sender, **kwargs):
+    actiontask_table_changed(sender, increase=False, **kwargs)
+
+def actiontask_table_changed(sender, instance, increase, **kwargs):
+    print "instance is: %s" % instance.id
+    if instance.id:
+        instance.action.total_tasks += 1 if increase else -1
+        instance.action.total_points += instance.points if increase else (-1 * instance.points)
+        instance.action.save()
+    
+models.signals.post_save.connect(actiontask_added, sender=ActionTask)
+models.signals.pre_delete.connect(actiontask_removed, sender=ActionTask)
+
+def record_added(sender, **kwargs):
+    record_table_changed(sender, increase=True, **kwargs)
+    
+def record_removed(sender, **kwargs):
+    record_table_changed(sender, increase=False, **kwargs)
+
+def record_table_changed(sender, instance, increase, **kwargs):
+    try:
+        obj, created = UserActionProgress.objects.get_or_create(user=instance.user, action=instance.activity.actiontask.action)
+        obj.completes += 1 if increase else -1
+        obj.save()
+    except Exception:
+        pass
         
-    def render_tooltip(self):
-        return self.tooltip_template.render(Context(self.records))
-        
+models.signals.post_save.connect(record_added, sender=Record)
+models.signals.pre_delete.connect(record_removed, sender=Record)
