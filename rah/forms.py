@@ -18,12 +18,15 @@ class RegistrationForm(forms.ModelForm):
     A form that creates a user, with no privileges, from the given email and password.
     """
     email = forms.EmailField(label='Email')
+    first_name = forms.CharField(min_length=2)
+    zipcode = forms.CharField(max_length=5, required=False)
     password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
-
+    
+    
     class Meta:
         model = User
-        fields = ("email",)
+        fields = ("first_name", "last_name", "email", )
 
     def clean(self):
         self.instance.username = hashlib.md5(self.cleaned_data.get("email", "")).hexdigest()[:30] 
@@ -32,9 +35,6 @@ class RegistrationForm(forms.ModelForm):
         return self.cleaned_data
 
     def clean_email(self):
-        """
-        Ensure that the email address is valid and unique
-        """
         email = self.cleaned_data['email']
         try:
             User.objects.get(email=email)
@@ -50,6 +50,19 @@ class RegistrationForm(forms.ModelForm):
         if len(password2) < 5:
             raise forms.ValidationError("Your password must contain at least 5 characters.")
         return password2
+
+    # OPTIMIZE: This code is duplicated in the profile form
+    def clean_zipcode(self):
+        data = self.cleaned_data['zipcode'].strip()
+        if not len(data):
+            self.instance.location = None
+            return
+        if len(data) <> 5:
+            raise forms.ValidationError("Please enter a 5 digit zipcode")
+        try:
+            self.cleaned_data["location"] = Location.objects.get(zipcode=data)
+        except Location.DoesNotExist, e:
+            raise forms.ValidationError("Zipcode is invalid")
 
 class AuthenticationForm(forms.Form):
    """
@@ -144,6 +157,7 @@ class ProfileEditForm(forms.ModelForm):
             self.instance.location = Location.objects.get(zipcode=data)
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
+
 
 class AccountForm(forms.ModelForm):
     """docstring for AccountForm"""

@@ -55,29 +55,23 @@ def password_reset_complete(request):
 
 @csrf_protect
 def register(request):
-    profileForm = ProfileEditForm()
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
-            Profile.objects.create(user=user)
+            
+            # Create a profile for the user
+            loc = form.cleaned_data["location"] if "location" in form.cleaned_data else None
+            Profile.objects.create(user=user, location=loc)
+            
             messages.success(request, 'Thanks for registering.')
-            
-            # If this is an ajax request, then return the new user ID
-            if request.is_ajax():
-                return HttpResponse(json.dumps({'valid': True, 'userid': user.id }))
-            
-            return redirect("profile_edit", user_id=user.id)
-        elif request.is_ajax():
-            # This should never happen if the client side validation is working properly
-            return HttpResponse(json.dumps({'valid': False, 'errors': eval(repr(form.errors)) }))
+            return redirect("index")
     else:
         form = RegistrationForm()
     return render_to_response("registration/register.html", {
         'form': form,
-        'profileForm': profileForm,
     }, context_instance=RequestContext(request))
 
 def action_show(request):
@@ -151,7 +145,6 @@ def profile(request, user_id):
 
 @login_required
 def profile_edit(request, user_id):
-    """docstring for inquiry"""
     if request.user.id <> int(user_id):
         return forbidden(request, "Sorry, but you do not have permissions to edit this profile.")
     if request.method == 'POST':
