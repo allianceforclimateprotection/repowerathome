@@ -34,8 +34,9 @@ print "Running Group tests..."
 timeit(group.how_many_members)()
 timeit(group.completed_actions_by_user)()
 timeit(group.completed_actions_by_user_denorm)()
-timeit(group.members_with_points)()
-timeit(group.get_latest_records)()
+timeit(group.completed_actions_by_user_denorm_best)()
+timeit(group.members)(50)
+timeit(group.get_latest_records)(50)
 # 
 users = User.objects.all()
 user = users[random.randint(0, len(users) - 1)]
