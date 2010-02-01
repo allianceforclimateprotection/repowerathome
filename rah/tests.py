@@ -159,7 +159,7 @@ class ProfileTest(TestCase):
         url = self.profile.get_gravatar_url()
         self.failUnlessEqual(url, self.expected_url)
     
-    def test__email_hash(self):
+    def test_email_hash(self):
         email_hash = self.profile._email_hash()
         self.failUnlessEqual(email_hash, self.expected_hash)
         

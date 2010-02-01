@@ -11,6 +11,7 @@ from django.forms.formsets import formset_factory
 from django.contrib import messages
 from rah.models import *
 from rah.forms import *
+from settings import GA_TRACK_PAGEVIEW
 from twitter_app.forms import StatusForm as TwitterStatusForm
 
 @csrf_protect
@@ -67,6 +68,8 @@ def register(request):
             Profile.objects.create(user=user, location=loc)
             
             messages.success(request, 'Thanks for registering.')
+            messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
+            
             return redirect("index")
     else:
         form = RegistrationForm()
