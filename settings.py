@@ -45,7 +45,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -74,14 +74,11 @@ INSTALLED_APPS = (
     'django.contrib.comments',
     'django.contrib.sites',
     'django.contrib.messages',
-    'django_extensions',
-    'debug_toolbar',
     'rah',
     'basic.blog',
     'basic.inlines',
     'tagging',
     'twitter_app',
-    # 'debug_toolbar',
 )
 
 AUTHENTICATION_BACKENDS = ('rah.backends.EmailBackend',)

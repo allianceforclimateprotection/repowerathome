@@ -47,8 +47,15 @@ class Group(DefaultModel):
         """
         return list(Action.objects.filter(useractionprogress__user__groups=self, useractionprogress__completes=models.F("total_tasks")))
         
-    def members_with_points(self):
-        return list(User.objects.filter(groups=self).annotate(total_points=models.Sum("record__points")))
+    def completed_actions_by_user_denorm_best(self):
+        """
+        what actions have been completed by users in this group and how many users have completed each action
+        """
+        return list(Action.objects.filter(useractionprogress__user__groups=self, useractionprogress__completed=1).annotate(users_completed=models.Count("useractionprogress__completed")))
+        
+    def members(self, quantity=None):
+        members = self.user_set.all()
+        return members[:quantity] if quantity else list(members)
         
     def get_latest_records(self, quantity=None):
         records = Record.objects.filter(user__groups=self)
@@ -68,6 +75,7 @@ class UserManager(models.Manager):
         return user_ids
         
 class User(DefaultModel):
+    total_points = models.IntegerField(default=0)
     groups = models.ManyToManyField(Group)
     objects = UserManager()
     
@@ -219,6 +227,7 @@ class Record(models.Model):
     user = models.ForeignKey(User)
     activity = models.ForeignKey(Activity)
     points = models.IntegerField(blank=True, null=True)
+    message = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
     objects = RecordManager()
     
@@ -283,6 +292,9 @@ def record_removed(sender, **kwargs):
 
 def record_table_changed(sender, instance, increase, **kwargs):
     # TODO: this entire function needs to be wrapped in a transaction
+    user = instance.user
+    user.total_points += instance.points if increase else (-1 * instance.points)
+    user.save()
     try:
         action = instance.activity.actiontask.action
         obj, created = UserActionProgress.objects.get_or_create(user=instance.user, action=action)
