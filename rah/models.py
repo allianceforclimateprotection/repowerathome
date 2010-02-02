@@ -46,11 +46,9 @@ class User(AuthUser):
         return records[:quantity] if quantity else records
         
     def record_activity(self, activity):
-        print "activity points: %s" % activity.points
-        Record(user=self, activity=activity, points=activity.points).save()
+        Record(user=self, activity=activity, points=activity.points, message=activity.name).save()
 
     def unrecord_activity(self, activity):
-        print "activity points: %s" % activity.points
         Record.objects.filter(user=self, activity=activity).delete()
         
     def get_chart_data(self):

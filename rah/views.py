@@ -234,6 +234,7 @@ def house_party(request):
     if request.method == 'POST':
         form = HousePartyForm(request.POST)
         if form.is_valid() and form.send(request.user):
+            request.user.record_activity(Activity.objects.get(name="house-party"))
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
         else:
             pass
@@ -243,6 +244,7 @@ def invite_friend(request):
     if request.method == 'POST':
         form = InviteFriendForm(request.POST)
         if form.is_valid() and form.send(request.user):
+            request.user.record_activity(Activity.objects.get(name="friend-invite"))
             messages.add_message(request, messages.SUCCESS, 'Invitation sent. Thanks!')
         else:
             pass
