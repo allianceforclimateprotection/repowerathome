@@ -88,6 +88,11 @@ LOGOUT_URL = "/logout"
 AUTH_PROFILE_MODULE = 'rah.Profile'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
+GA_TRACK_PAGEVIEW = 50
+MESSAGE_TAGS = {
+    GA_TRACK_PAGEVIEW: 'ga_track_pageview',
+}
+
 
 # sync media s3
 AWS_ACCESS_KEY_ID = ''

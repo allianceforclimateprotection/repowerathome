@@ -136,3 +136,19 @@ class ActionTest(TestCase):
         action = Action.objects.get(id=self.a.id)
         self.failUnlessEqual(action.users_with_completes()[0], 0)
         self.failUnlessEqual(action.users_with_completes()[2], 2)
+        
+class ProfileTest(TestCase):
+    def setUp(self):
+        test_user_email    = "test@test.com"
+        user               = User(username='1', id=1, email=test_user_email)
+        self.profile       = Profile.objects.create(user=user)
+        self.expected_url  = "http://www.gravatar.com/avatar/b642b4217b34b1e8d3bd915fc65c4452?r=g&d=identicon"
+        self.expected_hash = "b642b4217b34b1e8d3bd915fc65c4452"
+        
+    def test_get_gravatar_url(self):
+        url = self.profile.get_gravatar_url()
+        self.failUnlessEqual(url, self.expected_url)
+    
+    def test_email_hash(self):
+        email_hash = self.profile._email_hash()
+        self.failUnlessEqual(email_hash, self.expected_hash)

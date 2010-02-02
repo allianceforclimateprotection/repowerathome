@@ -55,15 +55,19 @@ var rah = {
     **/
     page_register: {
         init: function(){
-            // Funnel step 1: Start on registration page
-            _gaq.push(['_trackPageview', '/reg/start']);
-            
             // Validate the registration form
             $("#registration_form").validate({
                 rules: {
                     email: {
                         required: true,
                         email: true,
+                        remote: {
+                            url: "/validate/",
+                            type: "post",
+                        }
+                    },
+                    zipcode: {
+                        required: false,
                         remote: {
                             url: "/validate/",
                             type: "post",
@@ -87,27 +91,10 @@ var rah = {
                     email: {
                         remote: "That email is already registered",
                     },
+                    zipcode: {
+                        remote: "We couldn't locate this zipcode",
+                    },
                 },
-                submitHandler: function(form) {                    
-                    $(form).ajaxSubmit({
-                        dataType: "json",
-                        success: function(response, status){
-                            if(response['valid'] != true){
-                                alert(response['errors']);
-                                return;
-                            } else {
-                                // Set the action of the profile form with the freshly minted user id
-                                $("#profile_form").attr("action", "/user/edit/" + response['userid'] + "/");
-                                
-                                // Show the dialog with profile form
-                                $('#dialog').dialog('open');
-                                
-                                // Funnel step 2: Post registration questions popped up
-                                _gaq.push(['_trackPageview', '/reg/questions']);
-                            }
-                        }
-                    });
-                }
             });
             // Validate the post registration questions form
             $("#profile_form").validate({

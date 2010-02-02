@@ -10,13 +10,5 @@
 </form>
 <a href="{% url django.contrib.auth.views.login %}">Log in</a> | 
 <a href="{% url django.contrib.auth.views.password_reset %}">Recover password</a>
-<div id="dialog" class="dialog">
-    <form action="" method="post" id="profile_form">
-        <div>
-            {{ profileForm.as_p }}
-        </div>
-        {% csrf_token %}
-    </form>
-</div>
 {% endblock %}
 {% block js %}page_register{% endblock %}
