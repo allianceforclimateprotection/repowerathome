@@ -1,15 +1,17 @@
-{% if actions.items %}
-    {% for key, value in actions.items %}
-        <b><a href="{% url rah.views.action_detail value.0.slug %}">{{value.0}}</a></b><br/>
-        <ul class="generic_list">
-        {% for point in value.1 %}
-            <li>{{point.task.sequence}}) {{point.task.name}} ({{point.points}} points)</li>
-        {% endfor %}
-        </ul>
-    {% endfor %}
-{% endif %}
-{% if loose %}
-    {% for point in loose %}
-        <b>{{point.get_reason_display}} ({{point.points}} points)</b><br/>
-    {% endfor %}
+{% if records %}
+    {% regroup records by activity.actiontask.action as action_records %}
+	{% for action_record in action_records %}
+		{% if action_record.grouper %}
+			<b><a href="{% url rah.views.action_detail action_record.grouper.slug %}">{{ action_record.grouper }}</a></b><br/>
+		    <ul class="generic_list">
+		    {% for record in action_record.list %}
+		        <li>{{ record.activity.actiontask.sequence }}) {{ record.activity.name }} ({{ record.points }} points)</li>
+		    {% endfor %}
+			</ul>
+		{% else %}
+			{% for record in action_record.list %}
+				<b>{{ record.activity.name }} ({{ record.points }} points)</b><br/>
+			{% endfor %}
+		{% endif %}
+	{% endfor %}
 {% endif %}

@@ -1,4 +1,4 @@
-import json, hashlib
+import json, hashlib, time
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import datetime
@@ -6,29 +6,32 @@ from django.template import Context, loader
 
 import twitter_app.utils as twitter_app
 
-class UserManager(models.Manager):
-    def with_completes_for_action(self, action):
-        """
-        return a 3-tuple query set of user object lists, such that each user object has an additional attribute, completes,
-        which identifies how many tasks the user has completed for the given action.
+class ChartPoint(object):
+    """docstring for ChartPoint"""
+    def __init__(self, date):
+        super(ChartPoint, self).__init__()
+        self.date = date
+        self.points = 0
+        self.records = []
         
-        Note: only users that have began completeing task for the action will be listed
+    def add_record(self, record):
+        if self.date == record.created.date():
+            self.records.append(record)
+        self.points += record.points
         
-        The first list in the tuple is for all users that have made progress on the action, the second list is for all users
-        that are working on the action (in progress) and the final list is for all users that have completed the action
-        """
-        total_tasks = action.actiontask_set.all().count()
-        users = self.filter(useractiontask__action_task__action=action).annotate(completes=models.Count('useractiontask'))
-        in_progress = [user for user in users if total_tasks > user.completes and user.completes > 0]
-        completed = [user for user in users if total_tasks == user.completes]
-
-        return (users, in_progress, completed)
+    def get_date_as_milli_from_epoch(self):
+        return (int(time.mktime(self.date.timetuple())) - 18000) * 1000
         
-    def get_user_by_comment(self, comment):
-        return self.get(id=comment.user.id)
+    def __unicode__(self):
+        return u"(%s, %s) with %s" % (self.date, self.points, self.records)
+        
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+        
+    def __repr__(self):
+        return u'<%s: %s>' % (self.__class__.__name__, unicode(self))
 
 class User(AuthUser): 
-    objects = UserManager()
     class Meta:
         proxy = True
 
@@ -38,74 +41,26 @@ class User(AuthUser):
     def get_welcome(self):
         return 'Welcome, %s' % (self.get_full_name()) if self.get_full_name() else 'Logged in as, %s' % (self.email)
     
-    def get_latest_points(self, quantity=None):
-        points = Points.objects.filter(user=self).order_by('task__action' )
-        return points[:quantity] if quantity else points
+    def get_latest_records(self, quantity=None):
+        records = self.record_set.all()
+        return records[:quantity] if quantity else records
         
-    def get_total_points(self):
-        return Points.objects.filter(user=self).aggregate(models.Sum('points'))['points__sum']
+    def record_activity(self, activity):
+        print "activity points: %s" % activity.points
+        Record(user=self, activity=activity, points=activity.points).save()
 
-    def give_points(self, points, reason):
-        """
-        Gives a user a certain number of points. Check if we have an int or actiontask instance
-        If we have an actiontask, see if we've already given points for it. We don't give double
-        points for the same action task.
-
-        OPTIMIZE this seems open to concurrency issues. Maybe lock tables? 
-        """
-        if type(reason) == ActionTask:
-            self.take_points(reason=reason)
-            Points(user=self, points=points, task=reason).save()
-        else:
-            Points(user=self, points=points, reason=reason).save()
-
-    def take_points(self, reason):
-        """Take points away. Used for when a user unchecks an action task. Reason must be an ActionTask"""
-        Points.objects.filter(user=self, task=reason).delete()
-    
+    def unrecord_activity(self, activity):
+        print "activity points: %s" % activity.points
+        Record.objects.filter(user=self, activity=activity).delete()
+        
     def get_chart_data(self):
-        from time import mktime
-        points       = Points.objects.filter(user=self).order_by('created')
-        point_data   = []
-        tooltips     = []
-        point_tally  = 0
-        last_ordinal = None
-        
-        # Loop through user's recorded points and create data points and tooltips
-        # Events are rounded to the nearest day and tooltips are grouped by day
-        for point in points:
-            point_tally += point.points
-            if last_ordinal <> point.created.toordinal():
-                rounded_date = mktime(datetime.fromordinal(point.created.toordinal()).timetuple())
-                point_data.append([ int(rounded_date) * 1000 - 18000000, point_tally])
-                tooltips.append([point])
-            else:
-                tooltips[len(point_data)-1] += [point]
-                point_data[len(point_data)-1][1] = point_tally
-                
-            last_ordinal = point.created.toordinal()
-        
-        structured_tooltips = []
-        for day in tooltips:
-            daytips = {'loose': [], 'actions': {}}
-            for p in day:
-                if p.reason:
-                    daytips['loose'].append(p)
-                else:
-                    key = str(p.task.action.id)
-                    if(key in daytips['actions'].keys()):
-                        daytips['actions'][key][1] += [p]
-                    else:
-                        daytips['actions'][key] = [p.task.action, [p]]
-                    
-            structured_tooltips.append(daytips)
-        
-        template = loader.get_template('rah/_chart_tooltip.html')
-        rendered_tooltips = []
-        for day in structured_tooltips:
-             rendered_tooltips.append(template.render(Context(day)))
-        
-        return json.dumps({"point_data": point_data, "tooltips": rendered_tooltips})
+        records = self.get_latest_records().select_related().order_by("created")
+
+        chart_points = list(set([ChartPoint(record.created.date()) for record in records]))
+        for chart_point in chart_points:
+            [chart_point.add_record(record) for record in records if chart_point.date >= record.created.date()]
+
+        return chart_points
 
     def __unicode__(self):
         return u'%s' % (self.email)
@@ -125,54 +80,43 @@ class ActionCat(DefaultModel):
     slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
-
+    
 class ActionManager(models.Manager):
-    def with_tasks_for_user(self, user):
+    def actions_by_completion_status(self, user):
         """
         get a queryset of action objects, the actions will have three additional attributes
         attached: (1)'tasks': the number of tasks related to the action. (2)'user_completes':
         the number of tasks the particular user has completed. (3)'total_points': the number
         of points the action is worth.
-        
+
         each action will also contain a reference to a set of action tasks via the
         'action_tasks' attribute. Each action task in the set will have an additional attribute
         to indicated whether or not the particular user has completed the task, this attribute
         is called 'completed'
-        
+
         the return value is a 4-tuple of action lists; the first values is all the actions,
         the second value is all completed actions, the third value is the in progress actions
         and the last value is the completed actions
         """
-        actions = self.select_related().all().extra(
-            select = { 'tasks': 'SELECT COUNT(at.id) \
-                                 FROM rah_actiontask at \
-                                 WHERE at.action_id = rah_action.id' }).extra(
-            select_params = (user.id,),
-            select = { 'user_completes': 'SELECT COUNT(uat.id) \
-                                          FROM rah_useractiontask uat \
-                                          JOIN rah_actiontask at ON uat.action_task_id = at.id \
-                                          WHERE uat.user_id = %s AND at.action_id = rah_action.id'}).extra(
-            select = { 'total_points': 'SELECT SUM(at.points) \
-                                        FROM rah_actiontask at \
-                                        WHERE at.action_id = rah_action.id' })
-
-        action_tasks = ActionTask.objects.all().extra(
+        actiontasks = ActionTask.objects.select_related().all().extra(
             select_params = (user.id,), 
-            select = { 'completed': 'SELECT rah_useractiontask.completed \
-                                     FROM rah_useractiontask \
-                                     WHERE rah_useractiontask.user_id = %s AND \
-                                     rah_useractiontask.action_task_id = rah_actiontask.id' })
-        action_task_dict = dict([(at.id, at) for at in action_tasks])
-
-        for action in actions:
-            action.action_tasks = action.actiontask_set.all()
-            for action_task in action.action_tasks:
-                action_task.completed = action_task_dict[action_task.id].completed
+            select = { 'completed': 'SELECT rah_record.created \
+                                     FROM rah_record \
+                                     WHERE rah_record.user_id = %s AND \
+                                     rah_record.activity_id = rah_actiontask.activity_ptr_id' })
+                                     
+        action_dict = dict([actiontask.action, []] for actiontask in actiontasks)
+        [action_dict[actiontask.action].append(actiontask) for actiontask in actiontasks]
+        for action, actiontasks in action_dict.items():
+            action.user_completes = 0
+            action.actiontasks = actiontasks
+            for actiontask in actiontasks:
+                action.user_completes += 1 if actiontask.completed else 0
+        actions = action_dict.keys()
 
         not_complete = [action for action in actions if action.user_completes == 0]
-        in_progress = [action for action in actions if action.tasks > action.user_completes and action.user_completes > 0]
-        completed = [action for action in actions if action.tasks == action.user_completes]
-
+        in_progress = [action for action in actions if action.total_tasks > action.user_completes and action.user_completes > 0]
+        completed = [action for action in actions if action.total_tasks == action.user_completes]
         return (actions, not_complete, in_progress, completed)
 
 class Action(DefaultModel):
@@ -180,70 +124,92 @@ class Action(DefaultModel):
     slug = models.CharField(max_length=255)
     teaser = models.TextField()
     content = models.TextField()
+    total_tasks = models.IntegerField(default=0)
+    total_points = models.IntegerField(default=0)
+    users_in_progress = models.IntegerField(default=0)
+    users_completed = models.IntegerField(default=0)
     category = models.ForeignKey(ActionCat)
+    user_progress = models.ManyToManyField(User, through="UserActionProgress")
     objects = ActionManager()
-    
-    def get_total_points(self):
-        """
-        retrieve the summation of all the points in related action tasks
-        """
-        return self.actiontask_set.aggregate(total=models.Sum('points'))['total']
-        
-    def get_number_of_tasks(self):
-        """
-        retrieve the summation of all the points in related action tasks
-        """
-        return self.actiontask_set.count()
     
     def completes_for_user(self, user):
         """
         return the number of tasks a user has completed for an action
         """
-        return user.useractiontask_set.filter(action_task__action=self).count()
+        uap = UserActionProgress.objects.filter(action=self, user=user)
+        return uap[0].user_completes if uap else 0
+        
+    def users_with_completes(self, limit=5):
+        in_progress = UserActionProgress.objects.select_related().filter(action=self, is_completed=0)[:limit]
+        completed = UserActionProgress.objects.select_related().filter(action=self, is_completed=1)[:limit]
+        
+        return (self.users_in_progress, [uap.user for uap in in_progress], self.users_completed, [uap.user for uap in completed])
+        
+    def get_action_tasks_by_user(self, user):
+        return ActionTask.objects.filter(action=self).extra(
+            select_params = (user.id,), 
+            select = { 'is_complete': 'SELECT rah_record.created \
+                                     FROM rah_record \
+                                     WHERE rah_record.user_id = %s AND \
+                                     rah_record.activity_id = rah_actiontask.activity_ptr_id' })
         
     @models.permalink
     def get_absolute_url(self):
         return ('rah.views.action_detail', [str(self.slug)])
         
-
-class ActionTask(DefaultModel):
+class Activity(DefaultModel):
+    name = models.CharField(max_length=255)
+    content = models.TextField()
+    points = models.IntegerField()
+    users = models.ManyToManyField(User, through="Record")
+        
+class ActionTask(Activity):
     """
     class representing the individual tasks (or steps) a user must complete
     in order to gain successful completion of the associated action
     """
-    name = models.CharField(max_length=255)
-    content = models.TextField()
-    points = models.IntegerField()
     sequence = models.PositiveIntegerField()
     action = models.ForeignKey(Action)
     
     class Meta:
         ordering = ['action', 'sequence']
         unique_together = ('action', 'sequence',)
-
-    # OPTIMIZE pull this static method out and place in a manager
-    @staticmethod
-    def get_action_tasks_by_action_and_user(action, user):
-        return ActionTask.objects.filter(action=action.id).extra(
-            select_params = (user.id,), 
-            select = { 'completed': 'SELECT rah_useractiontask.completed \
-                                     FROM rah_useractiontask \
-                                     WHERE rah_useractiontask.user_id = %s AND \
-                                     rah_useractiontask.action_task_id = rah_actiontask.id' })
-
-class UserActionTask(models.Model):
-    """
-    class representing the ActionTasks a specific user has completed
-    """
-    action_task = models.ForeignKey(ActionTask)
+        
+class Record(models.Model):
     user = models.ForeignKey(User)
-    completed = models.DateTimeField(auto_now=True)
-    
+    activity = models.ForeignKey(Activity)
+    points = models.IntegerField(default=0)
+    message = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now=True)
+
     class Meta:
-        get_latest_by = 'complete'
+        ordering = ["user", "activity", "created"]
+        get_latest_by = "created"
 
     def __unicode__(self):
-        return u'%s completed at %s' % (self.action_task, self.completed)
+        return "%s records %s at %s" % (self.user, self.activity, self.created)
+
+    # def __cmp__(self, other):
+    #     if self.user != other.user:
+    #         return cmp(self.user, other.user)
+    #     try:
+    #         action = self.activity.actiontask.action
+    #     except Exception:
+    #         action = None
+    #     try:
+    #         oaction = other.activity.actiontask.action
+    #     except Exception:
+    #         oaction = None
+    #     return cmp(action, oaction) if action != oaction else cmp(self.created, other.created)
+    
+class UserActionProgress(models.Model):
+    user = models.ForeignKey(User)
+    action = models.ForeignKey(Action)
+    user_completes = models.IntegerField(default=0)
+    is_completed = models.IntegerField(default=0)
+
+    def __unicode__(self):
+        return "(%s, %s) has %s complete(s) and is%scompleted" % (self.user, self.action, self.user_completes, (" " if self.is_completed else " not "))
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
@@ -259,31 +225,6 @@ class Location(models.Model):
     
     def __unicode__(self):
         return u'%s, %s (%s)' % (self.name, self.st, self.zipcode)
-
-class Points(DefaultModel):
-    """
-    Points can be associated with a given action task or a given arbitrarily.
-    To assign the points arbitrarily, you should provide an int value for `reason`
-    """
-    
-    REASONS = (
-        (1, "You joined Repower@Home"),
-        (2, "Because we don't like you"),
-    )
-    
-    class Meta:
-        verbose_name_plural = 'points'
-    
-    user = models.ForeignKey(User)
-    points = models.IntegerField()
-    task = models.ForeignKey(ActionTask, related_name="task", null=True)
-    reason = models.IntegerField(choices=REASONS, null=True)
-    
-    def get_reason(self):
-        return self.task.name if self.task else self.reason
-            
-    def __unicode__(self):
-        return u'%s points' % (self.points)
 
 class Signup(models.Model):
     email = models.EmailField(max_length=255)
@@ -315,6 +256,7 @@ class Profile(models.Model):
     about = models.CharField(null=True, blank=True, max_length=255)
     is_profile_private = models.BooleanField(default=0)
     twitter_access_token = models.CharField(null=True, max_length=255, blank=True)
+    total_points = models.IntegerField(default=0)
     
     def __unicode__(self):
         return u'%s' % (self.user.email)
@@ -324,3 +266,58 @@ class Profile(models.Model):
 
     def _email_hash(self):
         return (hashlib.md5(self.user.email.lower()).hexdigest())
+        
+def actiontask_added(sender, **kwargs):
+    actiontask_table_changed(sender, increase=True, **kwargs)
+
+def actiontask_removed(sender, **kwargs):
+    actiontask_table_changed(sender, increase=False, **kwargs)
+
+def actiontask_table_changed(sender, instance, increase, **kwargs):
+    if instance.id:
+        instance.action.total_tasks += 1 if increase else -1
+        instance.action.total_points += instance.points if increase else (-1 * instance.points)
+        instance.action.save()
+        
+def user_post_save(sender, instance, signal, *args, **kwargs):
+    Profile.objects.get_or_create(user=instance)
+
+models.signals.post_save.connect(user_post_save, sender=User)
+
+models.signals.post_save.connect(actiontask_added, sender=ActionTask)
+models.signals.pre_delete.connect(actiontask_removed, sender=ActionTask)
+
+def record_added(sender, **kwargs):
+    record_table_changed(sender, increase=True, **kwargs)
+
+def record_removed(sender, **kwargs):
+    record_table_changed(sender, increase=False, **kwargs)
+
+def record_table_changed(sender, instance, increase, **kwargs):
+    # TODO: this entire function needs to be wrapped in a transaction
+    profile = instance.user.get_profile()
+    profile.total_points += instance.points if increase else (-1 * instance.points)
+    profile.save()
+    try:
+        action = instance.activity.actiontask.action
+        obj, created = UserActionProgress.objects.get_or_create(user=instance.user, action=action)
+        new_completes = obj.user_completes + 1 if increase else  obj.user_completes - 1
+        new_completed = 1 if new_completes >= action.total_tasks else 0
+        inprogress = 1  if obj.is_completed != 1 and obj.user_completes > 0 else 0 # the useraction is currently in_progress if it is not completed, but the completes count is greater than 0
+        new_inprogress = 1 if new_completed != 1 and new_completes > 0 else 0 # the useraction is going to be in_progress if it will not be completed, but the new completes count is greater than 0
+
+        if obj.is_completed != new_completed:
+            action.users_completed += new_completed - obj.is_completed
+        if inprogress != new_inprogress:
+            action.users_in_progress += new_inprogress - inprogress
+        if obj.is_completed != new_completed or inprogress != new_inprogress:
+            action.save()
+
+        obj.user_completes = new_completes
+        obj.is_completed = new_completed
+        obj.save()
+    except ActionTask.DoesNotExist:
+        pass
+
+models.signals.post_save.connect(record_added, sender=Record)
+models.signals.pre_delete.connect(record_removed, sender=Record)

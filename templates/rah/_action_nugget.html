@@ -3,15 +3,15 @@
 	<a class='title' href='{% url rah.views.action_detail action.slug %}'>{{ action.name }}</a>
 	<div class='content'>{{ action.content|safe|linebreaks }} (<a href='{% url rah.views.action_detail action.slug %}' class='tasks_link'>toggle steps</a>)</div>
     <div class='task_list'>
-    	{% for action_task in action.action_tasks %}
-    		<form action="{% url rah.views.action_task action_task.id %}" class="action_task_submitter" method='post'>
+    	{% for actiontask in action.actiontasks %}
+    		<form action="{% url rah.views.action_task actiontask.id %}" class="action_task_submitter" method='post'>
     			<p>
     				<input type='checkbox' name='task_completed' 
-    				{% if action_task.completed %}checked='checked'{% endif %} 
+    				{% if actiontask.completed %}checked='checked'{% endif %} 
     				{% if is_others_profile %}disabled='disabled' {% endif %}/>
-    				{{ action_task.sequence }}) 
-    				{{ action_task.name }}
-    				({{ action_task.points }} points)
+    				{{ actiontask.sequence }}) 
+    				{{ actiontask.name }}
+    				({{ actiontask.points }} points)
     			</p>
     		</form>
     	{% endfor %}

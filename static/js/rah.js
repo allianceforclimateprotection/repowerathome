@@ -334,7 +334,7 @@ var rah = {
                 beforeSend: function() { $("#loading").show(); },
                 complete: function() { $("#loading").hide(); },
                 error: function(XMLHttpRequest, textStatus) { 
-                    var error_html = "<ul class='messages'><li class='messages error'>" + textStatus + "<a href='#' class='dismiss'>close</a></li></ul>"
+                    var error_html = "<ul class='messages'><li class='messages error sticky'>" + textStatus + "<a href='#' class='dismiss'>close</a></li></ul>"
                     rah.mod_messages.init(error_html);
                 },
             });

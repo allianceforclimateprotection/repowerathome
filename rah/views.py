@@ -76,7 +76,7 @@ def register(request):
 
 def action_show(request):
     """Show all actions by Category"""
-    actions = Action.objects.with_tasks_for_user(request.user)[0]
+    actions = Action.objects.actions_by_completion_status(request.user)[0]
     categories = dict([(action.category, []) for action in actions]) #create a new map of categories to empty lists
     [categories[action.category].append(action) for action in actions] #append each action to the its assocaited categor list
     return render_to_response('rah/action_show.html', {'categories': categories}, context_instance=RequestContext(request))
@@ -86,15 +86,10 @@ def action_detail(request, action_slug):
     # Lookup the action
     dict = {}
     dict['action'] = get_object_or_404(Action, slug=action_slug)
-    dict['action_tasks'] = ActionTask.get_action_tasks_by_action_and_user(dict['action'], request.user)
-    users_in_progress, users_completed = User.objects.with_completes_for_action(dict['action'])[1:3]
+    dict['action_tasks'] = dict['action'].get_action_tasks_by_user(request.user)
+    dict['num_users_in_progress'], dict['show_users_in_progress'], dict['num_users_completed'], dict['show_users_completed'] = dict['action'].users_with_completes(5)
     
-    dict['num_users_in_progress'] = len(users_in_progress)
-    dict['show_users_in_progress'] = [user for user in users_in_progress if not user.get_profile().is_profile_private][:5]
     dict['num_noshow_users_in_progress'] = dict['num_users_in_progress'] - len(dict['show_users_in_progress'])
-    
-    dict['num_users_completed'] = len(users_completed)
-    dict['show_users_completed'] = [user for user in users_completed if not user.get_profile().is_profile_private][:5]
     dict['num_noshow_users_completed'] = dict['num_users_completed'] - len(dict['show_users_completed'])
     
     return render_to_response('rah/action_detail.html', dict, context_instance=RequestContext(request))
@@ -104,13 +99,12 @@ def action_task(request, action_task_id):
     # OPTIMIZE There are some extra queries going on here
     action_task = get_object_or_404(ActionTask, id=action_task_id)
     if request.method == 'POST' and request.user.is_authenticated():
-        user_action_task, created = UserActionTask.objects.get_or_create(user=request.user, action_task=action_task)
-        if request.POST.get('task_completed'):
-            request.user.give_points(reason=action_task, points=action_task.points)
+        record = Record.objects.filter(user=request.user, activity=action_task)
+        if request.POST.get('task_completed') and not record:
+            request.user.record_activity(action_task)
             messages.success(request, 'Great work, we have updated our records to show you completed %s' % (action_task))
         else:
-            user_action_task.delete()
-            request.user.take_points(reason=action_task)
+            request.user.unrecord_activity(action_task)
             messages.success(request, 'We have updated our records to show you have not completed %s' % (action_task))
     
     if request.is_ajax():
@@ -126,19 +120,24 @@ def profile(request, user_id):
     if request.user <> user and user.get_profile().is_profile_private:
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
         
-    recommended, in_progress, completed = Action.objects.with_tasks_for_user(user)[1:4]
+    recommended, in_progress, completed = Action.objects.actions_by_completion_status(user)[1:4]
     twitter_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
     })
+    
+    tooltip_template = loader.get_template("rah/_chart_tooltip.html")
+    chart_points = user.get_chart_data()
+    point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
+    tooltips = [tooltip_template.render(Context({"records": chart_point.records})) for chart_point in chart_points]
     return render_to_response('rah/profile.html', {
-        'total_points': user.get_total_points(),
+        'total_points': user.get_profile().total_points,
         'in_progress': in_progress,
         'completed': completed,
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'house_party_form': HousePartyForm(),
         'invite_friend_form': InviteFriendForm(),
         'twitter_status_form': twitter_form,
-        'chart_data': user.get_chart_data(),
+        'chart_data': json.dumps({"point_data": point_data, "tooltips": tooltips}),
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
     }, context_instance=RequestContext(request))

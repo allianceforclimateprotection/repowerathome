@@ -1,9 +1,0 @@
---
--- Dumping data for table `rah_actioncat`
---
-
-LOCK TABLES `rah_actioncat` WRITE;
-/*!40000 ALTER TABLE `rah_actioncat` DISABLE KEYS */;
-INSERT INTO `rah_actioncat`(id, name, slug, teaser, content, created, updated) VALUES (1,'Hot Water','hot-water','Hot water accounts for about 15-20% of the average household’s energy bill. By becoming more aware of your hot water use, and installing a few low-cost upgrades, you can easily reduce this number. ','Many of us don\'t realize that using water uses energy. In fact, supplying your home with hot water uses <strong>a lot</strong> of energy. Your hot water tank has to keep around 80 gallons of water at more than 100°F all day long. Hot water accounts for about 15-20% of the average household’s energy bill. By becoming more aware of your hot water use, and installing a few low-cost upgrades, you can easily reduce this number. The following steps will help you be more mindful and use your hot water more efficiently.','2009-12-01 15:59:52','2009-12-02 10:43:25'),(2,'Electricity','electricity','teaser','Powering your lights and electronic devices accounts for about 16% of your home energy use. ','2009-12-02 10:48:56','2009-12-10 13:05:45'),(3,'Air Sealing & Insulation','air-sealing-insulation','teaser','content','2009-12-02 10:54:46','2009-12-02 10:54:46'),(4,'Heating & Cooling','heating-cooling','teaser','TBD','2009-12-02 10:55:08','2009-12-10 13:06:19'),(5,'Appliances','appliances','teaser','TBD','2009-12-02 10:55:27','2009-12-10 13:06:01'),(6,'Home Inspections','home-inspections','teaser','Having a home inspection will improve your home\'s re-sale value, lower your utility bills, and upgrade your home\'s performance. Homeowners who retrofit their homes regularly see energy savings of more than 20%, with some achieving savings of 40% or more.','2009-12-02 10:55:54','2009-12-02 11:06:11');
-/*!40000 ALTER TABLE `rah_actioncat` ENABLE KEYS */;
-UNLOCK TABLES;
