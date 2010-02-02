@@ -63,9 +63,11 @@ def register(request):
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
             
-            # Create a profile for the user
-            loc = form.cleaned_data["location"] if "location" in form.cleaned_data else None
-            Profile.objects.create(user=user, location=loc)
+            # Add the location to profile if the user registered with one
+            if "location" in form.cleaned_data:
+                profile = user.get_profile()
+                profile.location = form.cleaned_data["location"]
+                profile.save()
             
             messages.success(request, 'Thanks for registering.')
             messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
