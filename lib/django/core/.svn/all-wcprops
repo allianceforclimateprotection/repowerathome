@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/12313/django/trunk/django/core
+END
+validators.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/12098/django/trunk/django/core/validators.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/3/django/trunk/django/core/__init__.py
+END
+signals.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/8223/django/trunk/django/core/signals.py
+END
+template_loader.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2809/django/trunk/django/core/template_loader.py
+END
+exceptions.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/12206/django/trunk/django/core/exceptions.py
+END
+xheaders.py
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/12159/django/trunk/django/core/xheaders.py
+END
+paginator.py
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/8191/django/trunk/django/core/paginator.py
+END
+context_processors.py
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/11804/django/trunk/django/core/context_processors.py
+END
+urlresolvers.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/12180/django/trunk/django/core/urlresolvers.py
+END

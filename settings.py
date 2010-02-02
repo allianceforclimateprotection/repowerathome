@@ -1,5 +1,9 @@
 import os
+import sys
+
 CURRENT_DIR = os.path.dirname(__file__)
+local_join = lambda x: os.path.join(os.path.dirname(__file__), x)
+sys.path.insert(0, local_join('lib'))
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -20,7 +24,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(CURRENT_DIR, 'static')
+MEDIA_ROOT = local_join('static')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -59,7 +63,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 TEMPLATE_DIRS = (
-    os.path.join(CURRENT_DIR, 'templates'),
+    local_join('templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

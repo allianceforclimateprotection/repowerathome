@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/12292/django/trunk/django/contrib/messages/storage
+END
+cookie.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/12292/django/trunk/django/contrib/messages/storage/cookie.py
+END
+base.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/11804/django/trunk/django/contrib/messages/storage/base.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/11804/django/trunk/django/contrib/messages/storage/__init__.py
+END
+fallback.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/11804/django/trunk/django/contrib/messages/storage/fallback.py
+END
+session.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/11804/django/trunk/django/contrib/messages/storage/session.py
+END
+user_messages.py
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/11804/django/trunk/django/contrib/messages/storage/user_messages.py
+END

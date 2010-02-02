@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/12302/django/trunk/django/contrib/gis/geometry
+END
+regex.py
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/12302/django/trunk/django/contrib/gis/geometry/regex.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/11952/django/trunk/django/contrib/gis/geometry/__init__.py
+END

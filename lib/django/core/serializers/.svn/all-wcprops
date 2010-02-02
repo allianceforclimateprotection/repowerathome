@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/11952/django/trunk/django/core/serializers
+END
+json.py
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/11952/django/trunk/django/core/serializers/json.py
+END
+xml_serializer.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/11952/django/trunk/django/core/serializers/xml_serializer.py
+END
+base.py
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/11952/django/trunk/django/core/serializers/base.py
+END
+pyyaml.py
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/11952/django/trunk/django/core/serializers/pyyaml.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/11952/django/trunk/django/core/serializers/__init__.py
+END
+python.py
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/11952/django/trunk/django/core/serializers/python.py
+END

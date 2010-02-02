@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/12084/django/trunk/django/core/mail
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/12084/django/trunk/django/core/mail/__init__.py
+END
+utils.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/11709/django/trunk/django/core/mail/utils.py
+END
+message.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/11719/django/trunk/django/core/mail/message.py
+END

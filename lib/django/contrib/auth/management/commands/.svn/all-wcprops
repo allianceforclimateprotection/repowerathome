@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/12351/django/trunk/django/contrib/auth/management/commands
+END
+changepassword.py
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/12351/django/trunk/django/contrib/auth/management/commands/changepassword.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/7590/django/trunk/django/contrib/auth/management/commands/__init__.py
+END
+createsuperuser.py
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/9158/django/trunk/django/contrib/auth/management/commands/createsuperuser.py
+END
