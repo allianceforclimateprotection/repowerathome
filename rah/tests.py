@@ -1,4 +1,6 @@
 from django.test import TestCase
+from django.contrib.auth.models import AnonymousUser
+
 from rah.models import *
 
 def create_test_users_and_action_tasks(object):
@@ -310,6 +312,64 @@ class ActionTest(TestCase):
         action = Action.objects.get(id=self.a.id)
         self.failUnlessEqual(action.users_with_completes()[0], 0)
         self.failUnlessEqual(action.users_with_completes()[2], 2)
+        
+    def test_actions_by_completion_status_with_user(self):
+        actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(self.u1)
+        self.failUnlessEqual(len(actions), 1)
+        self.failUnlessEqual(len(not_complete), 1)
+        self.failIf(not_complete[0].actiontasks[0].completed)
+        self.failIf(not_complete[0].actiontasks[1].completed)
+        self.failIf(not_complete[0].actiontasks[2].completed)
+        self.failUnlessEqual(len(in_progress), 0)
+        self.failUnlessEqual(len(completed), 0)
+        
+        Record.objects.create(activity=self.at1, user=self.u1)
+        
+        actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(self.u1)
+        self.failUnlessEqual(len(actions), 1)
+        self.failUnlessEqual(len(not_complete), 0)
+        self.failUnlessEqual(len(in_progress), 1)
+        self.failUnless(in_progress[0].actiontasks[0].completed)
+        self.failIf(in_progress[0].actiontasks[1].completed)
+        self.failIf(in_progress[0].actiontasks[2].completed)
+        self.failUnlessEqual(len(completed), 0)
+        
+        Record.objects.create(activity=self.at2, user=self.u1)
+        
+        actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(self.u1)
+        self.failUnlessEqual(len(actions), 1)
+        self.failUnlessEqual(len(not_complete), 0)
+        self.failUnlessEqual(len(in_progress), 1)
+        self.failUnless(in_progress[0].actiontasks[0].completed)
+        self.failUnless(in_progress[0].actiontasks[1].completed)
+        self.failIf(in_progress[0].actiontasks[2].completed)
+        self.failUnlessEqual(len(completed), 0)
+        
+        Record.objects.create(activity=self.at3, user=self.u1)
+        
+        actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(self.u1)
+        self.failUnlessEqual(len(actions), 1)
+        self.failUnlessEqual(len(not_complete), 0)
+        self.failUnlessEqual(len(in_progress), 0)
+        self.failUnlessEqual(len(completed), 1)
+        self.failUnless(completed[0].actiontasks[0].completed)
+        self.failUnless(completed[0].actiontasks[1].completed)
+        self.failUnless(completed[0].actiontasks[2].completed)
+        
+    def test_actions_by_completion_status_with_anon_user(self):
+        actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(AnonymousUser())
+        self.failUnlessEqual(len(actions), 1)
+        self.failUnlessEqual(len(not_complete), 1)
+        self.failUnlessEqual(len(in_progress), 0)
+        self.failUnlessEqual(len(completed), 0)
+        
+        Record.objects.create(activity=self.at1, user=self.u1)
+        
+        actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(AnonymousUser())
+        self.failUnlessEqual(len(actions), 1)
+        self.failUnlessEqual(len(not_complete), 1)
+        self.failUnlessEqual(len(in_progress), 0)
+        self.failUnlessEqual(len(completed), 0)
         
 class ProfileTest(TestCase):
     def setUp(self):
