@@ -29,22 +29,19 @@ class UserTest(TestCase):
         self.failUnlessEqual(u4.get_name(), 'first last')
     
     def test_get_chart_data(self):
-        pass
-        # create_test_users_and_action_tasks(self)
-        # Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
-        # Record(user=self.u1, activity=self.at2, points=self.at2.points).save()
-        # Record(user=self.u1, activity=self.at3, points=self.at3.points).save()
-        # 
-        # chart_points = self.u1.get_chart_data()
-        # point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
-        # problem here is that points aren't being collapsed
-        # print chart_points[0].points
-        # print Record.objects.all()[0].points
-        # 
-        # self.failUnlessEqual(len(chart_data), 3)
-        # print Record.objects.all()[0].points
-        # self.failUnlessEqual(chart_data[], 3)
-        # print self.u1.get_chart_data()
+        create_test_users_and_action_tasks(self)
+        Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
+        Record(user=self.u1, activity=self.at2, points=self.at2.points).save()
+        Record(user=self.u1, activity=self.at3, points=self.at3.points).save()
+        
+        chart_points = self.u1.get_chart_data()
+        self.failUnlessEqual(len(chart_points), 1)
+        self.failUnlessEqual(len(chart_points[0].records), 3)
+        self.failUnlessEqual(chart_points[0].points, 35)
+        
+        point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
+        self.failUnlessEqual(len(point_data), 1)
+        self.failUnlessEqual(point_data[0][1], 35)
     
     def test_get_latest_records(self):
         create_test_users_and_action_tasks(self)
