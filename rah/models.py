@@ -42,10 +42,7 @@ class User(AuthUser):
         proxy = True
 
     def get_name(self):
-        return self.get_full_name() if self.get_full_name() else self.email
-
-    def get_welcome(self):
-        return 'Welcome, %s' % (self.get_full_name()) if self.get_full_name() else 'Logged in as, %s' % (self.email)
+        return self.get_full_name() if self.get_full_name() else "Repower@Home User"
     
     def get_latest_records(self, quantity=None):
         records = self.record_set.all()
@@ -85,6 +82,7 @@ class ActionCat(DefaultModel):
     content = models.TextField()
     
 class ActionManager(models.Manager):
+    # TODO: Write unit test for actions_by_completion_status
     def actions_by_completion_status(self, user):
         """
         get a queryset of action objects, the actions will have three additional attributes
@@ -288,6 +286,11 @@ def actiontask_table_changed(sender, instance, increase, **kwargs):
         
 def user_post_save(sender, instance, signal, *args, **kwargs):
     Profile.objects.get_or_create(user=instance)
+    
+def record_to_create(sender, instance, **kwargs):
+    if type(instance.activity) == ActionTask and \
+        Record.objects.filter(user=instance.user, activity=instance.activity).count() > 0:
+        raise Exception("Record already exists.")
 
 def record_added(sender, **kwargs):
     record_table_changed(sender, increase=True, **kwargs)
@@ -324,5 +327,6 @@ def record_table_changed(sender, instance, increase, **kwargs):
 models.signals.post_save.connect(actiontask_added, sender=ActionTask)
 models.signals.pre_delete.connect(actiontask_removed, sender=ActionTask)
 models.signals.post_save.connect(user_post_save, sender=User)
+models.signals.pre_save.connect(record_to_create, sender=Record)
 models.signals.post_save.connect(record_added, sender=Record)
 models.signals.pre_delete.connect(record_removed, sender=Record)

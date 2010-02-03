@@ -20,7 +20,7 @@
                 <a href="/" title="Repower America" class="site-logo">Repower @ Home</a>
                 <div id="header-links">
                     {% if user.is_authenticated %}
-                        {{ user.get_welcome }} | <a href="{% url rah.views.profile_edit user.id %}">Edit your profile</a> | <a href="{% url logout %}">Logout</a>
+                        {{ user.get_name }} | <a href="{% url rah.views.profile_edit user.id %}">Edit your profile</a> | <a href="{% url logout %}">Logout</a>
                     {% else %}
                         <a href="{% url login %}?next={{ request.path }}">Login</a> | <a href="{% url register %}">Sign Up</a>
                     {% endif %}

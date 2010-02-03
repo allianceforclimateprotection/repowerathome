@@ -15,23 +15,30 @@ def create_test_users_and_action_tasks(object):
     object.at2 = ActionTask.objects.create(name='test action task 2', action=object.a, points=10, sequence=2)
     object.at3 = ActionTask.objects.create(name='test action task 3', action=object.a, points=20, sequence=3)
 
+class ChartPoint(TestCase):
+    def test_add_record(self):
+        pass
+    
+    def get_date_as_milli_from_epoch(self):
+        pass
+
+
+
 class UserTest(TestCase):
     def setUp(self):
-        # create_test_users_and_action_tasks(self)
-        pass
+        create_test_users_and_action_tasks(self)
 
     def test_get_name(self):
         u1 = User(username='1', email='test@test.com')
         u2 = User(username='2', email='test@test.net', first_name='first')
         u3 = User(username='3', email='test@test.org', last_name='last')
         u4 = User(username='4', email='test@test.edu', first_name='first', last_name='last')
-        self.failUnlessEqual(u1.get_name(), 'test@test.com')
+        self.failUnlessEqual(u1.get_name(), 'Repower@Home User')
         self.failUnlessEqual(u2.get_name(), 'first')
         self.failUnlessEqual(u3.get_name(), 'last')
         self.failUnlessEqual(u4.get_name(), 'first last')
     
     def test_get_chart_data(self):
-        create_test_users_and_action_tasks(self)
         Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
         Record(user=self.u1, activity=self.at2, points=self.at2.points).save()
         Record(user=self.u1, activity=self.at3, points=self.at3.points).save()
@@ -45,9 +52,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(len(point_data), 1)
         self.failUnlessEqual(point_data[0][1], 35)
     
-    def test_get_latest_records(self):
-        create_test_users_and_action_tasks(self)
-        
+    def test_get_latest_records(self):        
         Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
         Record(user=self.u1, activity=self.at2, points=self.at2.points).save()
         Record(user=self.u1, activity=self.at3, points=self.at3.points).save()
@@ -62,9 +67,7 @@ class UserTest(TestCase):
         # Make sure the order is correct
         self.failUnless(all_records[0].created < all_records[1].created < all_records[2].created)
     
-    def test_record_activity(self):
-        create_test_users_and_action_tasks(self)
-        
+    def test_record_activity(self):        
         # User should have zero points
         self.failUnlessEqual(self.u1.get_profile().total_points, 0)
         
@@ -77,9 +80,7 @@ class UserTest(TestCase):
         self.u1.record_activity(self.at2)
         self.failUnlessEqual(Record.objects.count(), 2)
         
-    def test_unrecord_activity(self):
-        create_test_users_and_action_tasks(self)
-        
+    def test_unrecord_activity(self):    
         # Add some records
         self.failUnlessEqual(Record.objects.count(), 0)
         Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
@@ -91,9 +92,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(Record.objects.count(), 1)
         self.failUnlessEqual(Record.objects.all()[0].activity.id, self.at2.id)
         
-    def test_record_action_task(self):
-        create_test_users_and_action_tasks(self)
-        
+    def test_record_action_task(self):        
         self.u1.record_activity(self.at1)
         record = Record.objects.get(user=self.u1, activity=self.at1)
         self.failUnlessEqual(record.points, self.at1.points)
@@ -105,9 +104,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 1)
         self.failUnlessEqual(action.users_completed, 0)
         
-    def test_complete_action(self):
-        create_test_users_and_action_tasks(self)
-        
+    def test_complete_action(self):        
         action = Action.objects.get(pk=self.a.id)
         self.failUnlessEqual(action.users_in_progress, 0)
         self.failUnlessEqual(action.users_completed, 0)
@@ -139,9 +136,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 0)
         self.failUnlessEqual(action.users_completed, 1)
         
-    def test_multi_user_complete_action(self):
-        create_test_users_and_action_tasks(self)
-        
+    def test_multi_user_complete_action(self):        
         self.u1.record_activity(self.at1)
     
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
@@ -191,9 +186,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 0)
         self.failUnlessEqual(action.users_completed, 2)
         
-    def test_total_points(self):
-        create_test_users_and_action_tasks(self)
-        
+    def test_total_points(self):    
         self.u1.record_activity(self.at1)
         
         user = User.objects.get(pk=self.u1.id)
@@ -277,7 +270,7 @@ class ActionTest(TestCase):
     def test_action_number_of_tasks(self):
         self.failUnlessEqual(self.a.total_tasks, 3)
         
-    def test_action_tasks_by_user(self):
+    def test_get_action_tasks_by_user(self):
         Record.objects.create(activity=self.at1, user=self.u1)
         Record.objects.create(activity=self.at3, user=self.u1)
 
@@ -288,6 +281,7 @@ class ActionTest(TestCase):
         self.failIfEqual(action_tasks[2].is_complete, None)
         
     def test_users_with_completes(self):
+        """Also tests record_added and (part of) record_table_changed signals"""
         self.failUnlessEqual(self.a.users_with_completes()[0], 0)
         self.failUnlessEqual(self.a.users_with_completes()[2], 0)
 
@@ -370,6 +364,18 @@ class ActionTest(TestCase):
         self.failUnlessEqual(len(not_complete), 1)
         self.failUnlessEqual(len(in_progress), 0)
         self.failUnlessEqual(len(completed), 0)
+
+    def test_completes_for_user(self):
+        self.failUnlessEqual(self.a.completes_for_user(self.u1), 0)
+        
+        Record.objects.create(activity=self.at1, user=self.u1)
+        self.failUnlessEqual(self.a.completes_for_user(self.u1), 1)
+        
+        Record.objects.create(activity=self.at2, user=self.u1)
+        self.failUnlessEqual(self.a.completes_for_user(self.u1), 2)
+
+        # Completing the same action task twice should not advance progress 
+        self.failUnlessRaises(Exception, Record.objects.create, activity=self.at1, user=self.u1)
         
 class ProfileTest(TestCase):
     def setUp(self):
