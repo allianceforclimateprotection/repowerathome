@@ -30,6 +30,12 @@ class ChartPoint(object):
         
     def __repr__(self):
         return u'<%s: %s>' % (self.__class__.__name__, unicode(self))
+        
+    def __cmp__(self, other):
+        return cmp(self.date, other.date)
+        
+    def __hash__(self):
+        return hash(self.date)
 
 class User(AuthUser): 
     class Meta:
@@ -54,7 +60,7 @@ class User(AuthUser):
     def get_chart_data(self):
         records = self.get_latest_records().select_related().order_by("created")
 
-        chart_points = list(set([ChartPoint(record.created.date()) for record in records]))
+        chart_points = list(sorted(set([ChartPoint(record.created.date()) for record in records])))
         for chart_point in chart_points:
             [chart_point.add_record(record) for record in records if chart_point.date >= record.created.date()]
 
