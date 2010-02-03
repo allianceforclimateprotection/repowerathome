@@ -1,8 +1,7 @@
-import os
 import sys
 
-CURRENT_DIR = os.path.dirname(__file__)
-local_join = lambda x: os.path.join(os.path.dirname(__file__), x)
+from utils import local_join
+
 sys.path.insert(0, local_join('lib'))
 
 # Local time zone for this installation. Choices can be found here:
@@ -97,7 +96,6 @@ MESSAGE_TAGS = {
     GA_TRACK_PAGEVIEW: 'ga_track_pageview',
 }
 
-
 # sync media s3
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
@@ -113,4 +111,3 @@ try:
     from local_settings import *
 except ImportError:
     print 'local_settings could not be imported'
-    pass

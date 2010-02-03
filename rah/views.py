@@ -135,6 +135,7 @@ def profile(request, user_id):
     point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
     
     tooltips = [tooltip_template.render(Context({"records": chart_point.records})) for chart_point in chart_points]
+    logging.debug("point data: %s" % point_data)
     return render_to_response('rah/profile.html', {
         'total_points': user.get_profile().total_points,
         'in_progress': in_progress,

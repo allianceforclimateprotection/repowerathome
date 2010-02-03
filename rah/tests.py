@@ -40,7 +40,7 @@ class UserTest(TestCase):
         # problem here is that points aren't being collapsed
         # print chart_points[0].points
         # print Record.objects.all()[0].points
-        
+        # 
         # self.failUnlessEqual(len(chart_data), 3)
         # print Record.objects.all()[0].points
         # self.failUnlessEqual(chart_data[], 3)
@@ -92,10 +92,128 @@ class UserTest(TestCase):
         self.failUnlessEqual(Record.objects.count(), 1)
         self.failUnlessEqual(Record.objects.all()[0].activity.id, self.at2.id)
         
-class UserManagerTest(TestCase):
-    def setUp(self):
+    def test_record_action_task(self):
         create_test_users_and_action_tasks(self)
+        
+        self.u1.record_activity(self.at1)
+        record = Record.objects.get(user=self.u1, activity=self.at1)
+        self.failUnlessEqual(record.points, self.at1.points)
+        self.failUnlessEqual(record.message, self.at1.name)
+        uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 1)
+        self.failUnlessEqual(uap.is_completed, 0)
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 1)
+        self.failUnlessEqual(action.users_completed, 0)
+        
+    def test_complete_action(self):
+        create_test_users_and_action_tasks(self)
+        
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 0)
+        self.failUnlessEqual(action.users_completed, 0)
+        
+        self.u1.record_activity(self.at1)
 
+        uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 1)
+        self.failUnlessEqual(uap.is_completed, 0)
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 1)
+        self.failUnlessEqual(action.users_completed, 0)
+        
+        self.u1.record_activity(self.at2)
+        
+        uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 2)
+        self.failUnlessEqual(uap.is_completed, 0)
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 1)
+        self.failUnlessEqual(action.users_completed, 0)
+        
+        self.u1.record_activity(self.at3)
+        
+        uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 3)
+        self.failUnlessEqual(uap.is_completed, 1)
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 0)
+        self.failUnlessEqual(action.users_completed, 1)
+        
+    def test_multi_user_complete_action(self):
+        create_test_users_and_action_tasks(self)
+        
+        self.u1.record_activity(self.at1)
+    
+        uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 1)
+        self.failUnlessEqual(uap.is_completed, 0)
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 1)
+        self.failUnlessEqual(action.users_completed, 0)
+        
+        self.u2.record_activity(self.at1)
+        
+        uap = UserActionProgress.objects.get(user=self.u2, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 1)
+        self.failUnlessEqual(uap.is_completed, 0)
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 2)
+        self.failUnlessEqual(action.users_completed, 0)
+        
+        self.u1.record_activity(self.at2)
+        
+        uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 2)
+        self.failUnlessEqual(uap.is_completed, 0)
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 2)
+        self.failUnlessEqual(action.users_completed, 0)
+        
+        self.u1.record_activity(self.at3)
+        self.u2.record_activity(self.at2)
+        
+        uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 3)
+        self.failUnlessEqual(uap.is_completed, 1)
+        uap = UserActionProgress.objects.get(user=self.u2, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 2)
+        self.failUnlessEqual(uap.is_completed, 0)
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 1)
+        self.failUnlessEqual(action.users_completed, 1)
+        
+        self.u2.record_activity(self.at3)
+        
+        uap = UserActionProgress.objects.get(user=self.u2, action=self.a)
+        self.failUnlessEqual(uap.user_completes, 3)
+        self.failUnlessEqual(uap.is_completed, 1)
+        action = Action.objects.get(pk=self.a.id)
+        self.failUnlessEqual(action.users_in_progress, 0)
+        self.failUnlessEqual(action.users_completed, 2)
+        
+    def test_total_points(self):
+        create_test_users_and_action_tasks(self)
+        
+        self.u1.record_activity(self.at1)
+        
+        user = User.objects.get(pk=self.u1.id)
+        self.failUnlessEqual(user.get_profile().total_points, 5)
+        
+        self.u1.record_activity(self.at2)
+        
+        user = User.objects.get(pk=self.u1.id)
+        self.failUnlessEqual(user.get_profile().total_points, 15)
+        
+        self.u1.record_activity(self.at3)
+        
+        user = User.objects.get(pk=self.u1.id)
+        self.failUnlessEqual(user.get_profile().total_points, 35)
+        
+        self.u1.unrecord_activity(self.at2)
+        
+        user = User.objects.get(pk=self.u1.id)
+        self.failUnlessEqual(user.get_profile().total_points, 25)
 
 class ActionTest(TestCase):
     def setUp(self):
