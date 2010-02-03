@@ -46,16 +46,14 @@ class User(AuthUser):
         return records[:quantity] if quantity else records
         
     def record_activity(self, activity):
-        print "activity points: %s" % activity.points
         Record(user=self, activity=activity, points=activity.points).save()
 
     def unrecord_activity(self, activity):
-        print "activity points: %s" % activity.points
         Record.objects.filter(user=self, activity=activity).delete()
         
     def get_chart_data(self):
         records = self.get_latest_records().select_related().order_by("created")
-
+        
         chart_points = list(set([ChartPoint(record.created.date()) for record in records]))
         for chart_point in chart_points:
             [chart_point.add_record(record) for record in records if chart_point.date >= record.created.date()]
@@ -266,6 +264,10 @@ class Profile(models.Model):
 
     def _email_hash(self):
         return (hashlib.md5(self.user.email.lower()).hexdigest())
+
+"""
+SIGNALS!
+"""
         
 def actiontask_added(sender, **kwargs):
     actiontask_table_changed(sender, increase=True, **kwargs)
@@ -281,11 +283,6 @@ def actiontask_table_changed(sender, instance, increase, **kwargs):
         
 def user_post_save(sender, instance, signal, *args, **kwargs):
     Profile.objects.get_or_create(user=instance)
-
-models.signals.post_save.connect(user_post_save, sender=User)
-
-models.signals.post_save.connect(actiontask_added, sender=ActionTask)
-models.signals.pre_delete.connect(actiontask_removed, sender=ActionTask)
 
 def record_added(sender, **kwargs):
     record_table_changed(sender, increase=True, **kwargs)
@@ -319,5 +316,8 @@ def record_table_changed(sender, instance, increase, **kwargs):
     except ActionTask.DoesNotExist:
         pass
 
+models.signals.post_save.connect(actiontask_added, sender=ActionTask)
+models.signals.pre_delete.connect(actiontask_removed, sender=ActionTask)
+models.signals.post_save.connect(user_post_save, sender=User)
 models.signals.post_save.connect(record_added, sender=Record)
 models.signals.pre_delete.connect(record_removed, sender=Record)

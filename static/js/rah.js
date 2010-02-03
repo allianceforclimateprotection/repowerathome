@@ -58,58 +58,15 @@ var rah = {
             // Validate the registration form
             $("#registration_form").validate({
                 rules: {
-                    email: {
-                        required: true,
-                        email: true,
-                        remote: {
-                            url: "/validate/",
-                            type: "post",
-                        }
-                    },
-                    zipcode: {
-                        required: false,
-                        remote: {
-                            url: "/validate/",
-                            type: "post",
-                        }
-                    },
-                    first_name: {
-        				required: true,
-        				minlength: 2
-        			},
-                    password1: {
-        				required: true,
-        				minlength: 5
-        			},
-        			password2: {
-        				required: true,
-        				minlength: 5,
-        				equalTo: "#id_password1"
-        			},
+                    zipcode:    { required: false, remote: { url: "/validate/", type: "post", } },
+                    email:      { required: true, email: true, remote: { url: "/validate/", type: "post", } },
+                    first_name: { required: true, minlength: 2 },
+                    password1:  { required: true, minlength: 5 },
+        			password2:  { required: true, minlength: 5, equalTo: "#id_password1" },
                 },
                 messages: {
-                    email: {
-                        remote: "That email is already registered",
-                    },
-                    zipcode: {
-                        remote: "We couldn't locate this zipcode",
-                    },
-                },
-            });
-            // Validate the post registration questions form
-            $("#profile_form").validate({
-                rules: {
-                    zipcode: {
-                        remote: {
-                            url: "/validate/",
-                            type: "post",
-                        }
-                    },
-                },
-                messages: {
-                    zipcode: {
-                        remote: "Please enter a valid 5 digit zipcode",
-                    },
+                    email: { remote: "That email is already registered", },
+                    zipcode: { remote: "We couldn't locate this zipcode", },
                 },
             });
         },
@@ -279,18 +236,9 @@ var rah = {
             // Validate the password form
             $("#password_change_form").validate({
                 rules: {
-                    old_password: {
-                        required: true,
-                    },
-                    new_password1: {
-        				required: true,
-        				minlength: 5
-        			},
-        			new_password2: {
-        				required: true,
-        				minlength: 5,
-        				equalTo: "#id_new_password1"
-        			},
+                    old_password: { required: true, },
+                    new_password1: { required: true, minlength: 5, },
+        			new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1", },
                 },
             });
         },
@@ -301,15 +249,8 @@ var rah = {
             // Validate the password form
             $("#password_reset_confirm").validate({
                 rules: {
-                    new_password1: {
-        				required: true,
-        				minlength: 5
-        			},
-        			new_password2: {
-        				required: true,
-        				minlength: 5,
-        				equalTo: "#id_new_password1"
-        			},
+                    new_password1: { required: true, minlength: 5 },
+        			new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" },
                 },
             });
         },
