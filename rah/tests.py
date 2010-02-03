@@ -1,10 +1,3 @@
-"""
-This file demonstrates two different styles of tests (one doctest and one
-unittest). These will both pass when you run "manage.py test".
-
-Replace these with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
 from rah.models import *
 
@@ -22,16 +15,82 @@ def create_test_users_and_action_tasks(object):
 
 class UserTest(TestCase):
     def setUp(self):
-        self.u1 = User(username='1', email='test@test.com')
-        self.u2 = User(username='2', email='test@test.net', first_name='first')
-        self.u3 = User(username='3', email='test@test.org', last_name='last')
-        self.u4 = User(username='4', email='test@test.edu', first_name='first', last_name='last')
+        # create_test_users_and_action_tasks(self)
+        pass
 
     def test_get_name(self):
-        self.failUnlessEqual(self.u1.get_name(), 'test@test.com')
-        self.failUnlessEqual(self.u2.get_name(), 'first')
-        self.failUnlessEqual(self.u3.get_name(), 'last')
-        self.failUnlessEqual(self.u4.get_name(), 'first last')
+        u1 = User(username='1', email='test@test.com')
+        u2 = User(username='2', email='test@test.net', first_name='first')
+        u3 = User(username='3', email='test@test.org', last_name='last')
+        u4 = User(username='4', email='test@test.edu', first_name='first', last_name='last')
+        self.failUnlessEqual(u1.get_name(), 'test@test.com')
+        self.failUnlessEqual(u2.get_name(), 'first')
+        self.failUnlessEqual(u3.get_name(), 'last')
+        self.failUnlessEqual(u4.get_name(), 'first last')
+    
+    def test_get_chart_data(self):
+        pass
+        # create_test_users_and_action_tasks(self)
+        # Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
+        # Record(user=self.u1, activity=self.at2, points=self.at2.points).save()
+        # Record(user=self.u1, activity=self.at3, points=self.at3.points).save()
+        # 
+        # chart_points = self.u1.get_chart_data()
+        # point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
+        # problem here is that points aren't being collapsed
+        # print chart_points[0].points
+        # print Record.objects.all()[0].points
+        
+        # self.failUnlessEqual(len(chart_data), 3)
+        # print Record.objects.all()[0].points
+        # self.failUnlessEqual(chart_data[], 3)
+        # print self.u1.get_chart_data()
+    
+    def test_get_latest_records(self):
+        create_test_users_and_action_tasks(self)
+        
+        Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
+        Record(user=self.u1, activity=self.at2, points=self.at2.points).save()
+        Record(user=self.u1, activity=self.at3, points=self.at3.points).save()
+        self.failUnlessEqual(Record.objects.count(), 3)
+        
+        all_records = self.u1.get_latest_records()
+        self.failUnlessEqual(len(all_records), 3)
+        
+        two_records = self.u1.get_latest_records(2)
+        self.failUnlessEqual(len(two_records), 2)
+        
+        # Make sure the order is correct
+        self.failUnless(all_records[0].created < all_records[1].created < all_records[2].created)
+    
+    def test_record_activity(self):
+        create_test_users_and_action_tasks(self)
+        
+        # User should have zero points
+        self.failUnlessEqual(self.u1.get_profile().total_points, 0)
+        
+        # Add a record
+        self.u1.record_activity(self.at1)
+        self.failUnlessEqual(Record.objects.count(), 1)
+        self.failUnlessEqual(self.u1.get_profile().total_points, self.at1.points)
+        
+        # Add another record
+        self.u1.record_activity(self.at2)
+        self.failUnlessEqual(Record.objects.count(), 2)
+        
+    def test_unrecord_activity(self):
+        create_test_users_and_action_tasks(self)
+        
+        # Add some records
+        self.failUnlessEqual(Record.objects.count(), 0)
+        Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
+        Record(user=self.u1, activity=self.at2, points=self.at1.points).save()
+        self.failUnlessEqual(Record.objects.count(), 2)
+        
+        # Make sure the right record was deleted
+        self.u1.unrecord_activity(self.at1)
+        self.failUnlessEqual(Record.objects.count(), 1)
+        self.failUnlessEqual(Record.objects.all()[0].activity.id, self.at2.id)
         
 class UserManagerTest(TestCase):
     def setUp(self):
