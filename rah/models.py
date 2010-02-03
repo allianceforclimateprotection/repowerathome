@@ -46,7 +46,7 @@ class User(AuthUser):
         return records[:quantity] if quantity else records
         
     def record_activity(self, activity):
-        Record(user=self, activity=activity, points=activity.points).save()
+        Record(user=self, activity=activity, points=activity.points, message=activity.name).save()
 
     def unrecord_activity(self, activity):
         Record.objects.filter(user=self, activity=activity).delete()
