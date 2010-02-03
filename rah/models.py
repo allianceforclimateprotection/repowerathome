@@ -42,10 +42,7 @@ class User(AuthUser):
         proxy = True
 
     def get_name(self):
-        return self.get_full_name() if self.get_full_name() else self.email
-
-    def get_welcome(self):
-        return 'Welcome, %s' % (self.get_full_name()) if self.get_full_name() else 'Logged in as, %s' % (self.email)
+        return self.get_full_name() if self.get_full_name() else "Repower@Home User"
     
     def get_latest_records(self, quantity=None):
         records = self.record_set.all()
@@ -85,6 +82,7 @@ class ActionCat(DefaultModel):
     content = models.TextField()
     
 class ActionManager(models.Manager):
+    # TODO: Write unit test for actions_by_completion_status
     def actions_by_completion_status(self, user):
         """
         get a queryset of action objects, the actions will have three additional attributes
