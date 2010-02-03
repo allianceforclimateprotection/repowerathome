@@ -164,13 +164,15 @@ class AccountForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', 'first_name', 'last_name')
-
+    
+    first_name = forms.CharField(max_length=255, required=True)
+    
     def clean_email(self):
         email = self.cleaned_data['email'].strip()
         if not len(email):
-            raise ValidationError('Email can not be blank')
+            raise ValidationError('Email cannot be blank')
 
-        if self.instance.email == email or self.instance.set_email(email):
+        if self.instance.email == email or not User.objects.filter(email=email):
             return email
         else:
              raise ValidationError('This email address has already been registered in our system.')

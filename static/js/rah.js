@@ -141,6 +141,28 @@ var rah = {
     },
     
     /**
+    * Profile Edit Page
+    **/
+    page_profile_edit: {
+        init: function(){
+            // Validate the registration form
+            $("#profile_edit_form").validate({
+                rules: {
+                    zipcode:    { required: false, remote: { url: "/validate/", type: "post", } },
+                    email:      { required: true, email: true, remote: { url: "/validate/", type: "post", } },
+                    first_name: { required: true, minlength: 2 },
+                    password1:  { required: false, minlength: 5 },
+        			password2:  { required: false, minlength: 5, equalTo: "#id_password1" },
+                },
+                messages: {
+                    email: { remote: "That email is already registered", },
+                    zipcode: { remote: "We couldn't locate this zipcode", },
+                },
+            });
+        },
+    },
+    
+    /**
     * Action Detail page
     **/
     page_action_detail: {

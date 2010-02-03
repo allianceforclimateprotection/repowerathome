@@ -153,20 +153,16 @@ def profile(request, user_id):
 def profile_edit(request, user_id):
     if request.user.id <> int(user_id):
         return forbidden(request, "Sorry, but you do not have permissions to edit this profile.")
+    
+    profile = request.user.get_profile()
     if request.method == 'POST':
-        # If the user just registered go to the home page
-        post_reg = True if ("/register/" in str(request.META.get('HTTP_REFERER'))) else False
-        profile_form = ProfileEditForm(request.POST, instance=request.user.get_profile())
+        profile_form = ProfileEditForm(request.POST, instance=profile)
         account_form = AccountForm(request.POST, instance=request.user)
-        if profile_form.is_valid() and (account_form.is_valid() or post_reg):
+        if profile_form.is_valid() and account_form.is_valid():
             profile_form.save()
-            account_form.save() if not post_reg else False
-            if post_reg:
-                return redirect('rah.views.index')
+            account_form.save()
             messages.add_message(request, messages.SUCCESS, 'Your profile has been updated.')
-            return redirect('rah.views.profile_edit', user_id=request.user.id)
     else:
-        profile      = request.user.get_profile()
         account_form = AccountForm(instance=request.user)
         profile_form = ProfileEditForm(instance=profile, initial={
             'zipcode': profile.location.zipcode if profile.location else '',
@@ -221,6 +217,8 @@ def validate_field(request):
     if request.POST.get("email"):
         from django.core.validators import email_re # OPTIMIZE Is it ok to have imports at the function level?
         if email_re.search(request.POST.get("email")) and not User.objects.filter(email__exact = request.POST.get("email")):
+            valid = True
+        if request.user.is_authenticated() and request.user.email == request.POST.get("email"):
             valid = True
     
     # Valid if zipcode is in our location table
