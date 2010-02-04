@@ -1,6 +1,7 @@
 import oauth, json
 
 from django.http import *
+from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -21,6 +22,7 @@ def unauth(request):
 @login_required
 def auth(request):
     "/auth/"
+    request.session["twitter_next"] = request.GET.get("next", reverse("profile_edit", args=[request.user.id]))
     token = get_unauthorised_request_token()
     auth_url = get_authorisation_url(token)
     request.session['unauthed_token'] = token.to_string()
@@ -38,12 +40,12 @@ def return_(request):
             profile.twitter_access_token = access_token.to_string()
             profile.save()
             messages.success(request, "Your account is now linked with twitter.")
-            return redirect('profile_edit', request.user.id)
+            return redirect(request.session.pop("twitter_next"))
         else:
             messages.error(request, "Your tokens to not match.")
     else:
         messages.error(request, "You are missing a token.")
-    return redirect('profile_edit', request.user.id)
+    return redirect(request.session.pop("twitter_next"))
 
 @login_required
 @require_POST
@@ -61,4 +63,4 @@ def post_status(request):
             profile.twitter_access_token = None
             profile.save()
             messages.error(request, "There was a problem posting your tweet, please relink your account.")
-    return redirect('index')
+    return redirect("index")

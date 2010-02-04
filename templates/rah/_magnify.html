@@ -30,7 +30,7 @@
 		</form>
 	{% else %}
 		<p>
-		    You need to <a href='{% url profile_edit user.id %}'>link your account with Twitter</a> 
+		    You need to <a href="{% url twitter_oauth_auth %}?next={{ request.path }}">link your account with Twitter</a> 
 		    before you can do this.
 		</p>
 	{% endif %}
