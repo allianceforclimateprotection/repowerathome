@@ -21,7 +21,7 @@
 		{% with object as post %}
 			<div>
 				{% include 'blog/_post_header.html' %}
-				<div class="post_body">{{ post.body|safe }}</div>
+				<div class="post_body">{{ post.body|safe|linebreaks }}</div>
 			</div>
 		{% endwith %}
 	</div>
