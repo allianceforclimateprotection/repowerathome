@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 from django.forms.formsets import formset_factory
 from django.contrib import messages
+from django.contrib.sites.models import Site
 from rah.models import *
 from rah.forms import *
 from settings import GA_TRACK_PAGEVIEW
@@ -268,6 +269,24 @@ def post_comment(request, next=None, using=None):
     response = comments.post_comment(request, next, using)
     messages.add_message(request, messages.SUCCESS, 'Thanks for the comment.')
     return response
+    
+@login_required
+@csrf_protect
+def create_group(request):
+    """
+    create a form a user can use to create a custom group, on POST save this group to the database
+    and automatically add the creator to the said group as a manager.
+    """
+    if request.method == "POST":
+        form = GroupForm(request.POST, request.FILES)
+        if form.is_valid():
+            group = form.save()
+            GroupUsers.objects.create(group=group, user=request.user, is_manager=True)
+            messages.success(request, "%s has been created." % group)
+            return redirect("index") # TODO: after creating the group we should redirect the user to the group detail page
+    else:
+        form = GroupForm()
+    return render_to_response("rah/create_group.html", {"form": form, "site": Site.objects.get_current()}, context_instance=RequestContext(request))
     
 def forbidden(request, message="You do not have permissions."):
     from django.http import HttpResponseForbidden

@@ -290,4 +290,27 @@ var rah = {
             });
         },
     },
+    
+    page_create_group: {
+        init: function() {
+            $("#id_slug").change(function() {
+                $(this).data("changed", true);
+            });
+
+            $("#id_name").keyup(function() {
+                var slug = $("#id_slug");
+                if(!slug.data("changed")) {
+                    slug.val(URLify($(this).val(), 50));
+                }
+            });
+            
+            $("#create_group_form").validate({
+                rules: {
+                    name: { required: true, },
+                    slug: { required: true, },
+        			description: { required: true, },
+                },
+            });
+        },
+    },
 }

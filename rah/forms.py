@@ -13,6 +13,18 @@ import hashlib
 
 import settings
 
+class SlugField(forms.CharField):
+    def __init__(self, *args, **kwargs):
+        super(SlugField, self).__init__(*args, **kwargs)
+
+    def clean(self, value):
+        import re
+        
+        if not re.search('^[a-z0-9-]+$', value):
+            raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
+    
+        return data
+
 class RegistrationForm(forms.ModelForm):
     """
     A form that creates a user, with no privileges, from the given email and password.
@@ -257,3 +269,22 @@ class PasswordChangeForm(auth_forms.PasswordChangeForm):
     def clean_old_password(self):
         return super(PasswordChangeForm, self).clean_old_password()
 PasswordChangeForm.base_fields.keyOrder = ['old_password', 'new_password1', 'new_password2']
+
+class GroupForm(forms.ModelForm):
+    name = forms.CharField(label="Group name", help_text="Enter a name for your new group")
+    slug = forms.SlugField(label="Group address", help_text="This will be your group's web address")
+    description = forms.CharField(label="Group description", help_text="What is the group all about?", widget=forms.Textarea)
+    image = forms.FileField(label="Upload a group image", help_text="You can upload png, jpg or gif files upto 512K", required=False)
+    
+    class Meta:
+        model = Group
+        exclude = ("is_featured", "users",)
+        widgets = {
+            "membership_type": forms.RadioSelect
+        }
+        
+    def clean_image(self):
+        data = self.cleaned_data["image"]
+        if data.size > 65536:
+            raise forms.ValidationError("Group images can not be larger than 512K")
+        return data

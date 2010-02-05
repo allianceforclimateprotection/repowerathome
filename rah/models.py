@@ -6,6 +6,16 @@ from django.template import Context, loader
 
 import twitter_app.utils as twitter_app
 
+class DefaultModel(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        abstract = True
+    
+    def __unicode__(self):
+        return u'%s' % (self.name)
+
 class ChartPoint(object):
     """docstring for ChartPoint"""
     def __init__(self, date):
@@ -36,24 +46,24 @@ class ChartPoint(object):
         
     def __hash__(self):
         return hash(self.date)
-
-class User(AuthUser): 
+        
+class User(AuthUser):
     class Meta:
         proxy = True
 
     def get_name(self):
         return self.get_full_name() if self.get_full_name() else "Repower@Home User"
-    
+
     def get_latest_records(self, quantity=None):
         records = self.record_set.all()
         return records[:quantity] if quantity else records
-        
+
     def record_activity(self, activity):
         Record(user=self, activity=activity, points=activity.points, message=activity.name).save()
 
     def unrecord_activity(self, activity):
         Record.objects.filter(user=self, activity=activity).delete()
-        
+
     def get_chart_data(self):
         records = self.get_latest_records().select_related().order_by("created")
         chart_points = list(sorted(set([ChartPoint(record.created.date()) for record in records])))
@@ -64,16 +74,30 @@ class User(AuthUser):
 
     def __unicode__(self):
         return u'%s' % (self.email)
+        
+class Group(DefaultModel):
+    MEMBERSHIP_CHOICES = (
+        ('O', 'Open membership'),
+        ('C', 'Closed membership'),
+    )
     
-class DefaultModel(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255, unique=True)
+    description = models.TextField()
+    membership_type = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default="O")
+    image = models.ImageField(upload_to="group_images", null=True)
+    is_featured = models.BooleanField(default=False)
+    users = models.ManyToManyField(User, through="GroupUsers")
+
+class GroupUsers(models.Model):
+    user = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
+    is_manager = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
-    class Meta:
-        abstract = True
-    
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return u'%s belongs to group %s' % (self.user, self.group)
 
 class ActionCat(DefaultModel):
     name = models.CharField(max_length=255)

@@ -7,3 +7,4 @@ test_settings.py
 static/js/js_libs_min.js
 static/js/rah_min.js
 static/css/style_min.css
+static/group_images/*
