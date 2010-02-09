@@ -37,6 +37,17 @@
 		{% endif %}
 		</p>
 	</div>
+	{% if commitment_list %}
+	    <h2>Commitments</h2>
+	    <p>
+	    {% for row in commitment_list %}
+	        <a href="{% url rah.views.action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed}}<br/>
+	    {% endfor %}
+	    </p>
+	{% endif %}
+	{% if not is_others_profile %}
+        {% include 'rah/_magnify.html' %}
+	{% endif %}
 	{% if completed %}
 	    <h2>Completed Actions</h2>
         <p>
@@ -44,9 +55,6 @@
             <a href="{% url rah.views.action_detail action.slug %}">{{action.name}}</a> ({{action.total_points}} points)<br/>
 	    {% endfor %}
 	    </p>
-	{% endif %}
-	{% if not is_others_profile %}
-        {% include 'rah/_magnify.html' %}
 	{% endif %}
 {% endblock %}
 

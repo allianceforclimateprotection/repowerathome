@@ -235,6 +235,18 @@ class UserTest(TestCase):
         self.failUnlessEqual(progress.is_completed, 1)
         self.failUnlessEqual(progress.user_completes, 3)
 
+    def test_get_commit_list(self):
+        from datetime import date
+        date_committed = date.today()
+        self.u1.set_action_commitment(self.a, date_committed)
+        
+        commit_list = self.u1.get_commit_list()
+        self.failUnlessEqual(len(commit_list), 1)
+        
+        commit_item = commit_list[0]
+        self.failUnlessEqual(commit_item.action, self.a)
+        self.failUnlessEqual(commit_item.date_committed, date_committed)
+
 class ActionTest(TestCase):
     def setUp(self):
         create_test_users_and_action_tasks(self)

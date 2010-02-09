@@ -85,7 +85,10 @@ class User(AuthUser):
     def get_action_progress(self, action):
         uap = UserActionProgress.objects.filter(action=action, user=self)
         return uap[0] if uap else None
-        
+    
+    def get_commit_list(self):
+        return UserActionProgress.objects.select_related().filter(user=self, is_completed=0, date_committed__isnull=False).order_by("date_committed")
+    
     def __unicode__(self):
         return u'%s' % (self.email)
         

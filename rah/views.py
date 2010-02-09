@@ -139,7 +139,6 @@ def profile(request, user_id):
     chart_points = user.get_chart_data()
     point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
     tooltips = [tooltip_template.render(Context({"records": chart_point.records})) for chart_point in chart_points]
-    logging.debug("point data: %s" % point_data)
     return render_to_response('rah/profile.html', {
         'total_points': user.get_profile().total_points,
         'in_progress': in_progress,
@@ -151,6 +150,7 @@ def profile(request, user_id):
         'chart_data': json.dumps({"point_data": point_data, "tooltips": tooltips}),
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
+        'commitment_list': user.get_commit_list(),
     }, context_instance=RequestContext(request))
 
 @login_required
@@ -188,7 +188,7 @@ def action_commit(request, action_slug):
         if commit_form.is_valid() and request.user.is_authenticated():
             commit_form.save(action, request.user)
             messages.add_message(request, messages.SUCCESS, 'We recorded your commitment.')
-            return redirect("rah.views.action_detail", action_slug=action.slug)
+            return redirect("action_detail", action_slug=action.slug)
     else:
         initial = {'date_committed': progress.date_committed} if progress else None
         commit_form = ActionCommitForm(initial=initial)
