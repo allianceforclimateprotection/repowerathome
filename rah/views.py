@@ -101,6 +101,7 @@ def action_detail(request, action_slug):
     params['num_noshow_users_completed'] = params['num_users_completed'] - len(params['show_users_completed'])
     
     params['progress'] = request.user.get_action_progress(params['action']) if request.user.is_authenticated() else None
+    params['commit_form'] = ActionCommitForm()
     
     return render_to_response('rah/action_detail.html', params, context_instance=RequestContext(request))
                               
@@ -193,7 +194,7 @@ def action_commit(request, action_slug):
         initial = {'date_committed': progress.date_committed} if progress else None
         commit_form = ActionCommitForm(initial=initial)
     
-    return render_to_response('rah/_action_commit.html' if request.is_ajax() else 'rah/action_commit.html', {
+    return render_to_response('rah/action_commit.html', {
         'action': action,
         'commit_form': commit_form,
     }, context_instance=RequestContext(request))

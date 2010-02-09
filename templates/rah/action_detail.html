@@ -30,15 +30,23 @@
 			{% include 'comments/_comment_list.html' %}
 		{% endwith %}
 	</div>
+	<div id="commit_dialog">
+        {% include 'rah/_action_commit.html' %}
+	</div>
 {% endblock %}
 {% block minorcol %}
     {% if progress.date_committed and not progress.is_completed %}
         <h2>Commitment</h2>
-        <p>You committed to complete this action by {{ progress.date_committed }}. (<a href="{% url action_commit action.slug %}">Change</a>)</p>
+        <p>
+            You committed to complete this action by {{ progress.date_committed }}. 
+            (<a href="{% url action_commit action.slug %}" class="commit_link">Change</a>)
+        </p>
     {% endif %}
     <h2>Action Tools</h2>
     <p>
-        {% if not progress.date_committed %}<a href="{% url action_commit action.slug %}" class="">Make a Commitment</a><br/>{% endif %}
+        {% if not progress.date_committed %}
+            <a href="{% url action_commit action.slug %}" class="commit_link">Make a Commitment</a><br/>
+        {% endif %}
         <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
     </p>
 	<h2>Who's doing this?</h2>

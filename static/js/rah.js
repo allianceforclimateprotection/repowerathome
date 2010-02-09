@@ -171,12 +171,38 @@ var rah = {
             checkboxes.parents('form').find(':submit').remove();
             rah.set_task_completion_submission.init(checkboxes);
             rah.mod_comment_form.init();
+            
+            // $("#house_party_form").validate({rules: {phone_number: { required: true }}});
+            
+            $('.commit_link').click(function(){ $('#commit_dialog').dialog('open'); return false; });
+            $('#commit_dialog').dialog({
+                title: 'Make a Commitment', modal: true, resizable: false, draggable: false, autoOpen: false, 
+                width: 550,
+                height: 450,
+                open: function(){
+                    $("#commit_form").hide();
+                    $("#commit_calendar").datepicker({
+                        dateFormat: 'yy-mm-dd', 
+                        maxDate: '+2y', 
+                        minDate: '0', 
+                        numberOfMonths: 2, 
+                        onSelect: function(dateText, inst) { 
+                            $("#id_date_committed").val(dateText);
+                        }
+                    });
+                },
+                buttons: { 
+                    "Commit": function() {
+                        $('#commit_form').submit(); 
+                        $('#commit_dialog').dialog('close');
+                    },
+                },
+            });
         },
     },
     
     page_action_commit: {
-        init: function(){
-            // $("#calendar").datepicker({ dateFormat: 'yy-mm-dd', maxDate: '+2y', minDate: '0', numberOfMonths: 2});   
+        init: function(){   
         },
     },
     

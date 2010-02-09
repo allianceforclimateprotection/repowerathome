@@ -1,9 +1,11 @@
 <p>
     When do you think you'll complete this action?
 </p>
-<div id="calendar"></div>
+<div id="commit_calendar"></div>
 <form action="{% url action_commit action.slug %}" method="post" id="commit_form">
-    <div>{{commit_form.as_p}}</div>
-    <input type="submit" value="Submit" id="commit_submit"/>
+    <div>
+        {{commit_form.as_p}}
+        <input type="submit" value="Submit" id="commit_submit"/>
+    </div>
     {% csrf_token %}
 </form>
