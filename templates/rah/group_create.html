@@ -1,7 +1,7 @@
 {% extends "rah/base.html" %}
 {% block content %}
     <h1>Create a group</h1>
-	<form id="create_group_form" action="" method="post" enctype="multipart/form-data">
+	<form id="group_create_form" action="" method="post" enctype="multipart/form-data">
 		{% for field in form %}
 		    <div style="margin-bottom: 15px;">
     			<div>{{ field.label_tag }}</div>
@@ -19,4 +19,4 @@
 		{% csrf_token %}
 	</form>
 {% endblock %}
-{% block js %}page_create_group{% endblock %}
+{% block js %}page_group_create{% endblock %}

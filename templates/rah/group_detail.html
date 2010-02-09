@@ -1,0 +1,78 @@
+{% extends "rah/base.html" %}
+{% block content %}
+    <div id="group_header">
+        <img class="group_image" src="{{ MEDIA_URL }}{{ group.image }}" alt="group image" height="75" width="75" />
+        <a class="group_leave" href="{% url group_leave group.id %}">Leave Group</a>
+        <h1>{{ group.name }}</h1>
+        <p>{{ group.description }}</p>
+        <p class="membership_type">
+            Group Type: {% if group.membership_type == "O" %}Public{% else %}Private{% endif %}
+        </p>
+    </div>
+    
+    <div id="group_info">
+        <div id="popular_actions">
+            {% if popular_actions %}
+                <h2>Popular Actions</h2>
+                <ol>
+                {% for action in popular_actions %}
+                    <li><a href="{% url action_detail action.slug %}">{{ action }}</a> ({{ action.users_completed }})</li>
+                {% endfor %}
+                </ol>
+            {% endif %}
+        </div>
+        <div id="top_members">
+            {% if top_members %}
+                <h2>Top Members</h2>
+                <ol>
+                {% for user in top_members %}
+                    <li><a href="{% url profile user.id %}">{{ user }}</a> ({{ user.get_profile.total_points }})</li>
+                {% endfor %}
+                </ol>
+            {% endif %}
+        </div>
+    </div>
+    <br class="spacer" />
+    
+    <div id="group_charts">
+        <table class="tablesorter">
+            <thead>
+                <tr>
+                    <th class="header">Members</th>
+                    <th class="header">Committed Actions</th>
+                    <th class="header">Actions Completed</th>
+                    <th class="header">Points Earned</th>
+                    <th class="header">Last Active</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in top_members %}
+                    <tr>
+                        <td>{{ user }}</td>
+                        <td>0</td>
+                        <td>{{ user.actions_completed }}</td>
+                        <td>{{ user.get_profile.total_points }}</td>
+                        <td>{{ user.last_active|date:"M j, Y" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="group_activity">
+        {% if group_records %}
+            <h2>Group Activity</h2>
+            <ul>
+            {% for record in group_records %}
+                <li>{{ record }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        
+    </div>
+
+{% endblock %}
+{% block minorcol %}
+
+{% endblock %}
+{% block js %}page_group_detail{% endblock %}

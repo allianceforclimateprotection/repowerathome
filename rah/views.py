@@ -134,7 +134,6 @@ def profile(request, user_id):
     tooltip_template = loader.get_template("rah/_chart_tooltip.html")
     chart_points = user.get_chart_data()
     point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
-    
     tooltips = [tooltip_template.render(Context({"records": chart_point.records})) for chart_point in chart_points]
     logging.debug("point data: %s" % point_data)
     return render_to_response('rah/profile.html', {
@@ -272,7 +271,7 @@ def post_comment(request, next=None, using=None):
     
 @login_required
 @csrf_protect
-def create_group(request):
+def group_create(request):
     """
     create a form a user can use to create a custom group, on POST save this group to the database
     and automatically add the creator to the said group as a manager.
@@ -283,10 +282,33 @@ def create_group(request):
             group = form.save()
             GroupUsers.objects.create(group=group, user=request.user, is_manager=True)
             messages.success(request, "%s has been created." % group)
-            return redirect("index") # TODO: after creating the group we should redirect the user to the group detail page
+            return redirect("group_detail", group_slug=group.slug) # TODO: after creating the group we should redirect the user to the group detail page
     else:
         form = GroupForm()
-    return render_to_response("rah/create_group.html", {"form": form, "site": Site.objects.get_current()}, context_instance=RequestContext(request))
+    return render_to_response("rah/group_create.html", {"form": form, "site": Site.objects.get_current()}, context_instance=RequestContext(request))
+
+def group_detail(request, group_slug):
+    """
+    display all of the information about a particular group
+    """
+    group = get_object_or_404(Group, slug=group_slug)
+    popular_actions = group.completed_actions_by_user()
+    top_members = group.members_ordered_by_points()
+    group_records = group.group_records(10)
+    is_member = request.user in group.users.all()
+    return render_to_response("rah/group_detail.html", locals(), context_instance=RequestContext(request))
+    
+def group_leave(request, group_slug):
+    """
+    display all of the information about a particular group
+    """
+    group = get_object_or_404(Group, slug=group_slug)
+    if request.user in group.users.all():
+        GroupUsers.objects.filter(group=group, user=request.user).delete()
+        messages.success(request, "You have been removed from group %s" % group)
+    else:
+        messages.error(request, "You can not leave a group your not a member of")
+    return redirect("group_detail", group_slug=group_slug)
     
 def forbidden(request, message="You do not have permissions."):
     from django.http import HttpResponseForbidden
