@@ -285,6 +285,6 @@ class GroupForm(forms.ModelForm):
         
     def clean_image(self):
         data = self.cleaned_data["image"]
-        if data.size > 65536:
+        if data.size > 4194304:
             raise forms.ValidationError("Group images can not be larger than 512K")
         return data
