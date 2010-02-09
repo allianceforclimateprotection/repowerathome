@@ -96,12 +96,32 @@ class Group(DefaultModel):
     )
     
     name = models.CharField(max_length=255)
-    slug = models.CharField(max_length=255, unique=True)
+    slug = models.CharField(max_length=255, unique=True, db_index=True)
     description = models.TextField()
     membership_type = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default="O")
     image = models.ImageField(upload_to="group_images", null=True)
     is_featured = models.BooleanField(default=False)
     users = models.ManyToManyField(User, through="GroupUsers")
+    
+    def completed_actions_by_user(self):
+        """
+        what actions have been completed by users in this group and how many users have completed each action
+        """
+        actions = Action.objects.filter(useractionprogress__user__group=self, useractionprogress__is_completed=1)
+        return actions.annotate(users_completed=models.Count("useractionprogress__is_completed"))
+        
+    def members_ordered_by_points(self, limit=None):
+        users = User.objects.filter(group=self)
+        users = users.annotate(actions_completed=models.Sum("useractionprogress__is_completed"))
+        users = users.annotate(last_active=models.Max("record__created"))
+        users = list(users[:limit]) if limit else list(users)
+        users.sort(lambda x,y: int(y.get_profile().total_points - x.get_profile().total_points))
+        return users
+        
+    def group_records(self, limit=None):
+        records = Record.objects.filter(user__group=self).order_by("created")
+        records = records[:limit] if limit else records
+        return records
 
 class GroupUsers(models.Model):
     user = models.ForeignKey(User)

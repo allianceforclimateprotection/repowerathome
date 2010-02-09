@@ -297,7 +297,7 @@ var rah = {
         },
     },
     
-    page_create_group: {
+    page_group_create: {
         init: function() {
             $("#id_slug").change(function() {
                 $(this).data("changed", true);
@@ -310,13 +310,19 @@ var rah = {
                 }
             });
             
-            $("#create_group_form").validate({
+            $("#group_create_form").validate({
                 rules: {
                     name: { required: true, },
                     slug: { required: true, },
         			description: { required: true, },
                 },
             });
+        },
+    },
+    
+    page_group_detail: {
+        init: function() {
+            $("table").tablesorter();
         },
     },
 }

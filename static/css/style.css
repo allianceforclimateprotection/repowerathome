@@ -376,6 +376,33 @@ acronym {
 
 .whos_working { margin-left: 25px; font-size: 0.9em; }
 
+/* @group groups */
+.group_image { float: left; margin-right: 10px; }
+
+.group_leave { float: right; font-size: 0.8em; display: inline; }
+
+.membership_type { font-size: 0.7em; }
+
+#popular_actions { float: left; }
+
+#group_info li { font-size: 0.9em; }
+
+#group_charts { margin-top: 20px; }
+
+th.header {  
+    cursor: pointer;
+    background-repeat: no-repeat; 
+    background-position: center left; 
+    padding-left: 20px; 
+    border-right: 1px solid #dad9c7; 
+    margin-left: -1px; 
+}
+
+th.headerSortUp, th.headerSortDown { 
+    background-color: #3399FF; 
+}
+/* @end */
+
 /*
 * jQuery UI CSS Framework
 * Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)
