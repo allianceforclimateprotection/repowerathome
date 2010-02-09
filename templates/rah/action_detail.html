@@ -32,8 +32,15 @@
 	</div>
 {% endblock %}
 {% block minorcol %}
+    {% if progress.date_committed and not progress.is_completed %}
+        <h2>Commitment</h2>
+        <p>You committed to complete this action by {{ progress.date_committed }}. (<a href="{% url action_commit action.slug %}">Change</a>)</p>
+    {% endif %}
     <h2>Action Tools</h2>
-    <p><a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a></p>
+    <p>
+        {% if not progress.date_committed %}<a href="{% url action_commit action.slug %}" class="">Make a Commitment</a><br/>{% endif %}
+        <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
+    </p>
 	<h2>Who's doing this?</h2>
 	<span class='total_users'>{{ num_users_completed }}</span> pe{{ num_users_completed|pluralize:"rson has,ople have" }} completed this action.<br/>
 	{% if num_users_completed %}

@@ -30,6 +30,7 @@ urlpatterns = patterns('rah.views',
     (r'^search/$', 'search'),
     url(r'^comments/post/$', 'post_comment', name='post_comment'),
     url(r'^group/create/$', 'create_group', name='create_group'),
+    url(r'^actions/(?P<action_slug>[a-z0-9-]+)/commit$', 'action_commit', name='action_commit'),
 )
 
 urlpatterns += patterns('',

@@ -72,6 +72,20 @@ class User(AuthUser):
 
         return chart_points
 
+    def set_action_commitment(self, action, date_committed):
+        uap = UserActionProgress.objects.filter(action=action, user=self)
+        if uap:
+            row = uap[0]
+            row.date_committed = date_committed
+            row.save()
+        else:
+            row = UserActionProgress(action=action, user=self, date_committed=date_committed).save()
+        return row
+    
+    def get_action_progress(self, action):
+        uap = UserActionProgress.objects.filter(action=action, user=self)
+        return uap[0] if uap else None
+        
     def __unicode__(self):
         return u'%s' % (self.email)
         
@@ -153,6 +167,7 @@ class Action(DefaultModel):
     total_points = models.IntegerField(default=0)
     users_in_progress = models.IntegerField(default=0)
     users_completed = models.IntegerField(default=0)
+    users_committed = models.IntegerField(default=0)
     category = models.ForeignKey(ActionCat)
     user_progress = models.ManyToManyField(User, through="UserActionProgress")
     objects = ActionManager()
@@ -232,7 +247,8 @@ class UserActionProgress(models.Model):
     action = models.ForeignKey(Action)
     user_completes = models.IntegerField(default=0)
     is_completed = models.IntegerField(default=0)
-
+    date_committed = models.DateField(null=True)
+    
     def __unicode__(self):
         return "(%s, %s) has %s complete(s) and is%scompleted" % (self.user, self.action, self.user_completes, (" " if self.is_completed else " not "))
 

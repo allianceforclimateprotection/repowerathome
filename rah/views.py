@@ -90,15 +90,19 @@ def action_show(request):
 def action_detail(request, action_slug):
     """Detail page for an action"""
     # Lookup the action
-    dict = {}
-    dict['action'] = get_object_or_404(Action, slug=action_slug)
-    dict['action_tasks'] = dict['action'].get_action_tasks_by_user(request.user)
-    dict['num_users_in_progress'], dict['show_users_in_progress'], dict['num_users_completed'], dict['show_users_completed'] = dict['action'].users_with_completes(5)
+    params = {}
+    params['action'] = get_object_or_404(Action, slug=action_slug)
+    params['action_tasks'] = params['action'].get_action_tasks_by_user(request.user)
     
-    dict['num_noshow_users_in_progress'] = dict['num_users_in_progress'] - len(dict['show_users_in_progress'])
-    dict['num_noshow_users_completed'] = dict['num_users_completed'] - len(dict['show_users_completed'])
+    params['num_users_in_progress'], params['show_users_in_progress'], params['num_users_completed'], \
+    params['show_users_completed'] = params['action'].users_with_completes(5)
     
-    return render_to_response('rah/action_detail.html', dict, context_instance=RequestContext(request))
+    params['num_noshow_users_in_progress'] = params['num_users_in_progress'] - len(params['show_users_in_progress'])
+    params['num_noshow_users_completed'] = params['num_users_completed'] - len(params['show_users_completed'])
+    
+    params['progress'] = request.user.get_action_progress(params['action']) if request.user.is_authenticated() else None
+    
+    return render_to_response('rah/action_detail.html', params, context_instance=RequestContext(request))
                               
 def action_task(request, action_task_id):
     #  Handle the POST if a task is being completed
@@ -176,9 +180,28 @@ def profile_edit(request, user_id):
     }, context_instance=RequestContext(request))
 
 @csrf_protect
+@login_required
+def action_commit(request, action_slug):
+    action = get_object_or_404(Action, slug=action_slug)
+    progress = request.user.get_action_progress(action)
+    if request.method == 'POST':
+        commit_form = ActionCommitForm(request.POST)
+        if commit_form.is_valid() and request.user.is_authenticated():
+            commit_form.save(action, request.user)
+            messages.add_message(request, messages.SUCCESS, 'We recorded your commitment.')
+            return redirect("rah.views.action_detail", action_slug=action.slug)
+    else:
+        initial = {'date_committed': progress.date_committed} if progress else None
+        commit_form = ActionCommitForm(initial=initial)
+    
+    return render_to_response('rah/_action_commit.html' if request.is_ajax() else 'rah/action_commit.html', {
+        'action': action,
+        'commit_form': commit_form,
+    }, context_instance=RequestContext(request))
+
+@csrf_protect
 def feedback(request):
     """docstring for feedback"""
-    success = False
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
@@ -189,12 +212,10 @@ def feedback(request):
             if request.user.is_authenticated():
                 feedback.user = request.user
                 feedback.save()
-            
+                
             messages.success(request, 'Thank you for the feedback.')
-            success = True
     else:
         form = FeedbackForm(initial={ 'url': request.META.get('HTTP_REFERER'), })
-    
     
     if request.is_ajax():
         if request.method == 'POST':
@@ -204,7 +225,7 @@ def feedback(request):
     else:
         template = 'rah/feedback.html'
         
-    return render_to_response(template, { 'feedback_form': form, 'success': success, }, context_instance=RequestContext(request))
+    return render_to_response(template, { 'feedback_form': form, }, context_instance=RequestContext(request))
 
 def validate_field(request):
     """The jQuery Validation plugin will post a single form field to this view and expects a json response."""

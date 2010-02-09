@@ -214,6 +214,12 @@ class ActionCatAdminForm(forms.ModelForm):
             raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
 
         return data
+
+class ActionCommitForm(forms.Form):
+    date_committed = forms.DateField(label="Commit date")
+    
+    def save(self, action, user):
+        user.set_action_commitment(action, self.cleaned_data['date_committed'])
         
 class HousePartyForm(forms.Form):
     phone_number = forms.CharField()

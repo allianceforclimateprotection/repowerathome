@@ -174,6 +174,12 @@ var rah = {
         },
     },
     
+    page_action_commit: {
+        init: function(){
+            // $("#calendar").datepicker({ dateFormat: 'yy-mm-dd', maxDate: '+2y', minDate: '0', numberOfMonths: 2});   
+        },
+    },
+    
     /**
     * Action Show page
     **/

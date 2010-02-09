@@ -22,8 +22,6 @@ class ChartPoint(TestCase):
     def get_date_as_milli_from_epoch(self):
         pass
 
-
-
 class UserTest(TestCase):
     def setUp(self):
         create_test_users_and_action_tasks(self)
@@ -206,6 +204,36 @@ class UserTest(TestCase):
         
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 25)
+    
+    def test_set_action_commitment(self):
+        from datetime import date
+        date_committed = date.today()
+        self.u1.set_action_commitment(self.a, date_committed)
+        
+        uap = UserActionProgress.objects.filter(user=self.u1, action=self.a)
+        self.failUnlessEqual(len(uap), 1)
+        self.failUnlessEqual(uap[0].date_committed, date_committed)
+    
+    def test_get_action_progress(self):
+        from datetime import date
+        date_committed = date.today()
+        UserActionProgress.objects.create(user=self.u1, action=self.a, date_committed=date_committed)
+        
+        progress = self.u1.get_action_progress(self.a)
+        self.failUnlessEqual(progress.is_completed, 0)
+        self.failUnlessEqual(progress.user_completes, 0)
+        self.failUnlessEqual(progress.date_committed, date_committed)
+        
+        self.u1.record_activity(activity=self.at1)
+        progress = self.u1.get_action_progress(self.a)
+        self.failUnlessEqual(progress.is_completed, 0)
+        self.failUnlessEqual(progress.user_completes, 1)
+        
+        self.u1.record_activity(activity=self.at2)
+        self.u1.record_activity(activity=self.at3)
+        progress = self.u1.get_action_progress(self.a)
+        self.failUnlessEqual(progress.is_completed, 1)
+        self.failUnlessEqual(progress.user_completes, 3)
 
 class ActionTest(TestCase):
     def setUp(self):
