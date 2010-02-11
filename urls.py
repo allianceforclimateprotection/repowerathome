@@ -32,7 +32,8 @@ urlpatterns = patterns('rah.views',
     url(r'^comments/post/$', 'post_comment', name='post_comment'),
     url(r'^group/create/$', 'group_create', name='group_create'),
     url(r'^group/(?P<group_slug>[a-z0-9-]+)/$', 'group_detail', name='group_detail'),
-    url(r'^group/(?P<group_slug>[a-z0-9-]+)/leave/$', 'group_leave', name='group_leave'),
+    url(r'^group/(?P<group_id>\d+)/leave/$', 'group_leave', name='group_leave'),
+    url(r'^group/(?P<group_id>\d+)/join/$', 'group_join', name='group_join'),
 )
 
 urlpatterns += patterns('',

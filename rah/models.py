@@ -106,6 +106,11 @@ class Group(DefaultModel):
     is_featured = models.BooleanField(default=False)
     users = models.ManyToManyField(User, through="GroupUsers")
     
+    def join(self, user):
+        if self.membership_type == "O":
+             GroupUsers.objects.create(group=self, user=user, is_manager=False)
+        return True
+    
     def completed_actions_by_user(self):
         """
         what actions have been completed by users in this group and how many users have completed each action

@@ -2,7 +2,9 @@
 {% block content %}
     <div id="group_header">
         <img class="group_image" src="{{ MEDIA_URL }}{{ group.image }}" alt="group image" height="75" width="75" />
-        <a class="group_leave" href="{% url group_leave group.id %}">Leave Group</a>
+        {% if is_member %}
+            <a class="group_leave" href="{% url group_leave group.id %}">Leave Group</a>
+        {% endif %}
         <h1>{{ group.name }}</h1>
         <p>{{ group.description }}</p>
         <p class="membership_type">
@@ -73,6 +75,8 @@
 
 {% endblock %}
 {% block minorcol %}
-
+    {% if not is_member %}
+        <a href="{% url group_join group.id %}">Join this Group</a>
+    {% endif %}
 {% endblock %}
 {% block js %}page_group_detail{% endblock %}

@@ -320,17 +320,20 @@ def group_detail(request, group_slug):
     is_member = request.user in group.users.all()
     return render_to_response("rah/group_detail.html", locals(), context_instance=RequestContext(request))
     
-def group_leave(request, group_slug):
-    """
-    display all of the information about a particular group
-    """
-    group = get_object_or_404(Group, slug=group_slug)
+def group_leave(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
     if request.user in group.users.all():
         GroupUsers.objects.filter(group=group, user=request.user).delete()
         messages.success(request, "You have been removed from group %s" % group)
     else:
         messages.error(request, "You can not leave a group your not a member of")
-    return redirect("group_detail", group_slug=group_slug)
+    return redirect("group_detail", group_slug=group.slug)
+    
+def group_join(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    if group.join(request.user):
+        messages.success(request, "You have successfully joined group %s" % group)
+    return redirect("group_detail", group_slug=group.slug)
     
 def forbidden(request, message="You do not have permissions."):
     from django.http import HttpResponseForbidden
