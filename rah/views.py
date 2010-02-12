@@ -317,7 +317,9 @@ def group_detail(request, group_slug):
     popular_actions = group.completed_actions_by_user()
     top_members = group.members_ordered_by_points()
     group_records = group.group_records(10)
-    is_member = request.user in group.users.all()
+    is_member = GroupUsers.objects.filter(group=group, user=request.user).exists()
+    membership_pending = MembershipRequests.objects.filter(group=group, user=request.user).exists()
+    requesters = User.objects.filter(membershiprequests__group=group) if request.user.is_group_manager(group) else []
     return render_to_response("rah/group_detail.html", locals(), context_instance=RequestContext(request))
     
 def group_leave(request, group_id):
@@ -331,8 +333,43 @@ def group_leave(request, group_id):
     
 def group_join(request, group_id):
     group = get_object_or_404(Group, id=group_id)
-    if group.join(request.user):
-        messages.success(request, "You have successfully joined group %s" % group)
+    if GroupUsers.objects.filter(group=group, user=request.user).exists():
+        messages.error(request, "You are already a member")
+        return redirect("group_detail", group_slug=group.slug)
+    if MembershipRequests.objects.filter(group=group, user=request.user).exists():
+        messages.error(request, "Your membership is currently pending")
+        return redirect("group_detail", group_slug=group.slug)
+    if group.is_public():
+        GroupUsers.objects.create(group=group, user=request.user, is_manager=False)
+        messages.success(request, "You have successfully joined group %s" % group, extra_tags="sticky")
+    else:
+        template = loader.get_template("rah/group_join_request.html")
+        context = { "user": request.user, "group": group, "domain": Site.objects.get_current().domain, }
+        manager_emails = [user_dict["email"] for user_dict in User.objects.filter(group=group, groupusers__is_manager=True).values("email")]
+        try:
+            send_mail("Group Join Request", template.render(Context(context)), None, manager_emails, fail_silently=False)
+            MembershipRequests.objects.create(group=group, user=request.user)
+            messages.success(request, "You have made a request to join %s, a manager should grant or deny your membership shortly." % group, extra_tags="sticky")
+        except SMTPException, e:
+            messages.error(request, "A problem occured, if this persits please contact feedback@repowerathome.com", extra_tags="sticky")
+    return redirect("group_detail", group_slug=group.slug)
+    
+def group_membership(request, group_id, user_id, action):
+    group = get_object_or_404(Group, id=group_id)
+    user = get_object_or_404(User, id=user_id)
+    membership_request = MembershipRequests.objects.filter(group=group, user=user)
+    if membership_request:
+        if action == "approve":
+            GroupUsers.objects.create(group=group, user=user, is_manager=False)
+            membership_request.delete()
+            messages.success(request, "%s has been added to the group" % user)
+            # TODO: also create a message for the approved user
+        elif action == "deny":
+            membership_request.delete()
+            messages.success(request, "%s has been denied access to the group" % user)
+            # TODO: also create a message for the denied user
+    else:
+        messages.errors(request, "%s has not requested to join this group" % user)
     return redirect("group_detail", group_slug=group.slug)
     
 def forbidden(request, message="You do not have permissions."):

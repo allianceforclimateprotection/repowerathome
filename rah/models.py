@@ -88,6 +88,9 @@ class User(AuthUser):
     
     def get_commit_list(self):
         return UserActionProgress.objects.select_related().filter(user=self, is_completed=0, date_committed__isnull=False).order_by("date_committed")
+        
+    def is_group_manager(self, group):
+        return GroupUsers.objects.filter(user=self, group=group, is_manager=True).exists()
     
     def __unicode__(self):
         return u'%s' % (self.email)
@@ -105,11 +108,11 @@ class Group(DefaultModel):
     image = models.ImageField(upload_to="group_images", null=True)
     is_featured = models.BooleanField(default=False)
     users = models.ManyToManyField(User, through="GroupUsers")
+    requesters = models.ManyToManyField(User, through="MembershipRequests", related_name="requested_group_set")
     
-    def join(self, user):
-        if self.membership_type == "O":
-             GroupUsers.objects.create(group=self, user=user, is_manager=False)
-        return True
+    def is_public(self):
+        print self.membership_type
+        return self.membership_type == "O"
     
     def completed_actions_by_user(self):
         """
@@ -127,9 +130,13 @@ class Group(DefaultModel):
         return users
         
     def group_records(self, limit=None):
-        records = Record.objects.filter(user__group=self).order_by("created")
+        records = Record.objects.select_related().filter(user__group=self).order_by("created")
         records = records[:limit] if limit else records
         return records
+        
+    @models.permalink
+    def get_absolute_url(self):
+        return ("group_detail", [str(self.slug)])
 
 class GroupUsers(models.Model):
     user = models.ForeignKey(User)
@@ -140,6 +147,14 @@ class GroupUsers(models.Model):
     
     def __unicode__(self):
         return u'%s belongs to group %s' % (self.user, self.group)
+        
+class MembershipRequests(models.Model):
+    user = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
+    created = models.DateTimeField(auto_now_add=True)
+    
+    def __unicode__(self):
+        return u'%s request to join %s on %s' % (self.user, self.group, self.created)
 
 class ActionCat(DefaultModel):
     name = models.CharField(max_length=255)
@@ -255,7 +270,7 @@ class Record(models.Model):
         get_latest_by = "created"
 
     def __unicode__(self):
-        return "%s records %s at %s" % (self.user, self.activity, self.created)
+        return u"%s records %s at %s" % (self.user, self.activity, self.created)
 
     # def __cmp__(self, other):
     #     if self.user != other.user:
@@ -278,7 +293,7 @@ class UserActionProgress(models.Model):
     date_committed = models.DateField(null=True)
     
     def __unicode__(self):
-        return "(%s, %s) has %s complete(s) and is%scompleted" % (self.user, self.action, self.user_completes, (" " if self.is_completed else " not "))
+        return u"(%s, %s) has %s complete(s) and is%scompleted" % (self.user, self.action, self.user_completes, (" " if self.is_completed else " not "))
 
 class Location(models.Model):
     name = models.CharField(max_length=200)

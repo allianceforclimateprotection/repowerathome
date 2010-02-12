@@ -34,6 +34,8 @@ urlpatterns = patterns('rah.views',
     url(r'^group/(?P<group_slug>[a-z0-9-]+)/$', 'group_detail', name='group_detail'),
     url(r'^group/(?P<group_id>\d+)/leave/$', 'group_leave', name='group_leave'),
     url(r'^group/(?P<group_id>\d+)/join/$', 'group_join', name='group_join'),
+    url(r'^group/(?P<group_id>\d+)/approve/(?P<user_id>\d+)/$', 'group_membership', {'action': 'approve'}, name='group_approve'),
+    url(r'^group/(?P<group_id>\d+)/deny/(?P<user_id>\d+)/$', 'group_membership', {'action': 'deny'}, name='group_deny'),
 )
 
 urlpatterns += patterns('',
