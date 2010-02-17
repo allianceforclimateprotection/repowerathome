@@ -1,11 +1,42 @@
-import json, hashlib, time
+import json, hashlib, time, re
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import datetime
 from django.template import Context, loader
 
 import twitter_app.utils as twitter_app
+    
+class ChartPoint(object):
+    """docstring for ChartPoint"""
+    def __init__(self, date):
+        super(ChartPoint, self).__init__()
+        self.date = date
+        self.points = 0
+        self.records = []
 
+    def add_record(self, record):
+        if self.date == record.created.date():
+            self.records.append(record)
+        self.points += record.points
+
+    def get_date_as_milli_from_epoch(self):
+        return (int(time.mktime(self.date.timetuple())) - 18000) * 1000
+
+    def __unicode__(self):
+        return u"(%s, %s) with %s" % (self.date, self.points, self.records)
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    def __repr__(self):
+        return u'<%s: %s>' % (self.__class__.__name__, unicode(self))
+
+    def __cmp__(self, other):
+        return cmp(self.date, other.date)
+
+    def __hash__(self):
+        return hash(self.date)
+    
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -15,38 +46,22 @@ class DefaultModel(models.Model):
     
     def __unicode__(self):
         return u'%s' % (self.name)
+        
+class Location(models.Model):
+    name = models.CharField(max_length=200, db_index=True)
+    zipcode = models.CharField(max_length=5, db_index=True)
+    county = models.CharField(max_length=100, db_index=True)
+    st = models.CharField(max_length=2, db_index=True)
+    state = models.CharField(max_length=50)
+    lon = models.CharField(max_length=50)
+    lat = models.CharField(max_length=50)
+    pop = models.PositiveIntegerField()
+    timezone = models.CharField(max_length=100)
+    recruit = models.BooleanField()
 
-class ChartPoint(object):
-    """docstring for ChartPoint"""
-    def __init__(self, date):
-        super(ChartPoint, self).__init__()
-        self.date = date
-        self.points = 0
-        self.records = []
-        
-    def add_record(self, record):
-        if self.date == record.created.date():
-            self.records.append(record)
-        self.points += record.points
-        
-    def get_date_as_milli_from_epoch(self):
-        return (int(time.mktime(self.date.timetuple())) - 18000) * 1000
-        
     def __unicode__(self):
-        return u"(%s, %s) with %s" % (self.date, self.points, self.records)
-        
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-        
-    def __repr__(self):
-        return u'<%s: %s>' % (self.__class__.__name__, unicode(self))
-        
-    def __cmp__(self, other):
-        return cmp(self.date, other.date)
-        
-    def __hash__(self):
-        return hash(self.date)
-        
+        return u'%s, %s (%s)' % (self.name, self.st, self.zipcode)
+
 class User(AuthUser):
     class Meta:
         proxy = True
@@ -91,52 +106,188 @@ class User(AuthUser):
         
     def is_group_manager(self, group):
         return GroupUsers.objects.filter(user=self, group=group, is_manager=True).exists()
-    
+        
+    def my_groups(self):
+        groups = list(Group.objects.filter(users=self))
+        return groups + GeoGroup.objects.get_users_geo_groups(self)
+        
     def __unicode__(self):
         return u'%s' % (self.email)
         
-class Group(DefaultModel):
+class BaseGroup(DefaultModel):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    
+    class Meta:
+        abstract = True
+
+    _must_redefine = Exception("Implementation of BaseGroup must redefine this method")
+    
+    def is_joinable(self):
+        raise _must_redefine
+        
+    def is_member(self):
+        raise _must_redefine
+        
+    def _group_users_filtered(self):
+        raise _must_redefine
+        
+    def _group_actions_filtered(self):
+        raise _must_redefine
+        
+    def _group_records_filtered(self):
+        raise _must_redefine
+        
+    def is_public(self):
+        return True
+        
+    def completed_actions_by_user(self):
+        """
+        what actions have been completed by users in this group and how many users have completed each action
+        """
+        actions = self._group_actions_filtered()
+        actions = actions.filter(useractionprogress__is_completed=1)
+        actions = actions.annotate(users_completed=models.Count("useractionprogress__is_completed"))
+        return actions
+        
+    def members_ordered_by_points(self, limit=None):
+        users = self._group_users_filtered()
+        users = users.order_by("profile__total_points")
+        users = users.annotate(actions_completed=models.Sum("useractionprogress__is_completed"))
+        users = users.annotate(last_active=models.Max("record__created"))
+        return users[:limit] if limit else users
+        
+    def group_records(self, limit=None):
+        records = self._group_records_filtered()
+        records = records.select_related().order_by("created")
+        return records[:limit] if limit else records
+        
+    def has_pending_membership(self, user):
+        return False
+        
+    def requesters_to_grant_or_deny(self, user):
+        return []
+        
+class Group(BaseGroup):
     MEMBERSHIP_CHOICES = (
         ('O', 'Open membership'),
         ('C', 'Closed membership'),
     )
-    
-    name = models.CharField(max_length=255)
+
     slug = models.CharField(max_length=255, unique=True, db_index=True)
-    description = models.TextField()
     membership_type = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default="O")
     image = models.ImageField(upload_to="group_images", null=True)
     is_featured = models.BooleanField(default=False)
     users = models.ManyToManyField(User, through="GroupUsers")
     requesters = models.ManyToManyField(User, through="MembershipRequests", related_name="requested_group_set")
     
-    def is_public(self):
-        print self.membership_type
-        return self.membership_type == "O"
+    def is_joinable(self):
+        return True
     
-    def completed_actions_by_user(self):
-        """
-        what actions have been completed by users in this group and how many users have completed each action
-        """
-        actions = Action.objects.filter(useractionprogress__user__group=self, useractionprogress__is_completed=1)
-        return actions.annotate(users_completed=models.Count("useractionprogress__is_completed"))
+    def is_public(self):
+        return self.membership_type == "O"
         
-    def members_ordered_by_points(self, limit=None):
-        users = User.objects.filter(group=self)
-        users = users.annotate(actions_completed=models.Sum("useractionprogress__is_completed"))
-        users = users.annotate(last_active=models.Max("record__created"))
-        users = list(users[:limit]) if limit else list(users)
-        users.sort(lambda x,y: int(y.get_profile().total_points - x.get_profile().total_points))
-        return users
+    def is_member(self, user):
+        if user.is_authenticated():
+            return GroupUsers.objects.filter(group=self, user=user).exists()
+        return False
         
-    def group_records(self, limit=None):
-        records = Record.objects.select_related().filter(user__group=self).order_by("created")
-        records = records[:limit] if limit else records
-        return records
+    def _group_users_filtered(self):
+        return User.objects.filter(group=self)
+
+    def _group_actions_filtered(self):
+        return Action.objects.filter(useractionprogress__user__group=self)
+
+    def _group_records_filtered(self):
+        return Record.objects.filter(user__group=self)
+    
+    def has_pending_membership(self, user):
+        if user.is_authenticated():
+            return MembershipRequests.objects.filter(group=self, user=user).exists()
+        return False
+        
+    def requesters_to_grant_or_deny(self, user):
+        if user.is_authenticated() and user.is_group_manager(self):
+            return User.objects.filter(membershiprequests__group=self)
+        return []
         
     @models.permalink
     def get_absolute_url(self):
         return ("group_detail", [str(self.slug)])
+        
+class GeoGroupManager(models.Manager):
+    def geo_slugify(self, value):
+        return re.sub("[\s]", "-", value).lower()
+
+    def de_geo_slugify(self, value):
+        return re.sub("[-]", " ", value).title()
+    
+    def get_geo_group(self, state, county_slug=None, place_slug=None):
+        locations = Location.objects.filter(st=state)
+        name = state
+        if place_slug:
+            place = self.de_geo_slugify(place_slug)
+            locations = locations.filter(name=place)
+            name = "%s, %s" % (place, state)
+        elif county_slug:
+            county = self.de_geo_slugify(county_slug)
+            locations = locations.filter(county=county)
+            name = "%s in %s" % (county, state)
+        
+        if locations.count() == 0:
+            return None
+        return GeoGroup(name=name, description="A place for all users belonging to %s" % name, 
+            locations=locations, state=state, county_slug=county_slug, place_slug=place_slug)
+            
+    def get_users_geo_groups(self, user):
+        location = user.get_profile().location
+        state = location.st
+        county_slug = self.geo_slugify(location.county)
+        place_slug = self.geo_slugify(location.name)
+        return [self.get_geo_group(state),
+                    self.get_geo_group(state, county_slug),
+                    self.get_geo_group(state, county_slug, place_slug),]
+        
+class GeoGroup(BaseGroup):
+    objects = GeoGroupManager()
+    
+    class Meta:
+        managed = False
+        
+    def __init__(self, locations, state, county_slug=None, place_slug=None, *args, **kwargs):
+        self.locations = locations
+        self.state = state
+        self.county_slug = county_slug
+        self.place_slug = place_slug
+        super(GeoGroup, self).__init__(*args, **kwargs)
+        
+    def is_joinable(self):
+        return False 
+        
+    def is_public(self):
+        return True
+
+    def is_member(self, user):
+        if user.is_authenticated():
+            return User.objects.filter(pk=user.id, profile__location__in=self.locations).exists()
+        return False
+
+    def _group_users_filtered(self):
+        return User.objects.filter(profile__location__in=self.locations)
+
+    def _group_actions_filtered(self):
+        return Action.objects.filter(useractionprogress__user__profile__location__in=self.locations)
+
+    def _group_records_filtered(self):
+        return Record.objects.filter(user__profile__location__in=self.locations)
+        
+    @models.permalink
+    def get_absolute_url(self):
+        if self.place_slug:
+            return ("geo_group_place", [self.state, self.county_slug, self.place_slug])
+        elif self.county_slug:
+            return ("geo_group_county", [self.state, self.county_slug])
+        return ("geo_group_state", [self.state])
 
 class GroupUsers(models.Model):
     user = models.ForeignKey(User)
@@ -294,21 +445,6 @@ class UserActionProgress(models.Model):
     
     def __unicode__(self):
         return u"(%s, %s) has %s complete(s) and is%scompleted" % (self.user, self.action, self.user_completes, (" " if self.is_completed else " not "))
-
-class Location(models.Model):
-    name = models.CharField(max_length=200)
-    zipcode = models.CharField(max_length=5, db_index=True)
-    county = models.CharField(max_length=100, db_index=True)
-    st = models.CharField(max_length=2)
-    state = models.CharField(max_length=50)
-    lon = models.CharField(max_length=50)
-    lat = models.CharField(max_length=50)
-    pop = models.PositiveIntegerField()
-    timezone = models.CharField(max_length=100)
-    recruit = models.BooleanField()
-    
-    def __unicode__(self):
-        return u'%s, %s (%s)' % (self.name, self.st, self.zipcode)
 
 class Signup(models.Model):
     email = models.EmailField(max_length=255)

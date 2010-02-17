@@ -1,5 +1,5 @@
 import json, logging
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib.comments.views import comments
 from django.shortcuts import render_to_response, redirect, get_object_or_404
@@ -90,20 +90,18 @@ def action_show(request):
 def action_detail(request, action_slug):
     """Detail page for an action"""
     # Lookup the action
-    params = {}
-    params['action'] = get_object_or_404(Action, slug=action_slug)
-    params['action_tasks'] = params['action'].get_action_tasks_by_user(request.user)
+    action = get_object_or_404(Action, slug=action_slug)
+    action_tasks = action.get_action_tasks_by_user(request.user)
     
-    params['num_users_in_progress'], params['show_users_in_progress'], params['num_users_completed'], \
-    params['show_users_completed'] = params['action'].users_with_completes(5)
+    num_users_in_progress, show_users_in_progress, num_users_completed, show_users_completed = action.users_with_completes(5)
     
-    params['num_noshow_users_in_progress'] = params['num_users_in_progress'] - len(params['show_users_in_progress'])
-    params['num_noshow_users_completed'] = params['num_users_completed'] - len(params['show_users_completed'])
+    num_noshow_users_in_progress = num_users_in_progress - len(show_users_in_progress)
+    num_noshow_users_completed = num_users_completed - len(show_users_completed)
     
-    params['progress'] = request.user.get_action_progress(params['action']) if request.user.is_authenticated() else None
-    params['commit_form'] = ActionCommitForm()
+    progress = request.user.get_action_progress(action) if request.user.is_authenticated() else None
+    commit_form = ActionCommitForm()
     
-    return render_to_response('rah/action_detail.html', params, context_instance=RequestContext(request))
+    return render_to_response('rah/action_detail.html', locals(), context_instance=RequestContext(request))
                               
 def action_task(request, action_task_id):
     #  Handle the POST if a task is being completed
@@ -152,6 +150,7 @@ def profile(request, user_id):
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
         'commitment_list': user.get_commit_list(),
+        'my_groups': user.my_groups(),
     }, context_instance=RequestContext(request))
 
 @login_required
@@ -308,20 +307,8 @@ def group_create(request):
     else:
         form = GroupForm()
     return render_to_response("rah/group_create.html", {"form": form, "site": Site.objects.get_current()}, context_instance=RequestContext(request))
-
-def group_detail(request, group_slug):
-    """
-    display all of the information about a particular group
-    """
-    group = get_object_or_404(Group, slug=group_slug)
-    popular_actions = group.completed_actions_by_user()
-    top_members = group.members_ordered_by_points()
-    group_records = group.group_records(10)
-    is_member = GroupUsers.objects.filter(group=group, user=request.user).exists()
-    membership_pending = MembershipRequests.objects.filter(group=group, user=request.user).exists()
-    requesters = User.objects.filter(membershiprequests__group=group) if request.user.is_group_manager(group) else []
-    return render_to_response("rah/group_detail.html", locals(), context_instance=RequestContext(request))
     
+@login_required
 def group_leave(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     if request.user in group.users.all():
@@ -331,6 +318,7 @@ def group_leave(request, group_id):
         messages.error(request, "You can not leave a group your not a member of")
     return redirect("group_detail", group_slug=group.slug)
     
+@login_required
 def group_join(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     if GroupUsers.objects.filter(group=group, user=request.user).exists():
@@ -353,10 +341,14 @@ def group_join(request, group_id):
         except SMTPException, e:
             messages.error(request, "A problem occured, if this persits please contact feedback@repowerathome.com", extra_tags="sticky")
     return redirect("group_detail", group_slug=group.slug)
-    
+
+@login_required    
 def group_membership(request, group_id, user_id, action):
     group = get_object_or_404(Group, id=group_id)
     user = get_object_or_404(User, id=user_id)
+    if not request.user.is_group_manager(group):
+        messages.errors(request, "You do not have permissions")
+        return redirect("group_detail", group_slug=group.slug)
     membership_request = MembershipRequests.objects.filter(group=group, user=user)
     if membership_request:
         if action == "approve":
@@ -371,6 +363,28 @@ def group_membership(request, group_id, user_id, action):
     else:
         messages.errors(request, "%s has not requested to join this group" % user)
     return redirect("group_detail", group_slug=group.slug)
+
+def group_detail(request, group_slug):
+    """
+    display all of the information about a particular group
+    """
+    group = get_object_or_404(Group, slug=group_slug)
+    return _group_detail(request, group)
+    
+def geo_group(request, state, county_slug=None, place_slug=None):
+    geo_group = GeoGroup.objects.get_geo_group(state, county_slug, place_slug)
+    if not geo_group:
+        raise Http404
+    return _group_detail(request, geo_group)
+        
+def _group_detail(request, group):
+    popular_actions = group.completed_actions_by_user()
+    top_members = group.members_ordered_by_points()
+    group_records = group.group_records(10)
+    is_member = group.is_member(request.user)
+    membership_pending = group.has_pending_membership(request.user)
+    requesters = group.requesters_to_grant_or_deny(request.user)
+    return render_to_response("rah/group_detail.html", locals(), context_instance=RequestContext(request))
     
 def forbidden(request, message="You do not have permissions."):
     from django.http import HttpResponseForbidden

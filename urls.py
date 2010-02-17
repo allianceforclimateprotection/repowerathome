@@ -31,11 +31,13 @@ urlpatterns = patterns('rah.views',
     (r'^search/$', 'search'),
     url(r'^comments/post/$', 'post_comment', name='post_comment'),
     url(r'^group/create/$', 'group_create', name='group_create'),
-    url(r'^group/(?P<group_slug>[a-z0-9-]+)/$', 'group_detail', name='group_detail'),
     url(r'^group/(?P<group_id>\d+)/leave/$', 'group_leave', name='group_leave'),
     url(r'^group/(?P<group_id>\d+)/join/$', 'group_join', name='group_join'),
     url(r'^group/(?P<group_id>\d+)/approve/(?P<user_id>\d+)/$', 'group_membership', {'action': 'approve'}, name='group_approve'),
     url(r'^group/(?P<group_id>\d+)/deny/(?P<user_id>\d+)/$', 'group_membership', {'action': 'deny'}, name='group_deny'),
+    url(r'^group/(?P<state>[A-Z]{2})/(?P<county_slug>[a-z0-9-]+)/(?P<place_slug>[a-z0-9-]+)/$', 'geo_group', name='geo_group_place'),
+    url(r'^group/(?P<state>[A-Z]{2})/(?P<county_slug>[a-z0-9-]+)/$', 'geo_group', name='geo_group_county'),
+    url(r'^group/(?P<state>[A-Z]{2})/$', 'geo_group', name='geo_group_state'),
 )
 
 urlpatterns += patterns('',
@@ -58,3 +60,11 @@ if settings.DEBUG:
         'serve', {
         'document_root': settings.MEDIA_ROOT,
         'show_indexes': True }),)
+        
+urlpatterns += patterns('rah.views',
+    url(r'^(?P<group_slug>[a-z0-9-]+)/$', 'group_detail', name='group_detail'),
+)
+        
+def top_level_urls():
+    import re
+    return set([re.search("\^([^(/$]*)", p.regex.pattern).group(1) for p in urlpatterns])

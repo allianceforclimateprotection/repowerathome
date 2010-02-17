@@ -6,7 +6,7 @@
 		    <div style="margin-bottom: 15px;">
     			<div>{{ field.label_tag }}</div>
     			<div>
-        			{% if field.name == "slug" %}<span>http://{{ site }}/group/</span>{% endif %}
+        			{% if field.name == "slug" %}<span>http://{{ site }}/</span>{% endif %}
                     {{ field }}
     				{% for error in field.errors %}
     				    <span class="error">{{ error|escape }}</span>

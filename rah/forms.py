@@ -11,8 +11,6 @@ from smtplib import SMTPException
 from django.template import Context, loader
 import hashlib
 
-import settings
-
 class SlugField(forms.CharField):
     def __init__(self, *args, **kwargs):
         super(SlugField, self).__init__(*args, **kwargs)
@@ -34,7 +32,6 @@ class RegistrationForm(forms.ModelForm):
     zipcode = forms.CharField(max_length=5, required=False)
     password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
-    
     
     class Meta:
         model = User
@@ -284,13 +281,21 @@ class GroupForm(forms.ModelForm):
     
     class Meta:
         model = Group
-        exclude = ("is_featured", "users",)
+        exclude = ("is_featured", "users", "requesters",)
         widgets = {
             "membership_type": forms.RadioSelect
         }
         
     def clean_image(self):
         data = self.cleaned_data["image"]
-        if data.size > 4194304:
+        if data and data.size > 4194304:
             raise forms.ValidationError("Group images can not be larger than 512K")
         return data
+        
+    def clean_slug(self):
+        import urls
+        data = self.cleaned_data["slug"]
+        if data in urls.top_level_urls():
+            raise forms.ValidationError("This Group address is not allowed.")
+        return data
+        
