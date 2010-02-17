@@ -52,6 +52,7 @@ urlpatterns += patterns('',
     (r'^blog/', include('basic.blog.urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
     url(r'^twitter/', include('twitter_app.urls')),
+    url(r'^rateable/', include('rateable.urls')),
 )
 
 if settings.DEBUG:

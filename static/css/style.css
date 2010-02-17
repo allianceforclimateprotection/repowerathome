@@ -365,6 +365,8 @@ acronym {
 
 /* @group comments */
 .comment .author { margin-top: -15px; }
+
+.comment_helpful_question { float: left; }
 /* @end */
 
 /* @group blog */
