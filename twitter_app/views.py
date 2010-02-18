@@ -57,7 +57,7 @@ def post_status(request):
     if form.is_valid():
         profile = request.user.get_profile()
         if form.save(profile):
-            request.user.record_activity(Activity.objects.get(name="tweet"))
+            request.user.record_activity('mag_tweet')
             messages.success(request, "Your tweet has been posted.")
         else:
             profile.twitter_access_token = None

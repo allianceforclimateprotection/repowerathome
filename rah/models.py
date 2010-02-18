@@ -1,10 +1,32 @@
-import json, hashlib, time
+import json, hashlib, time, base64
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
-from datetime import datetime
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+from datetime import datetime, timedelta
 from django.template import Context, loader
 
+try:
+    import cPickle as pickle
+except:
+    import pickle
+
 import twitter_app.utils as twitter_app
+
+class SerializedDataField(models.TextField):
+    """Because Django for some reason feels its needed to repeatedly call
+    to_python even after it's been converted this does not support strings."""
+    __metaclass__ = models.SubfieldBase
+
+    def to_python(self, value):
+        if value is None: return
+        if not isinstance(value, basestring): return value
+        value = pickle.loads(base64.b64decode(value))
+        return value
+
+    def get_db_prep_save(self, value):
+        if value is None: return
+        return base64.b64encode(pickle.dumps(value))
 
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -55,14 +77,43 @@ class User(AuthUser):
         return self.get_full_name() if self.get_full_name() else "Repower@Home User"
 
     def get_latest_records(self, quantity=None):
-        records = self.record_set.all()
+        records = self.record_set.filter(void=False)
         return records[:quantity] if quantity else records
 
-    def record_activity(self, activity):
-        Record(user=self, activity=activity, points=activity.points, message=activity.name).save()
+    def record_activity(self, activity, content_object=None, data=None):
+        if type(activity) is str:
+            activity = Activity.objects.get(slug=activity)
+        
+        # Figure out how many points we're going to give.
+        points = content_object.points if hasattr(content_object, "points") else activity.points
+        
+        # Add a new content_object (and don't create a new record) if this is batachable
+        if activity.batch_time_minutes and content_object:
+            # see if one exists in timeframe
+            batch_minutes = activity.batch_time_minutes
+            cutoff_time = datetime.now()-timedelta(minutes=batch_minutes)
+            batchable_items = Record.objects.filter(user=self, activity=activity, 
+                                                    created__gt=cutoff_time).order_by('-created').all()[0:1]
 
-    def unrecord_activity(self, activity):
-        Record.objects.filter(user=self, activity=activity).delete()
+            if batchable_items:
+                batchable_items[0].content_objects.create(content_object=content_object)
+                batchable_items[0].is_batched = True
+                batchable_items[0].points += points
+                batchable_items[0].save()
+                return batchable_items[0]
+
+        record = Record.objects.create(user=self, activity=activity, data=data, points=points)
+        if content_object: record.content_objects.create(content_object=content_object)
+        record.save()
+        return record
+
+    def unrecord_activity(self, activity, content_object):
+        if type(activity) is str:
+            activity = Activity.objects.get(slug=activity)
+        record = Record.objects.filter(void=False, user=self, activity=activity, content_objects__object_id=content_object.id)[0:1]
+        if record:
+            record[0].void = True
+            record[0].save()
 
     def get_chart_data(self):
         records = self.get_latest_records().select_related().order_by("created")
@@ -167,10 +218,10 @@ class ActionManager(models.Manager):
         """
         actiontasks = ActionTask.objects.select_related().all().extra(
             select_params = (user.id,), 
-            select = { 'completed': 'SELECT rah_record.created \
-                                     FROM rah_record \
-                                     WHERE rah_record.user_id = %s AND \
-                                     rah_record.activity_id = rah_actiontask.activity_ptr_id' })
+            select = { 'completed': 'SELECT rah_actiontaskuser.created \
+                                     FROM rah_actiontaskuser \
+                                     WHERE rah_actiontaskuser.user_id = %s AND \
+                                     rah_actiontaskuser.actiontask_id = rah_actiontask.id'})
                                      
         action_dict = dict([actiontask.action, []] for actiontask in actiontasks)
         [action_dict[actiontask.action].append(actiontask) for actiontask in actiontasks]
@@ -197,14 +248,14 @@ class Action(DefaultModel):
     users_completed = models.IntegerField(default=0)
     users_committed = models.IntegerField(default=0)
     category = models.ForeignKey(ActionCat)
-    user_progress = models.ManyToManyField(User, through="UserActionProgress")
+    users = models.ManyToManyField(User, through="UserActionProgress")
     objects = ActionManager()
     
     def completes_for_user(self, user):
         """
         return the number of tasks a user has completed for an action
         """
-        uap = UserActionProgress.objects.filter(action=self, user=user)
+        uap = UserActionProgress.objects.filter(action=self, user=user)[0:1]
         return uap[0].user_completes if uap else 0
         
     def users_with_completes(self, limit=5):
@@ -214,62 +265,68 @@ class Action(DefaultModel):
         return (self.users_in_progress, [uap.user for uap in in_progress], self.users_completed, [uap.user for uap in completed])
         
     def get_action_tasks_by_user(self, user):
-        return ActionTask.objects.filter(action=self).extra(
-            select_params = (user.id,), 
-            select = { 'is_complete': 'SELECT rah_record.created \
-                                     FROM rah_record \
-                                     WHERE rah_record.user_id = %s AND \
-                                     rah_record.activity_id = rah_actiontask.activity_ptr_id' })
+        return ActionTask.objects.filter(action=self).extra( select_params = (user.id,), 
+                select = { 'is_complete': 'SELECT rah_actiontaskuser.created \
+                                           FROM rah_actiontaskuser \
+                                           WHERE rah_actiontaskuser.user_id = %s AND \
+                                           rah_actiontaskuser.actiontask_id = rah_actiontask.id' })
         
     @models.permalink
     def get_absolute_url(self):
         return ('rah.views.action_detail', [str(self.slug)])
-        
-class Activity(DefaultModel):
-    name = models.CharField(max_length=255)
-    content = models.TextField()
-    points = models.IntegerField()
-    users = models.ManyToManyField(User, through="Record")
-        
-class ActionTask(Activity):
+
+class ActionTask(DefaultModel):
     """
     class representing the individual tasks (or steps) a user must complete
     in order to gain successful completion of the associated action
     """
+    name = models.CharField(max_length=255)
+    content = models.TextField()
     sequence = models.PositiveIntegerField()
     action = models.ForeignKey(Action)
-    
+    points = models.IntegerField(default=0)
+    users = models.ManyToManyField(User, through="ActionTaskUser")
+
     class Meta:
         ordering = ['action', 'sequence']
         unique_together = ('action', 'sequence',)
-        
-class Record(models.Model):
-    user = models.ForeignKey(User)
-    activity = models.ForeignKey(Activity)
-    points = models.IntegerField(default=0)
-    message = models.CharField(max_length=255)
-    created = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ["user", "activity", "created"]
-        get_latest_by = "created"
-
-    def __unicode__(self):
-        return "%s records %s at %s" % (self.user, self.activity, self.created)
-
-    # def __cmp__(self, other):
-    #     if self.user != other.user:
-    #         return cmp(self.user, other.user)
-    #     try:
-    #         action = self.activity.actiontask.action
-    #     except Exception:
-    #         action = None
-    #     try:
-    #         oaction = other.activity.actiontask.action
-    #     except Exception:
-    #         oaction = None
-    #     return cmp(action, oaction) if action != oaction else cmp(self.created, other.created)
     
+    def complete_task(self, user, undo=False):
+        if undo:
+            ActionTaskUser.objects.filter(user=user, actiontask=self).delete()
+        else:
+            ActionTaskUser(user=user, actiontask=self).save()
+        
+        # Maintain denomed columns on Action and UserActionProgress 
+        action = self.action
+        obj, created = UserActionProgress.objects.get_or_create(user=user, action=action)
+        new_completes = obj.user_completes + 1 if not undo else obj.user_completes - 1
+        new_completed = 1 if new_completes >= action.total_tasks else 0
+        inprogress = 1  if obj.is_completed != 1 and obj.user_completes > 0 else 0 # the useraction is currently in_progress if it is not completed, but the completes count is greater than 0
+        new_inprogress = 1 if new_completed != 1 and new_completes > 0 else 0 # the useraction is going to be in_progress if it will not be completed, but the new completes count is greater than 0
+        
+        if obj.is_completed != new_completed:
+            action.users_completed += new_completed - obj.is_completed
+        if inprogress != new_inprogress:
+            action.users_in_progress += new_inprogress - inprogress
+        if obj.is_completed != new_completed or inprogress != new_inprogress:
+            action.save()
+        
+        obj.user_completes = new_completes
+        obj.is_completed = new_completed
+        obj.save()
+
+class ActionTaskUser(DefaultModel):
+    actiontask = models.ForeignKey(ActionTask)
+    user = models.ForeignKey(User)
+    
+    class Meta:
+        unique_together = ('actiontask', 'user',)
+    
+    def __unicode__(self):
+        return "yes"
+        # return "User: %s, ActionTask: %s" % (self.user.id, self.actiontask.sequence)
+
 class UserActionProgress(models.Model):
     user = models.ForeignKey(User)
     action = models.ForeignKey(Action)
@@ -336,65 +393,85 @@ class Profile(models.Model):
     def _email_hash(self):
         return (hashlib.md5(self.user.email.lower()).hexdigest())
 
+
+class Activity(DefaultModel):
+    """
+    _Jon_ earned _10_ points for _installing a low-flow shower head_
+    _Jon_ committed to _install a low flow shower head_ on _Feb. 5th_
+
+    <a href="{{ user.permalink }}">{{ user.get_name }}</a> committed 
+    to _install a low flow shower head_ on {{ date_committted }}
+
+    {
+        "user": user_id,
+        "user": user.get_name,
+        "date_"committed: date_committed
+    }
+    """
+    slug = models.SlugField()
+    points = models.IntegerField(default=0)
+    users = models.ManyToManyField(User, through="Record")
+    batch_time_minutes = models.IntegerField("batch time in minutes", default=0, blank=True)
+    
+    def __unicode__(self):
+        return u'%s' % (self.slug)
+
+class Record(DefaultModel):
+    user = models.ForeignKey(User)
+    activity = models.ForeignKey(Activity)
+    points = models.IntegerField(default=0)
+    data = SerializedDataField(blank=True, null=True)
+    is_batched = models.BooleanField(default=False)
+    void = models.BooleanField(default=False)
+    # cos = generic.GenericRelation("RecordActivityObject", related_name="content_object")
+
+    class Meta:
+        ordering = ["user", "activity", "created"]
+        get_latest_by = "created"
+
+    def render(self):
+        if self.is_batched:
+            template_file = "activity/%s_batch.html" % self.activity.slug
+        else:
+            template_file = "activity/%s.html" % self.activity.slug
+        template = loader.get_template(template_file)
+        content_object = self.content_objects.get().content_object
+        return template.render(Context({"record": self, "content_object":content_object}))
+
+    def __unicode__(self):
+        return "user: %s, activity: %s" % (self.user, self.activity)
+
+class RecordActivityObject(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey()
+    record = models.ForeignKey(Record, related_name="content_objects")
+    
+    class Meta:
+        unique_together = ('content_type', 'object_id', 'record',)
+    
+    def __unicode__(self):
+        return "%s %s" % (self.content_type, self.object_id)
+
 """
 SIGNALS!
 """
+def update_actiontask_counts(sender, instance, **kwargs):
+    instance.action.total_tasks = ActionTask.objects.filter(action=instance.action).count()
+    instance.action.total_points = ActionTask.objects.filter(action=instance.action).aggregate(models.Sum('points'))['points__sum']
+    instance.action.save()
         
-def actiontask_added(sender, **kwargs):
-    actiontask_table_changed(sender, increase=True, **kwargs)
-
-def actiontask_removed(sender, **kwargs):
-    actiontask_table_changed(sender, increase=False, **kwargs)
-
-def actiontask_table_changed(sender, instance, increase, **kwargs):
-    if instance.id:
-        instance.action.total_tasks += 1 if increase else -1
-        instance.action.total_points += instance.points if increase else (-1 * instance.points)
-        instance.action.save()
-        
-def user_post_save(sender, instance, signal, *args, **kwargs):
+def user_post_save(sender, instance, **kwargs):
     Profile.objects.get_or_create(user=instance)
-    
-def record_to_create(sender, instance, **kwargs):
-    if type(instance.activity) == ActionTask and \
-        Record.objects.filter(user=instance.user, activity=instance.activity).count() > 0:
-        raise Exception("Record already exists.")
 
-def record_added(sender, **kwargs):
-    record_table_changed(sender, increase=True, **kwargs)
-
-def record_removed(sender, **kwargs):
-    record_table_changed(sender, increase=False, **kwargs)
-
-def record_table_changed(sender, instance, increase, **kwargs):
-    # TODO: this entire function needs to be wrapped in a transaction
+def update_profile_points(sender, instance, **kwargs):
+    if instance.points == 0: return
     profile = instance.user.get_profile()
-    profile.total_points += instance.points if increase else (-1 * instance.points)
+    total_points = Record.objects.filter(user=instance.user, void=False).aggregate(models.Sum('points'))['points__sum']
+    profile.total_points = total_points if total_points else 0
     profile.save()
-    try:
-        action = instance.activity.actiontask.action
-        obj, created = UserActionProgress.objects.get_or_create(user=instance.user, action=action)
-        new_completes = obj.user_completes + 1 if increase else  obj.user_completes - 1
-        new_completed = 1 if new_completes >= action.total_tasks else 0
-        inprogress = 1  if obj.is_completed != 1 and obj.user_completes > 0 else 0 # the useraction is currently in_progress if it is not completed, but the completes count is greater than 0
-        new_inprogress = 1 if new_completed != 1 and new_completes > 0 else 0 # the useraction is going to be in_progress if it will not be completed, but the new completes count is greater than 0
 
-        if obj.is_completed != new_completed:
-            action.users_completed += new_completed - obj.is_completed
-        if inprogress != new_inprogress:
-            action.users_in_progress += new_inprogress - inprogress
-        if obj.is_completed != new_completed or inprogress != new_inprogress:
-            action.save()
-
-        obj.user_completes = new_completes
-        obj.is_completed = new_completed
-        obj.save()
-    except ActionTask.DoesNotExist:
-        pass
-
-models.signals.post_save.connect(actiontask_added, sender=ActionTask)
-models.signals.pre_delete.connect(actiontask_removed, sender=ActionTask)
+models.signals.post_save.connect(update_actiontask_counts, sender=ActionTask)
+models.signals.pre_delete.connect(update_actiontask_counts, sender=ActionTask)
 models.signals.post_save.connect(user_post_save, sender=User)
-models.signals.pre_save.connect(record_to_create, sender=Record)
-models.signals.post_save.connect(record_added, sender=Record)
-models.signals.pre_delete.connect(record_removed, sender=Record)
+models.signals.post_save.connect(update_profile_points, sender=Record)
