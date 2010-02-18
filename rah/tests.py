@@ -82,8 +82,8 @@ class UserTest(TestCase):
     def test_unrecord_activity(self):    
         # Add some records
         self.failUnlessEqual(Record.objects.count(), 0)
-        self.u1.record_activity(self.act1, self.at1).save()
-        self.u1.record_activity(self.act1, self.at2).save()
+        self.u1.record_activity(self.act1, self.at1)
+        self.u1.record_activity(self.act1, self.at2)
         self.failUnlessEqual(Record.objects.count(), 2)
         
         # Make sure the right record was voided
@@ -91,9 +91,8 @@ class UserTest(TestCase):
         self.failUnlessEqual(Record.objects.count(), 2)
         
         voids = Record.objects.filter(void=True)
-        
         self.failUnlessEqual(voids.count(), 1)
-        self.failUnlessEqual(voids[0].activity.id, self.at1.id)
+        self.failUnlessEqual(voids.get().activity.id, self.act1.id)
         
     def test_record_action_task(self):        
         self.u1.record_activity(self.act1, self.at1)
@@ -391,7 +390,7 @@ class ActionTest(TestCase):
         self.failUnlessEqual(len(in_progress), 0)
         self.failUnlessEqual(len(completed), 0)
         
-        Record.objects.create(activity=self.act1, user=self.u1)
+        self.at1.complete_task(self.u1)
         
         actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(AnonymousUser())
         self.failUnlessEqual(len(actions), 1)
