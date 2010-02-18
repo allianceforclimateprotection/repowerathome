@@ -379,6 +379,16 @@ acronym {
 .whos_working { margin-left: 25px; font-size: 0.9em; }
 
 /* @group groups */
+#group_create_form { margin-top: 30px; }
+
+#group_create_form .form_row { margin-bottom: 15px; }
+
+#group_create_form label { font-weight: bold; font-size: 0.9em; }
+
+#group_create_form .help_text { font-size: 0.8em; color: #636363; }
+
+#group_create_form ul { list-style-type: none; color: #373637; margin-left: 10px; }
+
 .group_image { float: left; margin-right: 10px; }
 
 .group_leave { float: right; font-size: 0.8em; display: inline; }

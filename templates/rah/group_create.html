@@ -3,7 +3,7 @@
     <h1>Create a group</h1>
 	<form id="group_create_form" action="" method="post" enctype="multipart/form-data">
 		{% for field in form %}
-		    <div style="margin-bottom: 15px;">
+		    <div class="form_row">
     			<div>{{ field.label_tag }}</div>
     			<div>
         			{% if field.name == "slug" %}<span>http://{{ site }}/</span>{% endif %}
@@ -12,7 +12,7 @@
     				    <span class="error">{{ error|escape }}</span>
     				{% endfor %}
     			</div>
-    			<div>{{ field.help_text }}</div>
+    			<div class="help_text">{{ field.help_text }}</div>
 			</div>
 		{% endfor %}
 		<p><input type="submit" value="Create Group"></input></p>
