@@ -1,0 +1,704 @@
+[
+    {
+        "pk": 1, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-25 10:36:02", 
+            "name": "Size your water heater", 
+            "sequence": 1, 
+            "created": "2010-01-25 10:36:02", 
+            "content": "You'll need to know how many gallons your water heater holds. Your manual will provide this information, but most homes use hot water heaters that hold 30-50 gallons.<cite>Nunan, Jon. \"<a href=\"http://www.servicemagic.com/article.show.Hot-Water-Needs.8976.html\">Hot Water Needs</a>\" Service Magic. n.d. 20 Jan. 2010</cite>", 
+            "points": 5, 
+            "action": 16
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-20 15:00:33", 
+            "name": "Buy an insulation kit", 
+            "sequence": 2, 
+            "created": "2010-01-20 15:00:33", 
+            "content": "Most hot water insulating kits are fairly inexpensive ? usually under $20. Look for one that has an R-value of 8 or more, like the <a href='http://www.amazon.com/Thermwell-SP57-11C-Heater-Blanket-gallon/dp/B000BPCWQY/ref=sr_1_1?ie=UTF8&amp;s=hi&amp;qid=1257784351&amp;sr=8-1'>Frost King</a> model.  Adding insulation will save you 4-9% in water heating costs.<cite>\"<a href=\"http://www.energysavers.gov/your_home/water_heating/index.cfm/mytopic=13070\">Insulate Your Water Heater Tank for Energy Savings</a>\" <i>Energy Savers</i>. U.S. Department of Energy. 24 March 2009. 19 Jan 2010</cite>", 
+            "points": 10, 
+            "action": 16
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-20 14:55:37", 
+            "name": "Install the insulation ", 
+            "sequence": 3, 
+            "created": "2010-01-20 14:55:37", 
+            "content": "You can easily install it yourself with some scissors and tape. Your kit may come with its own instructions, but here is a set of general <a href='http://www.energysavers.gov/your_home/water_heating/index.cfm/mytopic=13080'>step-by-step instructions</a>. If you have a gas-powered water heater, make sure to keep the insulation away from the flue.", 
+            "points": 10, 
+            "action": 16
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-25 10:36:49", 
+            "name": "Buy an Energy Star-rated refrigerator ", 
+            "sequence": 1, 
+            "created": "2010-01-25 10:36:49", 
+            "content": "Look for the blue Energy Star label when selecting your appliance. Energy Star refrigerators use 20% less energy than similar, non-certified models.<cite>\"<a href=\"http://energystar.custhelp.com/cgi-bin/energystar.cfg/php/enduser/std_adp.php?p_faqid=4912>What's more energy efficient, a refrigerator with a top-mounted freezers, bottom-mounted freezer, or a side-by-side?</a>\" ENERGY STAR. 9 Sept. 2009. 20 Jan. 2010.</cite> <a href=\"http://www.energystar.gov/index.cfm?fuseaction=refrig.calculator\">This calculator</a> will tell you how much more energy you current fridge is wasting when compared to a new model. You can find an Energy Star model for almost any type of refrigerator, giving you access to all the latest features.", 
+            "points": 20, 
+            "action": 17
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-20 15:00:39", 
+            "name": "Install your new refrigerator ", 
+            "sequence": 2, 
+            "created": "2010-01-20 15:00:39", 
+            "content": "   ", 
+            "points": 10, 
+            "action": 17
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-20 15:02:30", 
+            "name": "Set your water heater to 120\u00b0F", 
+            "sequence": 1, 
+            "created": "2010-01-20 15:02:30", 
+            "content": "Your owner?s manual will include instructions about how to adjust the temperature setting. If you can't find your manual, it's usually fairly easy to find your heater's thermostat. <a href='http://www.popularmechanics.com/how_to_central/home_clinic/1833166.html?page=1'>This article from Popular Mechanics</a> gives a good description of how to set the temperature for electric, gas, and oil powered water heaters.\r\n", 
+            "points": 30, 
+            "action": 18
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-20 15:32:37", 
+            "name": "Identify an auditor", 
+            "sequence": 1, 
+            "created": "2010-01-20 15:32:37", 
+            "content": "The Repower@Home database will connect you with a qualified auditor in your neighborhood. Repower@Home only lists inspectors who are certified by Energy Star, so you know you'll be receiving high-quality work.", 
+            "points": 10, 
+            "action": 19
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-12 12:20:23", 
+            "name": "Schedule an appointment", 
+            "sequence": 2, 
+            "created": "2010-01-12 12:20:23", 
+            "content": "Pick a time when you'll be able to devote a few hours to walking through your home with the auditors.", 
+            "points": 10, 
+            "action": 19
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-12 12:20:32", 
+            "name": "Organize your documents", 
+            "sequence": 3, 
+            "created": "2010-01-12 12:20:32", 
+            "content": "Think of any concerns you may already have and collect your recent utility bills.", 
+            "points": 10, 
+            "action": 19
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-12 12:20:47", 
+            "name": "Meet the auditor and begin improving your home ", 
+            "sequence": 4, 
+            "created": "2010-01-12 12:20:47", 
+            "content": "   ", 
+            "points": 10, 
+            "action": 19
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-12 16:51:36", 
+            "name": "Buy insulation", 
+            "sequence": 1, 
+            "created": "2010-01-12 16:51:36", 
+            "content": "Insulation is very inexpensive and commonly available. The diameter of your pipe should match the diameter of the sleeve for a snug fit.", 
+            "points": 10, 
+            "action": 20
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-12 16:51:45", 
+            "name": "Install the insulation", 
+            "sequence": 2, 
+            "created": "2010-01-12 16:51:45", 
+            "content": "This is a very similar project to insulating your hot water heater: cut, wrap, and tape. The most important pipes are the ones that are three feet or closer to your hot water heater.<cite>California Energy Commission, <a href=\"http://www.consumerenergycenter.org/home/appliances/waterheaters.html>Water Heaters - Energy Choices at Home</a> If you have a gas-powered water heater, make sure to keep your insulation at least six inches away from the flue.<cite>Mighigan Dept. of Energy, Labor & Economic Growth, <i>The Energy Observer</i> <a href=\"http://www.michigan.gov/documents/dleg/EO_12-08_260425_7.pdf>Increasing Your Water Heater's Efficiency</a></cite>", 
+            "points": 5, 
+            "action": 20
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-12 13:12:57", 
+            "name": "Size your fireplace", 
+            "sequence": 1, 
+            "created": "2010-01-12 13:12:57", 
+            "content": "It's important that the chimney draft guard fits snugly.", 
+            "points": 10, 
+            "action": 21
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-12 16:52:35", 
+            "name": "Order your draft guard", 
+            "sequence": 2, 
+            "created": "2010-01-12 16:52:35", 
+            "content": "   ", 
+            "points": 10, 
+            "action": 21
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 15:02:25", 
+            "name": "Install draft guard", 
+            "sequence": 3, 
+            "created": "2010-01-13 15:02:25", 
+            "content": "     ", 
+            "points": 10, 
+            "action": 21
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 15:50:44", 
+            "name": "Switch your wash cycle", 
+            "sequence": 1, 
+            "created": "2010-01-13 15:50:44", 
+            "content": "If you wash 80% of your loads in cold water for a year, you'll save more than $60 in energy costs.<cite>Planet Green, <a href=\"http://planetgreen.discovery.com/home-garden/beat-the-heat-wash-in-cold.html\">Beat the Heat, Wash in Cold</a></cite>\r\n\r\nThere are many laundry detergents available that are specifically formulated to work with cold water, including Tide Coldwash and Woolite Liquid Cold Water Wash. As an added benefit of switching cycles, your clothes will last longer if they're washed in cold water.", 
+            "points": 10, 
+            "action": 22
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 15:55:01", 
+            "name": "Buy a power strip", 
+            "sequence": 1, 
+            "created": "2010-01-13 15:55:01", 
+            "content": "You can eliminate vampire power by connecting all your electronics to power strips, and switching off the power strip after you're done using your devices. \r\n\r\nIt's easy to forget to switch off your power strip every time, so \"smart\" power strips are here to make destroying vampire power even easier. They  cut power to your electronics, either by <a href='http://www.amazon.com/Belkin-BG108000-04-Conserve-Energy-Saving/dp/B001GQ2W6W'>linking all devices on the strip to a single control</a> or by <a href='http://catalog.bitsltd.us/'>automatically switching everything off</a> when one device, like the television, is powered down. They're perfect for the home entertainment or office areas. \r\n", 
+            "points": 10, 
+            "action": 23
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-26 10:23:25", 
+            "name": "Use the power strip", 
+            "sequence": 2, 
+            "created": "2010-01-26 10:23:25", 
+            "content": "Plug in your devices and start saving! Make sure you remember to switch your power strip off, or you won't actually see any savings.", 
+            "points": 10, 
+            "action": 23
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 15:55:12", 
+            "name": "Identify the correct model for your home", 
+            "sequence": 1, 
+            "created": "2010-01-13 15:55:12", 
+            "content": "There are a wide range of thermostats for many different types of heating systems, budgets, and habits.  Some thermostats give you the ability to program several different settings for each day of the week.", 
+            "points": 10, 
+            "action": 24
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 15:03:23", 
+            "name": "Purchase the thermostat", 
+            "sequence": 2, 
+            "created": "2010-01-13 15:03:23", 
+            "content": "Buy the right thermostat for your system. If your home has electric heat, make sure to select one specifically for that system. Programmable thermostats are generally not compatible with heat pumps.", 
+            "points": 10, 
+            "action": 24
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 15:03:32", 
+            "name": "Install the thermostat", 
+            "sequence": 3, 
+            "created": "2010-01-13 15:03:32", 
+            "content": "If you already have a manual thermostat, you can probably install a programmable one yourself.", 
+            "points": 10, 
+            "action": 24
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 15:05:56", 
+            "name": "Program the thermostat", 
+            "sequence": 4, 
+            "created": "2010-01-13 15:05:56", 
+            "content": "Think about when you typically go to bed, leave in the morning, and come home at night. Set your thermostat to lower your heat or air-conditioning while you're asleep or at work, and turn the heat back up by the time you wake up or get home. During the winter, rolling back your thermostat from 72\u00b0 to 65\u00b0 for eight hours a day will save you 7% on your heating bill.<cite>Department of Energy, Energy Savers, <a href=\"http://www.energysavers.gov/your_home/space_heating_cooling/index.cfm/mytopic=12720>Thermostats and Control Systems</a></cite> You can achieve similar savings in the summer by raising your thermostat in the summer.", 
+            "points": 10, 
+            "action": 24
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 17:07:00", 
+            "name": "Experiment to find a comfortable temperature", 
+            "sequence": 1, 
+            "created": "2010-01-13 17:07:00", 
+            "content": "The difference between 78\u00b0 and 74\u00b0 may not feel like much, but it has a big impact on your energy use. By permanently setting your thermostat to 78\u00b0 instead of 74\u00b0 during the summer, you'll save around 12% on your cooling bill.<cite>Christopher Solomon, MSN Real Estate <a href=\"http://realestate.msn.com/article.aspx?cp-documentid=13107978\">14 ways to lower your heating bill</a></cite> The same is true in the winter; try setting your thermostat to 70\u00b0 or 68\u00b0 instead of 72\u00b0. ", 
+            "points": 10, 
+            "action": 26
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 17:07:12", 
+            "name": "Enact your reduced settings ", 
+            "sequence": 2, 
+            "created": "2010-01-13 17:07:12", 
+            "content": "           ", 
+            "points": 10, 
+            "action": 26
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 17:07:12", 
+            "name": "Measure which vents you want to seal", 
+            "sequence": 1, 
+            "created": "2010-01-13 17:07:12", 
+            "content": "If your vents can easily be closed, you may not even need a vent cover.", 
+            "points": 10, 
+            "action": 27
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 17:07:12", 
+            "name": "Buy the vent cover", 
+            "sequence": 2, 
+            "created": "2010-01-13 17:07:12", 
+            "content": "Magnetic vent covers stay in place, but are also easy to remove", 
+            "points": 10, 
+            "action": 27
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 17:07:36", 
+            "name": "Install vent cover ", 
+            "sequence": 3, 
+            "created": "2010-01-13 17:07:36", 
+            "content": "     ", 
+            "points": 10, 
+            "action": 27
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 17:07:56", 
+            "name": "Change your filters every three months", 
+            "sequence": 1, 
+            "created": "2010-01-13 17:07:56", 
+            "content": "Don't underestimate the benefits of new filters. Clean filters help your system run efficiently, last longer, and create better indoor air quality. ", 
+            "points": 10, 
+            "action": 30
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-25 10:32:51", 
+            "name": "Turn your fan on", 
+            "sequence": 1, 
+            "created": "2010-01-25 10:32:51", 
+            "content": "   ", 
+            "points": 10, 
+            "action": 31
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-25 10:31:29", 
+            "name": "Raise your thermostat", 
+            "sequence": 2, 
+            "created": "2010-01-25 10:31:29", 
+            "content": "If you have a fan installed properly, you can raise your thermostat by four degrees and not feel any hotter.<cite>Novak, Sara. \"<a href=\"http://planetgreen.discovery.com/home-garden/fans-thermostat-degrees.html\">Use Fans, Turn the Thermostat Up 4 Degrees</a>.\" Planet Green. 2 Aug 2009. 25 Jan 2010.</cite> Consistently keeping your thermostat four degrees higher in the summer will save you around 12% on your summer cooling bill.<cite>\"3 percent to 5 percent more energy is used for each degree the furnace is set above 68 degrees and for each degree the air conditioner is set below 78 degrees,\" \"<a href=\"http://www.pge.com/myhome/saveenergymoney/savingstips/\">Energy Saving Tips</a>. PG&E. n.d. 25 Jan 2010.</cite>", 
+            "points": 10, 
+            "action": 31
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-15 12:27:54", 
+            "name": "Identify lights that are often left on", 
+            "sequence": 1, 
+            "created": "2010-01-15 12:27:54", 
+            "content": "Common culprits can be found in hallways, bathrooms, and porches.", 
+            "points": 10, 
+            "action": 32
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 17:07:12", 
+            "name": "Decide between a motion sensor or a timer ", 
+            "sequence": 2, 
+            "created": "2010-01-13 17:07:12", 
+            "content": "Motion sensors are a good choice for hallways and bathrooms. A timer can help you set your porch lights to go off at sunrise or turn off  lights by windows after a certain amount of time. ", 
+            "points": 10, 
+            "action": 32
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-14 14:53:14", 
+            "name": "Install", 
+            "sequence": 3, 
+            "created": "2010-01-14 14:53:14", 
+            "content": "Sensors and motion detectors are easy to install and operate. Once you set it up, plug it in and start enjoying automatic savings.", 
+            "points": 10, 
+            "action": 32
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-14 14:53:48", 
+            "name": "Close the damper", 
+            "sequence": 1, 
+            "created": "2010-01-14 14:53:48", 
+            "content": "Check to make sure your damper is closed when you're not using your fireplace. Open dampers are like open windows in the middle of winter! ", 
+            "points": 10, 
+            "action": 33
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-15 12:28:30", 
+            "name": "Buy a low-flow shower head", 
+            "sequence": 1, 
+            "created": "2010-01-15 12:28:30", 
+            "content": "<img align=\"left\" width=\"150\" height=\"150\" src=\"http://rahstatic.s3.amazonaws.com/actionmedia/watersenselabel.jpg\">You can find them at any local home improvement store. Starting in 2010, these high efficiency shower heads will carry the EPA WaterSense logo, making them easy to identify. Low-flow shower heads have a flow rate of less than 2.0 gpm, but most homes only need a 1.5 gpm shower head. The flow rate should be listed on the box.  Every shower you take will use 25% less water and energy if you opt for a 1.5gpm shower head over a 2.0 gpm model.", 
+            "points": 15, 
+            "action": 34
+        }
+    }, 
+    {
+        "pk": 36, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-15 12:28:42", 
+            "name": "Install the shower head", 
+            "sequence": 2, 
+            "created": "2010-01-15 12:28:42", 
+            "content": "You can easily do the installation yourself. For step-by-step instructions, refer to <a href='http://www.ehow.com/how_5097759_fit-shower-head.html'>this article</a>.", 
+            "points": 10, 
+            "action": 34
+        }
+    }, 
+    {
+        "pk": 37, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-15 12:32:39", 
+            "name": "Reverse the direction of your fan", 
+            "sequence": 1, 
+            "created": "2010-01-15 12:32:39", 
+            "content": "Warm air rises and sits near the ceiling, while it feels much colder on the floor. During the winter, reverse the direction of your ceiling fan. Warm air will now be pushed down, making the room feel warmer. This is particularly useful for homes with ceilings above 8 feet tall.", 
+            "points": 10, 
+            "action": 35
+        }
+    }, 
+    {
+        "pk": 38, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-15 12:32:10", 
+            "name": "Lower your thermostat", 
+            "sequence": 2, 
+            "created": "2010-01-15 12:32:10", 
+            "content": "Turning the fan on only saves energy if you also lower your heat. Experiment to find a comfortable setting. You should be able lower your thermostat enough to still feel comfortable and save around 10% on your heating bills.<cite>Kristin Underwood, Treehugger.com <a href=\"http://www.treehugger.com/files/2009/10/turn-back-your-clock-and-fan-this-halloween-for-better-energy-savings.php\">Turn Back Your Clock and Fan This Halloween for Better Energy Savings</a></cite> ", 
+            "points": 10, 
+            "action": 35
+        }
+    }, 
+    {
+        "pk": 39, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-15 13:34:21", 
+            "name": "Buy a sink aerator", 
+            "sequence": 1, 
+            "created": "2010-01-15 13:34:21", 
+            "content": "Sink aerators - small pieces that attach to your sinks - are widely available and very inexpensive: from about 50 cents to $3.00. For the bathroom, look for an aerator with a flow rate of between 0.5 to 1 gallon per minute. You can also install aerators in your kitchen, but kitchen sinks need a higher flow rate. \r\n\r\nLow-flow bathroom faucets can reduce a sink's water flow by 30 percent or more without sacrificing performance.<cite>EPA, WaterSense, <a href=\"http://www.epa.gov/watersense/products/bathroom_sink_faucets.html\">Bathroom Sink Faucets & Accessories</a></cite> Look for the EPA WaterSense logo on aerators to ensure you're purchasing a low-flow version.\r\n\r\nThe website MetaEfficient has <a href='http://www.metaefficient.com/bathroom-products/kitchen-faucet-aerator.html'>reviews and purchasing information</a> for some of the most popular sink aerators.", 
+            "points": 15, 
+            "action": 36
+        }
+    }, 
+    {
+        "pk": 40, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 17:07:12", 
+            "name": "Install the aerator", 
+            "sequence": 2, 
+            "created": "2010-01-13 17:07:12", 
+            "content": "It will screw right on to the bottom of most faucets.", 
+            "points": 10, 
+            "action": 36
+        }
+    }, 
+    {
+        "pk": 41, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-14 14:58:22", 
+            "name": "Assess your needs", 
+            "sequence": 1, 
+            "created": "2010-01-14 14:58:22", 
+            "content": "CFLs can be used virtually everywhere. Certain CFLs can even be used with dimmers and other specialty lights. To find the right CFL for you, consult the <a href='http://www.energystar.gov/index.cfm?c=cfls.pr_tips_cfls'>Energy Star Buyer's Guide</a>.", 
+            "points": 0, 
+            "action": 37
+        }
+    }, 
+    {
+        "pk": 42, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-14 14:58:38", 
+            "name": "Buy the light bulbs", 
+            "sequence": 2, 
+            "created": "2010-01-14 14:58:38", 
+            "content": "CFLs are widely available. CFLs are a bit more expensive, but you'll easily recoup your investment in energy savings. One CFL will save you $30 over the bulb's lifetime, paying for itself in around six months.<cite>ENERGY STAR, <a href=\"http://www.energystar.gov/index.cfm?c=cfls.pr_cfls>Compact Fluorescent Light Bulbs for Consumers</a><cite> The average home has 45 light bulbs; replacing all of these will save you over $1,300.<cite>Brian Dakss, The CBS Early Show <a href=\"http://www.cbsnews.com/stories/2007/06/22/earlyshow/living/home/main2965734.shtml>\"Green\" Light Bulb Buying Guide</a></cite> CFLs also last up to ten times longer, meaning fewer trips to the hardware store.", 
+            "points": 0, 
+            "action": 37
+        }
+    }, 
+    {
+        "pk": 43, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 16:14:46", 
+            "name": "Install one CFL", 
+            "sequence": 3, 
+            "created": "2010-01-13 16:14:46", 
+            "content": "           ", 
+            "points": 10, 
+            "action": 37
+        }
+    }, 
+    {
+        "pk": 44, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 16:15:05", 
+            "name": "Install five CFLs", 
+            "sequence": 4, 
+            "created": "2010-01-13 16:15:05", 
+            "content": "               ", 
+            "points": 40, 
+            "action": 37
+        }
+    }, 
+    {
+        "pk": 45, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 16:17:38", 
+            "name": "Install ten CFLs", 
+            "sequence": 5, 
+            "created": "2010-01-13 16:15:49", 
+            "content": "        ", 
+            "points": 50, 
+            "action": 37
+        }
+    }, 
+    {
+        "pk": 46, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-13 16:18:15", 
+            "name": "Install twenty CFLs", 
+            "sequence": 6, 
+            "created": "2010-01-13 16:18:15", 
+            "content": "                  ", 
+            "points": 100, 
+            "action": 37
+        }
+    }, 
+    {
+        "pk": 47, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-25 15:31:40", 
+            "name": "Select your caulk", 
+            "sequence": 1, 
+            "created": "2010-01-25 14:46:53", 
+            "content": "You can buy caulk at virtually any hardware store. There are many different types of caulk available, but make sure you select a caulk designed to seal dissimilar materials. <strong>Butyl rubber caulk</strong> is one good choice.", 
+            "points": 5, 
+            "action": 38
+        }
+    }, 
+    {
+        "pk": 48, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-25 15:40:13", 
+            "name": "Clean the surface", 
+            "sequence": 2, 
+            "created": "2010-01-25 15:40:13", 
+            "content": "Wipe down the surface and scrape away any old caulk with a putty knife or screw driver. Make sure the surface is completely dry before you start.", 
+            "points": 5, 
+            "action": 38
+        }
+    }, 
+    {
+        "pk": 49, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-25 16:00:35", 
+            "name": "Caulk", 
+            "sequence": 3, 
+            "created": "2010-01-25 15:55:30", 
+            "content": "Make sure to put caulk where the glass meets the frame and in the frame's joints. \r\n\r\nCaulking is an improvement you can easily do yourself, but it can take some practice to get it perfect. To perfect your form, try:<ul><li>Holding the gun at a 45\u00ba angle, so the caulk is forced into cracks as it comes out.</li> <li>Caulking continually, without multiple stops and starts.</li> <li>Having the caulk stick to both sides of a gap.</li>\r\n</ul>", 
+            "points": 20, 
+            "action": 38
+        }
+    }, 
+    {
+        "pk": 50, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-26 10:05:26", 
+            "name": "Buy a window insulation kit", 
+            "sequence": 1, 
+            "created": "2010-01-26 10:05:26", 
+            "content": "Window insulation kits contain a special plastic sheet and double-sided tape. The sheet traps air between the sheet and glass, creating an insulating barrier. Kits - like those from <a href=\"http://www.amazon.com/3M-2141W-Indoor-5-Window-Insulator/dp/B00002NCJI\">3M</a> and <a href=\"http://www.acehardware.com/product/index.jsp?productId=1286194&CAWELAID=109365640\">Ace</a> - are easy to install and generally cost less than $4 per window. ", 
+            "points": 10, 
+            "action": 39
+        }
+    }, 
+    {
+        "pk": 51, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-26 10:10:12", 
+            "name": "Install the kit", 
+            "sequence": 2, 
+            "created": "2010-01-26 10:10:12", 
+            "content": "With just some scissors and a few minutes, you can stop uncomfortable drafts.", 
+            "points": 5, 
+            "action": 39
+        }
+    }, 
+    {
+        "pk": 52, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-26 14:14:29", 
+            "name": "Select high-performance windows", 
+            "sequence": 1, 
+            "created": "2010-01-26 14:14:22", 
+            "content": "The most energy efficient windows are double-paned and constructed with high-performance glass. \"High- performance\" means the glass is able to absorb or reflect light better than conventional glass. In cold areas, for example, \"low-e\" windows are a good choice. They readily absorb heat and reflect it back into the room. In warm areas, \"spectrally selective\" glass reduces heat gain while allowing light to pass through. \r\n\r\nChoosing the right window will make a big difference in your energy bills. A contractor will be able to tailor recommendations to your home's needs. ", 
+            "points": 100, 
+            "action": 40
+        }
+    }, 
+    {
+        "pk": 53, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-26 14:16:38", 
+            "name": "Install the windows", 
+            "sequence": 2, 
+            "created": "2010-01-26 14:16:38", 
+            "content": "      ", 
+            "points": 50, 
+            "action": 40
+        }
+    }, 
+    {
+        "pk": 54, 
+        "model": "rah.actiontask", 
+        "fields": {
+            "updated": "2010-01-27 15:18:11", 
+            "name": "Activate energy-saving settings", 
+            "sequence": 1, 
+            "created": "2010-01-27 14:36:28", 
+            "content": "It's easy to customize your power management preferences. Set your computer to enter standby or hibernate mode after 30 to 60 minutes of inactivity. Have the monitor turn off after 20 minutes of inactivity. \r\n<ul><li><strong>For Windows Users:</strong>\r\nStart -> Control Panel -> Performance and Maintenance -> Power Options</li>\r\n<li><strong>For Mac Users:</strong>\r\nApplications -> System Preferences -> Energy Saver</li>\r\n</ul>", 
+            "points": 20, 
+            "action": 41
+        }
+    }
+]

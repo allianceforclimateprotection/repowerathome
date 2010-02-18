@@ -1,0 +1,90 @@
+[
+    {
+        "pk": 1, 
+        "model": "rah.activity", 
+        "fields": {
+            "updated": null, 
+            "points": 0, 
+            "batch_time_minutes": 0, 
+            "slug": "action_task_complete", 
+            "created": null
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "rah.activity", 
+        "fields": {
+            "updated": null, 
+            "points": 20, 
+            "batch_time_minutes": 30, 
+            "slug": "action_commitment", 
+            "created": null
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "rah.activity", 
+        "fields": {
+            "updated": null, 
+            "points": 50, 
+            "batch_time_minutes": 0, 
+            "slug": "mag_tweet", 
+            "created": null
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "rah.activity", 
+        "fields": {
+            "updated": null, 
+            "points": 20, 
+            "batch_time_minutes": 0, 
+            "slug": "mag_invite_friend", 
+            "created": null
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "rah.activity", 
+        "fields": {
+            "updated": null, 
+            "points": 20, 
+            "batch_time_minutes": 0, 
+            "slug": "mag_request_party_host_info", 
+            "created": null
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "rah.activity", 
+        "fields": {
+            "updated": null, 
+            "points": 5, 
+            "batch_time_minutes": 0, 
+            "slug": "group_create", 
+            "created": null
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "rah.activity", 
+        "fields": {
+            "updated": null, 
+            "points": 5, 
+            "batch_time_minutes": 30, 
+            "slug": "comment_mark_useful", 
+            "created": null
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "rah.activity", 
+        "fields": {
+            "updated": null, 
+            "points": 5, 
+            "batch_time_minutes": 0, 
+            "slug": "comment_create", 
+            "created": null
+        }
+    }
+]
