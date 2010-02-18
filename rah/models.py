@@ -224,18 +224,23 @@ class GeoGroupManager(models.Manager):
     
     def get_geo_group(self, state, county_slug=None, place_slug=None):
         locations = Location.objects.filter(st=state)
-        name = state
         if place_slug:
             place = self.de_geo_slugify(place_slug)
             locations = locations.filter(name=place)
-            name = "%s, %s" % (place, state)
         elif county_slug:
             county = self.de_geo_slugify(county_slug)
             locations = locations.filter(county=county)
-            name = "%s in %s" % (county, state)
         
         if locations.count() == 0:
             return None
+            
+        sample_location = locations[0]
+        if place_slug:
+            name = "%s, %s" % (sample_location.name, sample_location.st)
+        elif county_slug:
+            name = "%s in %s" % (sample_location.county, sample_location.state)
+        else:
+            name = sample_location.state
         return GeoGroup(name=name, description="A place for all users belonging to %s" % name, 
             locations=locations, state=state, county_slug=county_slug, place_slug=place_slug)
             
