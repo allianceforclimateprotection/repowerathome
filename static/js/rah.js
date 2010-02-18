@@ -198,16 +198,6 @@ var rah = {
                     },
                 },
             });
-            $(".rateable_rate_form [name='next']").remove();
-            $('.rateable_rate_form :submit').click(function(){
-                submit = $(this);
-                form = submit.parents('form');
-                form.append("<input type='hidden' name='" + submit.val() + "' value='" + submit.val() + "' />")
-                $.post(form.attr('action'), form.serialize(), function(data){
-                    rah.mod_messages.init(data);
-                });
-               return false; 
-            });
         },
     },
     
@@ -274,6 +264,16 @@ var rah = {
                 rules: {
                     name: { required: true, },
                 },
+            });
+            $(".rateable_rate_form [name='next']").remove();
+            $('.rateable_rate_form :submit').click(function(){
+                submit = $(this);
+                form = submit.parents('form');
+                form.append("<input type='hidden' name='" + submit.val() + "' value='" + submit.val() + "' />")
+                $.post(form.attr('action'), form.serialize(), function(data){
+                    rah.mod_messages.init(data);
+                });
+               return false; 
             });
         },
     },
