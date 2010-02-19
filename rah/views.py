@@ -195,7 +195,7 @@ def action_commit(request, action_slug):
         if commit_form.is_valid():
             commit_form.save(action, request.user)
             data = {'date_committed': commit_form.cleaned_data['date_committed']}
-            request.user.create_record('action_commitment', data=data)
+            request.user.create_record('action_commitment',action, data=data)
             messages.add_message(request, messages.SUCCESS, 'We recorded your commitment.')
             return redirect("action_detail", action_slug=action.slug)
     else:
