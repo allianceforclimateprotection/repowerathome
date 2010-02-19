@@ -41,51 +41,50 @@ class UserTest(TestCase):
         self.failUnlessEqual(len(point_data), 1)
         self.failUnlessEqual(point_data[0][1], 35)
     
-    def test_get_latest_records(self):        
+    def test_user_records(self):        
         Record(user=self.u1, activity=self.act1, points=self.at1.points).save()
         Record(user=self.u1, activity=self.act1, points=self.at2.points).save()
         Record(user=self.u1, activity=self.act1, points=self.at3.points).save()
         self.failUnlessEqual(Record.objects.count(), 3)
         
-        all_records = self.u1.get_latest_records()
+        all_records = self.u1.user_records()
         self.failUnlessEqual(len(all_records), 3)
         
-        two_records = self.u1.get_latest_records(2)
+        two_records = self.u1.user_records(2)
         self.failUnlessEqual(len(two_records), 2)
         
-        # Make sure the order is correct
-        self.failUnless(all_records[0].created < all_records[1].created < all_records[2].created)
+        # Make sure the order is correct (reverse cron)
+        self.failUnless(all_records[0].created > all_records[1].created > all_records[2].created)
     
-    def test_record_activity(self):        
+    def test_create_record(self):        
         # User should have zero points
         self.failUnlessEqual(self.u1.get_profile().total_points, 0)
         
         # Add a record
-        self.u1.record_activity(self.act1, self.at1)
+        self.u1.create_record(self.act1, self.at1)
         self.failUnlessEqual(Record.objects.count(), 1)
         self.failUnlessEqual(self.u1.get_profile().total_points, self.at1.points)
         
         # Add another record
-        self.u1.record_activity(self.act1, self.at2)
+        self.u1.create_record(self.act1, self.at2)
         self.failUnlessEqual(Record.objects.count(), 2)
         
-    def test_unrecord_activity(self):    
+    def test_void_record(self):    
         # Add some records
         self.failUnlessEqual(Record.objects.count(), 0)
-        self.u1.record_activity(self.act1, self.at1)
-        self.u1.record_activity(self.act1, self.at2)
+        self.u1.create_record(self.act1, self.at1)
+        self.u1.create_record(self.act1, self.at2)
         self.failUnlessEqual(Record.objects.count(), 2)
         
-        # Make sure the right record was voided
-        self.u1.unrecord_activity(self.act1, self.at1)
-        self.failUnlessEqual(Record.objects.count(), 2)
-        
-        voids = Record.objects.filter(void=True)
-        self.failUnlessEqual(voids.count(), 1)
-        self.failUnlessEqual(voids.get().activity.id, self.act1.id)
+        # Void a record
+        # Manager should automatically filter(void=False)
+        self.u1.void_record(self.act1, self.at1)
+        records = Record.objects.all()
+        self.failUnlessEqual(records.count(), 1)
+        self.failUnlessEqual(records[0].activity.id, self.act1.id)
         
     def test_record_action_task(self):        
-        self.u1.record_activity(self.act1, self.at1)
+        self.u1.create_record(self.act1, self.at1)
         self.at1.complete_task(self.u1)
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 1)
@@ -145,7 +144,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 2)
         self.failUnlessEqual(action.users_completed, 0)
         
-        self.u1.record_activity(self.act1, self.at2)
+        self.u1.create_record(self.act1, self.at2)
         self.at2.complete_task(self.u1)
         
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
@@ -178,22 +177,22 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_completed, 2)
         
     def test_total_points(self):    
-        self.u1.record_activity(self.act1, self.at1)
+        self.u1.create_record(self.act1, self.at1)
         
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 5)
         
-        self.u1.record_activity(self.act1, self.at2)
+        self.u1.create_record(self.act1, self.at2)
         
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 15)
         
-        self.u1.record_activity(self.act1, self.at3)
+        self.u1.create_record(self.act1, self.at3)
         
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 35)
         
-        self.u1.unrecord_activity(self.act1, self.at2)
+        self.u1.void_record(self.act1, self.at2)
         
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 25)
