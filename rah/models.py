@@ -621,8 +621,13 @@ def update_profile_points(sender, instance, **kwargs):
     total_points = Record.objects.filter(user=instance.user).aggregate(models.Sum('points'))['points__sum']
     profile.total_points = total_points if total_points else 0
     profile.save()
+    
+def update_commited_action(sender, instance, **kwargs):
+    instance.action.users_committed = UserActionProgress.objects.filter(action=instance.action, date_committed__isnull=False).count()
+    instance.action.save()
 
 models.signals.post_save.connect(update_actiontask_counts, sender=ActionTask)
-models.signals.pre_delete.connect(update_actiontask_counts, sender=ActionTask)
+models.signals.post_delete.connect(update_actiontask_counts, sender=ActionTask)
 models.signals.post_save.connect(user_post_save, sender=User)
 models.signals.post_save.connect(update_profile_points, sender=Record)
+models.signals.post_save.connect(update_commited_action, sender=UserActionProgress)
