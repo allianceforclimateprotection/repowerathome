@@ -4,6 +4,13 @@
     <script type="text/javascript" charset="utf-8">
         var chart_data = {{chart_data|safe}};
     </script>
+    {% if records %}
+	    <ul>
+	    {% for rec in records %}
+            <li>{{ rec.render }}</li>
+	    {% endfor %}
+	    </ul>
+	{% endif %}
 	{% if in_progress %}
 		<div class="actions_block" id="actions_in_progress">
 			<h2>In Progress Actions</h2>

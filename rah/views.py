@@ -112,11 +112,11 @@ def action_task(request, action_task_id):
 
         if request.POST.get('task_completed') and not record:
             action_task.complete_task(request.user)
-            request.user.record_activity('action_task_complete', action_task)
+            request.user.create_record('action_task_complete', action_task)
             messages.success(request, 'Great work, we have updated our records to show you completed %s' % (action_task))
         else:
             action_task.complete_task(request.user, undo=True)
-            request.user.unrecord_activity('action_task_complete', action_task)
+            request.user.void_record('action_task_complete', action_task)
             messages.success(request, 'We have updated our records to show you have not completed %s' % (action_task))
     
     if request.is_ajax():
@@ -154,6 +154,7 @@ def profile(request, user_id):
         'is_others_profile': request.user <> user,
         'commitment_list': user.get_commit_list(),
         'my_groups': user.my_groups(),
+        'records': user.user_records(10),
     }, context_instance=RequestContext(request))
 
 @login_required
@@ -188,8 +189,10 @@ def action_commit(request, action_slug):
     progress = request.user.get_action_progress(action)
     if request.method == 'POST':
         commit_form = ActionCommitForm(request.POST)
-        if commit_form.is_valid() and request.user.is_authenticated():
+        if commit_form.is_valid():
             commit_form.save(action, request.user)
+            data = {'date_committed': commit_form.cleaned_data['date_committed']}
+            request.user.create_record('action_commitment', data=data)
             messages.add_message(request, messages.SUCCESS, 'We recorded your commitment.')
             return redirect("action_detail", action_slug=action.slug)
     else:
@@ -258,7 +261,7 @@ def house_party(request):
     if request.method == 'POST':
         form = HousePartyForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            request.user.record_activity('mag_request_party_host_info')
+            request.user.create_record('mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
         else:
             pass
@@ -268,8 +271,9 @@ def invite_friend(request):
     if request.method == 'POST':
         form = InviteFriendForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            request.user.record_activity('mag_invite_friend')
+            request.user.create_record('mag_invite_friend')
             messages.add_message(request, messages.SUCCESS, 'Invitation sent. Thanks!')
+            request.user.create_record('mag_invite_friend')
         else:
             pass
     return redirect('rah.views.index')
@@ -305,6 +309,7 @@ def group_create(request):
         if form.is_valid():
             group = form.save()
             GroupUsers.objects.create(group=group, user=request.user, is_manager=True)
+            request.user.create_record('action_commitment', group)
             messages.success(request, "%s has been created." % group)
             return redirect("group_detail", group_slug=group.slug) # TODO: after creating the group we should redirect the user to the group detail page
     else:

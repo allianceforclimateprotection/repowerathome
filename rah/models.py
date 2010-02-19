@@ -101,11 +101,16 @@ class User(AuthUser):
     def get_name(self):
         return self.get_full_name() if self.get_full_name() else "Repower@Home User"
 
-    def get_latest_records(self, quantity=None):
-        records = self.record_set.filter(void=False)
+    def user_records(self, quantity=None):
+        records = self.record_set.all()
         return records[:quantity] if quantity else records
 
-    def record_activity(self, activity, content_object=None, data=None):
+    def create_record(self, activity, content_object=None, data=None):
+        """
+        activity: str or Activty object (required) 
+        content_object: A model object to associate with the record
+        data: A python dictionary with additional data to be stored with the record 
+        """
         if type(activity) is str:
             activity = Activity.objects.get(slug=activity)
         
@@ -132,16 +137,16 @@ class User(AuthUser):
         record.save()
         return record
 
-    def unrecord_activity(self, activity, content_object):
+    def void_record(self, activity, content_object):
         if type(activity) is str:
             activity = Activity.objects.get(slug=activity)
-        record = Record.objects.filter(void=False, user=self, activity=activity, content_objects__object_id=content_object.id)[0:1]
+        record = Record.objects.filter(user=self, activity=activity, content_objects__object_id=content_object.id)[0:1]
         if record:
             record[0].void = True
             record[0].save()
 
     def get_chart_data(self):
-        records = self.get_latest_records().select_related().order_by("created")
+        records = self.user_records().select_related().order_by("created")
         chart_points = list(sorted(set([ChartPoint(record.created.date()) for record in records])))
         for chart_point in chart_points:
             [chart_point.add_record(record) for record in records if chart_point.date >= record.created.date()]
@@ -559,6 +564,10 @@ class Profile(models.Model):
         return (hashlib.md5(self.user.email.lower()).hexdigest())
 
 
+class RecordManager(models.Manager):
+    def get_query_set(self):
+        return super(RecordManager, self).get_query_set().filter(void=False)
+
 class Activity(DefaultModel):
     slug = models.SlugField()
     points = models.IntegerField(default=0)
@@ -575,18 +584,20 @@ class Record(DefaultModel):
     data = SerializedDataField(blank=True, null=True)
     is_batched = models.BooleanField(default=False)
     void = models.BooleanField(default=False)
+    objects = RecordManager()
     
     class Meta:
-        ordering = ["user", "activity", "created"]
-        get_latest_by = "created"
+        ordering = ["-created"]
     
     def render(self):
+        # TODO: Add a param to allow rendering specifically for the chart tooltip
         if self.is_batched:
             template_file = "activity/%s_batch.html" % self.activity.slug
         else:
             template_file = "activity/%s.html" % self.activity.slug
         template = loader.get_template(template_file)
-        content_object = self.content_objects.get().content_object
+        content_object = self.content_objects.all()
+        if content_object: content_object = content_object[0].content_object
         return template.render(Context({"record": self, "content_object":content_object}))
 
     def __unicode__(self):
@@ -618,7 +629,7 @@ def user_post_save(sender, instance, **kwargs):
 def update_profile_points(sender, instance, **kwargs):
     if instance.points == 0: return
     profile = instance.user.get_profile()
-    total_points = Record.objects.filter(user=instance.user, void=False).aggregate(models.Sum('points'))['points__sum']
+    total_points = Record.objects.filter(user=instance.user).aggregate(models.Sum('points'))['points__sum']
     profile.total_points = total_points if total_points else 0
     profile.save()
 

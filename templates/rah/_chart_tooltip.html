@@ -11,7 +11,7 @@
 			</ul>
 		{% else %}
 			{% for record in action_record.list %}
-				<b>{{ record.activity.slug }} ({{ record.points }} points)</b><br/>
+				<b>{{ record.render }} ({{ record.points }} points)</b><br/>
 			{% endfor %}
 		{% endif %}
 	{% endfor %}
