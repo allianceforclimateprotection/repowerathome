@@ -1,5 +1,0 @@
-{% extends "activity/base.html" %}
-{% block activity_item %}
-    <a href="{% url profile record.user.id %}">{{ record.user }}</a> marked a comment as useful
-    on {{ record.created }} {% if record.points %}for {{ record.points }} points{% endif %}
-{% endblock %}
