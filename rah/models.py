@@ -1,4 +1,9 @@
 import json, hashlib, time, base64, re
+try:
+    import cPickle as pickle
+except:
+    import pickle
+    
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from django.contrib.contenttypes.models import ContentType
@@ -6,11 +11,7 @@ from django.contrib.contenttypes import generic
 from datetime import datetime, timedelta
 from django.template import Context, loader
 
-try:
-    import cPickle as pickle
-except:
-    import pickle
-
+from geo.models import Location
 import twitter_app.utils as twitter_app
 
 class SerializedDataField(models.TextField):
@@ -79,20 +80,7 @@ class DefaultModel(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
         
-class Location(models.Model):
-    name = models.CharField(max_length=200, db_index=True)
-    zipcode = models.CharField(max_length=5, db_index=True)
-    county = models.CharField(max_length=100, db_index=True)
-    st = models.CharField(max_length=2, db_index=True)
-    state = models.CharField(max_length=50)
-    lon = models.CharField(max_length=50)
-    lat = models.CharField(max_length=50)
-    pop = models.PositiveIntegerField()
-    timezone = models.CharField(max_length=100)
-    recruit = models.BooleanField()
 
-    def __unicode__(self):
-        return u'%s, %s (%s)' % (self.name, self.st, self.zipcode)
 
 class User(AuthUser):
     class Meta:

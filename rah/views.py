@@ -1,4 +1,5 @@
 import json, logging
+
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib.comments.views import comments
@@ -10,9 +11,11 @@ from django.views.decorators.csrf import csrf_protect
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.sites.models import Site
+
 from rah.models import *
 from rah.forms import *
 from settings import GA_TRACK_PAGEVIEW
+from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 
 @csrf_protect

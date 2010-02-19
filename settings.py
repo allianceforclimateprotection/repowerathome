@@ -83,6 +83,7 @@ INSTALLED_APPS = (
     'tagging',
     'twitter_app',
     'rateable',
+    'geo',
 )
 
 AUTHENTICATION_BACKENDS = ('rah.backends.EmailBackend',)
