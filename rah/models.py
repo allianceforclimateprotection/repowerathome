@@ -3,7 +3,6 @@ from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import datetime, timedelta
 from geo.models import Location
-# from records.models import Record
 
 import twitter_app.utils as twitter_app
 

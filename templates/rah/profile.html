@@ -4,13 +4,6 @@
     <script type="text/javascript" charset="utf-8">
         var chart_data = {{chart_data|safe}};
     </script>
-    {% if records %}
-	    <ul>
-	    {% for rec in records %}
-            <li>{{ rec.render }}</li>
-	    {% endfor %}
-	    </ul>
-	{% endif %}
 	{% if in_progress %}
 		<div class="actions_block" id="actions_in_progress">
 			<h2>In Progress Actions</h2>
@@ -57,9 +50,11 @@
 	{% endif %}
 	{% if my_groups %}
 	    <h2>Groups</h2>
+	    <p>
 	    {% for group in my_groups %}
 	        <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br />
 	    {% endfor %}
+	    </p>
 	{% endif %}
 	{% if completed %}
 	    <h2>Completed Actions</h2>
@@ -68,6 +63,12 @@
             <a href="{% url rah.views.action_detail action.slug %}">{{action.name}}</a> ({{action.total_points}} points)<br/>
 	    {% endfor %}
 	    </p>
+	{% endif %}
+	{% if records %}
+	    <h2>Recent Activity</h2>
+	    {% for rec in records %}
+            {{ rec.render }}
+	    {% endfor %}
 	{% endif %}
 {% endblock %}
 

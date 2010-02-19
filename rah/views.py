@@ -140,9 +140,8 @@ def profile(request, user_id):
     twitter_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
     })
-    
     tooltip_template = loader.get_template("rah/_chart_tooltip.html")
-    chart_points = user.get_chart_data()
+    chart_points = Record.objects.get_chart_data(user)
     point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
     tooltips = [tooltip_template.render(Context({"records": chart_point.records})) for chart_point in chart_points]
     return render_to_response('rah/profile.html', {
@@ -158,7 +157,7 @@ def profile(request, user_id):
         'is_others_profile': request.user <> user,
         'commitment_list': user.get_commit_list(),
         'my_groups': user.my_groups(),
-        'records': user.user_records(10),
+        'records': Record.objects.user_records(user, 10),
     }, context_instance=RequestContext(request))
 
 @login_required

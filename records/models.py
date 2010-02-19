@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.template import Context, loader
-from rah.models import User
+from rah.models import User, ChartPoint
 
 try:
     import cPickle as pickle
@@ -87,8 +87,8 @@ class RecordManager(models.Manager):
             record[0].void = True
             record[0].save()
     
-    def get_chart_data(self):
-        records = self.user_records().select_related().order_by("created")
+    def get_chart_data(self, user):
+        records = self.user_records(user).select_related().order_by("created")
         chart_points = list(sorted(set([ChartPoint(record.created.date()) for record in records])))
         for chart_point in chart_points:
             [chart_point.add_record(record) for record in records if chart_point.date >= record.created.date()]
@@ -121,7 +121,7 @@ class Record(DefaultModel):
         if self.is_batched:
             template_file = "records/%s_batch.html" % self.activity.slug
         else:
-            template_file = "records/activity/%s.html" % self.activity.slug
+            template_file = "records/%s.html" % self.activity.slug
         template = loader.get_template(template_file)
         content_object = self.content_objects.all()
         if content_object: content_object = content_object[0].content_object

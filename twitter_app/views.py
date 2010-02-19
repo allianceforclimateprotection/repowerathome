@@ -10,7 +10,7 @@ from django.contrib import messages
 from twitter_app.utils import *
 from twitter_app.forms import StatusForm
 
-from rah.models import Activity
+from records.models import Record
 
 @login_required
 def unauth(request):
