@@ -55,36 +55,8 @@ class UserTest(TestCase):
         
         # Make sure the order is correct (reverse cron)
         self.failUnless(all_records[0].created > all_records[1].created > all_records[2].created)
-    
-    def test_create_record(self):        
-        # User should have zero points
-        self.failUnlessEqual(self.u1.get_profile().total_points, 0)
-        
-        # Add a record
-        self.u1.create_record(self.act1, self.at1)
-        self.failUnlessEqual(Record.objects.count(), 1)
-        self.failUnlessEqual(self.u1.get_profile().total_points, self.at1.points)
-        
-        # Add another record
-        self.u1.create_record(self.act1, self.at2)
-        self.failUnlessEqual(Record.objects.count(), 2)
-        
-    def test_void_record(self):    
-        # Add some records
-        self.failUnlessEqual(Record.objects.count(), 0)
-        self.u1.create_record(self.act1, self.at1)
-        self.u1.create_record(self.act1, self.at2)
-        self.failUnlessEqual(Record.objects.count(), 2)
-        
-        # Void a record
-        # Manager should automatically filter(void=False)
-        self.u1.void_record(self.act1, self.at1)
-        records = Record.objects.all()
-        self.failUnlessEqual(records.count(), 1)
-        self.failUnlessEqual(records[0].activity.id, self.act1.id)
         
     def test_record_action_task(self):        
-        self.u1.create_record(self.act1, self.at1)
         self.at1.complete_task(self.u1)
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 1)
