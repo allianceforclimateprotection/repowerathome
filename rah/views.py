@@ -102,18 +102,21 @@ def action_detail(request, action_slug):
     commit_form = ActionCommitForm()
     
     return render_to_response('rah/action_detail.html', locals(), context_instance=RequestContext(request))
-                              
+
+@login_required
 def action_task(request, action_task_id):
     #  Handle the POST if a task is being completed
-    # OPTIMIZE There are some extra queries going on here
     action_task = get_object_or_404(ActionTask, id=action_task_id)
-    if request.method == 'POST' and request.user.is_authenticated():
-        record = Record.objects.filter(user=request.user, activity=action_task)
+    if request.method == 'POST':
+        record = ActionTaskUser.objects.filter(user=request.user, actiontask=action_task)
+
         if request.POST.get('task_completed') and not record:
-            request.user.record_activity(action_task)
+            action_task.complete_task(request.user)
+            request.user.record_activity('action_task_complete', action_task)
             messages.success(request, 'Great work, we have updated our records to show you completed %s' % (action_task))
         else:
-            request.user.unrecord_activity(action_task)
+            action_task.complete_task(request.user, undo=True)
+            request.user.unrecord_activity('action_task_complete', action_task)
             messages.success(request, 'We have updated our records to show you have not completed %s' % (action_task))
     
     if request.is_ajax():
@@ -255,7 +258,7 @@ def house_party(request):
     if request.method == 'POST':
         form = HousePartyForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            request.user.record_activity(Activity.objects.get(name="house-party"))
+            request.user.record_activity('mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
         else:
             pass
@@ -265,7 +268,7 @@ def invite_friend(request):
     if request.method == 'POST':
         form = InviteFriendForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            request.user.record_activity(Activity.objects.get(name="friend-invite"))
+            request.user.record_activity('mag_invite_friend')
             messages.add_message(request, messages.SUCCESS, 'Invitation sent. Thanks!')
         else:
             pass

@@ -14,6 +14,7 @@ def create_test_users_and_action_tasks(object):
     object.at1 = ActionTask.objects.create(name='test action task 1', action=object.a, points=5, sequence=1)
     object.at2 = ActionTask.objects.create(name='test action task 2', action=object.a, points=10, sequence=2)
     object.at3 = ActionTask.objects.create(name='test action task 3', action=object.a, points=20, sequence=3)
+    object.act1 = Activity.objects.create(slug='action_task_complete')
 
 class ChartPoint(TestCase):
     def test_add_record(self):
@@ -27,9 +28,9 @@ class UserTest(TestCase):
         create_test_users_and_action_tasks(self)
     
     def test_get_chart_data(self):
-        Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
-        Record(user=self.u1, activity=self.at2, points=self.at2.points).save()
-        Record(user=self.u1, activity=self.at3, points=self.at3.points).save()
+        Record(user=self.u1, activity=self.act1, points=self.at1.points).save()
+        Record(user=self.u1, activity=self.act1, points=self.at2.points).save()
+        Record(user=self.u1, activity=self.act1, points=self.at3.points).save()
         
         chart_points = self.u1.get_chart_data()
         self.failUnlessEqual(len(chart_points), 1)
@@ -41,9 +42,9 @@ class UserTest(TestCase):
         self.failUnlessEqual(point_data[0][1], 35)
     
     def test_get_latest_records(self):        
-        Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
-        Record(user=self.u1, activity=self.at2, points=self.at2.points).save()
-        Record(user=self.u1, activity=self.at3, points=self.at3.points).save()
+        Record(user=self.u1, activity=self.act1, points=self.at1.points).save()
+        Record(user=self.u1, activity=self.act1, points=self.at2.points).save()
+        Record(user=self.u1, activity=self.act1, points=self.at3.points).save()
         self.failUnlessEqual(Record.objects.count(), 3)
         
         all_records = self.u1.get_latest_records()
@@ -60,31 +61,32 @@ class UserTest(TestCase):
         self.failUnlessEqual(self.u1.get_profile().total_points, 0)
         
         # Add a record
-        self.u1.record_activity(self.at1)
+        self.u1.record_activity(self.act1, self.at1)
         self.failUnlessEqual(Record.objects.count(), 1)
         self.failUnlessEqual(self.u1.get_profile().total_points, self.at1.points)
         
         # Add another record
-        self.u1.record_activity(self.at2)
+        self.u1.record_activity(self.act1, self.at2)
         self.failUnlessEqual(Record.objects.count(), 2)
         
     def test_unrecord_activity(self):    
         # Add some records
         self.failUnlessEqual(Record.objects.count(), 0)
-        Record(user=self.u1, activity=self.at1, points=self.at1.points).save()
-        Record(user=self.u1, activity=self.at2, points=self.at1.points).save()
+        self.u1.record_activity(self.act1, self.at1)
+        self.u1.record_activity(self.act1, self.at2)
         self.failUnlessEqual(Record.objects.count(), 2)
         
-        # Make sure the right record was deleted
-        self.u1.unrecord_activity(self.at1)
-        self.failUnlessEqual(Record.objects.count(), 1)
-        self.failUnlessEqual(Record.objects.all()[0].activity.id, self.at2.id)
+        # Make sure the right record was voided
+        self.u1.unrecord_activity(self.act1, self.at1)
+        self.failUnlessEqual(Record.objects.count(), 2)
+        
+        voids = Record.objects.filter(void=True)
+        self.failUnlessEqual(voids.count(), 1)
+        self.failUnlessEqual(voids.get().activity.id, self.act1.id)
         
     def test_record_action_task(self):        
-        self.u1.record_activity(self.at1)
-        record = Record.objects.get(user=self.u1, activity=self.at1)
-        self.failUnlessEqual(record.points, self.at1.points)
-        self.failUnlessEqual(record.message, self.at1.name)
+        self.u1.record_activity(self.act1, self.at1)
+        self.at1.complete_task(self.u1)
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 1)
         self.failUnlessEqual(uap.is_completed, 0)
@@ -97,8 +99,8 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 0)
         self.failUnlessEqual(action.users_completed, 0)
         
-        self.u1.record_activity(self.at1)
-
+        self.at1.complete_task(self.u1)
+        
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 1)
         self.failUnlessEqual(uap.is_completed, 0)
@@ -106,7 +108,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 1)
         self.failUnlessEqual(action.users_completed, 0)
         
-        self.u1.record_activity(self.at2)
+        self.at2.complete_task(self.u1)
         
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 2)
@@ -115,7 +117,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 1)
         self.failUnlessEqual(action.users_completed, 0)
         
-        self.u1.record_activity(self.at3)
+        self.at3.complete_task(self.u1)
         
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 3)
@@ -125,8 +127,8 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_completed, 1)
         
     def test_multi_user_complete_action(self):        
-        self.u1.record_activity(self.at1)
-    
+        self.at1.complete_task(self.u1)
+        
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 1)
         self.failUnlessEqual(uap.is_completed, 0)
@@ -134,7 +136,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 1)
         self.failUnlessEqual(action.users_completed, 0)
         
-        self.u2.record_activity(self.at1)
+        self.at1.complete_task(self.u2)
         
         uap = UserActionProgress.objects.get(user=self.u2, action=self.a)
         self.failUnlessEqual(uap.user_completes, 1)
@@ -143,7 +145,8 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 2)
         self.failUnlessEqual(action.users_completed, 0)
         
-        self.u1.record_activity(self.at2)
+        self.u1.record_activity(self.act1, self.at2)
+        self.at2.complete_task(self.u1)
         
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 2)
@@ -152,8 +155,8 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 2)
         self.failUnlessEqual(action.users_completed, 0)
         
-        self.u1.record_activity(self.at3)
-        self.u2.record_activity(self.at2)
+        self.at3.complete_task(self.u1)
+        self.at2.complete_task(self.u2)
         
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 3)
@@ -165,7 +168,7 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 1)
         self.failUnlessEqual(action.users_completed, 1)
         
-        self.u2.record_activity(self.at3)
+        self.at3.complete_task(self.u2)
         
         uap = UserActionProgress.objects.get(user=self.u2, action=self.a)
         self.failUnlessEqual(uap.user_completes, 3)
@@ -175,22 +178,22 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_completed, 2)
         
     def test_total_points(self):    
-        self.u1.record_activity(self.at1)
+        self.u1.record_activity(self.act1, self.at1)
         
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 5)
         
-        self.u1.record_activity(self.at2)
+        self.u1.record_activity(self.act1, self.at2)
         
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 15)
         
-        self.u1.record_activity(self.at3)
+        self.u1.record_activity(self.act1, self.at3)
         
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 35)
         
-        self.u1.unrecord_activity(self.at2)
+        self.u1.unrecord_activity(self.act1, self.at2)
         
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 25)
@@ -214,13 +217,13 @@ class UserTest(TestCase):
         self.failUnlessEqual(progress.user_completes, 0)
         self.failUnlessEqual(progress.date_committed, date_committed)
         
-        self.u1.record_activity(activity=self.at1)
+        self.at1.complete_task(self.u1)
         progress = self.u1.get_action_progress(self.a)
         self.failUnlessEqual(progress.is_completed, 0)
         self.failUnlessEqual(progress.user_completes, 1)
         
-        self.u1.record_activity(activity=self.at2)
-        self.u1.record_activity(activity=self.at3)
+        self.at2.complete_task(self.u1)
+        self.at3.complete_task(self.u1)
         progress = self.u1.get_action_progress(self.a)
         self.failUnlessEqual(progress.is_completed, 1)
         self.failUnlessEqual(progress.user_completes, 3)
@@ -248,27 +251,17 @@ class ActionTest(TestCase):
         self.failUnlessEqual(action.user_completes, 0)
         
     def test_one_user_complete(self):
-        Record.objects.create(activity=self.at1, user=self.u1)
+        self.at1.complete_task(self.u1)
         
         action = Action.objects.actions_by_completion_status(self.u1)[0][0]
         
         self.failUnlessEqual(action.total_tasks, 3)
         self.failUnlessEqual(action.user_completes, 1)
-        
-    def test_all_user_completes(self):
-        Record.objects.create(activity=self.at1, user=self.u1)
-        Record.objects.create(activity=self.at2, user=self.u1)
-        Record.objects.create(activity=self.at3, user=self.u1)
-
-        action = Action.objects.actions_by_completion_status(self.u1)[0][0]
-
-        self.failUnlessEqual(action.total_tasks, 3)
-        self.failUnlessEqual(action.user_completes, 3)
     
     def test_partial_users_completes(self):
-        Record.objects.create(activity=self.at1, user=self.u1)
-        Record.objects.create(activity=self.at2, user=self.u2)
-        Record.objects.create(activity=self.at3, user=self.u1)
+        self.at1.complete_task(self.u1)
+        self.at2.complete_task(self.u2)
+        self.at3.complete_task(self.u1)
 
         action1 = Action.objects.actions_by_completion_status(self.u1)[0][0]
         action2 = Action.objects.actions_by_completion_status(self.u2)[0][0]
@@ -279,12 +272,12 @@ class ActionTest(TestCase):
         self.failUnlessEqual(action2.user_completes, 1)
         
     def test_all_users_completes(self):
-        Record.objects.create(activity=self.at1, user=self.u1)
-        Record.objects.create(activity=self.at2, user=self.u1)
-        Record.objects.create(activity=self.at3, user=self.u1)
-        Record.objects.create(activity=self.at1, user=self.u2)
-        Record.objects.create(activity=self.at2, user=self.u2)
-        Record.objects.create(activity=self.at3, user=self.u2)
+        self.at1.complete_task(self.u1)
+        self.at2.complete_task(self.u1)
+        self.at3.complete_task(self.u1)
+        self.at1.complete_task(self.u2)
+        self.at2.complete_task(self.u2)
+        self.at3.complete_task(self.u2)
 
         action1 = Action.objects.actions_by_completion_status(self.u1)[0][0]
         action2 = Action.objects.actions_by_completion_status(self.u2)[0][0]
@@ -301,9 +294,9 @@ class ActionTest(TestCase):
         self.failUnlessEqual(self.a.total_tasks, 3)
         
     def test_get_action_tasks_by_user(self):
-        Record.objects.create(activity=self.at1, user=self.u1)
-        Record.objects.create(activity=self.at3, user=self.u1)
-
+        self.at1.complete_task(self.u1)
+        self.at3.complete_task(self.u1)
+        
         action_tasks = self.a.get_action_tasks_by_user(self.u1)
 
         self.failIfEqual(action_tasks[0].is_complete, None)
@@ -315,24 +308,24 @@ class ActionTest(TestCase):
         self.failUnlessEqual(self.a.users_with_completes()[0], 0)
         self.failUnlessEqual(self.a.users_with_completes()[2], 0)
 
-        Record.objects.create(activity=self.at1, user=self.u1)
+        self.at1.complete_task(self.u1)
         action = Action.objects.get(id=self.a.id)
         self.failUnlessEqual(action.users_with_completes()[0], 1)
         self.failUnlessEqual(action.users_with_completes()[2], 0)
 
-        Record.objects.create(activity=self.at2, user=self.u1)
-        Record.objects.create(activity=self.at1, user=self.u2)
+        self.at2.complete_task(self.u1)
+        self.at1.complete_task(self.u2)
         action = Action.objects.get(id=self.a.id)
         self.failUnlessEqual(action.users_with_completes()[0], 2)
         self.failUnlessEqual(action.users_with_completes()[2], 0)
 
-        Record.objects.create(activity=self.at3, user=self.u1)
-        Record.objects.create(activity=self.at2, user=self.u2)
+        self.at3.complete_task(self.u1)
+        self.at2.complete_task(self.u2)
         action = Action.objects.get(id=self.a.id)
         self.failUnlessEqual(action.users_with_completes()[0], 1)
         self.failUnlessEqual(action.users_with_completes()[2], 1)
 
-        Record.objects.create(activity=self.at3, user=self.u2)
+        self.at3.complete_task(self.u2)
         action = Action.objects.get(id=self.a.id)
         self.failUnlessEqual(action.users_with_completes()[0], 0)
         self.failUnlessEqual(action.users_with_completes()[2], 2)
@@ -347,7 +340,7 @@ class ActionTest(TestCase):
         self.failUnlessEqual(len(in_progress), 0)
         self.failUnlessEqual(len(completed), 0)
         
-        Record.objects.create(activity=self.at1, user=self.u1)
+        self.at1.complete_task(self.u1)
         
         actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(self.u1)
         self.failUnlessEqual(len(actions), 1)
@@ -358,7 +351,7 @@ class ActionTest(TestCase):
         self.failIf(in_progress[0].actiontasks[2].completed)
         self.failUnlessEqual(len(completed), 0)
         
-        Record.objects.create(activity=self.at2, user=self.u1)
+        self.at2.complete_task(self.u1)
         
         actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(self.u1)
         self.failUnlessEqual(len(actions), 1)
@@ -369,7 +362,7 @@ class ActionTest(TestCase):
         self.failIf(in_progress[0].actiontasks[2].completed)
         self.failUnlessEqual(len(completed), 0)
         
-        Record.objects.create(activity=self.at3, user=self.u1)
+        self.at3.complete_task(self.u1)
         
         actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(self.u1)
         self.failUnlessEqual(len(actions), 1)
@@ -387,7 +380,7 @@ class ActionTest(TestCase):
         self.failUnlessEqual(len(in_progress), 0)
         self.failUnlessEqual(len(completed), 0)
         
-        Record.objects.create(activity=self.at1, user=self.u1)
+        self.at1.complete_task(self.u1)
         
         actions, not_complete, in_progress, completed = Action.objects.actions_by_completion_status(AnonymousUser())
         self.failUnlessEqual(len(actions), 1)
@@ -398,14 +391,23 @@ class ActionTest(TestCase):
     def test_completes_for_user(self):
         self.failUnlessEqual(self.a.completes_for_user(self.u1), 0)
         
-        Record.objects.create(activity=self.at1, user=self.u1)
+        self.at1.complete_task(self.u1)
         self.failUnlessEqual(self.a.completes_for_user(self.u1), 1)
         
-        Record.objects.create(activity=self.at2, user=self.u1)
+        self.at3.complete_task(self.u1)
         self.failUnlessEqual(self.a.completes_for_user(self.u1), 2)
 
-        # Completing the same action task twice should not advance progress 
-        self.failUnlessRaises(Exception, Record.objects.create, activity=self.at1, user=self.u1)
+        # Failing on exception is not working, so this try/except/else is a workaround
+        try:
+            self.at1.complete_task(self.u1)
+        except Exception, e:
+            pass
+        else:
+            self.fail("Completing the same action task twice should have thrown an exception")
+        
+        # Completing the same action task twice should not advance progress
+        self.failUnlessEqual(self.a.completes_for_user(self.u1), 2)
+        
         
 class ProfileTest(TestCase):
     def setUp(self):
