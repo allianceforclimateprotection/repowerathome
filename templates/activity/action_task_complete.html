@@ -2,5 +2,5 @@
 {% block activity_item %}
     <a href="{% url profile record.user.id %}">{{ record.user }}</a> completed 
     <a href="{% url action_detail content_object.action.slug %}">{{ content_object.name }}</a> 
-    on {{ record.created }}
+    on {{ record.created }} {% if record.points %}for {{ record.points }} points{% endif %}
 {% endblock %}
