@@ -1,5 +1,4 @@
 {% extends "rah/base.html" %}
-{% load rah %}
 
 {% block content %}
     <div id="group_header" class="group_section">
@@ -69,7 +68,7 @@
             <h2>Group Activity</h2>
             <ul>
             {% for record in group_records %}
-                <li>{% safe_user_link record.user %} recorded {{ record.activity }} on {{ record.created|date:"M j, Y" }}</li>
+                <li>{{ record.render }}</li>
             {% endfor %}
             </ul>
         {% endif %}

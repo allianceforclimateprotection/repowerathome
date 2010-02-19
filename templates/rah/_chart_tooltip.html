@@ -1,18 +1,3 @@
-{% if records %}
-    {% regroup records by content_objects.get.content_object.action as action_records %}
-	{% for action_record in action_records %}
-		{% if action_record.grouper %}
-			<b><a href="{% url rah.views.action_detail action_record.grouper.slug %}">{{ action_record.grouper }}</a></b><br/>
-		    <ul class="generic_list">
-		        {{ dir.action_record }}
-		    {% for record in action_record.list %}
-		        <li>{{ record.content_objects.get.content_object.sequence }}) {{ record.content_objects.get.content_object.name }} ({{ record.points }} points)</li>
-		    {% endfor %}
-			</ul>
-		{% else %}
-			{% for record in action_record.list %}
-				<b>{{ record.render }} ({{ record.points }} points)</b><br/>
-			{% endfor %}
-		{% endif %}
-	{% endfor %}
-{% endif %}
+{% for record in records %}
+	<b>{{ record.render }}</b><br/>
+{% endfor %}

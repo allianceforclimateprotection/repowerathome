@@ -9,7 +9,7 @@ admin2Codes.txt (http://download.geonames.org/export/dump/admin2Codes.txt)
 
 # Set up file handles
 fin = open("US.txt")
-fout = open("geonames.sql", "w")
+fout = open("location.sql", "w")
 fcounties = open("admin2Codes.txt")
 
 # Vars to hold counts. Should be about 40,000 zips found
@@ -93,18 +93,18 @@ for line in fcounties:
         countyCount += 1
 
 
-
+tally = 0
 # Work through the main file and generate SQL
 for line in fin:
     lineCount += 1
     line = line.strip()
     line = str(line)
     parts = line.split("\t")
-
     # See if there is an alternate name
     if parts[3]:
         # If so, split on the comma and go through each split element.
         altparts = parts[3].split(",")
+
         for altpart in altparts:
             # If we have a number, it's a zipcode!
             if altpart.isdigit():
@@ -121,11 +121,17 @@ for line in fin:
                 if st == "DC":
                     county = "District of Columbia"
                 else:
-                    county = counties["US." + st + "." + parts[11]]
+                    key = "US.%s.%s" % (st, parts[11])
+                    try:
+                        county = counties[key]
+                    except KeyError:
+                        tally += 1
+                        print "%s\t\t\t\t%s\t\t\t\t%s\t\t\t\t%s" % (name, st, zipcode, parts[11])
+                        continue
                 
                 # Write a line of SQL
-                fout.write("INSERT INTO `rah_location` (`name`,`zipcode`,`county`,`st`,`state`,`lon`,`lat`,`pop`,`timezone`) ")
-                fout.write('VALUES ("%s","%s","%s","%s","%s","%s","%s",%s,"%s");\n' % (name, zipcode, county, st, state, lon, lat, pop, timezone)) 
+                fout.write("INSERT INTO `geo_location` (`name`,`zipcode`,`county`,`st`,`state`,`lon`,`lat`,`pop`,`timezone`, `recruit`) ")
+                fout.write('VALUES ("%s","%s","%s","%s","%s","%s","%s",%s,"%s", 0);\n' % (name, zipcode, county, st, state, lon, lat, pop, timezone)) 
                 zipsFound += 1
             else:
                 continue
@@ -139,3 +145,4 @@ fcounties.close()
 print "Total Counties: " + str(countyCount)
 print "Zips Found: "     + str(zipsFound)
 print "Total Lines: "    + str(lineCount)
+print "Lines Missed: %s" % tally

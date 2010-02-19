@@ -409,7 +409,7 @@ acronym {
 
 #group_info li { font-size: 0.9em; list-style: decimal inside; }
 
-#group_activity li { font-size: 0.8em; list-style: disc inside; }
+#group_activity li { font-size: 0.8em; list-style: disc outside; margin-left: 20px; }
 
 th.header {  
     cursor: pointer;

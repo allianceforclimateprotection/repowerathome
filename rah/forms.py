@@ -1,15 +1,18 @@
+import hashlib
+from smtplib import SMTPException
+from urlparse import urlparse
+
 from django import forms
 from django.contrib import auth
 from django.contrib.auth import forms as auth_forms
-from rah.models import *
 from django.forms import ValidationError
 from django.core.mail import send_mail, EmailMessage
 from django.core.urlresolvers import resolve, Resolver404
-from urlparse import urlparse
 from django.forms.widgets import CheckboxSelectMultiple
-from smtplib import SMTPException
 from django.template import Context, loader
-import hashlib
+
+from rah.models import *
+from geo.models import Location
 
 class SlugField(forms.CharField):
     def __init__(self, *args, **kwargs):

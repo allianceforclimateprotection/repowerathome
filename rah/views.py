@@ -1,4 +1,5 @@
 import json, logging
+
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib.comments.views import comments
@@ -10,10 +11,12 @@ from django.views.decorators.csrf import csrf_protect
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.sites.models import Site
+
 from rah.models import *
 from records.models import *
 from rah.forms import *
 from settings import GA_TRACK_PAGEVIEW
+from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 
 @csrf_protect
@@ -193,7 +196,7 @@ def action_commit(request, action_slug):
         if commit_form.is_valid():
             commit_form.save(action, request.user)
             data = {'date_committed': commit_form.cleaned_data['date_committed']}
-            Record.objects.create_record(request.user, 'action_commitment', data=data)
+            Record.objects.create_record(request.user, 'action_commitment', action, data=data)
             messages.add_message(request, messages.SUCCESS, 'We recorded your commitment.')
             return redirect("action_detail", action_slug=action.slug)
     else:

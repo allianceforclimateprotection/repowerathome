@@ -2,6 +2,7 @@ import json, hashlib, time, re
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import datetime, timedelta
+from geo.models import Location
 # from records.models import Record
 
 import twitter_app.utils as twitter_app
@@ -57,20 +58,7 @@ class DefaultModel(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
         
-class Location(models.Model):
-    name = models.CharField(max_length=200, db_index=True)
-    zipcode = models.CharField(max_length=5, db_index=True)
-    county = models.CharField(max_length=100, db_index=True)
-    st = models.CharField(max_length=2, db_index=True)
-    state = models.CharField(max_length=50)
-    lon = models.CharField(max_length=50)
-    lat = models.CharField(max_length=50)
-    pop = models.PositiveIntegerField()
-    timezone = models.CharField(max_length=100)
-    recruit = models.BooleanField()
 
-    def __unicode__(self):
-        return u'%s, %s (%s)' % (self.name, self.st, self.zipcode)
 
 class User(AuthUser):
     class Meta:
@@ -502,6 +490,11 @@ def update_actiontask_counts(sender, instance, **kwargs):
 def user_post_save(sender, instance, **kwargs):
     Profile.objects.get_or_create(user=instance)
 
+def update_commited_action(sender, instance, **kwargs):
+    instance.action.users_committed = UserActionProgress.objects.filter(action=instance.action, date_committed__isnull=False).count()
+    instance.action.save()
+
 models.signals.post_save.connect(update_actiontask_counts, sender=ActionTask)
-models.signals.pre_delete.connect(update_actiontask_counts, sender=ActionTask)
+models.signals.post_delete.connect(update_actiontask_counts, sender=ActionTask)
 models.signals.post_save.connect(user_post_save, sender=User)
+models.signals.post_save.connect(update_commited_action, sender=UserActionProgress)
