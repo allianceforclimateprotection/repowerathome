@@ -1,0 +1,24 @@
+{% extends "rah/base.html" %}
+
+{% block content %}
+    {% if new_groups %}
+        <h3>New Groups</h3>
+        <ol>
+            {% for group in new_groups %}
+                <li>
+                    <div class="group_section">
+                        {% include "rah/_group_header.html" %}
+                        {% if group.is_joinable and not is_member and not membership_pending %}
+                            <a href="{% url group_join group.id %}">Join this Group</a>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+{% endblock %}
+{% block minorcol %}
+    <h2>About Groups</h2>
+    <p class="group_description">This text should describe some features of groups and how they can be useful to our users.</p>
+    <a href="{% url group_create %}">Create a Group</a>
+{% endblock %}

@@ -387,6 +387,13 @@ def geo_group(request, state, county_slug=None, place_slug=None):
     if not geo_group:
         raise Http404
     return _group_detail(request, geo_group)
+    
+def group_list(request):
+    """
+    display a listing of the groups
+    """
+    new_groups = Group.objects.all().order_by("-created")[:5]
+    return render_to_response("rah/group_list.html", locals(), context_instance=RequestContext(request))
         
 def _group_detail(request, group):
     popular_actions = group.completed_actions_by_user()

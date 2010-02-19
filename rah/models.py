@@ -79,8 +79,6 @@ class DefaultModel(models.Model):
     
     def __unicode__(self):
         return u'%s' % (self.name)
-        
-
 
 class User(AuthUser):
     class Meta:

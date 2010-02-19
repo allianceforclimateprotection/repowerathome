@@ -1,0 +1,9 @@
+<img class="group_image" src="{{ MEDIA_URL }}{{ group.image }}" alt="group image" height="75" width="75" />
+{% if group.is_joinable and is_member %}
+    <a class="group_leave" href="{% url group_leave group.id %}">Leave Group</a>
+{% endif %}
+<h1><a href="{{ group.get_absolute_url }}">{{ group.name }}</a></h1>
+<p class="group_description">{{ group.description }}</p>
+<div class="membership_type">
+    Group Type: {% if group.is_public %}Public{% else %}Private{% endif %}
+</div>
