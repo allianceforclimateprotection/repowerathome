@@ -379,6 +379,8 @@ acronym {
 .whos_working { margin-left: 25px; font-size: 0.9em; }
 
 /* @group groups */
+.group_section { margin-bottom: 25px; } 
+
 #group_create_form { margin-top: 30px; }
 
 #group_create_form .form_row { margin-bottom: 15px; }
@@ -395,11 +397,19 @@ acronym {
 
 .membership_type { font-size: 0.7em; }
 
-#popular_actions { float: left; }
+.membership_status { font-size: 0.9em; }
 
-#group_info li { font-size: 0.9em; }
+.membership_request { list-style: disc inside; }
 
-#group_charts { margin-top: 20px; }
+.membership_tools { font-size: 0.8em; font-weight: bold; margin-left: 30px; }
+
+#group_info div { float: left; }
+
+#top_members { margin-left: 70px; }
+
+#group_info li { font-size: 0.9em; list-style: decimal inside; }
+
+#group_activity li { font-size: 0.8em; list-style: disc inside; }
 
 th.header {  
     cursor: pointer;

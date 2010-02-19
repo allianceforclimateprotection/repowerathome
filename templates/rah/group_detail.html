@@ -1,6 +1,8 @@
 {% extends "rah/base.html" %}
+{% load rah %}
+
 {% block content %}
-    <div id="group_header">
+    <div id="group_header" class="group_section">
         <img class="group_image" src="{{ MEDIA_URL }}{{ group.image }}" alt="group image" height="75" width="75" />
         {% if group.is_joinable and is_member %}
             <a class="group_leave" href="{% url group_leave group.id %}">Leave Group</a>
@@ -12,7 +14,7 @@
         </p>
     </div>
     
-    <div id="group_info">
+    <div id="group_info" class="group_section">
         <div id="popular_actions">
             {% if popular_actions %}
                 <h2>Popular Actions</h2>
@@ -33,10 +35,11 @@
                 </ol>
             {% endif %}
         </div>
+        <br class="spacer" />
     </div>
-    <br class="spacer" />
     
-    <div id="group_charts">
+    
+    <div id="group_charts" class="group_section">
         <table class="tablesorter">
             <thead>
                 <tr>
@@ -51,7 +54,7 @@
                 {% for user in top_members %}
                     <tr>
                         <td>{{ user }}</td>
-                        <td>0</td>
+                        <td>{{ user.actions_committed }}</td>
                         <td>{{ user.actions_completed }}</td>
                         <td>{{ user.get_profile.total_points }}</td>
                         <td>{{ user.last_active|date:"M j, Y" }}</td>
@@ -61,12 +64,12 @@
         </table>
     </div>
     
-    <div id="group_activity">
+    <div id="group_activity" class="group_section">
         {% if group_records %}
             <h2>Group Activity</h2>
             <ul>
             {% for record in group_records %}
-                <li>{{ record }}</li>
+                <li>{% safe_user_link record.user %} recorded {{ record.activity }} on {{ record.created|date:"M j, Y" }}</li>
             {% endfor %}
             </ul>
         {% endif %}
@@ -79,15 +82,22 @@
         <a href="{% url group_join group.id %}">Join this Group</a>
     {% endif %}
     {% if membership_pending %}
-        Your membership status is currently pending.
+        <span class="membership_status">Your membership status is currently <b>pending</b>.</span>
     {% endif %}
     
-    {% for requester in requesters %}
-        <div class="membership_request">
-            {{ requester }} would like to join<br/>
-            <a href="{% url group_approve group.id requester.id %}">Approve</a> or 
-            <a href="{% url group_deny group.id requester.id %}">Deny</a>
-        </div>
-    {% endfor %}
+    {% if requesters %}
+        <h2>Membership Requests</h2>
+        <ul>
+            {% for requester in requesters %}
+                <li class="membership_request">
+                    {% safe_user_link requester %} would like to join
+                    <div class="membership_tools">
+                        <a href="{% url group_approve group.id requester.id %}">Approve</a> or 
+                        <a href="{% url group_deny group.id requester.id %}">Deny</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}
 {% block js %}page_group_detail{% endblock %}

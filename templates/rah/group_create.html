@@ -1,7 +1,6 @@
 {% extends "rah/base.html" %}
 {% block content %}
-    <h1>Create a group</h1>
-	<form id="group_create_form" action="" method="post" enctype="multipart/form-data">
+    <form id="group_create_form" action="" method="post" enctype="multipart/form-data">
 		{% for field in form %}
 		    <div class="form_row">
     			<div>{{ field.label_tag }}</div>

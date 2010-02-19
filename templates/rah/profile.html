@@ -24,7 +24,7 @@
 {% block minorcol %}
     <div>
 		<img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
-		<h2>{{ profile.user.get_name }}</h2><br class="spacer"/>
+		<h2>{{ profile.user }}</h2><br class="spacer"/>
 		<p>
 		{% if profile.location %}
             <b>Location: </b>{{ profile.location }}<br/>

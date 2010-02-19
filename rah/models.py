@@ -65,9 +65,9 @@ class Location(models.Model):
 class User(AuthUser):
     class Meta:
         proxy = True
-
-    def get_name(self):
-        return self.get_full_name() if self.get_full_name() else "Repower@Home User"
+        
+    def last_active(self):
+        return Record.objects.filter(user=self).aggregate(la=models.Max("created"))["la"]
 
     def get_latest_records(self, quantity=None):
         records = self.record_set.all()
@@ -112,15 +112,9 @@ class User(AuthUser):
         return groups + GeoGroup.objects.get_users_geo_groups(self)
         
     def __unicode__(self):
-        return u'%s' % (self.email)
+        return u'%s' % (self.get_full_name())
         
-class BaseGroup(DefaultModel):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    
-    class Meta:
-        abstract = True
-
+class BaseGroup(object):
     _must_redefine = Exception("Implementation of BaseGroup must redefine this method")
     
     def is_joinable(self):
@@ -146,20 +140,21 @@ class BaseGroup(DefaultModel):
         what actions have been completed by users in this group and how many users have completed each action
         """
         actions = self._group_actions_filtered()
+        actions = actions.order_by("-users_completed")
         actions = actions.filter(useractionprogress__is_completed=1)
         actions = actions.annotate(users_completed=models.Count("useractionprogress__is_completed"))
         return actions
         
     def members_ordered_by_points(self, limit=None):
         users = self._group_users_filtered()
-        users = users.order_by("profile__total_points")
+        users = users.order_by("-profile__total_points")
         users = users.annotate(actions_completed=models.Sum("useractionprogress__is_completed"))
-        users = users.annotate(last_active=models.Max("record__created"))
+        users = users.annotate(actions_committed=models.Count("useractionprogress__date_committed"))
         return users[:limit] if limit else users
         
     def group_records(self, limit=None):
         records = self._group_records_filtered()
-        records = records.select_related().order_by("created")
+        records = records.select_related().order_by("-created")
         return records[:limit] if limit else records
         
     def has_pending_membership(self, user):
@@ -168,13 +163,15 @@ class BaseGroup(DefaultModel):
     def requesters_to_grant_or_deny(self, user):
         return []
         
-class Group(BaseGroup):
+class Group(DefaultModel, BaseGroup):
     MEMBERSHIP_CHOICES = (
         ('O', 'Open membership'),
         ('C', 'Closed membership'),
     )
 
+    name = models.CharField(max_length=255)
     slug = models.CharField(max_length=255, unique=True, db_index=True)
+    description = models.TextField()
     membership_type = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default="O")
     image = models.ImageField(upload_to="group_images", null=True)
     is_featured = models.BooleanField(default=False)
@@ -215,7 +212,7 @@ class Group(BaseGroup):
     def get_absolute_url(self):
         return ("group_detail", [str(self.slug)])
         
-class GeoGroupManager(models.Manager):
+class GeoGroupManager(models.Manager):    
     def geo_slugify(self, value):
         return re.sub("[\s]", "-", value).lower()
 
@@ -234,24 +231,18 @@ class GeoGroupManager(models.Manager):
         if locations.count() == 0:
             return None
             
-        sample_location = locations[0]
-        if place_slug:
-            name = "%s, %s" % (sample_location.name, sample_location.st)
-        elif county_slug:
-            name = "%s in %s" % (sample_location.county, sample_location.state)
-        else:
-            name = sample_location.state
-        return GeoGroup(name=name, description="A place for all users belonging to %s" % name, 
-            locations=locations, state=state, county_slug=county_slug, place_slug=place_slug)
+        return GeoGroup(locations=locations, state=state, county_slug=county_slug, place_slug=place_slug)
             
     def get_users_geo_groups(self, user):
         location = user.get_profile().location
-        state = location.st
-        county_slug = self.geo_slugify(location.county)
-        place_slug = self.geo_slugify(location.name)
-        return [self.get_geo_group(state),
-                    self.get_geo_group(state, county_slug),
-                    self.get_geo_group(state, county_slug, place_slug),]
+        if location:
+            state = location.st
+            county_slug = self.geo_slugify(location.county)
+            place_slug = self.geo_slugify(location.name)
+            return [self.get_geo_group(state),
+                        self.get_geo_group(state, county_slug),
+                        self.get_geo_group(state, county_slug, place_slug),]
+        return []
         
 class GeoGroup(BaseGroup):
     objects = GeoGroupManager()
@@ -264,7 +255,17 @@ class GeoGroup(BaseGroup):
         self.state = state
         self.county_slug = county_slug
         self.place_slug = place_slug
-        super(GeoGroup, self).__init__(*args, **kwargs)
+        self._set_attributes(locations[0], county_slug != None, place_slug != None)
+        
+    def _set_attributes(self, location, has_county, has_place):
+        if has_place:
+            self.name = "%s, %s" % (location.name, location.st)
+        elif has_county:
+            self.name = "%s in %s" % (location.county, location.state)
+        else:
+            self.name = location.state
+        self.description = "A meeting place for all users belonging to %s" % self.name
+        self.image = "geo_group_images/geo.jpg"
         
     def is_joinable(self):
         return False 

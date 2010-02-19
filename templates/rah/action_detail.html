@@ -1,4 +1,6 @@
 {% extends "rah/base.html" %}
+{% load rah %}
+
 {% block content %}
 	<div id="breadcrumbs">
 	    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
@@ -54,7 +56,7 @@
 	{% if num_users_completed %}
 		<ul class="whos_working">
 			{% for user in show_users_completed %}
-				<li><a href="{% url profile user.id %}">{{ user.get_name }}</a> has completed this.</li>
+			    <li>{% safe_user_link user %} has completed this.</li>
 			{% endfor %}
 			{% if num_noshow_users_completed > 0 %}
 				{{ num_noshow_users_completed }} additional user{{ num_noshow_users_completed|pluralize:" has,s have" }} completed this.
@@ -65,7 +67,7 @@
 	{% if num_users_in_progress %}
 		<ul class="whos_working">
 			{% for user in show_users_in_progress %}
-				<li><a href="{% url profile user.id %}">{{ user.get_name }}</a> is working on this.</li>
+			    <li>{% safe_user_link user %} is working on this.</li>
 			{% endfor %}
 			{% if num_noshow_users_in_progress > 0 %}
 				{{ num_noshow_users_in_progress }} additional user{{ num_noshow_users_in_progress|pluralize:" has,s have" }} completed this.
