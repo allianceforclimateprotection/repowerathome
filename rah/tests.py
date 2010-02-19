@@ -26,16 +26,6 @@ class ChartPoint(TestCase):
 class UserTest(TestCase):
     def setUp(self):
         create_test_users_and_action_tasks(self)
-
-    def test_get_name(self):
-        u1 = User(username='1', email='test@test.com')
-        u2 = User(username='2', email='test@test.net', first_name='first')
-        u3 = User(username='3', email='test@test.org', last_name='last')
-        u4 = User(username='4', email='test@test.edu', first_name='first', last_name='last')
-        self.failUnlessEqual(u1.get_name(), 'Repower@Home User')
-        self.failUnlessEqual(u2.get_name(), 'first')
-        self.failUnlessEqual(u3.get_name(), 'last')
-        self.failUnlessEqual(u4.get_name(), 'first last')
     
     def test_get_chart_data(self):
         Record(user=self.u1, activity=self.act1, points=self.at1.points).save()
