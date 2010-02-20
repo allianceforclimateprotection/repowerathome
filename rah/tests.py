@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
 
 from rah.models import *
+from records.models import *
 
 def create_test_users_and_action_tasks(object):
     """
@@ -26,65 +27,8 @@ class ChartPoint(TestCase):
 class UserTest(TestCase):
     def setUp(self):
         create_test_users_and_action_tasks(self)
-    
-    def test_get_chart_data(self):
-        Record(user=self.u1, activity=self.act1, points=self.at1.points).save()
-        Record(user=self.u1, activity=self.act1, points=self.at2.points).save()
-        Record(user=self.u1, activity=self.act1, points=self.at3.points).save()
-        
-        chart_points = self.u1.get_chart_data()
-        self.failUnlessEqual(len(chart_points), 1)
-        self.failUnlessEqual(len(chart_points[0].records), 3)
-        self.failUnlessEqual(chart_points[0].points, 35)
-        
-        point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
-        self.failUnlessEqual(len(point_data), 1)
-        self.failUnlessEqual(point_data[0][1], 35)
-    
-    def test_user_records(self):        
-        Record(user=self.u1, activity=self.act1, points=self.at1.points).save()
-        Record(user=self.u1, activity=self.act1, points=self.at2.points).save()
-        Record(user=self.u1, activity=self.act1, points=self.at3.points).save()
-        self.failUnlessEqual(Record.objects.count(), 3)
-        
-        all_records = self.u1.user_records()
-        self.failUnlessEqual(len(all_records), 3)
-        
-        two_records = self.u1.user_records(2)
-        self.failUnlessEqual(len(two_records), 2)
-        
-        # Make sure the order is correct (reverse cron)
-        self.failUnless(all_records[0].created > all_records[1].created > all_records[2].created)
-    
-    def test_create_record(self):        
-        # User should have zero points
-        self.failUnlessEqual(self.u1.get_profile().total_points, 0)
-        
-        # Add a record
-        self.u1.create_record(self.act1, self.at1)
-        self.failUnlessEqual(Record.objects.count(), 1)
-        self.failUnlessEqual(self.u1.get_profile().total_points, self.at1.points)
-        
-        # Add another record
-        self.u1.create_record(self.act1, self.at2)
-        self.failUnlessEqual(Record.objects.count(), 2)
-        
-    def test_void_record(self):    
-        # Add some records
-        self.failUnlessEqual(Record.objects.count(), 0)
-        self.u1.create_record(self.act1, self.at1)
-        self.u1.create_record(self.act1, self.at2)
-        self.failUnlessEqual(Record.objects.count(), 2)
-        
-        # Void a record
-        # Manager should automatically filter(void=False)
-        self.u1.void_record(self.act1, self.at1)
-        records = Record.objects.all()
-        self.failUnlessEqual(records.count(), 1)
-        self.failUnlessEqual(records[0].activity.id, self.act1.id)
         
     def test_record_action_task(self):        
-        self.u1.create_record(self.act1, self.at1)
         self.at1.complete_task(self.u1)
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
         self.failUnlessEqual(uap.user_completes, 1)
@@ -144,7 +88,6 @@ class UserTest(TestCase):
         self.failUnlessEqual(action.users_in_progress, 2)
         self.failUnlessEqual(action.users_completed, 0)
         
-        self.u1.create_record(self.act1, self.at2)
         self.at2.complete_task(self.u1)
         
         uap = UserActionProgress.objects.get(user=self.u1, action=self.a)
@@ -175,27 +118,6 @@ class UserTest(TestCase):
         action = Action.objects.get(pk=self.a.id)
         self.failUnlessEqual(action.users_in_progress, 0)
         self.failUnlessEqual(action.users_completed, 2)
-        
-    def test_total_points(self):    
-        self.u1.create_record(self.act1, self.at1)
-        
-        user = User.objects.get(pk=self.u1.id)
-        self.failUnlessEqual(user.get_profile().total_points, 5)
-        
-        self.u1.create_record(self.act1, self.at2)
-        
-        user = User.objects.get(pk=self.u1.id)
-        self.failUnlessEqual(user.get_profile().total_points, 15)
-        
-        self.u1.create_record(self.act1, self.at3)
-        
-        user = User.objects.get(pk=self.u1.id)
-        self.failUnlessEqual(user.get_profile().total_points, 35)
-        
-        self.u1.void_record(self.act1, self.at2)
-        
-        user = User.objects.get(pk=self.u1.id)
-        self.failUnlessEqual(user.get_profile().total_points, 25)
     
     def test_set_action_commitment(self):
         from datetime import date

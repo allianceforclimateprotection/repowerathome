@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.contrib.sites.models import Site
 
 from rah.models import *
+from records.models import *
 from rah.forms import *
 from settings import GA_TRACK_PAGEVIEW
 from geo.models import Location
@@ -115,11 +116,11 @@ def action_task(request, action_task_id):
 
         if request.POST.get('task_completed') and not record:
             action_task.complete_task(request.user)
-            request.user.create_record('action_task_complete', action_task)
+            Record.objects.create_record(request.user, 'action_task_complete', action_task)
             messages.success(request, 'Great work, we have updated our records to show you completed %s' % (action_task))
         else:
             action_task.complete_task(request.user, undo=True)
-            request.user.void_record('action_task_complete', action_task)
+            Record.objects.void_record(request.user, 'action_task_complete', action_task)
             messages.success(request, 'We have updated our records to show you have not completed %s' % (action_task))
     
     if request.is_ajax():
@@ -139,9 +140,8 @@ def profile(request, user_id):
     twitter_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
     })
-    
     tooltip_template = loader.get_template("rah/_chart_tooltip.html")
-    chart_points = user.get_chart_data()
+    chart_points = Record.objects.get_chart_data(user)
     point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
     tooltips = [tooltip_template.render(Context({"records": chart_point.records})) for chart_point in chart_points]
     return render_to_response('rah/profile.html', {
@@ -157,7 +157,7 @@ def profile(request, user_id):
         'is_others_profile': request.user <> user,
         'commitment_list': user.get_commit_list(),
         'my_groups': user.my_groups(),
-        'records': user.user_records(10),
+        'records': Record.objects.user_records(user, 10),
     }, context_instance=RequestContext(request))
 
 @login_required
@@ -195,7 +195,7 @@ def action_commit(request, action_slug):
         if commit_form.is_valid():
             commit_form.save(action, request.user)
             data = {'date_committed': commit_form.cleaned_data['date_committed']}
-            request.user.create_record('action_commitment',action, data=data)
+            Record.objects.create_record(request.user, 'action_commitment', action, data=data)
             messages.add_message(request, messages.SUCCESS, 'We recorded your commitment.')
             return redirect("action_detail", action_slug=action.slug)
     else:
@@ -264,7 +264,7 @@ def house_party(request):
     if request.method == 'POST':
         form = HousePartyForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            request.user.create_record('mag_request_party_host_info')
+            Record.objects.create_record(request.user, 'mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
         else:
             pass
@@ -274,9 +274,8 @@ def invite_friend(request):
     if request.method == 'POST':
         form = InviteFriendForm(request.POST)
         if form.is_valid() and form.send(request.user):
-            request.user.create_record('mag_invite_friend')
+            Record.objects.create_record(request.user, 'mag_invite_friend')
             messages.add_message(request, messages.SUCCESS, 'Invitation sent. Thanks!')
-            request.user.create_record('mag_invite_friend')
         else:
             pass
     return redirect('rah.views.index')
@@ -312,7 +311,7 @@ def group_create(request):
         if form.is_valid():
             group = form.save()
             GroupUsers.objects.create(group=group, user=request.user, is_manager=True)
-            request.user.create_record('action_commitment', group)
+            Record.objects.create_record(request.user, 'action_commitment', group)
             messages.success(request, "%s has been created." % group)
             return redirect("group_detail", group_slug=group.slug) # TODO: after creating the group we should redirect the user to the group detail page
     else:

@@ -1,4 +1,4 @@
-{% extends "activity/base.html" %}
+{% extends "records/base.html" %}
 {% block activity_item %}
     <a href="{% url profile record.user.id %}">{{ record.user }}</a> created the a new group, 
     <a href="{% url group_detail content_object.slug %}">{{ content_object.name }}</a> 
