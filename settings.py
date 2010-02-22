@@ -78,13 +78,14 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'rah',
+    'rateable',
+    'records',
+    'geo',
     'basic.blog',
     'basic.inlines',
     'tagging',
     'twitter_app',
-    'rateable',
-    'geo',
-    'records',
+    'django_extensions',
 )
 
 AUTHENTICATION_BACKENDS = ('rah.backends.EmailBackend',)
