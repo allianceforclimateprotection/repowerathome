@@ -1,0 +1,54 @@
+[
+    {
+        "pk": 1, 
+        "model": "rah.profile", 
+        "fields": {
+            "about": "", 
+            "is_profile_private": 0, 
+            "twitter_access_token": null, 
+            "building_type": null, 
+            "user": 1, 
+            "total_points": 0, 
+            "location": 7696
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "rah.profile", 
+        "fields": {
+            "about": "", 
+            "is_profile_private": 0, 
+            "twitter_access_token": "oauth_token_secret=f8EMggBeFH9o061U8PfU5EFBbbnr4i6ut83IfgG6aKI&oauth_token=103893331-oNhD3dEsLJvkydXFKSiFxvBjrnNoQJYwdqlAHwyi", 
+            "building_type": "S", 
+            "user": 2, 
+            "total_points": 0, 
+            "location": 7683
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "rah.profile", 
+        "fields": {
+            "about": "I am the very model of a modern major general", 
+            "is_profile_private": 0, 
+            "twitter_access_token": "oauth_token_secret=oqxbvAClWGWFFD7qJtWxqAkmadgHZbfi5aUKbo5vPY&oauth_token=33620666-xEbrXCsKuWXy5eFrypaCzHwYBJvGlSZ0DALBMBLQ6", 
+            "building_type": "A", 
+            "user": 4, 
+            "total_points": 0, 
+            "location": 1558
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "rah.profile", 
+        "fields": {
+            "about": "", 
+            "is_profile_private": 0, 
+            "twitter_access_token": null, 
+            "building_type": "A", 
+            "user": 5, 
+            "total_points": 0, 
+            "location": 1552
+        }
+    }
+]

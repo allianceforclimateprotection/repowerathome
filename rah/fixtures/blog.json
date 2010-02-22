@@ -1,0 +1,74 @@
+[
+    {
+        "pk": 5, 
+        "model": "blog.post", 
+        "fields": {
+            "body": "<strong>Every month, we challenge all Repower@Home members to take one simple step to improve their energy use. This month, we're highlight the most effective tool <u>you already own</u> for reducing your heating and cooling bill: your thermostat. Everyone who programs their thermostat between now and February 28th will receive double the points for the action.</strong>\r\n\r\nYour thermostat may seem lowly, but it has the potential to make a huge difference. The secret: you have to use it. Around 70% of American households have thermostats,<cite>ENERGY STAR, <a href=\u201d http://www.energystar.gov/ia/partners/prod_development/revisions/downloads/thermostats/Summary.pdf\u201d>Summary of Research Findings From the Programmable Thermostat Market</a></cite> but many of us are missing out on savings by not setting our thermostats correctly.<cite>Ibid.</cite> \r\n\r\nSaving money and energy with your thermostat is easy. Before you go to sleep or leave the house for the day, set back your thermostat. If you turn your thermostat from 72\u00b0 to 62\u00b0 during the winter, you could save <strong>10% on your heating bill</strong>.<cite>U.S. Department of Energy, Energy Savers, <a href=\u201dhttp://www.energysavers.gov/your_home/space_heating_cooling/index.cfm/mytopic=12720\u201d>Thermostats and Control Systems</a></cite> In the summer, raise your thermostat to 82\u00b0. It just takes a few moments every day, and you\u2019ll quickly see real results. \r\n\r\nProgrammable thermostats make saving energy automatic by raising or lowering your thermostat during certain times. There are many different models available, including ones that allow you to program different temperature settings for each day of the week. Your local home improvement store will likely offer a wide range of models. New models are also easier to set than some older versions. You can get started saving energy right away. Once programmed, you\u2019ll never have to remember to set your thermostat again.\r\n\r\nYou have everything to gain by programming your thermostat this month. Try it out, and let us know how it worked for you.", 
+            "status": 2, 
+            "allow_comments": 1, 
+            "author": 5, 
+            "tease": "<strong>Every month, we challenge all Repower@Home members to take one simple step to improve their energy use. This month, we're highlight the most effective tool <u>you already own</u> for reducing your heating and cooling bill: your thermostat. Everyone who programs their thermostat between now and February 28th will receive double the points for the action.</strong>", 
+            "modified": "2010-01-28 10:11:49", 
+            "publish": "2010-01-19 16:37:51", 
+            "created": "2010-01-19 16:39:52", 
+            "categories": [], 
+            "title": "Do Now: Program Your Thermostat", 
+            "slug": "repower-spotlight-thermostats", 
+            "tags": ""
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "blog.post", 
+        "fields": {
+            "body": "At Repower@Home house parties, people often ask whether energy efficiency can really have an impact on climate change. Environmentally friendly actions like recycling or choosing reusable bags are definitely more visible changes than, say, insulating your attic. But while less obvious, steps that reduce your energy use at home are some of the most important things you can personally do to combat climate change. \n\nDirect energy use by American households accounts for around 38% of U.S. CO2 emissions.<cite>Dietz, Thomas et al., \u201cHousehold actions can provide a behavioral wedge to rapidly reduce U.S. carbon emissions.\u201d PNAS. 106.44 (2009)</cite> That means the emissions from American households are larger than the entire emissions of any other country except China. <cite>Ibid.</cite>\n  \nSave money, Save the world\nThe good news is that our homes represent an enormous opportunity to significantly reduce <strong>global</strong> greenhouse gas emissions. Homeowners across the country have already realized these savings.  The average household that had a retrofit in Maryland, for example, reduced their energy use by more than 20%. <cite>Maryland Energy Administration, <a href=\"http://www.energy.state.md.us/incentives/residential/res_ee.asp\">Maryland Home Performance with ENERGY STARE</a></cite> Even smaller steps, like reducing your hot water use and upgrading your  lighting, start to add up to big rewards. \n\nBest of all, you can personally have an impact on climate change while saving money. Not only is investing in building efficiency the most cost-effective way to combat climate change, it\u2019s actually an overall cost savings.<cite>McKinsey & Company, <a href=\"http://www.mckinsey.com/clientservice/electricpowernaturalgas/US_energy_efficiency/\">Unlocking Energy Efficiency in the US Economy</a></cite>  Investing in energy efficiency is like paying yourself to do the right thing.\n\nOnline and at our house parties, people across the country are getting geared up to make a big impact on energy waste and greenhouse gases. Together, we can make a real difference.", 
+            "status": 2, 
+            "allow_comments": 1, 
+            "author": 5, 
+            "tease": "At Repower@Home house parties, people often ask whether energy efficiency can really have an impact on climate change. Environmentally friendly actions like recycling or choosing reusable bags are definitely more visible changes than, say, insulating your attic. But while less obvious, steps that reduce your energy use at home are some of the most important things you can personally do to combat climate change. ", 
+            "modified": "2010-01-19 16:36:19", 
+            "publish": "2010-01-19 16:35:03", 
+            "created": "2010-01-19 16:36:19", 
+            "categories": [], 
+            "title": "Energy Efficiency & Climate Change", 
+            "slug": "energy-efficiency-climate-change", 
+            "tags": ""
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "blog.post", 
+        "fields": {
+            "body": "The typical home consumed $2,200 in energy bills in 2009.<cite>ENERGY STAR, <a href=\u201dhttp://www.energystar.gov/index.cfm?c=products.pr_pie\u201d>Where Does My Money Go?</a></cite> However, some tasks needed considerably more energy than others. Identifying the biggest energy users in your home will help you make targeted improvements and get the best return on your investment.  \r\n\r\nAverage Home Energy Bill By Task\r\n<img align=\"center\" src=\"\">\r\n\r\nIn the chart, you can see that heating and cooling is by far the biggest energy user in most homes. It\u2019s responsible for almost half of your energy bill, costing the average home around $1,000 a year to run. Small, inexpensive improvements \u2013 like installing new air sealing \u2013 can add up to huge rewards. \r\n\r\nHot water is another, surprising energy-guzzler. Just heating your hot water uses more energy than running your refrigerator, microwave, and other appliances. By becoming more mindful of your hot water use while showering or washing clothes, you can eliminate waste and higher bills.  \r\n", 
+            "status": 2, 
+            "allow_comments": 1, 
+            "author": 5, 
+            "tease": "The typical home consumed $2,200 in energy bills in 2009.<cite>ENERGY STAR, <a href=\u201dhttp://www.energystar.gov/index.cfm?c=products.pr_pie\u201d>Where Does My Money Go?</a></cite> However, some tasks needed considerably more energy than others. Identifying the biggest energy users in your home will help you make targeted improvements and get the best return on your investment.  ", 
+            "modified": "2010-01-19 16:34:33", 
+            "publish": "2010-01-14 16:32:52", 
+            "created": "2010-01-19 16:34:33", 
+            "categories": [], 
+            "title": "Anatomy of an Energy Bill", 
+            "slug": "anatomy-energy-bill", 
+            "tags": ""
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "blog.post", 
+        "fields": {
+            "body": "Repower@Home is a fresh approach to saving energy. American homes consume almost a quarter of all the energy used in the United States. Unfortunately, much of this energy is needlessly wasted by outdated systems and habits. Repower@Home\u2019s goal is to give you the power to reclaim that wasted energy and realize benefits like: \r\n<ul>\r\n<li>Lower monthly bills\r\n<li>A home that\u2019s more valuable, more comfortable, and healthier\r\n<li>A cleaner environment\r\n</ul>\r\n\r\n<strong>Tools for success</strong>\r\nRepower@Home will help you build a high performing, energy efficient home. Our online tools will give you personalized recommendations, connect you with local resources, help you track your progress, and allow you to share your achievements with friends and neighbors.  Step by step, block by block, Repower@Home is giving people across the country the tools to restore, revitalize, and repower their homes.\r\n\r\n<strong>Where do we go from here?</strong>\r\nRepower@Home is a work in progress. As we grow, we\u2019re excited to hear your feedback and suggestions for future content. As you click through the site, let us know how we\u2019re doing by using the \u201cFeedback\u201d link up top. You\u2019re going to be noticing a lot of new features in the upcoming weeks, so make sure to sign up for our email list to stay updated.", 
+            "status": 2, 
+            "allow_comments": 1, 
+            "author": 4, 
+            "tease": "Repower@Home is a fresh approach to saving energy. American homes consume almost a quarter of all the energy used in the United States. Unfortunately, much of this energy is needlessly wasted by outdated systems and habits. Repower@Home\u2019s goal is to give you the power to reclaim that wasted energy and realize benefits like: \r\n<ul>\r\n<li>Lower monthly bills\r\n<li>A home that\u2019s more valuable, more comfortable, and healthier\r\n<li>A cleaner environment\r\n</ul>", 
+            "modified": "2010-01-19 16:32:39", 
+            "publish": "2010-01-12 12:21:47", 
+            "created": "2010-01-19 16:24:05", 
+            "categories": [], 
+            "title": "What is Repower@Home? ", 
+            "slug": "what-repowerhome", 
+            "tags": ""
+        }
+    }
+]
