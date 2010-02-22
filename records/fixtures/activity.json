@@ -3,88 +3,88 @@
         "pk": 1, 
         "model": "records.activity", 
         "fields": {
-            "updated": null, 
+            "updated": "2010-02-19 18:10:12", 
             "points": 0, 
             "batch_time_minutes": 0, 
             "slug": "action_task_complete", 
-            "created": null
+            "created": "2010-02-19 18:10:12"
         }
     }, 
     {
         "pk": 2, 
         "model": "records.activity", 
         "fields": {
-            "updated": null, 
+            "updated": "2010-02-19 18:10:12", 
             "points": 20, 
-            "batch_time_minutes": 30, 
+            "batch_time_minutes": 0, 
             "slug": "action_commitment", 
-            "created": null
+            "created": "2010-02-19 18:10:12"
         }
     }, 
     {
         "pk": 3, 
         "model": "records.activity", 
         "fields": {
-            "updated": null, 
+            "updated": "2010-02-19 18:10:12", 
             "points": 50, 
             "batch_time_minutes": 0, 
             "slug": "mag_tweet", 
-            "created": null
+            "created": "2010-02-19 18:10:12"
         }
     }, 
     {
         "pk": 4, 
         "model": "records.activity", 
         "fields": {
-            "updated": null, 
+            "updated": "2010-02-19 18:10:12", 
             "points": 20, 
             "batch_time_minutes": 0, 
             "slug": "mag_invite_friend", 
-            "created": null
+            "created": "2010-02-19 18:10:12"
         }
     }, 
     {
         "pk": 5, 
         "model": "records.activity", 
         "fields": {
-            "updated": null, 
+            "updated": "2010-02-19 18:10:12", 
             "points": 20, 
             "batch_time_minutes": 0, 
             "slug": "mag_request_party_host_info", 
-            "created": null
+            "created": "2010-02-19 18:10:12"
         }
     }, 
     {
         "pk": 6, 
         "model": "records.activity", 
         "fields": {
-            "updated": null, 
+            "updated": "2010-02-19 18:10:12", 
             "points": 5, 
             "batch_time_minutes": 0, 
             "slug": "group_create", 
-            "created": null
+            "created": "2010-02-19 18:10:12"
         }
     }, 
     {
         "pk": 7, 
         "model": "records.activity", 
         "fields": {
-            "updated": null, 
+            "updated": "2010-02-19 18:10:12", 
             "points": 5, 
-            "batch_time_minutes": 30, 
+            "batch_time_minutes": 0, 
             "slug": "comment_mark_useful", 
-            "created": null
+            "created": "2010-02-19 18:10:12"
         }
     }, 
     {
         "pk": 8, 
         "model": "records.activity", 
         "fields": {
-            "updated": null, 
+            "updated": "2010-02-19 18:10:12", 
             "points": 5, 
             "batch_time_minutes": 0, 
             "slug": "comment_create", 
-            "created": null
+            "created": "2010-02-19 18:10:12"
         }
     }
 ]

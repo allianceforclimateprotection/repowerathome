@@ -1,14 +1,46 @@
-import base64
+import base64, time
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.template import Context, loader
-from rah.models import User, ChartPoint
+from datetime import datetime, timedelta
+from django.contrib.auth.models import User
 
 try:
     import cPickle as pickle
 except:
     import pickle
+
+class ChartPoint(object):
+    """docstring for ChartPoint"""
+    def __init__(self, date):
+        super(ChartPoint, self).__init__()
+        self.date = date
+        self.points = 0
+        self.records = []
+
+    def add_record(self, record):
+        if self.date == record.created.date():
+            self.records.append(record)
+        self.points += record.points
+
+    def get_date_as_milli_from_epoch(self):
+        return (int(time.mktime(self.date.timetuple())) - 18000) * 1000
+
+    def __unicode__(self):
+        return u"(%s, %s) with %s" % (self.date, self.points, self.records)
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    def __repr__(self):
+        return u'<%s: %s>' % (self.__class__.__name__, unicode(self))
+
+    def __cmp__(self, other):
+        return cmp(self.date, other.date)
+
+    def __hash__(self):
+        return hash(self.date)
 
 class SerializedDataField(models.TextField):
     """Because Django for some reason feels its needed to repeatedly call
@@ -128,7 +160,7 @@ class Record(DefaultModel):
         return template.render(Context({"record": self, "content_object":content_object}))
 
     def __unicode__(self):
-        return "user: %s, activity: %s" % (self.user, self.activity)
+        return "user: %s, activity: %s" % (self.user.get_full_name(), self.activity)
 
 class RecordActivityObject(models.Model):
     content_type = models.ForeignKey(ContentType)

@@ -1,5 +1,5 @@
 {% extends "records/base.html" %}
 {% block activity_item %}
-    <a href="{% url profile record.user.id %}">{{ record.user }}</a> posted a message to twitter
-    on {{ record.created }} {% if record.points %}for {{ record.points }} points{% endif %}
+    <a href="{% url profile record.user.id %}">{{ record.user.get_full_name }}</a> posted a message to twitter
+    on {{ record.created|date:"M j, Y" }} {% if record.points %}for {{ record.points }} points{% endif %}
 {% endblock %}

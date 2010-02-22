@@ -1,6 +1,6 @@
 {% extends "records/base.html" %}
 {% block activity_item %}
-    <a href="{% url profile record.user.id %}">{{ record.user }}</a> created the a new group, 
+    <a href="{% url profile record.user.id %}">{{ record.user.get_full_name }}</a> created the a new group, 
     <a href="{% url group_detail content_object.slug %}">{{ content_object.name }}</a> 
-    on {{ record.created }} {% if record.points %}for {{ record.points }} points{% endif %}
+    on {{ record.created|date:"M j, Y" }} {% if record.points %}for {{ record.points }} points{% endif %}
 {% endblock %}

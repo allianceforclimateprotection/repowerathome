@@ -427,6 +427,9 @@ th.headerSortUp, th.headerSortDown {
 }
 /* @end */
 
+/* Activity Stream */
+.activity_item{ margin-bottom:10px;}
+
 /*
 * jQuery UI CSS Framework
 * Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)

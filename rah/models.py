@@ -1,8 +1,8 @@
-import json, hashlib, time, re
+import json, hashlib, re
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
-from datetime import datetime, timedelta
 from geo.models import Location
+from records.models import Record
 
 import twitter_app.utils as twitter_app
 
@@ -14,38 +14,7 @@ class DefaultModel(models.Model):
         abstract = True
 
     def __unicode__(self):
-            return u'%s' % (self.name)
-    
-class ChartPoint(object):
-    """docstring for ChartPoint"""
-    def __init__(self, date):
-        super(ChartPoint, self).__init__()
-        self.date = date
-        self.points = 0
-        self.records = []
-
-    def add_record(self, record):
-        if self.date == record.created.date():
-            self.records.append(record)
-        self.points += record.points
-
-    def get_date_as_milli_from_epoch(self):
-        return (int(time.mktime(self.date.timetuple())) - 18000) * 1000
-
-    def __unicode__(self):
-        return u"(%s, %s) with %s" % (self.date, self.points, self.records)
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
-    def __repr__(self):
-        return u'<%s: %s>' % (self.__class__.__name__, unicode(self))
-
-    def __cmp__(self, other):
-        return cmp(self.date, other.date)
-
-    def __hash__(self):
-        return hash(self.date)
+        return u'%s' % (self.name)
     
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -170,9 +139,7 @@ class Group(DefaultModel, BaseGroup):
         return Action.objects.filter(useractionprogress__user__group=self)
 
     def _group_records_filtered(self):
-        # TODO: puposely broken for now
-        return 
-        return Record.objects.filter(user__group=self)
+        return Record.objects.filter(user__groups=self)
     
     def has_pending_membership(self, user):
         if user.is_authenticated():
@@ -261,8 +228,6 @@ class GeoGroup(BaseGroup):
         return Action.objects.filter(useractionprogress__user__profile__location__in=self.locations)
 
     def _group_records_filtered(self):
-        # TODO: Purposely broken for now
-        return
         return Record.objects.filter(user__profile__location__in=self.locations)
         
     @models.permalink
@@ -298,7 +263,6 @@ class ActionCat(DefaultModel):
     content = models.TextField()
     
 class ActionManager(models.Manager):
-    # TODO: Write unit test for actions_by_completion_status
     def actions_by_completion_status(self, user):
         """
         get a queryset of action objects, the actions will have three additional attributes

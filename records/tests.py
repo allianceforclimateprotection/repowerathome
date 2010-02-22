@@ -6,8 +6,9 @@ Replace these with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-from rah.models import *
 from records.models import *
+from rah.models import *
+
 
 def create_test_users_and_action_tasks(object):
     """
@@ -16,15 +17,19 @@ def create_test_users_and_action_tasks(object):
     object.u1 = User.objects.create(username='1', email='test@test.com')
     object.u2 = User.objects.create(username='2', email='test@test.net')
     object.ac = ActionCat.objects.create(name='test action cat')
-    object.a = Action.objects.create(name='test action', category=object.ac)
+    object.a = Action.objects.create(name='test action', slug='test-action', category=object.ac)
     object.at1 = ActionTask.objects.create(name='test action task 1', action=object.a, points=5, sequence=1)
     object.at2 = ActionTask.objects.create(name='test action task 2', action=object.a, points=10, sequence=2)
     object.at3 = ActionTask.objects.create(name='test action task 3', action=object.a, points=20, sequence=3)
     object.act1 = Activity.objects.create(slug='action_task_complete')
 
-class RecordTest(TestCase):
+class RecordManagerTest(TestCase):
     def setUp(self):
         create_test_users_and_action_tasks(self)
+    
+    def test_last_active(self):
+        # TODO: Write test_last_active
+        pass
     
     def test_get_chart_data(self):
         Record(user=self.u1, activity=self.act1, points=self.at1.points).save()
@@ -63,6 +68,10 @@ class RecordTest(TestCase):
         # Add another record
         Record.objects.create_record(self.u1, self.act1, self.at2)
         self.failUnlessEqual(Record.objects.count(), 2)
+        
+        # Add another record with activity slug
+        Record.objects.create_record(self.u1, self.act1.slug, self.at2)
+        self.failUnlessEqual(Record.objects.count(), 3)
     
     def test_void_record(self):    
         # Add some records
@@ -77,7 +86,11 @@ class RecordTest(TestCase):
         records = Record.objects.all()
         self.failUnlessEqual(records.count(), 1)
         self.failUnlessEqual(records[0].activity.id, self.act1.id)
-    
+        
+        # Void record with activity slug
+        Record.objects.void_record(self.u1, self.act1.slug, self.at2)
+        self.failUnlessEqual(Record.objects.all().count(), 0)
+        
     def test_total_points(self):
         Record.objects.create_record(self.u1, self.act1, self.at1)
         
@@ -102,3 +115,12 @@ class RecordTest(TestCase):
         user = User.objects.get(pk=self.u1.id)
         self.failUnlessEqual(user.get_profile().total_points, 25)
     
+class RecordTest(TestCase):
+    fixtures = ['activity.json']
+    def setUp(self):
+        create_test_users_and_action_tasks(self)
+    
+    def test_render(self):
+        r1 = Record.objects.create_record(self.u1, self.act1, self.at1)
+        # TODO: test_render is a crappy test. Should probably use Client()
+        self.failUnless(100 < len(r1.render()) < 500)
