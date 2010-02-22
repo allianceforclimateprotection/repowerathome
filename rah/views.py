@@ -311,7 +311,7 @@ def group_create(request):
         if form.is_valid():
             group = form.save()
             GroupUsers.objects.create(group=group, user=request.user, is_manager=True)
-            Record.objects.create_record(request.user, 'action_commitment', group)
+            Record.objects.create_record(request.user, 'group_create', group)
             messages.success(request, "%s has been created." % group)
             return redirect("group_detail", group_slug=group.slug) # TODO: after creating the group we should redirect the user to the group detail page
     else:
