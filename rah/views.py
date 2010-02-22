@@ -391,7 +391,7 @@ def group_list(request):
     """
     display a listing of the groups
     """
-    new_groups = Group.objects.all().order_by("-created")[:5]
+    new_groups = Group.objects.new_groups_with_memberships(request.user, 5)
     return render_to_response("rah/group_list.html", locals(), context_instance=RequestContext(request))
         
 def _group_detail(request, group):

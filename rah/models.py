@@ -106,6 +106,23 @@ class BaseGroup(object):
     def requesters_to_grant_or_deny(self, user):
         return []
         
+class GroupManager(models.Manager):
+    def new_groups_with_memberships(self, user, limit=None):
+        groups = self.all().order_by("-created")
+        groups = groups.extra(
+                    select_params = (user.id,), 
+                    select = { 'is_member': 'SELECT rah_groupusers.created \
+                                                FROM rah_groupusers \
+                                                WHERE rah_groupusers.user_id = %s AND \
+                                                rah_groupusers.group_id = rah_group.id'})
+        groups = groups.extra(
+                    select_params = (user.id,), 
+                    select = { 'membership_pending': 'SELECT rah_membershiprequests.created \
+                                                        FROM rah_membershiprequests \
+                                                        WHERE rah_membershiprequests.user_id = %s AND \
+                                                        rah_membershiprequests.group_id = rah_group.id'})
+        return groups[:limit] if limit else groups
+        
 class Group(DefaultModel, BaseGroup):
     MEMBERSHIP_CHOICES = (
         ('O', 'Open membership'),
@@ -120,6 +137,8 @@ class Group(DefaultModel, BaseGroup):
     is_featured = models.BooleanField(default=False)
     users = models.ManyToManyField(User, through="GroupUsers")
     requesters = models.ManyToManyField(User, through="MembershipRequests", related_name="requested_group_set")
+    
+    objects = GroupManager()
     
     def is_joinable(self):
         return True

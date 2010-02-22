@@ -8,7 +8,7 @@
                 <li>
                     <div class="group_section">
                         {% include "rah/_group_header.html" %}
-                        {% if group.is_joinable and not is_member and not membership_pending %}
+                        {% if group.is_joinable and not group.is_member and not group.membership_pending %}
                             <a href="{% url group_join group.id %}">Join this Group</a>
                         {% endif %}
                     </div>
