@@ -50,5 +50,18 @@
             "total_points": 0, 
             "location": 1552
         }
+    },
+    {
+        "pk": 6, 
+        "model": "rah.profile", 
+        "fields": {
+            "about": "", 
+            "is_profile_private": 0, 
+            "twitter_access_token": null, 
+            "building_type": "A", 
+            "user": 6, 
+            "total_points": 0, 
+            "location": 1552
+        }
     }
 ]
