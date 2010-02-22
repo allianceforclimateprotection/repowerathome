@@ -135,8 +135,8 @@ class Group(DefaultModel, BaseGroup):
     membership_type = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default="O")
     image = models.ImageField(upload_to="group_images", null=True)
     is_featured = models.BooleanField(default=False)
-    users = models.ManyToManyField(User, through="GroupUsers")
-    requesters = models.ManyToManyField(User, through="MembershipRequests", related_name="requested_group_set")
+    users = models.ManyToManyField(AuthUser, through="GroupUsers")
+    requesters = models.ManyToManyField(AuthUser, through="MembershipRequests", related_name="requested_group_set")
     
     objects = GroupManager()
     
@@ -158,7 +158,7 @@ class Group(DefaultModel, BaseGroup):
         return Action.objects.filter(useractionprogress__user__group=self)
 
     def _group_records_filtered(self):
-        return Record.objects.filter(user__groups=self)
+        return Record.objects.filter(user__group=self)
     
     def has_pending_membership(self, user):
         if user.is_authenticated():
@@ -258,7 +258,7 @@ class GeoGroup(BaseGroup):
         return ("geo_group_state", [self.state])
 
 class GroupUsers(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(AuthUser)
     group = models.ForeignKey(Group)
     is_manager = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -268,7 +268,7 @@ class GroupUsers(models.Model):
         return u'%s belongs to group %s' % (self.user, self.group)
         
 class MembershipRequests(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(AuthUser)
     group = models.ForeignKey(Group)
     created = models.DateTimeField(auto_now_add=True)
     
