@@ -1,6 +1,10 @@
 {% extends "blog/base_blog.html" %}
 {% load blog comments %}
 
+{% block extralinks %}
+<link rel="alternate" type="application/atom+xml"  href="{% url blog_feed %}" title="Repower@Home Blog" />
+{% endblock %}
+
 {% block title %}Post archive{% endblock %}
 {% block body_class %}{{ block.super }} post_list{% endblock %}
 
@@ -24,7 +28,12 @@
 		{% endfor %}
 	</div>
 	
-	<a href="{% url feed "blog" %}">follow us</a>
+	<h6>
+	    follow us
+    	<a class="atom_link" href="{% url blog_feed %}">
+            <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
+        </a>
+    </h6>
 {% endblock %}
 
 {% block minorcol %}

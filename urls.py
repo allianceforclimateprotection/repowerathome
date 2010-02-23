@@ -1,15 +1,12 @@
 import settings
 from django.conf.urls.defaults import *
 from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
+from rah.feeds import GroupActivityFeed
 from basic.blog.feeds import BlogPostsFeed
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
-
-feeds = {
-    'blog': BlogPostsFeed,
-}
 
 urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
@@ -42,7 +39,6 @@ urlpatterns = patterns('rah.views',
 )
 
 urlpatterns += patterns('',
-    url(r'^(?P<url>.*)/feed/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name='feed'),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^login/$', 'django.contrib.auth.views.login', { 'authentication_form': AuthenticationForm }, name='login'),
     url(r'^password_change/$', 'django.contrib.auth.views.password_change', { 'post_change_redirect': '/password_change_done/', 'password_change_form': PasswordChangeForm }, name='password_change'),
@@ -51,6 +47,7 @@ urlpatterns += patterns('',
     (r'^', include('django.contrib.auth.urls')),
     url(r'^admin/(.*)', admin.site.root, name='admin_root'),
     (r'^blog/', include('basic.blog.urls')),
+    url(r'^blog/feed/$', BlogPostsFeed(), name='blog_feed'),
     (r'^comments/', include('django.contrib.comments.urls')),
     url(r'^twitter/', include('twitter_app.urls')),
     url(r'^rateable/', include('rateable.urls')),

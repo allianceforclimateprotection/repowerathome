@@ -6,12 +6,12 @@
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
         <link rel="shortcut icon" href="{{ MEDIA_URL }}images/theme/favico.ico"/>
         <link rel="stylesheet" href="{{ MEDIA_URL }}css/style{%if not debug%}_min{%endif%}.css" type="text/css" media="screen" charset="utf-8"/>
-		<link rel="alternate" type="application/rss+xml"  href="{% url feed 'blog' %}" title="Repower@Home Blog" />
         <script type="text/javascript">
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', 'UA-11623269-1']);
             _gaq.push(['_trackPageview']);
         </script>
+        {% block extralinks %}{% endblock %}
     </head>
     <body>
 		<div id="loading" class="warning">Loading...</div>

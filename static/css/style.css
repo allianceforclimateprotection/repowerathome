@@ -292,6 +292,8 @@ acronym {
 
 .spacer { clear: both; }
 
+.atom_link { margin-left: 5px; }
+
 /* Action Detail page */
 .action_detail_task_container {
     position:relative;
