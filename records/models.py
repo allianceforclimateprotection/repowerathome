@@ -159,6 +159,14 @@ class Record(DefaultModel):
         if content_object: content_object = content_object[0].content_object
         return template.render(Context({"record": self, "content_object":content_object}))
 
+    def get_absolute_url(self):
+        content_objects = self.content_objects.all()
+        if content_objects:
+            content_object = content_objects[0].content_object
+            return content_object.get_absolute_url()
+        else:
+            return self.user.get_absolute_url()
+
     def __unicode__(self):
         return "user: %s, activity: %s" % (self.user.get_full_name(), self.activity)
 

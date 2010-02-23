@@ -397,6 +397,9 @@ class ActionTask(DefaultModel):
         obj.user_completes = new_completes
         obj.is_completed = new_completed
         obj.save()
+        
+    def get_absolute_url(self):
+        return self.action.get_absolute_url()
 
 class ActionTaskUser(DefaultModel):
     actiontask = models.ForeignKey(ActionTask)

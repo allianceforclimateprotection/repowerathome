@@ -88,6 +88,10 @@ INSTALLED_APPS = (
     'django_extensions',
 )
 
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda user: "/user/%s/" % user.id,
+}
+
 AUTHENTICATION_BACKENDS = ('rah.backends.EmailBackend',)
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/login"
