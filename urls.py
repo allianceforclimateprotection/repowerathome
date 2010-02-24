@@ -1,8 +1,9 @@
 import settings
 from django.conf.urls.defaults import *
 from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
-from rah.feeds import GroupActivityFeed
+
 from basic.blog.feeds import BlogPostsFeed
+from groups.feeds import GroupActivityFeed
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -27,15 +28,6 @@ urlpatterns = patterns('rah.views',
     (r'^feedback/$', 'feedback'),
     (r'^search/$', 'search'),
     url(r'^comments/post/$', 'post_comment', name='post_comment'),
-    url(r'^groups/$', 'group_list', name='group_list'),
-    url(r'^groups/create/$', 'group_create', name='group_create'),
-    url(r'^groups/(?P<group_id>\d+)/leave/$', 'group_leave', name='group_leave'),
-    url(r'^groups/(?P<group_id>\d+)/join/$', 'group_join', name='group_join'),
-    url(r'^groups/(?P<group_id>\d+)/approve/(?P<user_id>\d+)/$', 'group_membership', {'action': 'approve'}, name='group_approve'),
-    url(r'^groups/(?P<group_id>\d+)/deny/(?P<user_id>\d+)/$', 'group_membership', {'action': 'deny'}, name='group_deny'),
-    url(r'^groups/(?P<state>[A-Z]{2})/(?P<county_slug>[a-z0-9-]+)/(?P<place_slug>[a-z0-9-]+)/$', 'geo_group', name='geo_group_place'),
-    url(r'^groups/(?P<state>[A-Z]{2})/(?P<county_slug>[a-z0-9-]+)/$', 'geo_group', name='geo_group_county'),
-    url(r'^groups/(?P<state>[A-Z]{2})/$', 'geo_group', name='geo_group_state'),
 )
 
 urlpatterns += patterns('',
@@ -51,6 +43,7 @@ urlpatterns += patterns('',
     (r'^comments/', include('django.contrib.comments.urls')),
     url(r'^twitter/', include('twitter_app.urls')),
     url(r'^rateable/', include('rateable.urls')),
+    url(r'^groups/', include('groups.urls')),
 )
 
 if settings.DEBUG:
@@ -60,11 +53,7 @@ if settings.DEBUG:
         'document_root': settings.MEDIA_ROOT,
         'show_indexes': True }),)
         
-urlpatterns += patterns('rah.views',
+urlpatterns += patterns('groups.views',
     url(r'^(?P<group_slug>[a-z0-9-]+)/feed/$', GroupActivityFeed(), name='group_activity_feed'),
     url(r'^(?P<group_slug>[a-z0-9-]+)/$', 'group_detail', name='group_detail'),
 )
-        
-def top_level_urls():
-    import re
-    return set([re.search("\^([^(/$]*)", p.regex.pattern).group(1) for p in urlpatterns])

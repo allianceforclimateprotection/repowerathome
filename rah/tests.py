@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
 
-from rah.models import *
-from records.models import *
+from records.models import Activity, Record
+from rah.models import User, ActionCat, Action, ActionTask, UserActionProgress, Profile
 
 def create_test_users_and_action_tasks(object):
     """

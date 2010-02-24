@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.template import Context, loader
 from datetime import datetime, timedelta
-from django.contrib.auth.models import User as AuthUser
+from django.contrib.auth.models import User
 
 try:
     import cPickle as pickle
@@ -130,14 +130,14 @@ class RecordManager(models.Manager):
 class Activity(DefaultModel):
     slug = models.SlugField()
     points = models.IntegerField(default=0)
-    users = models.ManyToManyField(AuthUser, through="Record")
+    users = models.ManyToManyField(User, through="Record")
     batch_time_minutes = models.IntegerField("batch time in minutes", default=0, blank=True)
     
     def __unicode__(self):
         return u'%s' % (self.slug)
 
 class Record(DefaultModel):
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(User)
     activity = models.ForeignKey(Activity)
     points = models.IntegerField(default=0)
     data = SerializedDataField(blank=True, null=True)

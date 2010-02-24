@@ -1,10 +1,10 @@
 import json, hashlib, re
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
+
 from geo.models import Location
 from records.models import Record
-
-import twitter_app.utils as twitter_app
+from twitter_app import utils as twitter_app
 
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -47,233 +47,8 @@ class User(AuthUser):
     def get_commit_list(self):
         return UserActionProgress.objects.select_related().filter(user=self, is_completed=0, date_committed__isnull=False).order_by("date_committed")
         
-    def is_group_manager(self, group):
-        return GroupUsers.objects.filter(user=self, group=group, is_manager=True).exists()
-        
-    def my_groups(self):
-        groups = list(Group.objects.filter(users=self))
-        return groups + GeoGroup.objects.get_users_geo_groups(self)
-        
     def __unicode__(self):
         return u'%s' % (self.get_full_name())
-        
-class BaseGroup(object):
-    _must_redefine = Exception("Implementation of BaseGroup must redefine this method")
-    
-    def is_joinable(self):
-        raise _must_redefine
-        
-    def is_member(self):
-        raise _must_redefine
-        
-    def _group_users_filtered(self):
-        raise _must_redefine
-        
-    def _group_actions_filtered(self):
-        raise _must_redefine
-        
-    def _group_records_filtered(self):
-        raise _must_redefine
-        
-    def is_public(self):
-        return True
-        
-    def completed_actions_by_user(self):
-        """
-        what actions have been completed by users in this group and how many users have completed each action
-        """
-        actions = self._group_actions_filtered()
-        actions = actions.order_by("-users_completed")
-        actions = actions.filter(useractionprogress__is_completed=1)
-        actions = actions.annotate(users_completed=models.Count("useractionprogress__is_completed"))
-        return actions
-        
-    def members_ordered_by_points(self, limit=None):
-        users = self._group_users_filtered()
-        users = users.order_by("-profile__total_points")
-        users = users.annotate(actions_completed=models.Sum("useractionprogress__is_completed"))
-        users = users.annotate(actions_committed=models.Count("useractionprogress__date_committed"))
-        return users[:limit] if limit else users
-        
-    def group_records(self, limit=None):
-        records = self._group_records_filtered()
-        records = records.select_related().order_by("-created")
-        return records[:limit] if limit else records
-        
-    def has_pending_membership(self, user):
-        return False
-        
-    def requesters_to_grant_or_deny(self, user):
-        return []
-        
-class GroupManager(models.Manager):
-    def new_groups_with_memberships(self, user, limit=None):
-        groups = self.all().order_by("-created")
-        groups = groups.extra(
-                    select_params = (user.id,), 
-                    select = { 'is_member': 'SELECT rah_groupusers.created \
-                                                FROM rah_groupusers \
-                                                WHERE rah_groupusers.user_id = %s AND \
-                                                rah_groupusers.group_id = rah_group.id'})
-        groups = groups.extra(
-                    select_params = (user.id,), 
-                    select = { 'membership_pending': 'SELECT rah_membershiprequests.created \
-                                                        FROM rah_membershiprequests \
-                                                        WHERE rah_membershiprequests.user_id = %s AND \
-                                                        rah_membershiprequests.group_id = rah_group.id'})
-        return groups[:limit] if limit else groups
-        
-class Group(DefaultModel, BaseGroup):
-    MEMBERSHIP_CHOICES = (
-        ('O', 'Open membership'),
-        ('C', 'Closed membership'),
-    )
-
-    name = models.CharField(max_length=255)
-    slug = models.CharField(max_length=255, unique=True, db_index=True)
-    description = models.TextField()
-    membership_type = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default="O")
-    image = models.ImageField(upload_to="group_images", null=True)
-    is_featured = models.BooleanField(default=False)
-    users = models.ManyToManyField(AuthUser, through="GroupUsers")
-    requesters = models.ManyToManyField(AuthUser, through="MembershipRequests", related_name="requested_group_set")
-    
-    objects = GroupManager()
-    
-    def is_joinable(self):
-        return True
-    
-    def is_public(self):
-        return self.membership_type == "O"
-        
-    def is_member(self, user):
-        if user.is_authenticated():
-            return GroupUsers.objects.filter(group=self, user=user).exists()
-        return False
-        
-    def _group_users_filtered(self):
-        return User.objects.filter(group=self)
-
-    def _group_actions_filtered(self):
-        return Action.objects.filter(useractionprogress__user__group=self)
-
-    def _group_records_filtered(self):
-        return Record.objects.filter(user__group=self)
-    
-    def has_pending_membership(self, user):
-        if user.is_authenticated():
-            return MembershipRequests.objects.filter(group=self, user=user).exists()
-        return False
-        
-    def requesters_to_grant_or_deny(self, user):
-        if user.is_authenticated() and user.is_group_manager(self):
-            return User.objects.filter(membershiprequests__group=self)
-        return []
-        
-    @models.permalink
-    def get_absolute_url(self):
-        return ("group_detail", [str(self.slug)])
-        
-class GeoGroupManager(models.Manager):    
-    def geo_slugify(self, value):
-        return re.sub("[\s]", "-", value).lower()
-
-    def de_geo_slugify(self, value):
-        return re.sub("[-]", " ", value).title()
-    
-    def get_geo_group(self, state, county_slug=None, place_slug=None):
-        locations = Location.objects.filter(st=state)
-        if place_slug:
-            place = self.de_geo_slugify(place_slug)
-            locations = locations.filter(name=place)
-        elif county_slug:
-            county = self.de_geo_slugify(county_slug)
-            locations = locations.filter(county=county)
-        
-        if locations.count() == 0:
-            return None
-            
-        return GeoGroup(locations=locations, state=state, county_slug=county_slug, place_slug=place_slug)
-            
-    def get_users_geo_groups(self, user):
-        location = user.get_profile().location
-        if location:
-            state = location.st
-            county_slug = self.geo_slugify(location.county)
-            place_slug = self.geo_slugify(location.name)
-            return [self.get_geo_group(state),
-                        self.get_geo_group(state, county_slug),
-                        self.get_geo_group(state, county_slug, place_slug),]
-        return []
-        
-class GeoGroup(BaseGroup):
-    objects = GeoGroupManager()
-    
-    class Meta:
-        managed = False
-        
-    def __init__(self, locations, state, county_slug=None, place_slug=None, *args, **kwargs):
-        self.locations = locations
-        self.state = state
-        self.county_slug = county_slug
-        self.place_slug = place_slug
-        self._set_attributes(locations[0], county_slug != None, place_slug != None)
-        
-    def _set_attributes(self, location, has_county, has_place):
-        if has_place:
-            self.name = "%s, %s" % (location.name, location.st)
-        elif has_county:
-            self.name = "%s in %s" % (location.county, location.state)
-        else:
-            self.name = location.state
-        self.description = "A meeting place for all users belonging to %s" % self.name
-        self.image = "geo_group_images/geo.jpg"
-        
-    def is_joinable(self):
-        return False 
-        
-    def is_public(self):
-        return True
-
-    def is_member(self, user):
-        if user.is_authenticated():
-            return User.objects.filter(pk=user.id, profile__location__in=self.locations).exists()
-        return False
-
-    def _group_users_filtered(self):
-        return User.objects.filter(profile__location__in=self.locations)
-
-    def _group_actions_filtered(self):
-        return Action.objects.filter(useractionprogress__user__profile__location__in=self.locations)
-
-    def _group_records_filtered(self):
-        return Record.objects.filter(user__profile__location__in=self.locations)
-        
-    @models.permalink
-    def get_absolute_url(self):
-        if self.place_slug:
-            return ("geo_group_place", [self.state, self.county_slug, self.place_slug])
-        elif self.county_slug:
-            return ("geo_group_county", [self.state, self.county_slug])
-        return ("geo_group_state", [self.state])
-
-class GroupUsers(models.Model):
-    user = models.ForeignKey(AuthUser)
-    group = models.ForeignKey(Group)
-    is_manager = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
-    def __unicode__(self):
-        return u'%s belongs to group %s' % (self.user, self.group)
-        
-class MembershipRequests(models.Model):
-    user = models.ForeignKey(AuthUser)
-    group = models.ForeignKey(Group)
-    created = models.DateTimeField(auto_now_add=True)
-    
-    def __unicode__(self):
-        return u'%s request to join %s on %s' % (self.user, self.group, self.created)
 
 class ActionCat(DefaultModel):
     name = models.CharField(max_length=255)
@@ -330,7 +105,7 @@ class Action(DefaultModel):
     users_completed = models.IntegerField(default=0)
     users_committed = models.IntegerField(default=0)
     category = models.ForeignKey(ActionCat)
-    users = models.ManyToManyField(User, through="UserActionProgress")
+    users = models.ManyToManyField(AuthUser, through="UserActionProgress")
     objects = ActionManager()
     
     def completes_for_user(self, user):
@@ -367,7 +142,7 @@ class ActionTask(DefaultModel):
     sequence = models.PositiveIntegerField()
     action = models.ForeignKey(Action)
     points = models.IntegerField(default=0)
-    users = models.ManyToManyField(User, through="ActionTaskUser")
+    users = models.ManyToManyField(AuthUser, through="ActionTaskUser")
 
     class Meta:
         ordering = ['action', 'sequence']
@@ -403,7 +178,7 @@ class ActionTask(DefaultModel):
 
 class ActionTaskUser(DefaultModel):
     actiontask = models.ForeignKey(ActionTask)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(AuthUser)
     
     class Meta:
         unique_together = ('actiontask', 'user',)
@@ -412,7 +187,7 @@ class ActionTaskUser(DefaultModel):
         return u"User: %s, ActionTask: %s" % (self.user.id, self.actiontask.sequence)
 
 class UserActionProgress(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(AuthUser)
     action = models.ForeignKey(Action)
     user_completes = models.IntegerField(default=0)
     is_completed = models.IntegerField(default=0)
@@ -429,7 +204,7 @@ class Signup(models.Model):
         return u'%s' % (self.email)
 
 class Feedback(DefaultModel):
-    user = models.ForeignKey(User, null=True)
+    user = models.ForeignKey(AuthUser, null=True)
     url = models.CharField(max_length=255, default='')
     comment = models.TextField(default='')
     beta_group = models.BooleanField(default=0)
@@ -479,5 +254,5 @@ def update_commited_action(sender, instance, **kwargs):
 
 models.signals.post_save.connect(update_actiontask_counts, sender=ActionTask)
 models.signals.post_delete.connect(update_actiontask_counts, sender=ActionTask)
-models.signals.post_save.connect(user_post_save, sender=User)
+models.signals.post_save.connect(user_post_save, sender=AuthUser)
 models.signals.post_save.connect(update_commited_action, sender=UserActionProgress)
