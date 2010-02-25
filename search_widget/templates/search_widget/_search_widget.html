@@ -1,0 +1,8 @@
+<form class="search_widget" action="{{ path }}" method="get">
+    <h3>{{ search_title }}</h3>
+    <input class="search_value" name="search" type="text"></input>
+    <input class="search_button" type="submit" value="Search"></input>
+    <ol class="search_results">
+        {{ search_results|safe }}
+    </ol>
+</form>

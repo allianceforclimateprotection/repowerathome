@@ -361,4 +361,35 @@ var rah = {
             $("table").tablesorter();
         },
     },
+    
+    page_group_list: {
+        init: function() {
+            rah.mod_search_widget.init();
+        },
+    },
+    
+    mod_search_widget: {
+        init: function() {
+            $(".search_widget").submit(function() {
+                var form = $(this);
+                $.ajax({
+                    url: form.attr("action"),
+                    type: form.attr("method"),
+                    data: form.serialize(),
+                    success: function(data) {
+                        $(".search_results", form).html(data);
+                    }
+                });
+                return false;
+            });
+            $(".search_more").live("click", function() {
+                var link = $(this);
+                var form = link.parents("form");
+                $.get(link.attr("href"), function(data) {
+                    link.replaceWith(data);
+                });
+                return false;
+            });
+        },
+    },
 }

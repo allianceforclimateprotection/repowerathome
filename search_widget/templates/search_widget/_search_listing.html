@@ -1,0 +1,12 @@
+{% for object in object_list %}
+    <li class="search_result_object">
+        {% if object_rendering_template %}
+            {% include object_rendering_template %}
+        {% else %}
+            {{ object }}
+        {% endif %}
+    </li>
+{% endfor %}
+{% if page_obj.has_next %}
+    <a class="search_more" href="{{ request.path }}?search={{ request.GET.search }}&amp;page={{ page_obj.next_page_number }}">more</a>
+{% endif %}

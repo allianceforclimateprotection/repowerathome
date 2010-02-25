@@ -1,4 +1,5 @@
-{% extends "rah/base.html" %}
+{% extends "base.html" %}
+{% load search_widget %}
 
 {% block content %}
     {% if new_groups %}
@@ -21,4 +22,7 @@
     <h2>About Groups</h2>
     <p class="group_description">This text should describe some features of groups and how they can be useful to our users.</p>
     <a href="{% url group_create %}">Create a Group</a>
+    <h3 class="search_title">Find a Group</h3>
+    {% search_widget group_search %}
 {% endblock %}
+{% block js %}page_group_list{% endblock %}
