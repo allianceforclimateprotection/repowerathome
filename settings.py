@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     'twitter_app',
     'django_extensions',
     'groups',
+    'search_widget',
 )
 
 ABSOLUTE_URL_OVERRIDES = {
