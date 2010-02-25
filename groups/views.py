@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from django.template import RequestContext
+from django.template import loader, RequestContext
 from django.views.decorators.csrf import csrf_protect
 
 from records.models import Record
@@ -104,7 +104,7 @@ def group_list(request):
     """
     new_groups = Group.objects.new_groups_with_memberships(request.user)
     return render_to_response("groups/group_list.html", locals(), context_instance=RequestContext(request))
-        
+
 def _group_detail(request, group):
     popular_actions = group.completed_actions_by_user()
     top_members = group.members_ordered_by_points()
