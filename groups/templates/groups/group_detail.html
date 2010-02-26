@@ -1,7 +1,9 @@
 {% extends "rah/base.html" %}
 
 {% block extralinks %}
-<link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower@Home Group Activity" />
+{% if group.slug %}
+    <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower@Home Group Activity" />
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -62,9 +64,11 @@
     <div id="group_activity" class="group_section">
         {% if group_records %}
             <h2>Group Activity
-                <a class="atom_link" href="{% url group_activity_feed group.slug %}">
-                    <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
-                </a>
+                {% if group.slug %}
+                    <a class="atom_link" href="{% url group_activity_feed group.slug %}">
+                        <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
+                    </a>
+                {% endif %}
             </h2>
             <ul>
             {% for record in group_records %}

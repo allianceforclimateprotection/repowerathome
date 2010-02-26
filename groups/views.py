@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 
 from records.models import Record
 
-from models import Group, GroupUsers, MembershipRequests
+from models import Group, GeoGroup, GroupUsers, MembershipRequests
 from forms import GroupForm
 
 @login_required
