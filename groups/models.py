@@ -32,6 +32,9 @@ class BaseGroup(object):
     def is_public(self):
         return True
         
+    def safe_image(self):
+        return self.image if self.image else "images/theme/default_group.png"
+        
     def completed_actions_by_user(self):
         """
         what actions have been completed by users in this group and how many users have completed each action
@@ -192,7 +195,7 @@ class GeoGroup(BaseGroup):
         else:
             self.name = location.state
         self.description = "A meeting place for all users belonging to %s" % self.name
-        self.image = "geo_group_images/geo.jpg"
+        self.image = "images/theme/geo_group.jpg"
         
     def is_joinable(self):
         return False 

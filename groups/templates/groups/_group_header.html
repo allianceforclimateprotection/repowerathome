@@ -1,4 +1,4 @@
-<img class="group_image" src="{{ MEDIA_URL }}{{ group.image }}" alt="group image" height="75" width="75" />
+<img class="group_image" src="{{ MEDIA_URL }}{{ group.safe_image }}" alt="group image" height="75" width="75" />
 {% if group.is_joinable and is_member %}
     <a class="group_leave" href="{% url group_leave group.id %}">Leave Group</a>
 {% endif %}
