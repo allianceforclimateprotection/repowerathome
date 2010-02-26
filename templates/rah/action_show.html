@@ -1,25 +1,26 @@
 {% extends "rah/base.html" %}
 {% block content %}
 	<div id="breadcrumbs">
-	    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
-	    Actions
+	    <a href="{% url index %}">Home</a> &rsaquo;
+	    {% if tag_filter %}
+	        <a href="{% url action_show %}">Actions</a> &rsaquo;
+	        {{ tag_filter.name|deslug }}
+	    {% else %}
+	        Actions
+	    {% endif %}
 	</div>
     <div id="action_show">    
-    	{% for category, actions in categories.items %}
-    		<h2 id='{{ category.slug }}' class='action_category_title'>{{ category.name }}</h2>
-    		<div class='action_category_description'>{{ category.content|safe|linebreaks }}</div>
-    		{% for action in actions %}
-    			{% include 'rah/_action_nugget.html' %}
-    		{% endfor %}
-    		<br class='spacer' />
-    	{% endfor %}
+		{% for action in actions %}
+			{% include 'rah/_action_nugget.html' %}
+			<br class='spacer' />
+		{% endfor %}
 	</div>
 {% endblock %}
 {% block minorcol %}
-	<h2>Categories</h2>
-	<ul>
-		{% for category, actions in categories.items %}
-			<li><a href='#{{ category.slug }}'>{{ category.name }}</a></li>
+	<h2>Tags</h2>
+	<ul class="tag_cloud">
+		{% for tag in tags %}
+			<li><a class="tag" href='{% url action_tag tag %}'>{{ tag.name|deslug }} ({{ tag.count }})</a></li>
 		{% endfor %}
 	</ul>
 {% endblock %}

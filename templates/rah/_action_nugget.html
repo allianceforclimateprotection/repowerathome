@@ -1,6 +1,11 @@
 <div class='action_nugget'>
 	<span class='total_points'>{{ action.total_points }} Points</span>
 	<a class='title' href='{% url rah.views.action_detail action.slug %}'>{{ action.name }}</a>
+	<span class='tag_list'>
+	    {% for tag in action.tags %}
+	        <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
+	    {% endfor %}
+	</span>
 	<div class='content'>{{ action.content|safe|linebreaks }} (<a href='{% url rah.views.action_detail action.slug %}' class='tasks_link'>toggle steps</a>)</div>
     <div class='task_list'>
     	{% for actiontask in action.actiontasks %}

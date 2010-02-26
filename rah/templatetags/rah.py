@@ -39,3 +39,8 @@ def safe_user_link(parser, token):
     """
     user_expr = UserNode.parse(parser, token)
     return UserNode(user_expr)
+    
+@register.filter
+@template.defaultfilters.stringfilter
+def deslug(value):
+    return value.title().replace('_', ' ').replace('-', ' ')

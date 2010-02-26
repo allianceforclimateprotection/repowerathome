@@ -12,6 +12,8 @@ from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.sites.models import Site
 
+from tagging.models import Tag
+
 from rah.models import *
 from records.models import *
 from rah.forms import *
@@ -84,12 +86,15 @@ def register(request):
         'form': form,
     }, context_instance=RequestContext(request))
 
-def action_show(request):
+def action_show(request, tag_slug=None):
     """Show all actions by Category"""
-    actions = Action.objects.actions_by_completion_status(request.user)[0]
-    categories = dict([(action.category, []) for action in actions]) #create a new map of categories to empty lists
-    [categories[action.category].append(action) for action in actions] #append each action to the its assocaited categor list
-    return render_to_response('rah/action_show.html', {'categories': categories}, context_instance=RequestContext(request))
+    try:
+        tag = Tag.objects.get(name=tag_slug)
+    except Tag.DoesNotExist:
+        tag = None
+    actions = Action.objects.actions_by_completion_status(request.user, tag)[0]
+    tags = Action.tags.cloud()
+    return render_to_response('rah/action_show.html', {'actions':actions, 'tags':tags, 'tag_filter':tag}, context_instance=RequestContext(request))
 
 def action_detail(request, action_slug):
     """Detail page for an action"""

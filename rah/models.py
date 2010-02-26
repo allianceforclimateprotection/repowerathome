@@ -2,6 +2,7 @@ import json, hashlib, re
 from django.db import models
 from django.contrib.auth.models import User as AuthUser
 
+import tagging
 from geo.models import Location
 from records.models import Record
 from twitter_app import utils as twitter_app
@@ -57,7 +58,7 @@ class ActionCat(DefaultModel):
     content = models.TextField()
     
 class ActionManager(models.Manager):
-    def actions_by_completion_status(self, user):
+    def actions_by_completion_status(self, user, tag=None):
         """
         get a queryset of action objects, the actions will have three additional attributes
         attached: (1)'tasks': the number of tasks related to the action. (2)'user_completes':
@@ -79,6 +80,8 @@ class ActionManager(models.Manager):
                                      FROM rah_actiontaskuser \
                                      WHERE rah_actiontaskuser.user_id = %s AND \
                                      rah_actiontaskuser.actiontask_id = rah_actiontask.id'})
+        if tag:
+            actiontasks = actiontasks.filter(action__in=Action.tagged.with_any(tag))
                                      
         action_dict = dict([actiontask.action, []] for actiontask in actiontasks)
         [action_dict[actiontask.action].append(actiontask) for actiontask in actiontasks]
@@ -131,6 +134,7 @@ class Action(DefaultModel):
     @models.permalink
     def get_absolute_url(self):
         return ('rah.views.action_detail', [str(self.slug)])
+tagging.register(Action)
 
 class ActionTask(DefaultModel):
     """
