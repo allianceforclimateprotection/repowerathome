@@ -6,11 +6,10 @@ from models import Group
 from feeds import GroupActivityFeed
 
 group_search_info = {
-    'queryset': Group.objects.all(),
+    'queryset': Group.objects.all().order_by("-created"),
     'paginate_by': 5,
-    'extra_context': {
-        'object_rendering_template': 'groups/_group_search_result.html',
-    },
+    'search_fields': ['name', 'description',],
+    'object_rendering_template': 'groups/_group_search_result.html',
 }
 
 urlpatterns = patterns('groups.views',
