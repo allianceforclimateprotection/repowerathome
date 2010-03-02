@@ -27,13 +27,13 @@ var rah = {
                             success: function(messages_html) {
                                 $("#feedback_dialog").dialog("close");
                                 rah.mod_messages.init(messages_html);
-                            },
+                            }
                         });
-                    },
+                    }
                 },
                 title: "Feedback",
                 autoOpen: false,
-                width: 400,
+                width: 400
             });
             // Attach functionality to feedback links
             $(".feedback_link").click(function(){
@@ -47,7 +47,7 @@ var rah = {
             });
             rah.mod_messages.init();
             rah.mod_ajax_setup.init();
-        },
+        }
     },
     
     /**
@@ -58,18 +58,18 @@ var rah = {
             // Validate the registration form
             $("#registration_form").validate({
                 rules: {
-                    zipcode:    { required: false, remote: { url: "/validate/", type: "post", } },
-                    email:      { required: true, email: true, remote: { url: "/validate/", type: "post", } },
+                    zipcode:    { required: false, remote: { url: "/validate/", type: "post" } },
+                    email:      { required: true, email: true, remote: { url: "/validate/", type: "post" } },
                     first_name: { required: true, minlength: 2 },
                     password1:  { required: true, minlength: 5 },
-        			password2:  { required: true, minlength: 5, equalTo: "#id_password1" },
+        			password2:  { required: true, minlength: 5, equalTo: "#id_password1" }
                 },
                 messages: {
-                    email: { remote: "That email is already registered", },
-                    zipcode: { remote: "We couldn't locate this zipcode", },
-                },
+                    email: { remote: "That email is already registered" },
+                    zipcode: { remote: "We couldn't locate this zipcode" }
+                }
             });
-        },
+        }
     },
     
     /**
@@ -92,12 +92,12 @@ var rah = {
                     series: {
                         lines: { show: true },
                         points: { show: true, radius: 10 },
-                        shadowSize: 5,
+                        shadowSize: 5
                     },
                     grid: { hoverable: true, clickable: true, backgroundColor: { colors: ["#DDD", "#FFF"] } },
                     legend: {show: false},
                     xaxis: {mode: "time",autoscaleMargin: 0.1,  minTickSize: [1, "day"]},
-                    yaxis: {min: 0, tickDecimals: 0, autoscaleMargin: 0.6,},
+                    yaxis: {min: 0, tickDecimals: 0, autoscaleMargin: 0.6,}
                 });
                 $("#chart").bind("plothover", function (event, pos, item) {
                     if (item) {
@@ -116,7 +116,7 @@ var rah = {
                         position: 'absolute',
                         display: 'none',
                         top: y - 18,
-                        left: x + 5 ,
+                        left: x + 5
                     }).appendTo("body").fadeIn(300);
                 }
             }
@@ -126,7 +126,7 @@ var rah = {
             $('#house_party_link').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
             $('#house_party_dialog').dialog({
                 title: 'House Party', modal: true, resizable: false, draggable: false, autoOpen: false, 
-                buttons: { "Give me a call": function() { $('#house_party_form').submit(); }},
+                buttons: { "Give me a call": function() { $('#house_party_form').submit(); }}
             });
             
             // Setup invite friend form, link, and dialog
@@ -134,7 +134,7 @@ var rah = {
             $('#invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
             $('#invite_friend_dialog').dialog({
                 title: 'Invite a friend', modal: true, autoOpen: false, 
-                buttons: { "Send Invitation": function() { $('#invite_friend_form').submit(); }},
+                buttons: { "Send Invitation": function() { $('#invite_friend_form').submit(); }}
             });
             
             // Setup twitter update form, link, and dialog
@@ -143,7 +143,7 @@ var rah = {
             var form = $('#twitter_status_form');
             $('#twitter_post_dialog').dialog({
                 title: 'Tell your tweeps about us', modal: true, autoOpen: false,
-                buttons: (form.size() > 0 ? { "Update status": function() { form.submit(); } } : { }),
+                buttons: (form.size() > 0 ? { "Update status": function() { form.submit(); } } : { })
             });
         },
     },
@@ -156,18 +156,18 @@ var rah = {
             // Validate the registration form
             $("#profile_edit_form").validate({
                 rules: {
-                    zipcode:    { required: false, remote: { url: "/validate/", type: "post", } },
-                    email:      { required: true, email: true, remote: { url: "/validate/", type: "post", } },
+                    zipcode:    { required: false, remote: { url: "/validate/", type: "post" } },
+                    email:      { required: true, email: true, remote: { url: "/validate/", type: "post" } },
                     first_name: { required: true, minlength: 2 },
                     password1:  { required: false, minlength: 5 },
-        			password2:  { required: false, minlength: 5, equalTo: "#id_password1" },
+        			password2:  { required: false, minlength: 5, equalTo: "#id_password1" }
                 },
                 messages: {
-                    email: { remote: "That email is already registered", },
-                    zipcode: { remote: "We couldn't locate this zipcode", },
-                },
+                    email: { remote: "That email is already registered" },
+                    zipcode: { remote: "We couldn't locate this zipcode" }
+                }
             });
-        },
+        }
     },
     
     /**
@@ -208,15 +208,10 @@ var rah = {
                     "Commit": function() {
                         $('#commit_form').submit(); 
                         $('#commit_dialog').dialog('close');
-                    },
-                },
+                    }
+                }
             });
-        },
-    },
-    
-    page_action_commit: {
-        init: function(){   
-        },
+        }
     },
     
     /**
@@ -225,7 +220,7 @@ var rah = {
     page_action_show: {
         init: function(){
             rah.mod_action_nugget.init();
-        },
+        }
     },
     
     /**
@@ -234,7 +229,7 @@ var rah = {
     page_post_detail: {
         init: function(){
             rah.mod_comment_form.init();
-        },
+        }
     },
     
     /**
@@ -251,7 +246,7 @@ var rah = {
                 $(this).parents('.action_nugget').find('.task_list').slideToggle();
                 return false;
             });
-        },
+        }
     },
    
     set_task_completion_submission: {
@@ -275,37 +270,36 @@ var rah = {
         init: function() {
             $("#comment_form").validate({
                 rules: {
-                    name: { required: true, },
-                },
+                    name: { required: true }
+                }
             });
             $(".rateable_rate_form [name='next']").remove();
             $('.rateable_rate_form :submit').click(function(){
                 submit = $(this);
                 form = submit.parents('form');
-                form.append("<input type='hidden' name='" + submit.val() + "' value='" + submit.val() + "' />")
+                form.append("<input type='hidden' name='" + submit.val() + "' value='" + submit.val() + "' />");
                 $.post(form.attr('action'), form.serialize(), function(data){
                     rah.mod_messages.init(data);
                 });
                return false; 
             });
-        },
+        }
     },
     
     /**
     * mod_messages: call this method to attach message html, if no html is passed it will just set a timer on any existing messages
     **/
     mod_messages: {
-      init: function(html) {
-          if(html) { $('#message_box').append(html); }
-          $(".messages:not(.sticky)").each(function() {
-              var elem = $(this).parents("ul");
-              setTimeout(function() {
-                  elem.slideUp(400, function(){ elem.remove(); });
-              }, 3000);
-          });
-          
-          $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").remove(); });
-      },
+        init: function(html) {
+            if(html) { $('#message_box').append(html); }
+            $(".messages:not(.sticky)").each(function() {
+                var elem = $(this).parents("ul");
+                setTimeout(function() {
+                    elem.slideUp(400, function(){ elem.remove(); });
+                }, 3000);
+            });
+            $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").remove(); });
+        }
     },
     
     page_password_change: {
@@ -313,12 +307,12 @@ var rah = {
             // Validate the password form
             $("#password_change_form").validate({
                 rules: {
-                    old_password: { required: true, },
-                    new_password1: { required: true, minlength: 5, },
-        			new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1", },
-                },
+                    old_password: { required: true },
+                    new_password1: { required: true, minlength: 5 },
+        			new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
+                }
             });
-        },
+        }
     },
     
     page_password_reset_confirm: {
@@ -327,10 +321,10 @@ var rah = {
             $("#password_reset_confirm").validate({
                 rules: {
                     new_password1: { required: true, minlength: 5 },
-        			new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" },
-                },
+        			new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
+                }
             });
-        },
+        }
     },
     
     mod_ajax_setup: {
@@ -339,11 +333,12 @@ var rah = {
                 beforeSend: function() { $("#loading").show(); },
                 complete: function() { $("#loading").hide(); },
                 error: function(XMLHttpRequest, textStatus) { 
-                    var error_html = "<ul class='messages'><li class='messages error sticky'>" + textStatus + "<a href='#' class='dismiss'>close</a></li></ul>"
+                    var error_html = "<ul class='messages'><li class='messages error sticky'>" + textStatus;
+                    error_html += "<a href='#' class='dismiss'>close</a></li></ul>";
                     rah.mod_messages.init(error_html);
-                },
+                }
             });
-        },
+        }
     },
     
     page_group_create: {
@@ -361,24 +356,24 @@ var rah = {
             
             $("#group_create_form").validate({
                 rules: {
-                    name: { required: true, },
-                    slug: { required: true, },
-        			description: { required: true, },
-                },
+                    name: { required: true },
+                    slug: { required: true },
+        			description: { required: true }
+                }
             });
-        },
+        }
     },
     
     page_group_detail: {
         init: function() {
             $("table").tablesorter();
-        },
+        }
     },
     
     page_group_list: {
         init: function() {
             rah.mod_search_widget.init();
-        },
+        }
     },
     
     mod_search_widget: {
@@ -403,6 +398,6 @@ var rah = {
                 });
                 return false;
             });
-        },
-    },
+        }
+    }
 }
