@@ -175,6 +175,11 @@ var rah = {
             // $("#house_party_form").validate({rules: {phone_number: { required: true }}});
             
             $('.commit_link').click(function(){ $('#commit_dialog').dialog('open'); return false; });
+            $('.commit_cancel_link').click(function(){
+                $("#id_cancel_commitment").attr("checked", "checked");
+                $('#commit_form').submit();
+                return false;
+            });
             $('#commit_dialog').dialog({
                 title: 'Make a Commitment', modal: true, resizable: false, draggable: false, autoOpen: false, 
                 width: 550,

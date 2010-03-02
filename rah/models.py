@@ -32,6 +32,7 @@ class User(AuthUser):
         proxy = True
 
     def set_action_commitment(self, action, date_committed):
+        """date_committed can be set to None to remove a commitment"""
         uap = UserActionProgress.objects.filter(action=action, user=self)
         if uap:
             row = uap[0]

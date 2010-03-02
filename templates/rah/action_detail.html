@@ -40,7 +40,8 @@
         <h2>Commitment</h2>
         <p>
             You committed to complete this action by {{ progress.date_committed }}. 
-            (<a href="{% url action_commit action.slug %}" class="commit_link">Change</a>)
+            (<a href="{% url action_commit action.slug %}" class="commit_link">Update</a> or 
+            <a href="{% url action_commit action.slug %}" class="commit_cancel_link">Cancel</a>)
         </p>
     {% endif %}
     <h2>Action Tools</h2>
