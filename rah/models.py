@@ -259,5 +259,5 @@ def update_commited_action(sender, instance, **kwargs):
 
 models.signals.post_save.connect(update_actiontask_counts, sender=ActionTask)
 models.signals.post_delete.connect(update_actiontask_counts, sender=ActionTask)
-models.signals.post_save.connect(user_post_save, sender=AuthUser)
+models.signals.post_save.connect(user_post_save, sender=User)
 models.signals.post_save.connect(update_commited_action, sender=UserActionProgress)
