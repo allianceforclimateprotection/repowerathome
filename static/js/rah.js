@@ -83,17 +83,21 @@ var rah = {
             if (!chart_data['point_data'].length) {
                 $("#chart").html('<img src="' + media_url + 'images/theme/chart_demo.png" alt="sample chart"/>');
             } else {
-                var plot = $.plot($("#chart"),
-                    [ { data: chart_data['point_data'] }], {
-                        series: {
-                            lines: { show: true },
-                            points: { show: true, radius: 10 },
-                            shadowSize: 5,
-                        },
-                        grid: { hoverable: true, clickable: true, backgroundColor: { colors: ["#DDD", "#FFF"] } },
-                        legend: {show: false},
-                        xaxis: {mode: "time", autoscaleMargin: 0.1, minTickSize: [1, "day"]},
-                        yaxis: {min: 0, tickDecimals: 0},
+                // Add an additional datapoint at the beginning to represent 0 points
+                yesterday = chart_data['point_data'][0][0] - (60*60*24*1000*1);
+                chart_data['point_data'].unshift([yesterday, 0]);
+                chart_data["tooltips"].unshift("");
+                                
+                var plot = $.plot($("#chart"), [ { data: chart_data['point_data'] }], {
+                    series: {
+                        lines: { show: true },
+                        points: { show: true, radius: 10 },
+                        shadowSize: 5,
+                    },
+                    grid: { hoverable: true, clickable: true, backgroundColor: { colors: ["#DDD", "#FFF"] } },
+                    legend: {show: false},
+                    xaxis: {mode: "time",autoscaleMargin: 0.1,  minTickSize: [1, "day"]},
+                    yaxis: {min: 0, tickDecimals: 0, autoscaleMargin: 0.6,},
                 });
                 $("#chart").bind("plothover", function (event, pos, item) {
                     if (item) {
@@ -104,6 +108,10 @@ var rah = {
                     }
                 });
                 function showTooltip(x, y, index) {
+                    // The first datapoint is an artificial point representing zero points, so it doesn't need a tooltip
+                    if (index == 0){
+                        return;
+                    }
                     $('<div class="chart_tooltip">' + chart_data["tooltips"][index] + '</div>').css( {
                         position: 'absolute',
                         display: 'none',
