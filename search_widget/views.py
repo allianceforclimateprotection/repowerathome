@@ -10,6 +10,8 @@ def search_list(request, queryset, search_fields=None,
         search = request.GET.get("search", None)
         if search:
             queryset = queryset.filter(__build_q_from_fields(search_fields, search.strip()))
+        else:
+            queryset = queryset.none()
     if object_rendering_template:
         ec = kwargs.get("extra_context", {})
         ec["object_rendering_template"] = object_rendering_template
