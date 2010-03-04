@@ -69,7 +69,7 @@ def register(request):
             new_user = form.save()
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
-            
+
             # Add the location to profile if the user registered with one
             if "location" in form.cleaned_data:
                 profile = user.get_profile()
@@ -121,11 +121,9 @@ def action_task(request, action_task_id):
 
         if request.POST.get('task_completed') and not record:
             action_task.complete_task(request.user)
-            Record.objects.create_record(request.user, 'action_task_complete', action_task)
             messages.success(request, 'Great work, we have updated our records to show you completed %s' % (action_task))
         else:
             action_task.complete_task(request.user, undo=True)
-            Record.objects.void_record(request.user, 'action_task_complete', action_task)
             messages.success(request, 'We have updated our records to show you have not completed %s' % (action_task))
     
     if request.is_ajax():

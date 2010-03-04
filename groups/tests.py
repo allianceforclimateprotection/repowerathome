@@ -1,16 +1,16 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
 
 from geo.models import Location
-from rah.models import User, Profile, Action
+from rah.models import Profile, Action
 
 from models import Group, GroupUsers
 
 class GroupTest(TestCase):
-    fixtures = ["geo_RI.json", "test_groups.json", "actions.json", "actiontasks.json",]
+    fixtures = ["test_geo_RI.json", "test_groups.json", "test_actions.json", "test_actiontasks.json",]
     
     def setUp(self):
         self.user = User.objects.create(username="1", email="test@test.com")
-        Profile.objects.create(user=self.user)
         self.yankees = Group.objects.get(name="yankees")
         self.sabres = Group.objects.get(name="sabres")
         self.ny = Group.objects.get(name="New York")
@@ -55,7 +55,7 @@ class GroupTest(TestCase):
         for task in water_heater.actiontask_set.all():
             task.complete_task(self.user)
         second_user = User.objects.create(username="2", email="test@example.com")
-        GroupUsers.objects.create(group=self.yankees, user=self.user)
+        GroupUsers.objects.create(group=self.yankees, user=second_user)
         fridge = Action.objects.get(name="Replace your outdated refrigerator")
         for task in fridge.actiontask_set.all():
             task.complete_task(self.user)
@@ -71,10 +71,42 @@ class GroupTest(TestCase):
         self.failUnlessEqual(fridge.users_completed, 1)
         
     def test_members_ordered_by_points(self):
-        pass
+        GroupUsers.objects.create(group=self.yankees, user=self.user)
+        water_heater = Action.objects.get(name="Insulate your water heater")
+        for task in water_heater.actiontask_set.all():
+            task.complete_task(self.user)
+        second_user = User.objects.create(username="2", email="test@example.com")
+        GroupUsers.objects.create(group=self.yankees, user=second_user)
+        fridge = Action.objects.get(name="Replace your outdated refrigerator")
+        for task in fridge.actiontask_set.all():
+            task.complete_task(self.user)
+            task.complete_task(second_user)
+   
+        user, second_user = self.yankees.members_ordered_by_points()
+        self.failUnlessEqual(user.get_profile().total_points, 55)
+        self.failUnlessEqual(second_user.get_profile().total_points, 30)
+        
+        self.failUnlessEqual(user.actions_completed, 2)
+        self.failUnlessEqual(second_user.actions_completed, 1)
         
     def test_group_records(self):
-        pass
+        GroupUsers.objects.create(group=self.yankees, user=self.user)
+        water_heater = Action.objects.get(name="Insulate your water heater")
+        for task in water_heater.actiontask_set.all():
+            task.complete_task(self.user)
+        second_user = User.objects.create(username="2", email="test@example.com")
+        GroupUsers.objects.create(group=self.yankees, user=second_user)
+        fridge = Action.objects.get(name="Replace your outdated refrigerator")
+        for task in fridge.actiontask_set.all():
+            task.complete_task(self.user)
+            task.complete_task(second_user)
+            
+        records = self.yankees.group_records()
+        self.failUnlessEqual(records.count(), 7)
+        first = records[0]
+        self.failUnlessEqual(first.user, second_user)
+        last = records[7]
+        self.failUnlessEqual(last.user, self.user)
         
     def test_has_pending_membership(self):
         pass

@@ -156,8 +156,10 @@ class ActionTask(DefaultModel):
     def complete_task(self, user, undo=False):
         if undo:
             ActionTaskUser.objects.filter(user=user, actiontask=self).delete()
+            Record.objects.void_record(user, 'action_task_complete', self)
         else:
             ActionTaskUser(user=user, actiontask=self).save()
+            Record.objects.create_record(user, 'action_task_complete', self)
         
         # Maintain denomed columns on Action and UserActionProgress 
         action = self.action
@@ -177,6 +179,7 @@ class ActionTask(DefaultModel):
         obj.user_completes = new_completes
         obj.is_completed = new_completed
         obj.save()
+        
         
     def get_absolute_url(self):
         return self.action.get_absolute_url()
@@ -259,5 +262,6 @@ def update_commited_action(sender, instance, **kwargs):
 
 models.signals.post_save.connect(update_actiontask_counts, sender=ActionTask)
 models.signals.post_delete.connect(update_actiontask_counts, sender=ActionTask)
+models.signals.post_save.connect(user_post_save, sender=AuthUser)
 models.signals.post_save.connect(user_post_save, sender=User)
 models.signals.post_save.connect(update_commited_action, sender=UserActionProgress)

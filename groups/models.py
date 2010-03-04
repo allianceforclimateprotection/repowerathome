@@ -164,6 +164,9 @@ class GroupUsers(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        unique_together = ("user", "group",)
+    
     def __unicode__(self):
         return u'%s belongs to group %s' % (self.user, self.group)
         
@@ -171,6 +174,9 @@ class MembershipRequests(models.Model):
     user = models.ForeignKey(User)
     group = models.ForeignKey(Group)
     created = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ("user", "group",)
     
     def __unicode__(self):
         return u'%s request to join %s on %s' % (self.user, self.group, self.created)
