@@ -21,7 +21,7 @@ def create_test_users_and_action_tasks(object):
     object.at1 = ActionTask.objects.create(name='test action task 1', action=object.a, points=5, sequence=1)
     object.at2 = ActionTask.objects.create(name='test action task 2', action=object.a, points=10, sequence=2)
     object.at3 = ActionTask.objects.create(name='test action task 3', action=object.a, points=20, sequence=3)
-    object.act1 = Activity.objects.create(slug='action_task_complete')
+    object.act1 = Activity.objects.get(slug='action_task_complete')
 
 class RecordManagerTest(TestCase):
     def setUp(self):
