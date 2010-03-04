@@ -202,7 +202,7 @@ def action_commit(request, action_slug):
             commit_form.save(action, request.user)
             data = {'date_committed': commit_form.cleaned_data['date_committed']}
             Record.objects.create_record(request.user, 'action_commitment', action, data=data)
-            messages.add_message(request, messages.SUCCESS, 'We recorded your commitment.')
+            messages.add_message(request, messages.SUCCESS, 'We updated your commitment successfully')
             return redirect("action_detail", action_slug=action.slug)
     else:
         initial = {'date_committed': progress.date_committed} if progress else None

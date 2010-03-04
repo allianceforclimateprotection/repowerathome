@@ -216,10 +216,12 @@ class ActionCatAdminForm(forms.ModelForm):
         return data
 
 class ActionCommitForm(forms.Form):
-    date_committed = forms.DateField(label="Commit date")
+    date_committed = forms.DateField(label="Commit date", required=False)
+    cancel_commitment = forms.BooleanField(required=False)
     
     def save(self, action, user):
-        user.set_action_commitment(action, self.cleaned_data['date_committed'])
+        date = None if self.cleaned_data['cancel_commitment'] else self.cleaned_data['date_committed']
+        user.set_action_commitment(action, date)
         
 class HousePartyForm(forms.Form):
     phone_number = forms.CharField()
