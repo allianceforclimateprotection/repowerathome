@@ -90,7 +90,7 @@ def group_detail(request, group_slug):
     """
     display all of the information about a particular group
     """
-    group = get_object_or_404(Group, slug=group_slug)
+    group = get_object_or_404(Group, slug=group_slug, is_geo_group=False)
     return _group_detail(request, group)
     
 def geo_group(request, state, county_slug=None, place_slug=None):
