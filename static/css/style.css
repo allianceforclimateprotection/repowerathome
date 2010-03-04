@@ -393,6 +393,8 @@ acronym {
 
 #group_create_form ul { list-style-type: none; color: #373637; margin-left: 10px; }
 
+.group_parent { font-size: 0.7em; }
+
 .group_image { float: left; margin-right: 10px; }
 
 .group_description { font-size: 0.8em; }
@@ -432,7 +434,9 @@ th.headerSortUp, th.headerSortDown {
 /* @end */
 
 /* @group Search Widget */
-.search_widget .search_results { border: 2px solid #515151; overflow: auto; width: 200px; height: 250px; margin-top: 5px; padding: 5px; }
+.search_widget .search_value { width: 190px; }
+
+.search_widget .search_results { border: 2px solid #515151; overflow: auto; width: 250px; height: 250px; margin-top: 5px; padding: 5px; }
 
 .search_widget li { list-style: none; display: block; margin-bottom: 10px; }
 

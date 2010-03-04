@@ -1,13 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
+from django.http import Http404
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import loader, RequestContext
 from django.views.decorators.csrf import csrf_protect
 
 from records.models import Record
 
-from models import Group, GeoGroup, GroupUsers, MembershipRequests
+from models import Group, GroupUsers, MembershipRequests
 from forms import GroupForm
 
 @login_required
@@ -93,10 +94,13 @@ def group_detail(request, group_slug):
     return _group_detail(request, group)
     
 def geo_group(request, state, county_slug=None, place_slug=None):
-    geo_group = GeoGroup.objects.get_geo_group(state, county_slug, place_slug)
-    if not geo_group:
-        raise Http404
-    return _group_detail(request, geo_group)
+    slug = state.lower()
+    if county_slug:
+        slug += "-%s" % county_slug
+    if place_slug:
+        slug += "-%s" % place_slug
+    group = get_object_or_404(Group, slug=slug)
+    return _group_detail(request, group)
     
 def group_list(request):
     """

@@ -1,0 +1,102 @@
+from django.test import TestCase
+
+from geo.models import Location
+from rah.models import User, Profile, Action
+
+from models import Group, GroupUsers
+
+class GroupTest(TestCase):
+    fixtures = ["geo_RI.json", "test_groups.json", "actions.json", "actiontasks.json",]
+    
+    def setUp(self):
+        self.user = User.objects.create(username="1", email="test@test.com")
+        Profile.objects.create(user=self.user)
+        self.yankees = Group.objects.get(name="yankees")
+        self.sabres = Group.objects.get(name="sabres")
+        self.ny = Group.objects.get(name="New York")
+    
+    def test_create_geo_group(self):
+        profile = self.user.get_profile()
+        profile.location = Location.objects.get(zipcode="02804")
+        profile.save()
+        ri, washington_county, ashaway = Group.objects.filter(users=self.user, is_geo_group=True)
+        self.failUnlessEqual(ri.name, "Rhode Island")
+        self.failUnlessEqual(ri.slug, "ri")
+        self.failUnlessEqual(ri.location_type, "S")
+        self.failUnlessEqual(ri.parent, None)
+        
+        self.failUnlessEqual(washington_county.name, "Washington County")
+        self.failUnlessEqual(washington_county.slug, "ri-washington-county")
+        self.failUnlessEqual(washington_county.location_type, "C")
+        self.failUnlessEqual(washington_county.parent, ri)
+        
+        self.failUnlessEqual(ashaway.name, "Ashaway, Rhode Island")
+        self.failUnlessEqual(ashaway.slug, "ri-washington-county-ashaway")
+        self.failUnlessEqual(ashaway.location_type, "P")
+        self.failUnlessEqual(ashaway.parent, washington_county)
+        
+    def test_is_joinable(self):
+        self.failUnlessEqual(self.yankees.is_joinable(), True)
+        self.failUnlessEqual(self.ny.is_joinable(), False)
+        
+    def test_is_public(self):
+        self.failUnlessEqual(self.yankees.is_public(), True)
+        self.failUnlessEqual(self.sabres.is_public(), False)
+        self.failUnlessEqual(self.ny.is_public(), True)
+        
+    def test_is_member(self):
+        self.failUnlessEqual(self.yankees.safe_image(), "images/yankees.jpg")
+        self.failUnlessEqual(self.sabres.safe_image(), "images/theme/default_group.png")
+        self.failUnlessEqual(self.ny.safe_image(), "images/theme/geo_group.jpg")
+        
+    def test_completed_actions_by_user(self):
+        GroupUsers.objects.create(group=self.yankees, user=self.user)
+        water_heater = Action.objects.get(name="Insulate your water heater")
+        for task in water_heater.actiontask_set.all():
+            task.complete_task(self.user)
+        second_user = User.objects.create(username="2", email="test@example.com")
+        GroupUsers.objects.create(group=self.yankees, user=self.user)
+        fridge = Action.objects.get(name="Replace your outdated refrigerator")
+        for task in fridge.actiontask_set.all():
+            task.complete_task(self.user)
+            task.complete_task(second_user)
+ 
+        water_heater, fridge = self.yankees.completed_actions_by_user()
+        self.failUnlessEqual(water_heater.users_completed, 2)
+        self.failUnlessEqual(fridge.users_completed, 1)
+        
+        water_heater.actiontask_set.all()[0].complete_task(self.user, undo=True)
+        water_heater, fridge = self.yankees.completed_actions_by_user()
+        self.failUnlessEqual(water_heater.users_completed, 1)
+        self.failUnlessEqual(fridge.users_completed, 1)
+        
+    def test_members_ordered_by_points(self):
+        pass
+        
+    def test_group_records(self):
+        pass
+        
+    def test_has_pending_membership(self):
+        pass
+        
+    def test_requesters_to_grant_or_deny(self):
+        pass
+        
+    def test_is_user_manager(self):
+        GroupUsers.objects.create(group=self.yankees, user=self.user, is_manager=True)
+        GroupUsers.objects.create(group=self.sabres, user=self.user)
+        GroupUsers.objects.create(group=self.ny, user=self.user, is_manager=True)
+        
+        self.failUnlessEqual(self.yankees.is_user_manager(self.user), True)
+        self.failUnlessEqual(self.sabres.is_user_manager(self.user), False)
+        self.failUnlessEqual(self.ny.is_user_manager(self.user), False)
+        
+    def test_parents(self):
+        profile = self.user.get_profile()
+        profile.location = Location.objects.get(zipcode="02804")
+        profile.save()
+        ri, washington_county, ashaway = Group.objects.filter(users=self.user, is_geo_group=True)
+        
+        self.failUnlessEqual(ri.parents(), [])
+        self.failUnlessEqual(washington_county.parents(), [ri])
+        self.failUnlessEqual(ashaway.parents(), [ri, washington_county])

@@ -137,7 +137,7 @@ def action_task(request, action_task_id):
 
 def profile(request, user_id):
     """docstring for profile"""
-    from groups.models import user_groups
+    from groups.models import Group
     user = request.user if request.user.id is user_id else get_object_or_404(User, id=user_id)
     if request.user <> user and user.get_profile().is_profile_private:
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
@@ -162,7 +162,7 @@ def profile(request, user_id):
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
         'commitment_list': user.get_commit_list(),
-        'my_groups': user_groups(user),
+        'my_groups': Group.objects.filter(users=user),
         'records': Record.objects.user_records(user, 10),
     }, context_instance=RequestContext(request))
 

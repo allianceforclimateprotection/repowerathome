@@ -1,0 +1,5 @@
+[
+    {"pk": 1, "model": "groups.group", "fields": {"membership_type": "O", "is_featured": 0, "description": "new york yankees fan club", "parent": null, "created": "2010-03-03 14:29:45", "image": "images/yankees.jpg", "updated": "2010-03-03 14:29:45", "location_type": "", "is_geo_group": 0, "sample_location": null, "slug": "yankees", "name": "yankees"}}, 
+    {"pk": 2, "model": "groups.group", "fields": {"membership_type": "C", "is_featured": 0, "description": "buffalo sabres fan club", "parent": null, "created": "2010-03-03 14:38:26", "image": "", "updated": "2010-03-03 14:38:26", "location_type": "", "is_geo_group": 0, "sample_location": null, "slug": "sabres", "name": "sabres"}}, 
+    {"pk": 3, "model": "groups.group", "fields": {"membership_type": "O", "is_featured": 0, "description": "", "parent": null, "created": "2010-03-03 13:56:00", "image": "", "updated": "2010-03-03 13:56:00", "location_type": "S", "is_geo_group": 1, "sample_location": 26108, "slug": "ny", "name": "New York"}}
+]
