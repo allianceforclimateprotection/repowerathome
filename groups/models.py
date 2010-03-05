@@ -148,6 +148,12 @@ class Group(models.Model):
             parents.append(self.parent)
         return parents
         
+    def has_other_managers(self, user):
+        return GroupUsers.objects.filter(group=self, is_manager=True).exclude(user=user).exists()
+        
+    def number_of_managers(self):
+        return GroupUsers.objects.filter(group=self, is_manager=True).count()
+        
     @models.permalink
     def get_absolute_url(self):
         if self.is_geo_group:

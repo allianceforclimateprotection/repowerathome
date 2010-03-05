@@ -1,0 +1,5 @@
+[
+    {"pk": 30602, "model": "geo.location", "fields": 
+        {"name": "Ashaway", "recruit": 0, "lon": "-71.7856238", "zipcode": "02804", "pop": 1547, "st": "RI", "county": "Washington County", "state": "Rhode Island", "lat": "41.4234329", "timezone": "America/New_York"}
+    }
+]

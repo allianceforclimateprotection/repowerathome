@@ -1,0 +1,32 @@
+<p>
+    {% for error in form.role.errors %}
+	    <span class="error">{{ error|escape }}</span>
+	{% endfor %}
+    {{ form.role }}
+    <input type="submit" name="change_membership" value="Submit"></input>
+</p>
+<p>
+    {% for error in form.memberships.errors %}
+	    <span class="error">{{ error|escape }}</span>
+	{% endfor %}
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Member</th>
+                <th>Date Joined</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for membership in form.memberships.field.queryset %}
+                <tr>
+                    <td><input name="memberships" value="{{ membership.pk }}" type="checkbox"></input></td>
+                    <td>{{ membership.user.get_full_name }}</td>
+                    <td>{{ membership.created }}</td>
+                    <td>{% if membership.is_manager %}Manager{% else %}Regular Member{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<p>

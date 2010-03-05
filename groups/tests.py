@@ -7,7 +7,7 @@ from rah.models import Profile, Action
 from models import Group, GroupUsers
 
 class GroupTest(TestCase):
-    fixtures = ["test_geo_RI.json", "test_groups.json", "test_actions.json", "test_actiontasks.json",]
+    fixtures = ["test_geo_02804.json", "test_groups.json", "test_actions.json", "test_actiontasks.json",]
     
     def setUp(self):
         self.user = User.objects.create(username="1", email="test@test.com")
@@ -105,7 +105,7 @@ class GroupTest(TestCase):
         self.failUnlessEqual(records.count(), 7)
         first = records[0]
         self.failUnlessEqual(first.user, second_user)
-        last = records[7]
+        last = records[6]
         self.failUnlessEqual(last.user, self.user)
         
     def test_has_pending_membership(self):

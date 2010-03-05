@@ -399,5 +399,17 @@ var rah = {
                 return false;
             });
         }
+    },
+    
+    page_group_edit: {
+        init: function() {
+            $("#group_edit_tabs").tabs();
+            $("#group_edit_tabs").bind("tabsselect", function(event, ui){
+                $("form", this).attr("action", $(ui.tab).attr("href"));
+            });
+            $("#delete_group_form").submit(function(){
+                return confirm("Are you sure you delete, this can not be undone?");
+            })
+        }
     }
 }

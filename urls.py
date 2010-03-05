@@ -55,6 +55,7 @@ if settings.DEBUG:
         'show_indexes': True }),)
         
 urlpatterns += patterns('groups.views',
-    url(r'^(?P<group_slug>[a-z0-9-]+)/feed/$', GroupActivityFeed(), name='group_activity_feed'),
     url(r'^(?P<group_slug>[a-z0-9-]+)/$', 'group_detail', name='group_detail'),
+    url(r'^(?P<group_slug>[a-z0-9-]+)/edit/$', 'group_edit', name='group_edit'),
+    url(r'^(?P<group_slug>[a-z0-9-]+)/feed/$', GroupActivityFeed(), name='group_activity_feed'),
 )

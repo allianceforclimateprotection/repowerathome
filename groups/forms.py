@@ -1,9 +1,11 @@
 from django import forms
 from django.core.urlresolvers import resolve, reverse
+from django.contrib.auth.models import User
 
 from geo.models import Location
 
-from models import Group
+from models import Group, GroupUsers
+from fields import UserModelMultipleChoiceField
 
 class GroupForm(forms.ModelForm):
     name = forms.CharField(label="Group name", help_text="Enter a name for your new group")
@@ -40,3 +42,39 @@ class GroupForm(forms.ModelForm):
         except:
             raise forms.ValidationError("This Group address is not allowed.")
         return data
+        
+class MembershipForm(forms.Form):
+    MEMBERSHIP_ROLES = (
+        ('', '--Set Membership Role--'),
+        ('M', 'Manager',),
+        ('N', 'Regular Member',),
+        ('D', 'Remove from Group',),
+    )
+    role = forms.ChoiceField(label="", choices=MEMBERSHIP_ROLES)
+    memberships = forms.ModelMultipleChoiceField(queryset=GroupUsers.objects.all(), widget=forms.CheckboxSelectMultiple)
+    
+    def __init__(self, group, *args, **kwargs):
+        super(MembershipForm, self).__init__(*args, **kwargs)
+        self.group = group
+        self.fields["memberships"].queryset = GroupUsers.objects.filter(group=group)
+        
+    def clean(self):
+        data = self.cleaned_data
+        role = data["role"] if "role" in data else ""
+        memberships = data["memberships"] if "memberships" in data else []
+        if (role == "N" or role == "D") and self.group.number_of_managers() == len(memberships):
+            self._errors["memberships"] = forms.util.ErrorList(["You must leave at least one manager in the group."])
+            del self.cleaned_data["memberships"]
+        return self.cleaned_data
+        
+    def save(self):
+        role = self.cleaned_data["role"]
+        memberships = self.cleaned_data["memberships"]
+        if role == "M":
+            memberships.update(is_manager=True)
+        elif role == "N":
+            memberships.update(is_manager=False)
+        elif role == "D":
+            memberships.delete()
+        else:
+            raise NameError("Role option %s does not exist" % role)         

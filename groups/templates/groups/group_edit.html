@@ -1,0 +1,48 @@
+{% extends "rah/base.html" %}
+{% block content %}
+    <div id="group_edit_tabs">
+        <ul>
+            <li><a href="#group_tab">Group</a></li>
+            <li><a href="#members_tab">Members</a></li>
+        </ul>
+        <div id="group_tab">
+            <form id="group_form" action="" method="post" enctype="multipart/form-data">
+                {% with group_form as form %}
+                    {% include "groups/_group_form.html" %}
+                {% endwith %}
+        		<p><input type="submit" name="change_group" value="Save Settings"></input></p>
+        		{% csrf_token %}
+        	</form>
+        	<form id="delete_group_form" action="" method="post">
+        	    <h3>Delete Group</h3>
+        	    <p>Deleting a group will immediately remove it from our system.<br/>Groups cannot be undeleted.</p>
+        	    <p><input type="submit" name="delete_group" value="Delete Group"></input></p>
+        	    {% csrf_token %}
+        	</form>
+        </div>
+        <div id="members_tab">
+            <form id="membership_form" action="" method="post">
+                {% with membership_form as form %}
+                    {% include "groups/_membership_form.html" %}
+                {% endwith %}
+                {% csrf_token %}
+            </form>
+        </div>
+{% endblock %}
+{% block minorcol %}
+    {% if requesters %}
+        <h2>Membership Requests</h2>
+        <ul>
+            {% for requester in requesters %}
+                <li class="membership_request">
+                    {% safe_user_link requester %} would like to join
+                    <div class="membership_tools">
+                        <a href="{% url group_approve group.id requester.id %}">Approve</a> or 
+                        <a href="{% url group_deny group.id requester.id %}">Deny</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
+{% block js %}page_group_edit{% endblock %}

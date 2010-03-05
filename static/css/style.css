@@ -383,15 +383,15 @@ acronym {
 /* @group groups */
 .group_section { margin-bottom: 25px; }
 
-#group_create_form { margin-top: 30px; }
+#group_form { margin-top: 30px; }
 
-#group_create_form .form_row { margin-bottom: 15px; }
-
-#group_create_form label { font-weight: bold; font-size: 0.9em; }
-
-#group_create_form .help_text { font-size: 0.8em; color: #636363; }
-
-#group_create_form ul { list-style-type: none; color: #373637; margin-left: 10px; }
+#group_form .form_row { margin-bottom: 15px; }
+      
+#group_form label { font-weight: bold; font-size: 0.9em; }
+      
+#group_form .help_text { font-size: 0.8em; color: #636363; }
+      
+#group_form ul { list-style-type: none; color: #373637; margin-left: 10px; }
 
 .group_parent { font-size: 0.7em; }
 
@@ -399,7 +399,7 @@ acronym {
 
 .group_description { font-size: 0.8em; }
 
-.group_leave { float: right; font-size: 0.8em; display: inline; }
+.group_action { float: right; font-size: 0.8em; display: inline; margin-left: 3px; }
 
 .membership_type { font-size: 0.7em; }
 

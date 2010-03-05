@@ -27,7 +27,7 @@
                 <h2>Top Members</h2>
                 <ol>
                 {% for user in top_members %}
-                    <li><a href="{% url profile user.id %}">{{ user }}</a> ({{ user.get_profile.total_points }})</li>
+                    <li><a href="{% url profile user.id %}">{{ user.get_full_name }}</a> ({{ user.get_profile.total_points }})</li>
                 {% endfor %}
                 </ol>
             {% endif %}
@@ -50,7 +50,7 @@
             <tbody>
                 {% for user in top_members %}
                     <tr>
-                        <td>{{ user }}</td>
+                        <td>{{ user.get_full_name }}</td>
                         <td>{{ user.actions_committed }}</td>
                         <td>{{ user.actions_completed }}</td>
                         <td>{{ user.get_profile.total_points }}</td>

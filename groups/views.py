@@ -5,11 +5,12 @@ from django.http import Http404
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import loader, RequestContext
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 
 from records.models import Record
 
 from models import Group, GroupUsers, MembershipRequests
-from forms import GroupForm
+from forms import GroupForm, MembershipForm
 
 @login_required
 @csrf_protect
@@ -25,7 +26,7 @@ def group_create(request):
             GroupUsers.objects.create(group=group, user=request.user, is_manager=True)
             Record.objects.create_record(request.user, 'group_create', group)
             messages.success(request, "%s has been created." % group)
-            return redirect("group_detail", group_slug=group.slug) # TODO: after creating the group we should redirect the user to the group detail page
+            return redirect("group_detail", group_slug=group.slug)
     else:
         form = GroupForm()
     return render_to_response("groups/group_create.html", {"form": form, "site": Site.objects.get_current()}, context_instance=RequestContext(request))
@@ -33,9 +34,12 @@ def group_create(request):
 @login_required
 def group_leave(request, group_id):
     group = get_object_or_404(Group, id=group_id)
-    if request.user in group.users.all():
-        GroupUsers.objects.filter(group=group, user=request.user).delete()
-        messages.success(request, "You have been removed from group %s" % group)
+    if request.user.id in group.users.all().values_list("id", flat=True):
+        if group.has_other_managers(request.user):
+            GroupUsers.objects.filter(group=group, user=request.user).delete()
+            messages.success(request, "You have been removed from group %s" % group)
+        else:
+            messages.error(request, "You can not leave the group, until you've assigned someone else to be manager.", extra_tags="sticky")
     else:
         messages.error(request, "You can not leave a group your not a member of")
     return redirect("group_detail", group_slug=group.slug)
@@ -65,7 +69,7 @@ def group_join(request, group_id):
     return redirect("group_detail", group_slug=group.slug)
 
 @login_required    
-def group_membership(request, group_id, user_id, action):
+def group_membership_request(request, group_id, user_id, action):
     group = get_object_or_404(Group, id=group_id)
     user = get_object_or_404(User, id=user_id)
     if not group.is_user_manager(request.user):
@@ -109,11 +113,55 @@ def group_list(request):
     new_groups = Group.objects.new_groups_with_memberships(request.user, 5)
     return render_to_response("groups/group_list.html", locals(), context_instance=RequestContext(request))
 
+@login_required
+@csrf_protect    
+def group_edit(request, group_slug):
+    group = get_object_or_404(Group, slug=group_slug, is_geo_group=False)
+    if not group.is_user_manager(request.user):
+        return _forbidden(request)
+    if request.method == "POST":
+        if "change_group" in request.POST:
+            group_form = GroupForm(request.POST, request.FILES, instance=group)
+            if group_form.is_valid():
+                group = group_form.save()
+                messages.success(request, "%s has been updated." % group)
+                return redirect("group_edit", group_slug=group.slug)
+            else:
+                membership_form = MembershipForm(group=group)
+        elif "delete_group" in request.POST:
+            group.delete()
+            messages.success(request, "%s has been deleted." % group)
+            return redirect("group_list")
+        elif "change_membership" in request.POST:
+            membership_form = MembershipForm(group=group, data=request.POST)
+            if membership_form.is_valid():
+                membership_form.save()
+                if group.is_user_manager(request.user):
+                    messages.success(request, "%s's memberships have been updated." % group)
+                    return render_to_response("groups/group_edit.html", locals(), context_instance=RequestContext(request))
+                else:
+                    messages.success(request, "You no longer have permissions to edit %s" % group)
+                    return redirect("group_detail", group_slug=group.slug)
+            else:
+                group_form = GroupForm(instance=group)
+    else:
+        group_form = GroupForm(instance=group)
+        membership_form = MembershipForm(group=group)
+    site = Site.objects.get_current()
+    requesters = group.requesters_to_grant_or_deny(request.user)
+    return render_to_response("groups/group_edit.html", locals(), context_instance=RequestContext(request))
+
 def _group_detail(request, group):
     popular_actions = group.completed_actions_by_user()
     top_members = group.members_ordered_by_points()
     group_records = group.group_records(10)
     is_member = group.is_member(request.user)
+    is_manager = group.is_user_manager(request.user)
     membership_pending = group.has_pending_membership(request.user)
     requesters = group.requesters_to_grant_or_deny(request.user)
+    has_other_managers = group.has_other_managers(request.user)
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))
+    
+def _forbidden(request, message="You do not have permissions."):
+    from django.http import HttpResponseForbidden
+    return HttpResponseForbidden(loader.render_to_string('403.html', { 'message':message, }, RequestContext(request)))

@@ -85,7 +85,7 @@ class RecordManager(models.Manager):
         content_object: A model object to associate with the record
         data: A python dictionary with additional data to be stored with the record 
         """
-        if type(activity) is str:
+        if not isinstance(activity, Activity):
             activity = Activity.objects.get(slug=activity)
 
         # Figure out how many points we're going to give.
