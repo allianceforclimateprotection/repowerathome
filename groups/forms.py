@@ -50,8 +50,9 @@ class MembershipForm(forms.Form):
         ('N', 'Regular Member',),
         ('D', 'Remove from Group',),
     )
-    role = forms.ChoiceField(label="", choices=MEMBERSHIP_ROLES)
-    memberships = forms.ModelMultipleChoiceField(queryset=GroupUsers.objects.all(), widget=forms.CheckboxSelectMultiple)
+    role = forms.ChoiceField(label="", choices=MEMBERSHIP_ROLES, error_messages={"required": "You must select a membership action."})
+    memberships = forms.ModelMultipleChoiceField(queryset=GroupUsers.objects.all(), widget=forms.CheckboxSelectMultiple,
+        error_messages={"required": "You must select at least one member from the group."})
     
     def __init__(self, group, *args, **kwargs):
         super(MembershipForm, self).__init__(*args, **kwargs)
