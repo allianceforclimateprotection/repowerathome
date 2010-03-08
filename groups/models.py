@@ -23,7 +23,7 @@ class GroupManager(models.Manager):
                                                         groups_membershiprequests.group_id = groups_group.id'})
         return groups[:limit] if limit else groups
         
-    def user_geo_groups(self, user):
+    def user_geo_group_tuple(self, user):
         location = user.get_profile().location
         geo_groups = []
         for location_type_tuple in Group.LOCATION_TYPE:
@@ -191,7 +191,7 @@ def associate_with_geo_groups(sender, instance, **kwargs):
     user = instance.user
     GroupUsers.objects.filter(user=user, group__is_geo_group=True).delete()
     if instance.location:
-        geo_groups = Group.objects.user_geo_groups(user)
+        geo_groups = Group.objects.user_geo_group_tuple(user)
         for location_type, geo_group in geo_groups:
             if not geo_group:
                 geo_group = Group.objects.create_geo_group(location_type, instance.location)

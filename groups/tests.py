@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from geo.models import Location
 from rah.models import Profile, Action
 
-from models import Group, GroupUsers
+from models import Group, GroupUsers, MembershipRequests
 
 class GroupTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_groups.json", "test_actions.json", "test_actiontasks.json",]
@@ -19,7 +19,7 @@ class GroupTest(TestCase):
         profile = self.user.get_profile()
         profile.location = Location.objects.get(zipcode="02804")
         profile.save()
-        ri, washington_county, ashaway = Group.objects.filter(users=self.user, is_geo_group=True)
+        ri, washington_county, ashaway = [g[1] for g in Group.objects.user_geo_group_tuple(self.user)]
         self.failUnlessEqual(ri.name, "Rhode Island")
         self.failUnlessEqual(ri.slug, "ri")
         self.failUnlessEqual(ri.location_type, "S")
@@ -109,10 +109,17 @@ class GroupTest(TestCase):
         self.failUnlessEqual(last.user, self.user)
         
     def test_has_pending_membership(self):
-        pass
+        self.failUnlessEqual(self.yankees.has_pending_membership(self.user), False)
+        MembershipRequests.objects.create(group=self.yankees, user=self.user)
+        self.failUnlessEqual(self.yankees.has_pending_membership(self.user), True)
         
     def test_requesters_to_grant_or_deny(self):
-        pass
+        self.failUnlessEqual(list(self.yankees.requesters_to_grant_or_deny(self.user)), [])
+        GroupUsers.objects.create(group=self.yankees, user=self.user, is_manager=True)
+        self.failUnlessEqual(list(self.yankees.requesters_to_grant_or_deny(self.user)), [])
+        second_user = User.objects.create(username="2", email="test@example.com")
+        MembershipRequests.objects.create(group=self.yankees, user=second_user)
+        self.failUnlessEqual(list(self.yankees.requesters_to_grant_or_deny(self.user)), [second_user])
         
     def test_is_user_manager(self):
         GroupUsers.objects.create(group=self.yankees, user=self.user, is_manager=True)
