@@ -6,7 +6,7 @@
 	<h2>Comments</h2>
 	{% for comment in comments %}
 		<div class="comment">
-			{{ comment.comment|safe|linebreaks }}
+			{{ comment.comment|linebreaks }}
 			<p class="author">
 				-- Posted by {% safe_user_link comment.user %} on {{ comment.submit_date|date:"F j, Y" }}
 			</p>
