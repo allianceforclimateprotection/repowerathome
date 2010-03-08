@@ -2,7 +2,7 @@ ssh_options[:keys] = %w(~/.ec2/acp-ec2-pk.pem)
 
 set :application, "rah"
 set :user, "ubuntu"
-set :deploy_to, "/scripts/dev"
+set :deploy_to, "/scripts/dev.repowerathome.com"
 
 # These things are not used at the moment
 set :scm, :git
@@ -18,12 +18,12 @@ role :app, "repowerathome.com"
 
 namespace :deploy do    
     task :staging do
-        set :deploy_to, "/scripts/staging"
+        set :deploy_to, "/scripts/staging.repowerathome.com"
         default
     end
     
     task :prod do
-        set :deploy_to, "/scripts/prod"
+        set :deploy_to, "/scripts/repowerathome.com"
         default
     end
     
