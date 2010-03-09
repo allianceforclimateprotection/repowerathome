@@ -1,9 +1,13 @@
+from smtplib import SMTPException
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.core.mail import send_mail
 from django.http import Http404
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from django.template import loader, RequestContext
+from django.template import Context, loader, RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 
@@ -57,7 +61,7 @@ def group_join(request, group_id):
         GroupUsers.objects.create(group=group, user=request.user, is_manager=False)
         messages.success(request, "You have successfully joined group %s" % group, extra_tags="sticky")
     else:
-        template = loader.get_template("rah/group_join_request.html")
+        template = loader.get_template("groups/group_join_request.html")
         context = { "user": request.user, "group": group, "domain": Site.objects.get_current().domain, }
         manager_emails = [user_dict["email"] for user_dict in User.objects.filter(group=group, groupusers__is_manager=True).values("email")]
         try:
