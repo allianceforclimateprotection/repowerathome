@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from geo.models import Location
 
 from models import Group, GroupUsers
-from fields import UserModelMultipleChoiceField
 
 class GroupForm(forms.ModelForm):
     name = forms.CharField(label="Group name", help_text="Enter a name for your new group")
