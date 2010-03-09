@@ -1,6 +1,6 @@
 from django.contrib import admin
-from rah.models import *
-from rah.forms import *
+from rah.models import Signup, ActionTask, Action, Profile
+from rah.forms import ActionAdminForm
 
 class SignupAdmin(admin.ModelAdmin):
     list_display = ('email', 'zipcode')
@@ -9,11 +9,7 @@ class SignupAdmin(admin.ModelAdmin):
 class ActionAdmin(admin.ModelAdmin):
     form = ActionAdminForm
 
-class ActionCatAdmin(admin.ModelAdmin):
-    form = ActionCatAdminForm
-
 admin.site.register(Signup, SignupAdmin)
 admin.site.register(ActionTask)
 admin.site.register(Action, ActionAdmin)
-admin.site.register(ActionCat, ActionCatAdmin)
 admin.site.register(Profile)

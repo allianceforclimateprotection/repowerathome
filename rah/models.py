@@ -16,16 +16,6 @@ class DefaultModel(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.name)
-    
-class DefaultModel(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        abstract = True
-    
-    def __unicode__(self):
-        return u'%s' % (self.name)
 
 class User(AuthUser):
     class Meta:
@@ -51,12 +41,6 @@ class User(AuthUser):
         
     def __unicode__(self):
         return u'%s' % (self.get_full_name())
-
-class ActionCat(DefaultModel):
-    name = models.CharField(max_length=255)
-    slug = models.CharField(max_length=255)
-    teaser = models.TextField()
-    content = models.TextField()
     
 class ActionManager(models.Manager):
     def actions_by_completion_status(self, user, tag=None):
@@ -108,7 +92,6 @@ class Action(DefaultModel):
     users_in_progress = models.IntegerField(default=0)
     users_completed = models.IntegerField(default=0)
     users_committed = models.IntegerField(default=0)
-    category = models.ForeignKey(ActionCat)
     users = models.ManyToManyField(AuthUser, through="UserActionProgress")
     objects = ActionManager()
     

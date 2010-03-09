@@ -202,19 +202,6 @@ class ActionAdminForm(forms.ModelForm):
     
         return data
 
-class ActionCatAdminForm(forms.ModelForm):
-    class Meta:
-        model = ActionCat
-
-    def clean_slug(self):
-        import re
-        data = self.cleaned_data['slug']
-
-        if not re.search('^[a-z0-9-]+$', data):
-            raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
-
-        return data
-
 class ActionCommitForm(forms.Form):
     date_committed = forms.DateField(label="Commit date", required=False)
     cancel_commitment = forms.BooleanField(required=False)
