@@ -1,5 +1,7 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.test import TestCase
+from django.test.client import Client
 
 from geo.models import Location
 from rah.models import Profile, Action
@@ -139,3 +141,55 @@ class GroupTest(TestCase):
         self.failUnlessEqual(ri.parents(), [])
         self.failUnlessEqual(washington_county.parents(), [ri])
         self.failUnlessEqual(ashaway.parents(), [ri, washington_county])
+        
+class GroupCreateViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.group_create_url = reverse("group_create")
+        
+    def test_login_required(self):
+        response = self.client.get(self.group_create_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.group_create_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_create.html")
+        
+    def test_valid(self):
+        self.client.login(username="test@test.com", password="test")
+        image = open("static/images/theme/geo_group.jpg")
+        response = self.client.post(self.group_create_url, {"name": "Test Group", "slug": "test-group", 
+            "description": "This is a test group", "image": image, "membership_type": "O"}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        test_group = response.context["group"]
+        self.failUnlessEqual(test_group.slug, "test-group")
+        self.failUnlessEqual(test_group.description, "This is a test group")
+        self.failUnlessEqual(test_group.membership_type, "O")
+        
+    def test_missing_required(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.group_create_url, {}, follow=True)
+        errors = response.context["form"].errors
+        self.failUnlessEqual(len(errors), 4)
+        self.failUnlessEqual("name" in errors, True)
+        self.failUnlessEqual("slug" in errors, True)
+        self.failUnlessEqual("description" in errors, True)
+        self.failUnlessEqual("image" in errors, False)
+        self.failUnlessEqual("membership_type" in errors, True)
+    
+    def test_invalid_slug(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.group_create_url, {"name": "Test Group", "slug": "test group", 
+            "description": "This is a test group", "membership_type": "O"}, follow=True)
+        errors = response.context["form"].errors
+        self.failUnlessEqual(len(errors), 1)
+        self.failUnlessEqual("slug" in errors, True)
+        
+    def test_non_unique_slug(self):
+        Group.objects.create(name="new group", slug="test-group")
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.group_create_url, {"name": "Test Group", "slug": "test-group", 
+            "description": "This is a test group", "membership_type": "O"}, follow=True)
+        errors = response.context["form"].errors
+        self.failUnlessEqual(len(errors), 1)
+        self.failUnlessEqual("slug" in errors, True)
