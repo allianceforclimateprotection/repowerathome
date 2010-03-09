@@ -90,6 +90,8 @@ INSTALLED_APPS = (
     'search_widget',
 )
 
+FIXTURE_DIR = ('fixtures',)
+
 ABSOLUTE_URL_OVERRIDES = {
     'auth.user': lambda user: "/user/%s/" % user.id,
 }
