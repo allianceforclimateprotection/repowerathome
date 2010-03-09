@@ -149,7 +149,10 @@ class Group(models.Model):
         return parents
         
     def has_other_managers(self, user):
-        return GroupUsers.objects.filter(group=self, is_manager=True).exclude(user=user).exists()
+        managers = GroupUsers.objects.filter(group=self, is_manager=True)
+        if user.is_authenticated():
+            managers = managers.exclude(user=user)
+        return managers.exists()
         
     def number_of_managers(self):
         return GroupUsers.objects.filter(group=self, is_manager=True).count()
