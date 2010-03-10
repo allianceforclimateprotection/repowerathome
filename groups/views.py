@@ -37,7 +37,7 @@ def group_create(request):
     
 @login_required
 def group_leave(request, group_id):
-    group = get_object_or_404(Group, id=group_id)
+    group = get_object_or_404(Group, id=group_id, is_geo_group=False)
     if request.user.id in group.users.all().values_list("id", flat=True):
         if group.has_other_managers(request.user):
             GroupUsers.objects.filter(group=group, user=request.user).delete()
@@ -50,7 +50,7 @@ def group_leave(request, group_id):
     
 @login_required
 def group_join(request, group_id):
-    group = get_object_or_404(Group, id=group_id)
+    group = get_object_or_404(Group, id=group_id, is_geo_group=False)
     if GroupUsers.objects.filter(group=group, user=request.user).exists():
         messages.error(request, "You are already a member")
         return redirect("group_detail", group_slug=group.slug)
@@ -74,10 +74,10 @@ def group_join(request, group_id):
 
 @login_required    
 def group_membership_request(request, group_id, user_id, action):
-    group = get_object_or_404(Group, id=group_id)
+    group = get_object_or_404(Group, id=group_id, is_geo_group=False)
     user = get_object_or_404(User, id=user_id)
     if not group.is_user_manager(request.user):
-        messages.errors(request, "You do not have permissions")
+        messages.error(request, "You do not have permissions")
         return redirect("group_detail", group_slug=group.slug)
     membership_request = MembershipRequests.objects.filter(group=group, user=user)
     if membership_request:
@@ -89,7 +89,7 @@ def group_membership_request(request, group_id, user_id, action):
             membership_request.delete()
             messages.success(request, "%s has been denied access to the group" % user)
     else:
-        messages.errors(request, "%s has not requested to join this group" % user)
+        messages.error(request, "%s has not requested to join this group" % user)
     return redirect("group_detail", group_slug=group.slug)
 
 def group_detail(request, group_slug):
