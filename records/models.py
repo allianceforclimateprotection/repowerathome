@@ -112,7 +112,7 @@ class RecordManager(models.Manager):
         return record
 
     def void_record(self, user, activity, content_object):
-        if type(activity) is str:
+        if not isinstance(activity, Activity):
             activity = Activity.objects.get(slug=activity)
         record = Record.objects.filter(user=user, activity=activity, content_objects__object_id=content_object.id)[0:1]
         if record:
