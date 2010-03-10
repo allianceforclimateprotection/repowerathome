@@ -85,11 +85,9 @@ def group_membership_request(request, group_id, user_id, action):
             GroupUsers.objects.create(group=group, user=user, is_manager=False)
             membership_request.delete()
             messages.success(request, "%s has been added to the group" % user)
-            # TODO: also create a message for the approved user
         elif action == "deny":
             membership_request.delete()
             messages.success(request, "%s has been denied access to the group" % user)
-            # TODO: also create a message for the denied user
     else:
         messages.errors(request, "%s has not requested to join this group" % user)
     return redirect("group_detail", group_slug=group.slug)

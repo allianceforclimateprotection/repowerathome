@@ -63,7 +63,6 @@ class RegistrationForm(forms.ModelForm):
             raise forms.ValidationError("Your password must contain at least 5 characters.")
         return password2
 
-    # OPTIMIZE: This code is duplicated in the profile form
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
         if not len(data):
