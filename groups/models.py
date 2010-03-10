@@ -40,7 +40,8 @@ class GroupManager(models.Manager):
         parent = None
         if parent_key:
             parent_slug = Group.LOCATION_SLUG[parent_key](location)
-            parent = self.get(slug=parent_slug)
+            parent_query = self.filter(slug=parent_slug)
+            parent = parent_query[0] if parent_query else self.create_geo_group(parent_key, location)
         geo_group = Group(name=name, slug=slug, is_geo_group=True, location_type=location_type, sample_location=location, parent=parent)
         geo_group.save()
         return geo_group
