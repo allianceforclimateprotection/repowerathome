@@ -3,7 +3,6 @@
         "pk": 16, 
         "model": "rah.action", 
         "fields": {
-            "category": 1, 
             "updated": "2010-02-18 10:29:40", 
             "users_committed": 0, 
             "name": "Insulate your water heater", 
@@ -21,7 +20,6 @@
         "pk": 17, 
         "model": "rah.action", 
         "fields": {
-            "category": 5, 
             "updated": "2010-02-02 14:39:47", 
             "users_committed": 0, 
             "name": "Replace your outdated refrigerator", 

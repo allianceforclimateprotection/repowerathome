@@ -16,8 +16,7 @@ def create_test_users_and_action_tasks(object):
     """
     object.u1 = User.objects.create(username='1', email='test@test.com')
     object.u2 = User.objects.create(username='2', email='test@test.net')
-    object.ac = ActionCat.objects.create(name='test action cat')
-    object.a = Action.objects.create(name='test action', slug='test-action', category=object.ac)
+    object.a = Action.objects.create(name='test action', slug='test-action')
     object.at1 = ActionTask.objects.create(name='test action task 1', action=object.a, points=5, sequence=1)
     object.at2 = ActionTask.objects.create(name='test action task 2', action=object.a, points=10, sequence=2)
     object.at3 = ActionTask.objects.create(name='test action task 3', action=object.a, points=20, sequence=3)
