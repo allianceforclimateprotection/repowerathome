@@ -389,4 +389,25 @@ class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(MembershipRequests.objects.filter(user=self.requester, group=self.group).exists(), False)
-        self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), False)    
+        self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), False)
+        
+class GroupDetailViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_invalid_group_id(self):
+        detail_url = reverse("group_detail", args=["does-not-exisit-group"])
+        response = self.client.get(detail_url)
+        self.failUnlessEqual(response.status_code, 404)
+
+    def test_geo_group_id(self):
+        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True)
+        detail_url = reverse("group_detail", args=[geo_group.slug])
+        response = self.client.get(detail_url)
+        self.failUnlessEqual(response.status_code, 404)
+
+    def test_valid_detail(self):
+        group = Group.objects.create(name="test group", slug="test-group")
+        detail_url = reverse("group_detail", args=[group.slug])
+        response = self.client.get(detail_url)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
