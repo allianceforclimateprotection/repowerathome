@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
+from django.contrib.messages import constants
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.test import TestCase
 from django.test.client import Client
 
@@ -168,7 +170,7 @@ class GroupCreateViewTest(TestCase):
         
     def test_missing_required(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.group_create_url, {}, follow=True)
+        response = self.client.post(self.group_create_url, follow=True)
         errors = response.context["form"].errors
         self.failUnlessEqual(len(errors), 4)
         self.failUnlessEqual("name" in errors, True)
@@ -193,3 +195,47 @@ class GroupCreateViewTest(TestCase):
         errors = response.context["form"].errors
         self.failUnlessEqual(len(errors), 1)
         self.failUnlessEqual("slug" in errors, True)
+        
+class GroupLeaveViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.group = Group.objects.create(name="test group", slug="test-group")
+        self.group_leave_url = reverse("group_leave", args=[self.group.id])
+        
+    def test_login_required(self):
+        response = self.client.get(self.group_leave_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        
+    def test_invalid_group_id(self):
+        self.client.login(username="test@test.com", password="test")
+        max_id = Group.objects.aggregate(max=models.Max("id"))["max"]
+        group_url = reverse("group_leave", args=[max_id+1])
+        response = self.client.get(group_url, follow=True)
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_not_a_member(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.group_leave_url, follow=True)
+        message = iter(response.context["messages"]).next()
+        self.failUnless("error" in message.tags)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        
+        
+    def test_only_manager(self):
+        self.client.login(username="test@test.com", password="test")
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        response = self.client.get(self.group_leave_url, follow=True)
+        message = iter(response.context["messages"]).next()
+        self.failUnless("error" in message.tags)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        
+    def successful_leave(self):
+        self.client.login(username="test@test.com", password="test")
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=False)
+        response = self.client.get(self.group_leave_url, follow=True)
+        message = iter(response.context["messages"]).next()
+        self.failUnless("success" in message.tags)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        
+        
