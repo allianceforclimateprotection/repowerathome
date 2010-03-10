@@ -99,9 +99,8 @@ class Group(models.Model):
         return self.is_geo_group or self.membership_type == "O"
         
     def is_member(self, user):
-        if user.is_authenticated():
-            return GroupUsers.objects.filter(group=self, user=user).exists()
-        return False
+        return user.is_authenticated() and \
+            GroupUsers.objects.filter(group=self, user=user).exists()
         
     def safe_image(self):
         if self.is_geo_group:
@@ -129,9 +128,9 @@ class Group(models.Model):
         return records[:limit] if limit else records
         
     def has_pending_membership(self, user):
-        if self.is_joinable() and user.is_authenticated():
-            return MembershipRequests.objects.filter(group=self, user=user).exists()
-        return False
+        return user.is_authenticated() and \
+            self.is_joinable() and \
+            MembershipRequests.objects.filter(group=self, user=user).exists()
         
     def requesters_to_grant_or_deny(self, user):
         if self.is_joinable() and user.is_authenticated() and self.is_user_manager(user):
@@ -139,7 +138,9 @@ class Group(models.Model):
         return []
         
     def is_user_manager(self, user):
-        return self.is_joinable() and GroupUsers.objects.filter(user=user, group=self, is_manager=True).exists()
+        return user.is_authenticated() and \
+            self.is_joinable() and \
+            GroupUsers.objects.filter(user=user, group=self, is_manager=True).exists()
         
     def parents(self):
         parents = []
