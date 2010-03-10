@@ -1,5 +1,5 @@
 {% extends "records/base.html" %}
 {% block activity_item %}
     <a href="{% url profile record.user.id %}">{{ record.user.get_full_name }}</a> invited a friend to join Repower@Home 
-    on {{ record.created|date:"M j, Y" }}{% if record.points %}for {{ record.points }} points{% endif %}
+    on {{ record.created|date:"M j, Y" }}{% if record.points %} for {{ record.points }} points{% endif %}
 {% endblock %}
