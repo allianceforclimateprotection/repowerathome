@@ -215,6 +215,13 @@ class GroupLeaveViewTest(TestCase):
         response = self.client.get(leave_url, follow=True)
         self.failUnlessEqual(response.status_code, 404)
         
+    def test_geo_group_id(self):
+        self.client.login(username="test@test.com", password="test")
+        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True)
+        leave_url = reverse("group_leave", args=[geo_group.id])
+        response = self.client.get(leave_url)
+        self.failUnlessEqual(response.status_code, 404)
+        
     def test_not_a_member(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.get(self.group_leave_url, follow=True)
@@ -254,6 +261,13 @@ class GroupJoinViewTest(TestCase):
         max_id = Group.objects.aggregate(max=models.Max("id"))["max"]
         join_url = reverse("group_join", args=[max_id+1])
         response = self.client.get(join_url, follow=True)
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_geo_group_id(self):
+        self.client.login(username="test@test.com", password="test")
+        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True)
+        join_url = reverse("group_join", args=[geo_group.id])
+        response = self.client.get(join_url)
         self.failUnlessEqual(response.status_code, 404)
         
     def test_already_a_member(self):
@@ -296,3 +310,83 @@ class GroupJoinViewTest(TestCase):
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, [manager.email])
         self.failUnlessEqual(email.subject, "Group Join Request")
+        
+class GroupMembershipRequestViewTest(object):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.requester = User.objects.create_user(username="requester", email="requester@test.com", password="requester")
+        self.group = Group.objects.create(name="test group", slug="test-group")
+        self.url = reverse(self.url_name, args=[self.group.id, self.requester.id])
+        
+    def test_login_required(self):
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        
+    def test_invalid_group_id(self):
+        self.client.login(username="test@test.com", password="test")
+        max_id = Group.objects.aggregate(max=models.Max("id"))["max"]
+        approve_url = reverse(self.url_name, args=[max_id+1, self.requester.id])
+        response = self.client.get(approve_url)
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_geo_group_id(self):
+        self.client.login(username="test@test.com", password="test")
+        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True)
+        approve_url = reverse(self.url_name, args=[geo_group.id, self.requester.id])
+        response = self.client.get(approve_url)
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_invalid_user_id(self):
+        self.client.login(username="test@test.com", password="test")
+        max_id = User.objects.aggregate(max=models.Max("id"))["max"]
+        approve_url = reverse(self.url_name, args=[self.group.id, max_id+1])
+        response = self.client.get(approve_url)
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_not_a_manager(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("error" in message.tags)
+        
+    def test_did_not_request(self):
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("error" in message.tags)
+        
+class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
+    def __init__(self, *args, **kwargs):
+        self.url_name = "group_approve"
+        super(TestCase, self).__init__(*args, **kwargs)
+        
+    def test_successful_approve(self):
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        MembershipRequests.objects.create(user=self.requester, group=self.group)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("success" in message.tags)
+        self.failUnlessEqual(MembershipRequests.objects.filter(user=self.requester, group=self.group).exists(), False)
+        self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), True)
+        
+class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
+    def __init__(self, *args, **kwargs):
+        self.url_name = "group_deny"
+        super(TestCase, self).__init__(*args, **kwargs)
+        
+    def test_successful_deny(self):
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        MembershipRequests.objects.create(user=self.requester, group=self.group)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("success" in message.tags)
+        self.failUnlessEqual(MembershipRequests.objects.filter(user=self.requester, group=self.group).exists(), False)
+        self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), False)    
