@@ -447,3 +447,17 @@ class GeoGroupViewTest(TestCase):
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 404)
         
+class GroupListViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.url = reverse("group_list")
+        
+    def test_listing(self):
+        for i in xrange(10):
+            Group.objects.create(name="%s" % i, slug="slug-%s" % i)
+        response = self.client.get(self.url)
+        self.failUnlessEqual(response.template[0].name, "groups/group_list.html")
+        self.failUnlessEqual(len(response.context["new_groups"]), 5)
+        
+        
+        
