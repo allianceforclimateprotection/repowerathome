@@ -38,7 +38,7 @@ class Post(models.Model):
     )
     title = models.CharField(_('title'), max_length=200)
     slug = models.SlugField(_('slug'), unique_for_date='publish')
-    author = models.ForeignKey(User, blank=True, null=True)
+    author = models.ForeignKey(User)
     body = models.TextField(_('body'), )
     tease = models.TextField(_('tease'), blank=True, help_text=_('Concise text suggested. Does not appear in RSS feed.'))
     status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=2)
