@@ -411,3 +411,39 @@ class GroupDetailViewTest(TestCase):
         detail_url = reverse("group_detail", args=[group.slug])
         response = self.client.get(detail_url)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        
+class GeoGroupViewTest(TestCase):
+    fixtures = ["test_geo_02804.json"]
+
+    def setUp(self):
+        self.client = Client()
+        self.asahway = Location.objects.get(zipcode="02804")
+
+    def test_state_geo_group(self):
+        group = Group.objects.create_geo_group("S", self.asahway)
+        url = reverse("geo_group_state", args=["RI"])
+        response = self.client.get(url)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+
+    def test_county_geo_group(self):
+        group = Group.objects.create_geo_group("C", self.asahway)
+        url = reverse("geo_group_county", args=["RI", "washington-county"])
+        response = self.client.get(url)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+
+    def test_place_geo_group(self):
+        group = Group.objects.create_geo_group("P", self.asahway)
+        url = reverse("geo_group_place", args=["RI", "washington-county", "ashaway"])
+        response = self.client.get(url)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        
+    def test_geo_group_not_yet_created(self):
+        url = reverse("geo_group_county", args=["NY", "erie-county"])
+        response = self.client.get(url)
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_invalid_geo_group(self):
+        url = reverse("geo_group_place", args=["HQ", "nowhere-county", "imaginaryville"])
+        response = self.client.get(url)
+        self.failUnlessEqual(response.status_code, 404)
+        
