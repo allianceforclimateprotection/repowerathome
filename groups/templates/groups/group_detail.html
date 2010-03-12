@@ -50,10 +50,10 @@
             <tbody>
                 {% for user in top_members %}
                     <tr>
-                        <td>{{ user.get_full_name }}</td>
+                        <td>{% safe_user_link user %}</td>
                         <td>{{ user.actions_committed }}</td>
                         <td>{{ user.actions_completed }}</td>
-                        <td>{{ user.get_profile.total_points }}</td>
+                        <td>{{ user.total_points }}</td>
                         <td>{{ user.last_active|date:"M j, Y" }}</td>
                     </tr>
                 {% endfor %}

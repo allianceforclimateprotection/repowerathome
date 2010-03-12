@@ -116,12 +116,22 @@ class Group(models.Model):
         actions = actions.order_by("-users_completed")
         return actions
 
-    def members_ordered_by_points(self, limit=None):
-        users = User.objects.filter(group=self)
-        users = users.order_by("-profile__total_points")
-        users = users.annotate(actions_completed=models.Sum("useractionprogress__is_completed"))
-        users = users.annotate(actions_committed=models.Count("useractionprogress__date_committed"))
-        return users[:limit] if limit else users
+    def members_ordered_by_points(self):
+        return User.objects.raw("""
+        SELECT auth_user.id, auth_user.username, auth_user.first_name, auth_user.last_name, auth_user.email, auth_user.password, 
+        	auth_user.is_staff, auth_user.is_active, auth_user.is_superuser, auth_user.last_login, auth_user.date_joined, rah_profile.total_points,
+        	SUM(rah_useractionprogress.is_completed) AS actions_completed, 
+        	COUNT(rah_useractionprogress.date_committed) AS actions_committed,
+        	(SELECT MAX(created) FROM records_record WHERE user_id = auth_user.id) AS last_active
+        FROM auth_user 
+        INNER JOIN groups_groupusers ON (auth_user.id = groups_groupusers.user_id)
+        LEFT OUTER JOIN rah_useractionprogress ON (auth_user.id = rah_useractionprogress.user_id)
+        LEFT OUTER JOIN rah_profile ON (auth_user.id = rah_profile.user_id)
+        WHERE groups_groupusers.group_id = %s
+        GROUP BY auth_user.id, auth_user.username, auth_user.first_name, auth_user.last_name, auth_user.email, auth_user.password,
+        	auth_user.is_staff, auth_user.is_active, auth_user.is_superuser, auth_user.last_login, auth_user.date_joined, rah_profile.total_points
+        ORDER BY rah_profile.total_points DESC
+        """ % self.id)
 
     def group_records(self, limit=None):
         records = Record.objects.filter(user__group=self)
