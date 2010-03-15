@@ -17,8 +17,10 @@
 			        {{ users_helped }} out of {{ users_voted }} user{{ users_voted|pluralize }} found this helpful.<br />
 			    {% endif %}
 			    {% if user.is_authenticated %}
-        		    <span class="comment_helpful_question">Did you find this comment helpful?</span>
-        			{% get_rating_form for comment %}
+			        <div class="rateable_rate_form_container">
+            		    <span class="comment_helpful_question">Did you find this comment helpful?</span>
+            			{% get_rating_form for comment %}
+            		</div>
         		{% endif %}
 			</div>
 		</div>

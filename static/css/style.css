@@ -173,6 +173,9 @@ acronym {
 .error   { color: #D8000C; background-color: #FFBABA; }
 .ga_track_pageview {display:none;}
 
+.highlight { background-color: #FFFF88; }
+
+
 /** Content Containers **/
 #content-container {
 	width: 960px;
@@ -449,8 +452,13 @@ th.headerSortUp, th.headerSortDown {
 /* @end */
 
 /* Activity Stream */
-.activity_item{ margin-bottom:10px;}
+.activity_item { margin-bottom:10px;}
 
+
+/* @groups rateable */
+.rateable_rate_form_container { margin-bottom: 20px; }
+.rateable_rate_form * { padding-bottom: 0; }
+/* @end */
 /*
 * jQuery UI CSS Framework
 * Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)

@@ -273,16 +273,7 @@ var rah = {
                     name: { required: true }
                 }
             });
-            $(".rateable_rate_form [name='next']").remove();
-            $('.rateable_rate_form :submit').click(function(){
-                submit = $(this);
-                form = submit.parents('form');
-                form.append("<input type='hidden' name='" + submit.val() + "' value='" + submit.val() + "' />");
-                $.post(form.attr('action'), form.serialize(), function(data){
-                    rah.mod_messages.init(data);
-                });
-               return false; 
-            });
+            rah.mod_is_helpful_widget.init();
         }
     },
     
@@ -410,6 +401,26 @@ var rah = {
             $("#delete_group_form").submit(function(){
                 return confirm("Are you sure you delete, this can not be undone?");
             })
+        }
+    },
+    
+    mod_is_helpful_widget: {
+        init: function() {
+            $(".rateable_rate_form [name='next']").remove();
+            $(".rateable_rate_form").submit(function(event) {
+                var form = $(this);
+                var value = event.originalEvent.explicitOriginalTarget.value;
+                form.append("<input type='hidden' name='" + value + "' />");
+                $.ajax({
+                    url: form.attr("action"),
+                    type: form.attr("method"),
+                    data: form.serialize(),
+                    success: function(data) {
+                        form.parent("div").html(data);
+                    }
+                });
+                return false;
+            });
         }
     }
 }

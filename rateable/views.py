@@ -47,5 +47,7 @@ def rate(request, rating_widget=IsHelpfulWidget, next=None, using=None, success_
         template_list = [ 
             "rateable/%s/ajax/rated.html" % content_type.model_class()._meta.app_label,
             "rateable/ajax/rated.html",
-        ] + template_list 
+        ] + template_list
+        for message in request._messages: #if messages weren't used in the response, clear them out
+            pass
     return render_to_response(template_list, {"rating":rating}, context_instance=RequestContext(request))    
