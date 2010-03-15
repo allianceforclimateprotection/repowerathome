@@ -72,12 +72,12 @@ class GroupTest(TestCase):
             task.complete_task(third_user)
         
         fridge, water_heater = self.yankees.completed_actions_by_user()
-        self.failUnlessEqual(water_heater.users_completed, 1)
-        self.failUnlessEqual(fridge.users_completed, 2)
-        water_heater.actiontask_set.all()[0].complete_task(self.user, undo=True)
-        actions = self.yankees.completed_actions_by_user()
-        self.failUnlessEqual(actions[0].users_completed, 1)
-        self.failUnlessEqual(actions[1].users_completed, 1)
+        self.failUnlessEqual(water_heater.completes_in_group, 1)
+        self.failUnlessEqual(fridge.completes_in_group, 2)
+        fridge.actiontask_set.all()[0].complete_task(self.user, undo=True)
+        actions = list(self.yankees.completed_actions_by_user())
+        self.failUnlessEqual(actions[0].completes_in_group, 1)
+        self.failUnlessEqual(actions[1].completes_in_group, 1)
     
     def test_members_ordered_by_points(self):
         GroupUsers.objects.create(group=self.yankees, user=self.user)
@@ -515,47 +515,3 @@ class GroupEditViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
         changed_group = Group.objects.get(pk=self.group.id)
         self.failUnlessEqual(changed_group.name, "Changed Group")
-    
-
-# class SeleniumCreateDeleteGroup(TestCase):
-#     def setUp(self):
-#         self.verificationErrors = []
-#         self.selenium = selenium("localhost", 4444, "*chrome", "http://localhost:8000/")
-#         self.selenium.start()
-# 
-#     def test_create_delete_group(self):
-#         sel = self.selenium
-#         sel.open("/")
-#         sel.click("link=Login")
-#         sel.wait_for_page_to_load("30000")
-#         sel.type("id_email", "test@repowerathome.com")
-#         sel.type("id_password", "repotest10")
-#         sel.click("//input[@value='Login']")
-#         sel.wait_for_page_to_load("30000")
-#         sel.click("link=Create a group")
-#         sel.wait_for_page_to_load("30000")
-#         sel.type("id_name", "test group")
-#         sel.key_up("id_name", "p")
-#         sel.type("id_description", "creating a test group")
-#         sel.click("//input[@value='Create Group']")
-#         sel.wait_for_page_to_load("30000")
-#         try: self.failUnless(sel.is_text_present("test group has been created."))
-#         except AssertionError, e: self.verificationErrors.append(str(e))
-#         try: self.assertEqual("test group", sel.get_text("//h1/a"))
-#         except AssertionError, e: self.verificationErrors.append(str(e))
-#         sel.click("link=Edit Group")
-#         sel.wait_for_page_to_load("30000")
-#         sel.click("delete_group")
-#         sel.wait_for_page_to_load("30000")
-#         self.failUnless(re.search(r"^Are you sure you delete, this can not be undone[\s\S]$", sel.get_confirmation()))
-#         try: self.failUnless(sel.is_text_present("test group has been deleted."))
-#         except AssertionError, e: self.verificationErrors.append(str(e))
-#         sel.click("link=Logout")
-#         sel.wait_for_page_to_load("30000")
-#         try: self.failUnless(sel.is_text_present("You have successfully logged out."))
-#         except AssertionError, e: self.verificationErrors.append(str(e))
-# 
-#     def tearDown(self):
-#         self.selenium.stop()
-#         self.assertEqual([], self.verificationErrors)
-        

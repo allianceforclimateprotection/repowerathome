@@ -112,9 +112,21 @@ class Group(models.Model):
         """
         what actions have been completed by users in this group and how many users have completed each action
         """
-        actions = Action.objects.distinct().filter(useractionprogress__user__group=self, users_completed__gte=1)
-        actions = actions.order_by("-users_completed")
-        return actions
+        return Action.objects.raw("""
+        SELECT DISTINCT rah_action.id, rah_action.created, rah_action.updated, rah_action.name, rah_action.slug,
+            rah_action.teaser, rah_action.content, rah_action.total_tasks, rah_action.total_points,
+            rah_action.users_in_progress, rah_action.users_completed, rah_action.users_committed,
+            COUNT(DISTINCT rah_useractionprogress.user_id) AS completes_in_group
+        FROM rah_action
+        INNER JOIN rah_useractionprogress ON (rah_action.id = rah_useractionprogress.action_id)
+        INNER JOIN groups_groupusers ON (rah_useractionprogress.user_id = groups_groupusers.user_id)
+        WHERE groups_groupusers.group_id = %s
+        AND rah_useractionprogress.is_completed = 1
+        GROUP BY rah_action.id, rah_action.created, rah_action.updated, rah_action.name, rah_action.slug,
+            rah_action.teaser, rah_action.content, rah_action.total_tasks, rah_action.total_points,
+            rah_action.users_in_progress, rah_action.users_completed, rah_action.users_committed
+        ORDER BY completes_in_group DESC
+        """ % self.id)
 
     def members_ordered_by_points(self):
         return User.objects.raw("""

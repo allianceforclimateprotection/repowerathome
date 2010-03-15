@@ -17,7 +17,7 @@
                 <h2>Popular Actions</h2>
                 <ol>
                 {% for action in popular_actions %}
-                    <li><a href="{% url action_detail action.slug %}">{{ action }}</a> ({{ action.users_completed }})</li>
+                    <li><a href="{% url action_detail action.slug %}">{{ action }}</a> ({{ action.completes_in_group }})</li>
                 {% endfor %}
                 </ol>
             {% endif %}
