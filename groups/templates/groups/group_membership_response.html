@@ -1,0 +1,7 @@
+{% if approved %}
+Congratulations you have been approved to join {{ group }}.
+{% else %}
+Sorry, you have been denied to join {{ group }}.
+{% endif %}
+
+http://{{ domain }}{{ group.get_absolute_url }}

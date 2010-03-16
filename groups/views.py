@@ -77,20 +77,31 @@ def group_membership_request(request, group_id, user_id, action):
     group = get_object_or_404(Group, id=group_id, is_geo_group=False)
     user = get_object_or_404(User, id=user_id)
     if not group.is_user_manager(request.user):
-        messages.error(request, "You do not have permissions")
-        return redirect("group_detail", group_slug=group.slug)
+        return _forbidden(request)
     membership_request = MembershipRequests.objects.filter(group=group, user=user)
     if membership_request:
         if action == "approve":
             GroupUsers.objects.create(group=group, user=user, is_manager=False)
             membership_request.delete()
-            messages.success(request, "%s has been added to the group" % user)
+            if __send_response_email(request, group, user, True):
+                messages.success(request, "%s has been added to the group" % user)
         elif action == "deny":
             membership_request.delete()
-            messages.success(request, "%s has been denied access to the group" % user)
+            if __send_response_email(request, group, user, False):
+                messages.success(request, "%s has been denied access to the group" % user)
     else:
         messages.error(request, "%s has not requested to join this group" % user)
     return redirect("group_detail", group_slug=group.slug)
+    
+def __send_response_email(request, group, user, approved):
+    template = loader.get_template("groups/group_membership_response.html")
+    context = { "approved": approved, "group": group, "domain": Site.objects.get_current().domain, }
+    try:
+        send_mail("Group Membership Response", template.render(Context(context)), None, [user.email], fail_silently=False)
+        return True
+    except SMTPException, e:
+        messages.error(request, "A problem occured, if this persits please contact feedback@repowerathome.com", extra_tags="sticky")
+    return False
 
 def group_detail(request, group_slug):
     """
@@ -116,7 +127,7 @@ def group_list(request):
     return render_to_response("groups/group_list.html", locals(), context_instance=RequestContext(request))
 
 @login_required
-@csrf_protect    
+@csrf_protect
 def group_edit(request, group_slug):
     group = get_object_or_404(Group, slug=group_slug, is_geo_group=False)
     if not group.is_user_manager(request.user):
@@ -146,6 +157,8 @@ def group_edit(request, group_slug):
                     return redirect("group_detail", group_slug=group.slug)
             else:
                 group_form = GroupForm(instance=group)
+        else:
+            messages.error(request, "No action specified.")
     else:
         group_form = GroupForm(instance=group)
         membership_form = MembershipForm(group=group)

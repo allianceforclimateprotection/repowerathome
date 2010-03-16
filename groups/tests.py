@@ -1,6 +1,3 @@
-from selenium.selenium import selenium
-import unittest, time, re
-
 from django.contrib.auth.models import User
 from django.contrib.messages import constants
 from django.core import mail
@@ -379,6 +376,11 @@ class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(MembershipRequests.objects.filter(user=self.requester, group=self.group).exists(), False)
         self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), True)
+        email = mail.outbox.pop()
+        self.failUnlessEqual(email.to, [self.requester.email])
+        self.failUnlessEqual(email.subject, "Group Membership Response")
+        self.failUnless("Congratulations" in email.body)
+        
 
 class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
     def __init__(self, *args, **kwargs):
@@ -395,6 +397,10 @@ class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(MembershipRequests.objects.filter(user=self.requester, group=self.group).exists(), False)
         self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), False)
+        email = mail.outbox.pop()
+        self.failUnlessEqual(email.to, [self.requester.email])
+        self.failUnlessEqual(email.subject, "Group Membership Response")
+        self.failUnless("Sorry" in email.body)
 
 class GroupDetailViewTest(TestCase):
     def setUp(self):
