@@ -1,12 +1,18 @@
+import os
+
 from django import forms
 from django.core.urlresolvers import resolve, reverse
 from django.contrib.auth.models import User
+
+from PIL.Image import open as pil_open
 
 from geo.models import Location
 
 from models import Group, GroupUsers
 
 class GroupForm(forms.ModelForm):
+    IMAGE_FORMATS = {"PNG": "png", "JPEG": "jpeg", "GIF": "gif"}
+    
     name = forms.CharField(label="Group name", help_text="Enter a name for your new group")
     slug = forms.SlugField(label="Group address", help_text="This will be your group's web address")
     description = forms.CharField(label="Group description", help_text="What is the group all about?", widget=forms.Textarea)
@@ -27,8 +33,12 @@ class GroupForm(forms.ModelForm):
         
     def clean_image(self):
         data = self.cleaned_data["image"]
-        if data and data.size > 4194304:
-            raise forms.ValidationError("Group images can not be larger than 512K")
+        if data:
+            if data.size > 4194304:
+                raise forms.ValidationError("Group images can not be larger than 512K")
+            self.image_format = pil_open(data.file).format
+            if not self.image_format in GroupForm.IMAGE_FORMATS:
+                raise forms.ValidationError("Images can not be of type %s" % data.content_type)
         return data
         
     def clean_slug(self):
@@ -41,6 +51,15 @@ class GroupForm(forms.ModelForm):
         except:
             raise forms.ValidationError("This Group address is not allowed.")
         return data
+        
+    def save(self):
+        group = super(GroupForm, self).save()
+        if group.image:
+            image_name = "%s.%s" % (group.pk, GroupForm.IMAGE_FORMATS[self.image_format])
+            original = group.image.file
+            group.image.save(image_name, original, save=True)
+            os.remove(original.name)
+        return group
         
 class MembershipForm(forms.Form):
     MEMBERSHIP_ROLES = (

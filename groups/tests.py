@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.messages import constants
-from django.core import mail
+from django.core import mail, files
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.test import TestCase
@@ -163,7 +163,7 @@ class GroupCreateViewTest(TestCase):
     
     def test_valid(self):
         self.client.login(username="test@test.com", password="test")
-        image = open("static/images/theme/geo_group.jpg")
+        image = files.File(open("static/images/theme/geo_group.jpg"))
         response = self.client.post(self.group_create_url, {"name": "Test Group", "slug": "test-group",
             "description": "This is a test group", "image": image, "membership_type": "O"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
@@ -171,6 +171,8 @@ class GroupCreateViewTest(TestCase):
         self.failUnlessEqual(test_group.slug, "test-group")
         self.failUnlessEqual(test_group.description, "This is a test group")
         self.failUnlessEqual(test_group.membership_type, "O")
+        self.failUnlessEqual(test_group.image.name, "group_images/%s.jpeg" % test_group.pk)
+        test_group.image.delete()
     
     def test_missing_required(self):
         self.client.login(username="test@test.com", password="test")
@@ -518,6 +520,8 @@ class GroupEditViewTest(TestCase):
         image = open("static/images/theme/geo_group.jpg")
         response = self.client.post(self.url, {"name": "Changed Group", "slug": "changed-group",
             "description": "This is a test group", "image": image, "membership_type": "C", "change_group": "True"}, follow=True)
+        test_group = response.context["group"]
         self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
         changed_group = Group.objects.get(pk=self.group.id)
         self.failUnlessEqual(changed_group.name, "Changed Group")
+        test_group.image.delete()
