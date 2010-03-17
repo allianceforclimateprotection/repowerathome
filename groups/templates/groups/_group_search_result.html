@@ -1,4 +1,6 @@
-<img class="group_image" src="{{ MEDIA_URL }}{{ object.safe_image }}" alt="group image" height="30" width="30" />
+{% load thumbnail %}
+
+<img class="group_image" src="{% thumbnail object.safe_image 30x30 %}" alt="group image" height="30" width="30" />
 <h6><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></h6>
 {% for parent in object.parents %}
     <span class="group_parent"><a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>

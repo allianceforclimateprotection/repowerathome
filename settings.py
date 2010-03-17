@@ -88,6 +88,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'groups',
     'search_widget',
+    'sorl.thumbnail',
 )
 
 FIXTURE_DIR = ('fixtures',)
