@@ -525,3 +525,32 @@ class GroupEditViewTest(TestCase):
         changed_group = Group.objects.get(pk=self.group.id)
         self.failUnlessEqual(changed_group.name, "Changed Group")
         test_group.image.delete()
+        
+    def test_delete_group(self):
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.url, {"delete_group": "True"}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_list.html")
+        self.failUnless(not Group.objects.filter(pk=self.group.pk).exists())
+        
+    def test_invalid_change_membership(self):
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.url, {"role": "N", "memberships": "%s" % self.user.pk, 
+            "change_membership": "True"}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
+        errors = response.context["membership_form"].errors
+        self.failUnless("memberships" in errors)
+        
+    def test_valid_change_membership(self):
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        new_user = User.objects.create(username="2", email="newuser@email.com")
+        GroupUsers.objects.create(user=new_user, group=self.group, is_manager=False)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.url, {"role": "M", "memberships": "%s" % new_user.pk, 
+            "change_membership": "True"}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
+        errors = response.context["membership_form"].errors
+        self.failUnlessEqual(errors, {})
+        self.failUnless(self.group.is_user_manager(new_user))
+        
