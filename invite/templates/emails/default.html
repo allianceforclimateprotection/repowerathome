@@ -1,0 +1,11 @@
+Hello, 
+
+{{ from_user|safe }} invited you to repowerathome.com. 
+
+To accept this invitation, click here:
+{{ invite.get_permalink }}
+
+{% if note %}Note: {{ note|safe }}{% endif %}
+
+Regards,
+The Repower@Home team

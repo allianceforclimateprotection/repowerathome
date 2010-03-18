@@ -2,6 +2,7 @@ import json, logging
 
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import auth
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.comments.views import comments
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader
@@ -11,13 +12,12 @@ from django.views.decorators.csrf import csrf_protect
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.sites.models import Site
-
 from tagging.models import Tag
-
+from invite.forms import InviteForm
 from rah.models import *
 from records.models import *
 from rah.forms import *
-from settings import GA_TRACK_PAGEVIEW
+from settings import GA_TRACK_PAGEVIEW, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 
@@ -79,7 +79,11 @@ def register(request):
             messages.success(request, 'Thanks for registering.')
             messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
             
-            return redirect("index")
+            redirect_to = request.GET.get(REDIRECT_FIELD_NAME, '')
+            # Light security check -- make sure redirect_to isn't garbage.
+            if not redirect_to or '//' in redirect_to or ' ' in redirect_to:
+                redirect_to = LOGIN_REDIRECT_URL
+            return HttpResponseRedirect(redirect_to)
     else:
         form = RegistrationForm()
     return render_to_response("registration/register.html", {
@@ -154,7 +158,7 @@ def profile(request, user_id):
         'completed': completed,
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'house_party_form': HousePartyForm(),
-        'invite_friend_form': InviteFriendForm(),
+        'invite_form': InviteForm(),
         'twitter_status_form': twitter_form,
         'chart_data': json.dumps({"point_data": point_data, "tooltips": tooltips}),
         'profile': user.get_profile(),

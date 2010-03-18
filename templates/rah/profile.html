@@ -2,7 +2,9 @@
 {% block content %}
     <div id="chart"></div>
     <script type="text/javascript" charset="utf-8">
+        /* <![CDATA[ */
         var chart_data = {{chart_data|safe}};
+        /* ]]> */
     </script>
 	{% if in_progress %}
 		<div class="actions_block" id="actions_in_progress">

@@ -130,11 +130,12 @@ var rah = {
             });
             
             // Setup invite friend form, link, and dialog
+            $('#invite_friend_form_submit').hide();
             $("#invite_friend_form").validate({rules: {to_email: { required: true, email: true }}});
             $('#invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
             $('#invite_friend_dialog').dialog({
                 title: 'Invite a friend', modal: true, autoOpen: false, 
-                buttons: { "Send Invitation": function() { $('#invite_friend_form').submit(); }}
+                buttons: { "Send Invitation": function() { $('#invite_friend_form_submit').click();}}
             });
             
             // Setup twitter update form, link, and dialog
@@ -287,7 +288,7 @@ var rah = {
                 var elem = $(this).parents("ul");
                 setTimeout(function() {
                     elem.slideUp(400, function(){ elem.remove(); });
-                }, 3000);
+                }, 5000);
             });
             $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").remove(); });
         }
