@@ -15,13 +15,7 @@
     </form>
 </div>
 <div id='invite_friend_dialog'>
-	<form action="{% url rah.views.invite_friend %}" method="post" id="invite_friend_form">
-	    <p>Share the magic with your friends.</p>
-		<div>
-		{{ invite_friend_form.as_p }}
-		</div>
-        {% csrf_token %}
-    </form>
+    {% include "_invite_form.html" %}
 </div>
 <div id='twitter_post_dialog'>
 	{% if user.get_profile.twitter_access_token %}

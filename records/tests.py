@@ -115,7 +115,7 @@ class RecordManagerTest(TestCase):
         self.failUnlessEqual(user.get_profile().total_points, 25)
     
 class RecordTest(TestCase):
-    fixtures = ['activity.json']
+    # fixtures = ['activity.json']
     def setUp(self):
         create_test_users_and_action_tasks(self)
     

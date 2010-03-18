@@ -45,6 +45,7 @@ urlpatterns += patterns('',
     url(r'^twitter/', include('twitter_app.urls')),
     url(r'^rateable/', include('rateable.urls')),
     url(r'^groups/', include('groups.urls')),
+    url(r'^invite/', include('invite.urls')),
 )
 
 if settings.DEBUG:

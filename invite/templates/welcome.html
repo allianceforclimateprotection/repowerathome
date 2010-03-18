@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome</h1>
+<p>
+    You need to <a href="{% url login %}?next={{ request.path }}">Login</a> or 
+    <a href="{% url register %}?next={{ request.path }}">Sign Up</a> 
+    to accept this invivation from {{invite.user.get_full_name}}.
+</p>
+{% endblock %}
