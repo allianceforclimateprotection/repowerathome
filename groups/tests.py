@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.messages import constants
-from django.core import mail, files
+from django.core import mail, management, files
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.test import TestCase
@@ -24,7 +24,7 @@ class GroupTest(TestCase):
         profile = self.user.get_profile()
         profile.location = Location.objects.get(zipcode="02804")
         profile.save()
-        ri, washington_county, ashaway = [g[1] for g in Group.objects.user_geo_group_tuple(self.user)]
+        ashaway, washington_county, ri = [g[1] for g in Group.objects.user_geo_group_tuple(self.user, 'P')]
         self.failUnlessEqual(ri.name, "Rhode Island")
         self.failUnlessEqual(ri.slug, "ri")
         self.failUnlessEqual(ri.location_type, "S")
@@ -39,7 +39,18 @@ class GroupTest(TestCase):
         self.failUnlessEqual(ashaway.slug, "ri-washington-county-ashaway")
         self.failUnlessEqual(ashaway.location_type, "P")
         self.failUnlessEqual(ashaway.parent, washington_county)
-    
+        
+    def test_create_dc_geo_group(self):
+        management.call_command("loaddata", "test_geo_dc.json", verbosity=0)
+        profile = self.user.get_profile()
+        profile.location = Location.objects.get(zipcode="20001")
+        profile.save()
+        dc = Group.objects.user_geo_group_tuple(self.user, 'P')[0][1]
+        self.failUnlessEqual(dc.name, "Washington, District Of Columbia")
+        self.failUnlessEqual(dc.slug, "dc-district-of-columbia-washington")
+        self.failUnlessEqual(dc.location_type, "P")
+        self.failUnlessEqual(dc.parent, None)
+        
     def test_is_joinable(self):
         self.failUnlessEqual(self.yankees.is_joinable(), True)
         self.failUnlessEqual(self.ny.is_joinable(), False)

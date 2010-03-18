@@ -23,14 +23,18 @@ class GroupManager(models.Manager):
                                                         groups_membershiprequests.group_id = groups_group.id'})
         return groups[:limit] if limit else groups
         
-    def user_geo_group_tuple(self, user):
+    def user_geo_group_tuple(self, user, location_type):
         location = user.get_profile().location
         geo_groups = []
-        for location_type_tuple in Group.LOCATION_TYPE:
-            location_type = location_type_tuple[0]
-            slug = Group.LOCATION_SLUG[location_type](location)
-            query = self.filter(slug=slug)
-            geo_groups.append((location_type, query[0] if query else None))
+        slug = Group.LOCATION_SLUG[location_type](location)
+        query = self.filter(slug=slug)
+        geo_groups.append((location_type, query[0] if query else None))
+        parent_key = Group.LOCATION_PARENT[location_type]
+        if parent_key:
+            size = Group.LOCATION_SIZE[location_type](location)
+            parent_size = Group.LOCATION_SIZE[parent_key](location)
+            if parent_size > size:
+                geo_groups = geo_groups + self.user_geo_group_tuple(user, parent_key)
         return geo_groups
 
     def create_geo_group(self, location_type, location):
@@ -41,7 +45,17 @@ class GroupManager(models.Manager):
         if parent_key:
             parent_slug = Group.LOCATION_SLUG[parent_key](location)
             parent_query = self.filter(slug=parent_slug)
-            parent = parent_query[0] if parent_query else self.create_geo_group(parent_key, location)
+            if parent_query:
+                parent = parent_query[0]
+            else:
+                size = Group.LOCATION_SIZE[location_type](location)
+                while parent_key:
+                    parent_size = Group.LOCATION_SIZE[parent_key](location)
+                    if parent_size > size:
+                        parent = self.create_geo_group(parent_key, location)
+                        break
+                    else:
+                        parent_key = Group.LOCATION_PARENT[parent_key]
         geo_group = Group(name=name, slug=slug, is_geo_group=True, location_type=location_type, sample_location=location, parent=parent)
         geo_group.save()
         return geo_group
@@ -69,12 +83,17 @@ class Group(models.Model):
     LOCATION_SLUG = {
         'S': lambda l: slugify(l.st),
         'C': lambda l: "%s-%s" % (slugify(l.st), slugify(l.county)),
-        'P': lambda l: "%s-%s-%s" % (slugify(l.st), slugify(l.county), slugify(l.name)),    
+        'P': lambda l: "%s-%s-%s" % (slugify(l.st), slugify(l.county), slugify(l.name)),
     }
     LOCATION_URL = {
         'S': lambda l: ("geo_group_state", [l.st]),
         'C': lambda l: ("geo_group_county", [l.st, slugify(l.county)]),
         'P': lambda l: ("geo_group_place", [l.st, slugify(l.county), slugify(l.name)]),
+    }
+    LOCATION_SIZE = {
+        'S': lambda l: Location.objects.filter(state=l.state).aggregate(size=models.Count('state')),
+        'C': lambda l: Location.objects.filter(state=l.state,county=l.county).aggregate(size=models.Count('county')),
+        'P': lambda l: Location.objects.filter(state=l.state,county=l.county,name=l.name).aggregate(size=models.Count('name'))
     }
 
     name = models.CharField(max_length=255, blank=True)
@@ -218,8 +237,8 @@ def associate_with_geo_groups(sender, instance, **kwargs):
     user = instance.user
     GroupUsers.objects.filter(user=user, group__is_geo_group=True).delete()
     if instance.location:
-        geo_groups = Group.objects.user_geo_group_tuple(user)
-        for location_type, geo_group in geo_groups:
+        geo_groups = Group.objects.user_geo_group_tuple(user, 'P')
+        for location_type, geo_group in reversed(geo_groups):
             if not geo_group:
                 geo_group = Group.objects.create_geo_group(location_type, instance.location)
             GroupUsers(user=user, group=geo_group).save()
