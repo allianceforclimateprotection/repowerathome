@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'groups',
     'search_widget',
     'sorl.thumbnail',
+    'flagged',
 )
 
 FIXTURE_DIR = ('fixtures',)
