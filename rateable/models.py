@@ -30,7 +30,7 @@ class Rating(models.Model):
     """
     A user rating for some object.
     """
-    content_type = models.ForeignKey(ContentType, verbose_name=_("content tpye"), related_name="%(class)s")
+    content_type = models.ForeignKey(ContentType, verbose_name=_("content type"), related_name="%(class)s")
     object_pk = models.PositiveIntegerField(_("object ID"))
     content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
     user = models.ForeignKey(User, verbose_name=_("name"), related_name="%(class)s_rating")
