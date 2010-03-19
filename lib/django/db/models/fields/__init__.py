@@ -196,7 +196,7 @@ class Field(object):
             return
         if self._choices and value:
             for option_key, option_value in self.choices:
-                if type(option_value) in (tuple, list):
+                if isinstance(option_value, (list, tuple)):
                     # This is an optgroup, so look inside the group for options.
                     for optgroup_key, optgroup_value in option_value:
                         if value == optgroup_key:
@@ -404,7 +404,7 @@ class Field(object):
         return first_choice + list(self.flatchoices)
 
     def _get_val_from_obj(self, obj):
-        if obj:
+        if obj is not None:
             return getattr(obj, self.attname)
         else:
             return self.get_default()
@@ -431,7 +431,7 @@ class Field(object):
         """Flattened version of choices tuple."""
         flat = []
         for choice, value in self.choices:
-            if type(value) in (list, tuple):
+            if isinstance(value, (list, tuple)):
                 flat.extend(value)
             else:
                 flat.append((choice,value))
@@ -445,9 +445,11 @@ class Field(object):
         "Returns a django.forms.Field instance for this database Field."
         defaults = {'required': not self.blank, 'label': capfirst(self.verbose_name), 'help_text': self.help_text}
         if self.has_default():
-            defaults['initial'] = self.get_default()
             if callable(self.default):
+                defaults['initial'] = self.default
                 defaults['show_hidden_initial'] = True
+            else:
+                defaults['initial'] = self.get_default()
         if self.choices:
             # Fields with choices get special treatment.
             include_blank = self.blank or not (self.has_default() or 'initial' in kwargs)
@@ -462,7 +464,7 @@ class Field(object):
             for k in kwargs.keys():
                 if k not in ('coerce', 'empty_value', 'choices', 'required',
                              'widget', 'label', 'initial', 'help_text',
-                             'error_messages'):
+                             'error_messages', 'show_hidden_initial'):
                     del kwargs[k]
         defaults.update(kwargs)
         return form_class(**defaults)
@@ -524,9 +526,14 @@ class BooleanField(Field):
         return "BooleanField"
 
     def to_python(self, value):
-        if value in (True, False): return value
-        if value in ('t', 'True', '1'): return True
-        if value in ('f', 'False', '0'): return False
+        if value in (True, False):
+            # if value is 1 or 0 than it's equal to True or False, but we want
+            # to return a true bool for semantic reasons.
+            return bool(value)
+        if value in ('t', 'True', '1'):
+            return True
+        if value in ('f', 'False', '0'):
+            return False
         raise exceptions.ValidationError(self.error_messages['invalid'])
 
     def get_prep_lookup(self, lookup_type, value):
@@ -866,7 +873,7 @@ class FloatField(Field):
 class IntegerField(Field):
     empty_strings_allowed = False
     default_error_messages = {
-        'invalid': _("This value must be a float."),
+        'invalid': _("This value must be an integer."),
     }
     description = _("Integer")
 
@@ -928,16 +935,23 @@ class NullBooleanField(Field):
 
     def __init__(self, *args, **kwargs):
         kwargs['null'] = True
+        kwargs['blank'] = True
         Field.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
         return "NullBooleanField"
 
     def to_python(self, value):
-        if value in (None, True, False): return value
-        if value in ('None',): return None
-        if value in ('t', 'True', '1'): return True
-        if value in ('f', 'False', '0'): return False
+        if value is None:
+            return None
+        if value in (True, False):
+            return bool(value)
+        if value in ('None',):
+            return None
+        if value in ('t', 'True', '1'):
+            return True
+        if value in ('f', 'False', '0'):
+            return False
         raise exceptions.ValidationError(self.error_messages['invalid'])
 
     def get_prep_lookup(self, lookup_type, value):

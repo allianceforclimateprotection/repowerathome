@@ -56,7 +56,7 @@ from django.template.context import Context, RequestContext, ContextPopException
 from django.utils.importlib import import_module
 from django.utils.itercompat import is_iterable
 from django.utils.functional import curry, Promise
-from django.utils.text import smart_split, unescape_string_literal
+from django.utils.text import smart_split, unescape_string_literal, get_text_list
 from django.utils.encoding import smart_unicode, force_unicode, smart_str
 from django.utils.translation import ugettext as _
 from django.utils.safestring import SafeData, EscapeData, mark_safe, mark_for_escaping
@@ -87,7 +87,7 @@ ALLOWED_VARIABLE_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01
 
 # what to report as the origin for templates that come from non-loader sources
 # (e.g. strings)
-UNKNOWN_SOURCE="&lt;unknown source&gt;"
+UNKNOWN_SOURCE = '<unknown source>'
 
 # match a variable or block tag and capture the entire tag, including start/end delimiters
 tag_re = re.compile('(%s.*?%s|%s.*?%s|%s.*?%s)' % (re.escape(BLOCK_TAG_START), re.escape(BLOCK_TAG_END),
@@ -104,20 +104,7 @@ builtins = []
 invalid_var_format_string = None
 
 class TemplateSyntaxError(Exception):
-    def __str__(self):
-        try:
-            import cStringIO as StringIO
-        except ImportError:
-            import StringIO
-        output = StringIO.StringIO()
-        output.write(Exception.__str__(self))
-        # Check if we wrapped an exception and print that too.
-        if hasattr(self, 'exc_info'):
-            import traceback
-            output.write('\n\nOriginal ')
-            e = self.exc_info
-            traceback.print_exception(e[0], e[1], e[2], 500, output)
-        return output.getvalue()
+    pass
 
 class TemplateDoesNotExist(Exception):
     pass
@@ -288,7 +275,7 @@ class Parser(object):
                 try:
                     compile_func = self.tags[command]
                 except KeyError:
-                    self.invalid_block_tag(token, command)
+                    self.invalid_block_tag(token, command, parse_until)
                 try:
                     compiled_result = compile_func(self, token)
                 except TemplateSyntaxError, e:
@@ -339,7 +326,9 @@ class Parser(object):
     def empty_block_tag(self, token):
         raise self.error(token, "Empty block tag")
 
-    def invalid_block_tag(self, token, command):
+    def invalid_block_tag(self, token, command, parse_until=None):
+        if parse_until:
+            raise self.error(token, "Invalid block tag: '%s', expected %s" % (command, get_text_list(["'%s'" % p for p in parse_until])))
         raise self.error(token, "Invalid block tag: '%s'" % command)
 
     def unclosed_block_tag(self, parse_until):
@@ -419,6 +408,20 @@ class TokenParser(object):
         "A microparser that parses for a value: some string constant or variable name."
         subject = self.subject
         i = self.pointer
+
+        def next_space_index(subject, i):
+            "Increment pointer until a real space (i.e. a space not within quotes) is encountered"
+            while i < len(subject) and subject[i] not in (' ', '\t'):
+                if subject[i] in ('"', "'"):
+                    c = subject[i]
+                    i += 1
+                    while i < len(subject) and subject[i] != c:
+                        i += 1
+                    if i >= len(subject):
+                        raise TemplateSyntaxError("Searching for value. Unexpected end of string in column %d: %s" % (i, subject))
+                i += 1
+            return i
+
         if i >= len(subject):
             raise TemplateSyntaxError("Searching for value. Expected another value but found end of string: %s" % subject)
         if subject[i] in ('"', "'"):
@@ -429,6 +432,10 @@ class TokenParser(object):
             if i >= len(subject):
                 raise TemplateSyntaxError("Searching for value. Unexpected end of string in column %d: %s" % (i, subject))
             i += 1
+
+            # Continue parsing until next "real" space, so that filters are also included
+            i = next_space_index(subject, i)
+
             res = subject[p:i]
             while i < len(subject) and subject[i] in (' ', '\t'):
                 i += 1
@@ -437,15 +444,7 @@ class TokenParser(object):
             return res
         else:
             p = i
-            while i < len(subject) and subject[i] not in (' ', '\t'):
-                if subject[i] in ('"', "'"):
-                    c = subject[i]
-                    i += 1
-                    while i < len(subject) and subject[i] != c:
-                        i += 1
-                    if i >= len(subject):
-                        raise TemplateSyntaxError("Searching for value. Unexpected end of string in column %d: %s" % (i, subject))
-                i += 1
+            i = next_space_index(subject, i)
             s = subject[p:i]
             while i < len(subject) and subject[i] in (' ', '\t'):
                 i += 1
@@ -526,8 +525,6 @@ class FilterExpression(object):
                         var_obj = None
                 elif var is None:
                     raise TemplateSyntaxError("Could not find variable at start of %s." % token)
-                elif var.find(VARIABLE_ATTRIBUTE_SEPARATOR + '_') > -1 or var[0] == '_':
-                    raise TemplateSyntaxError("Variables and attributes may not begin with underscores: '%s'" % var)
                 else:
                     var_obj = Variable(var)
             else:
@@ -539,8 +536,8 @@ class FilterExpression(object):
                 elif var_arg:
                     args.append((True, Variable(var_arg)))
                 filter_func = parser.find_filter(filter_name)
-                self.args_check(filter_name,filter_func, args)
-                filters.append( (filter_func,args))
+                self.args_check(filter_name, filter_func, args)
+                filters.append((filter_func, args))
             upto = match.end()
         if upto != len(token):
             raise TemplateSyntaxError("Could not parse the remainder: '%s' from '%s'" % (token[upto:], token))
@@ -686,6 +683,8 @@ class Variable(object):
             except ValueError:
                 # Otherwise we'll set self.lookups so that resolve() knows we're
                 # dealing with a bonafide variable
+                if var.find(VARIABLE_ATTRIBUTE_SEPARATOR + '_') > -1 or var[0] == '_':
+                    raise TemplateSyntaxError("Variables and attributes may not begin with underscores: '%s'" % var)
                 self.lookups = tuple(var.split(VARIABLE_ATTRIBUTE_SEPARATOR))
 
     def resolve(self, context):
@@ -758,6 +757,7 @@ class Node(object):
     # Set this to True for nodes that must be first in the template (although
     # they can be preceded by text nodes.
     must_be_first = False
+    child_nodelists = ('nodelist',)
 
     def render(self, context):
         "Return the node rendered as a string"
@@ -771,8 +771,10 @@ class Node(object):
         nodes = []
         if isinstance(self, nodetype):
             nodes.append(self)
-        if hasattr(self, 'nodelist'):
-            nodes.extend(self.nodelist.get_nodes_by_type(nodetype))
+        for attr in self.child_nodelists:
+            nodelist = getattr(self, attr, None)
+            if nodelist:
+                nodes.extend(nodelist.get_nodes_by_type(nodetype))
         return nodes
 
 class NodeList(list):

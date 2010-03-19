@@ -10,6 +10,5 @@ INSTALLED_APPS = (
 
 TEST_RUNNER = 'selenium_test_runner.run_tests'
 
-SELENIUM_BROWSERS = ('*safari', '*firefox',)
-SELENIUM_BROWSER = '*safari'
-SELENIUM_URL = 'http://localhost:8000'
+SELENIUM_BROWSERS = ('*firefox', '*safari',)
+SELENIUM_URL = 'http://localhost:8001'

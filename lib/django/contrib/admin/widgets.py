@@ -33,6 +33,9 @@ class FilteredSelectMultiple(forms.SelectMultiple):
         super(FilteredSelectMultiple, self).__init__(attrs, choices)
 
     def render(self, name, value, attrs=None, choices=()):
+        if attrs is None: attrs = {}
+        attrs['class'] = 'selectfilter'
+        if self.is_stacked: attrs['class'] += 'stacked'
         output = [super(FilteredSelectMultiple, self).render(name, value, attrs, choices)]
         output.append(u'<script type="text/javascript">addEvent(window, "load", function(e) {')
         # TODO: "id_" is hard-coded here. This should instead use the correct
@@ -130,7 +133,7 @@ class ForeignKeyRawIdWidget(forms.TextInput):
 
     def base_url_parameters(self):
         params = {}
-        if self.rel.limit_choices_to:
+        if self.rel.limit_choices_to and hasattr(self.rel.limit_choices_to, 'items'):
             items = []
             for k, v in self.rel.limit_choices_to.items():
                 if isinstance(v, list):
@@ -149,7 +152,10 @@ class ForeignKeyRawIdWidget(forms.TextInput):
 
     def label_for_value(self, value):
         key = self.rel.get_related_field().name
-        obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
+        try:
+            obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
+        except self.rel.to.DoesNotExist:
+            return ''
         return '&nbsp;<strong>%s</strong>' % escape(truncate_words(obj, 14))
 
 class ManyToManyRawIdWidget(ForeignKeyRawIdWidget):

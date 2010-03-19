@@ -267,7 +267,7 @@ class QuerySet(object):
         for row in compiler.results_iter():
             if fill_cache:
                 obj, _ = get_cached_row(self.model, row,
-                            index_start, max_depth,
+                            index_start, using=self.db, max_depth=max_depth,
                             requested=requested, offset=len(aggregate_select),
                             only_load=only_load)
             else:
@@ -279,15 +279,15 @@ class QuerySet(object):
                     # Omit aggregates in object creation.
                     obj = self.model(*row[index_start:aggregate_start])
 
+                # Store the source database of the object
+                obj._state.db = self.db
+
             for i, k in enumerate(extra_select):
                 setattr(obj, k, row[i])
 
             # Add the aggregates to the model
             for i, aggregate in enumerate(aggregate_select):
                 setattr(obj, aggregate, row[i+aggregate_start])
-
-            # Store the source database of the object
-            obj._state.db = self.db
 
             yield obj
 
@@ -796,7 +796,7 @@ class QuerySet(object):
         Returns the internal query's SQL and parameters (as a tuple).
         """
         obj = self.values("pk")
-        if connection == connections[obj.db]:
+        if obj._db is None or connection == connections[obj._db]:
             return obj.query.get_compiler(connection=connection).as_nested_sql()
         raise ValueError("Can't do subqueries with queries on different DBs.")
 
@@ -918,7 +918,7 @@ class ValuesQuerySet(QuerySet):
                     % self.__class__.__name__)
 
         obj = self._clone()
-        if connection == connections[obj.db]:
+        if obj._db is None or connection == connections[obj._db]:
             return obj.query.get_compiler(connection=connection).as_nested_sql()
         raise ValueError("Can't do subqueries with queries on different DBs.")
 
@@ -954,7 +954,8 @@ class ValuesListQuerySet(ValuesQuerySet):
             # If a field list has been specified, use it. Otherwise, use the
             # full list of fields, including extras and aggregates.
             if self._fields:
-                fields = self._fields
+                fields = list(self._fields) + filter(lambda f: f not in self._fields,
+                                                     aggregate_names)
             else:
                 fields = names
 
@@ -1111,7 +1112,7 @@ class EmptyQuerySet(QuerySet):
     value_annotation = False
 
 
-def get_cached_row(klass, row, index_start, max_depth=0, cur_depth=0,
+def get_cached_row(klass, row, index_start, using, max_depth=0, cur_depth=0,
                    requested=None, offset=0, only_load=None):
     """
     Helper function that recursively returns an object with the specified
@@ -1125,6 +1126,7 @@ def get_cached_row(klass, row, index_start, max_depth=0, cur_depth=0,
      * row - the row of data returned by the database cursor
      * index_start - the index of the row at which data for this
        object is known to start
+     * using - the database alias on which the query is being executed.
      * max_depth - the maximum depth to which a select_related()
        relationship should be explored.
      * cur_depth - the current depth in the select_related() tree.
@@ -1169,6 +1171,7 @@ def get_cached_row(klass, row, index_start, max_depth=0, cur_depth=0,
             obj = klass(**dict(zip(init_list, fields)))
         else:
             obj = klass(*fields)
+
     else:
         # Load all fields on klass
         field_count = len(klass._meta.fields)
@@ -1181,6 +1184,10 @@ def get_cached_row(klass, row, index_start, max_depth=0, cur_depth=0,
         else:
             obj = klass(*fields)
 
+    # If an object was retrieved, set the database state.
+    if obj:
+        obj._state.db = using
+
     index_end = index_start + field_count + offset
     # Iterate over each related object, populating any
     # select_related() fields
@@ -1192,8 +1199,8 @@ def get_cached_row(klass, row, index_start, max_depth=0, cur_depth=0,
         else:
             next = None
         # Recursively retrieve the data for the related object
-        cached_row = get_cached_row(f.rel.to, row, index_end, max_depth,
-                cur_depth+1, next)
+        cached_row = get_cached_row(f.rel.to, row, index_end, using,
+                max_depth, cur_depth+1, next)
         # If the recursive descent found an object, populate the
         # descriptor caches relevant to the object
         if cached_row:
@@ -1202,7 +1209,7 @@ def get_cached_row(klass, row, index_start, max_depth=0, cur_depth=0,
                 # If the base object exists, populate the
                 # descriptor cache
                 setattr(obj, f.get_cache_name(), rel_obj)
-            if f.unique:
+            if f.unique and rel_obj is not None:
                 # If the field is unique, populate the
                 # reverse descriptor cache on the related object
                 setattr(rel_obj, f.related.get_cache_name(), obj)
@@ -1221,8 +1228,8 @@ def get_cached_row(klass, row, index_start, max_depth=0, cur_depth=0,
                 continue
             next = requested[f.related_query_name()]
             # Recursively retrieve the data for the related object
-            cached_row = get_cached_row(model, row, index_end, max_depth,
-                cur_depth+1, next)
+            cached_row = get_cached_row(model, row, index_end, using,
+                max_depth, cur_depth+1, next)
             # If the recursive descent found an object, populate the
             # descriptor caches relevant to the object
             if cached_row:
@@ -1271,8 +1278,6 @@ def delete_objects(seen_objs, using):
                     signals.pre_delete.send(sender=cls, instance=instance)
 
             pk_list = [pk for pk,instance in items]
-            del_query = sql.DeleteQuery(cls)
-            del_query.delete_batch_related(pk_list, using=using)
 
             update_query = sql.UpdateQuery(cls)
             for field, model in cls._meta.get_fields_with_model():
@@ -1333,6 +1338,9 @@ class RawQuerySet(object):
 
     def __repr__(self):
         return "<RawQuerySet: %r>" % (self.raw_query % self.params)
+
+    def __getitem__(self, k):
+        return list(self)[k]
 
     @property
     def db(self):
@@ -1398,7 +1406,7 @@ class RawQuerySet(object):
         # Construct model instance and apply annotations
         skip = set()
         for field in self.model._meta.fields:
-            if field.name not in model_init_kwargs.keys():
+            if field.attname not in model_init_kwargs.keys():
                 skip.add(field.attname)
 
         if skip:

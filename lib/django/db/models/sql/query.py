@@ -19,7 +19,8 @@ from django.db.models.sql import aggregates as base_aggregates_module
 from django.db.models.sql.constants import *
 from django.db.models.sql.datastructures import EmptyResultSet, Empty, MultiJoin
 from django.db.models.sql.expressions import SQLEvaluator
-from django.db.models.sql.where import WhereNode, Constraint, EverythingNode, AND, OR
+from django.db.models.sql.where import (WhereNode, Constraint, EverythingNode,
+    ExtraWhere, AND, OR)
 from django.core.exceptions import FieldError
 
 __all__ = ['Query', 'RawQuery']
@@ -53,7 +54,7 @@ class RawQuery(object):
 
     def __iter__(self):
         # Always execute a new query for a new iterator.
-        # This could be optomized with a cache at the expense of RAM.
+        # This could be optimized with a cache at the expense of RAM.
         self._execute_query()
         return iter(self.cursor)
 
@@ -128,8 +129,6 @@ class Query(object):
         self._extra_select_cache = None
 
         self.extra_tables = ()
-        self.extra_where = ()
-        self.extra_params = ()
         self.extra_order_by = ()
 
         # A tuple that is a set of model field names and either True, if these
@@ -149,7 +148,7 @@ class Query(object):
         return sql % params
 
     def __deepcopy__(self, memo):
-        result= self.clone()
+        result = self.clone(memo=memo)
         memo[id(self)] = result
         return result
 
@@ -200,7 +199,7 @@ class Query(object):
         """
         return self.model._meta
 
-    def clone(self, klass=None, **kwargs):
+    def clone(self, klass=None, memo=None, **kwargs):
         """
         Creates a copy of the current instance. The 'kwargs' parameter can be
         used by clients to update attributes after copying has taken place.
@@ -224,19 +223,19 @@ class Query(object):
         obj.dupe_avoidance = self.dupe_avoidance.copy()
         obj.select = self.select[:]
         obj.tables = self.tables[:]
-        obj.where = deepcopy(self.where)
+        obj.where = deepcopy(self.where, memo=memo)
         obj.where_class = self.where_class
         if self.group_by is None:
             obj.group_by = None
         else:
             obj.group_by = self.group_by[:]
-        obj.having = deepcopy(self.having)
+        obj.having = deepcopy(self.having, memo=memo)
         obj.order_by = self.order_by[:]
         obj.low_mark, obj.high_mark = self.low_mark, self.high_mark
         obj.distinct = self.distinct
         obj.select_related = self.select_related
         obj.related_select_cols = []
-        obj.aggregates = deepcopy(self.aggregates)
+        obj.aggregates = deepcopy(self.aggregates, memo=memo)
         if self.aggregate_select_mask is None:
             obj.aggregate_select_mask = None
         else:
@@ -256,10 +255,8 @@ class Query(object):
         else:
             obj._extra_select_cache = self._extra_select_cache.copy()
         obj.extra_tables = self.extra_tables
-        obj.extra_where = self.extra_where
-        obj.extra_params = self.extra_params
         obj.extra_order_by = self.extra_order_by
-        obj.deferred_loading = deepcopy(self.deferred_loading)
+        obj.deferred_loading = deepcopy(self.deferred_loading, memo=memo)
         if self.filter_is_sticky and self.used_aliases:
             obj.used_aliases = self.used_aliases.copy()
         else:
@@ -466,9 +463,6 @@ class Query(object):
             if self.extra and rhs.extra:
                 raise ValueError("When merging querysets using 'or', you "
                         "cannot have extra(select=...) on both sides.")
-            if self.extra_where and rhs.extra_where:
-                raise ValueError("When merging querysets using 'or', you "
-                        "cannot have extra(where=...) on both sides.")
         self.extra.update(rhs.extra)
         extra_select_mask = set()
         if self.extra_select_mask is not None:
@@ -478,8 +472,6 @@ class Query(object):
         if extra_select_mask:
             self.set_extra_mask(extra_select_mask)
         self.extra_tables += rhs.extra_tables
-        self.extra_where += rhs.extra_where
-        self.extra_params += rhs.extra_params
 
         # Ordering uses the 'rhs' ordering, unless it has none, in which case
         # the current ordering is used.
@@ -1100,13 +1092,13 @@ class Query(object):
             for child in q_object.children:
                 if connector == OR:
                     refcounts_before = self.alias_refcount.copy()
+                self.where.start_subtree(connector)
                 if isinstance(child, Node):
-                    self.where.start_subtree(connector)
                     self.add_q(child, used_aliases)
-                    self.where.end_subtree()
                 else:
                     self.add_filter(child, connector, q_object.negated,
                             can_reuse=used_aliases)
+                self.where.end_subtree()
                 if connector == OR:
                     # Aliases that were newly added or not used at all need to
                     # be promoted to outer joins if they are nullable relations.
@@ -1611,10 +1603,8 @@ class Query(object):
                 select_pairs[name] = (entry, entry_params)
             # This is order preserving, since self.extra_select is a SortedDict.
             self.extra.update(select_pairs)
-        if where:
-            self.extra_where += tuple(where)
-        if params:
-            self.extra_params += tuple(params)
+        if where or params:
+            self.where.add(ExtraWhere(where, params), AND)
         if tables:
             self.extra_tables += tuple(tables)
         if order_by:

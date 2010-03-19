@@ -13,6 +13,7 @@ from django.db import models, transaction
 from django.db.models.fields import BLANK_CHOICE_DASH
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
+from django.utils.decorators import method_decorator
 from django.utils.datastructures import SortedDict
 from django.utils.functional import update_wrapper
 from django.utils.html import escape
@@ -53,6 +54,7 @@ FORMFIELD_FOR_DBFIELD_DEFAULTS = {
     models.FileField:       {'widget': widgets.AdminFileWidget},
 }
 
+csrf_protect_m = method_decorator(csrf_protect)
 
 class BaseModelAdmin(object):
     """Functionality common to both ModelAdmin and InlineAdmin."""
@@ -559,16 +561,16 @@ class ModelAdmin(BaseModelAdmin):
             for formset in formsets:
                 for added_object in formset.new_objects:
                     change_message.append(_('Added %(name)s "%(object)s".')
-                                          % {'name': added_object._meta.verbose_name,
+                                          % {'name': force_unicode(added_object._meta.verbose_name),
                                              'object': force_unicode(added_object)})
                 for changed_object, changed_fields in formset.changed_objects:
                     change_message.append(_('Changed %(list)s for %(name)s "%(object)s".')
                                           % {'list': get_text_list(changed_fields, _('and')),
-                                             'name': changed_object._meta.verbose_name,
+                                             'name': force_unicode(changed_object._meta.verbose_name),
                                              'object': force_unicode(changed_object)})
                 for deleted_object in formset.deleted_objects:
                     change_message.append(_('Deleted %(name)s "%(object)s".')
-                                          % {'name': deleted_object._meta.verbose_name,
+                                          % {'name': force_unicode(deleted_object._meta.verbose_name),
                                              'object': force_unicode(deleted_object)})
         change_message = ' '.join(change_message)
         return change_message or _('No fields changed.')
@@ -696,6 +698,11 @@ class ModelAdmin(BaseModelAdmin):
         changelist; it returns an HttpResponse if the action was handled, and
         None otherwise.
         """
+        if 'index' not in request.POST:
+            # If "Go" was not pushed then we can assume the POST was for
+            # an inline edit save and we do not need to validate the form.
+            return None
+
         # There can be multiple action forms on the page (at the top
         # and bottom of the change list, for example). Get the action
         # whose button was pushed.
@@ -754,7 +761,7 @@ class ModelAdmin(BaseModelAdmin):
             msg = _("No action selected.")
             self.message_user(request, msg)
 
-    @csrf_protect
+    @csrf_protect_m
     @transaction.commit_on_success
     def add_view(self, request, form_url='', extra_context=None):
         "The 'add' admin view for this model."
@@ -844,7 +851,7 @@ class ModelAdmin(BaseModelAdmin):
         context.update(extra_context or {})
         return self.render_change_form(request, context, form_url=form_url, add=True)
 
-    @csrf_protect
+    @csrf_protect_m
     @transaction.commit_on_success
     def change_view(self, request, object_id, extra_context=None):
         "The 'change' admin view for this model."
@@ -936,7 +943,7 @@ class ModelAdmin(BaseModelAdmin):
         context.update(extra_context or {})
         return self.render_change_form(request, context, change=True, obj=obj)
 
-    @csrf_protect
+    @csrf_protect_m
     def changelist_view(self, request, extra_context=None):
         "The 'change list' admin view for this model."
         from django.contrib.admin.views.main import ERROR_FLAG
@@ -1030,13 +1037,15 @@ class ModelAdmin(BaseModelAdmin):
         else:
             action_form = None
 
-        if cl.result_count == 1:
-            module_name = force_unicode(opts.verbose_name)
-        else:
-            module_name = force_unicode(opts.verbose_name_plural)
+        selection_note = ungettext('of %(count)d selected',
+            'of %(count)d selected', len(cl.result_list))
+        selection_note_all = ungettext('%(total_count)s selected',
+            'All %(total_count)s selected', cl.result_count)
 
         context = {
-            'module_name': module_name,
+            'module_name': force_unicode(opts.verbose_name_plural),
+            'selection_note': selection_note % {'count': len(cl.result_list)},
+            'selection_note_all': selection_note_all % {'total_count': cl.result_count},
             'title': cl.title,
             'is_popup': cl.is_popup,
             'cl': cl,
@@ -1057,7 +1066,7 @@ class ModelAdmin(BaseModelAdmin):
             'admin/change_list.html'
         ], context, context_instance=context_instance)
 
-    @csrf_protect
+    @csrf_protect_m
     def delete_view(self, request, object_id, extra_context=None):
         "The 'delete' admin view for this model."
         opts = self.model._meta
@@ -1073,9 +1082,7 @@ class ModelAdmin(BaseModelAdmin):
 
         # Populate deleted_objects, a data structure of all related objects that
         # will also be deleted.
-        deleted_objects = [mark_safe(u'%s: <a href="../../%s/">%s</a>' % (escape(force_unicode(capfirst(opts.verbose_name))), object_id, escape(obj))), []]
-        perms_needed = set()
-        get_deleted_objects(deleted_objects, perms_needed, request.user, obj, opts, 1, self.admin_site)
+        (deleted_objects, perms_needed) = get_deleted_objects((obj,), opts, request.user, self.admin_site)
 
         if request.POST: # The user has already confirmed the deletion.
             if perms_needed:
@@ -1180,6 +1187,7 @@ class InlineModelAdmin(BaseModelAdmin):
     template = None
     verbose_name = None
     verbose_name_plural = None
+    can_delete = True
 
     def __init__(self, parent_model, admin_site):
         self.admin_site = admin_site
@@ -1225,6 +1233,7 @@ class InlineModelAdmin(BaseModelAdmin):
             "formfield_callback": curry(self.formfield_for_dbfield, request=request),
             "extra": self.extra,
             "max_num": self.max_num,
+            "can_delete": self.can_delete,
         }
         defaults.update(kwargs)
         return inlineformset_factory(self.parent_model, self.model, **defaults)

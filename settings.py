@@ -91,6 +91,7 @@ INSTALLED_APPS = (
     'search_widget',
     'sorl.thumbnail',
     'flagged',
+    'invite',
 )
 
 FIXTURE_DIR = ('fixtures',)

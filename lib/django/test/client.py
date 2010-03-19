@@ -428,6 +428,9 @@ class Client(object):
                 request.session = engine.SessionStore()
             login(request, user)
 
+            # Save the session values.
+            request.session.save()
+
             # Set the cookie to represent the session.
             session_cookie = settings.SESSION_COOKIE_NAME
             self.cookies[session_cookie] = request.session.session_key
@@ -439,9 +442,6 @@ class Client(object):
                 'expires': None,
             }
             self.cookies[session_cookie].update(cookie_data)
-
-            # Save the session values.
-            request.session.save()
 
             return True
         else:
@@ -470,11 +470,15 @@ class Client(object):
             redirect_chain = response.redirect_chain
             redirect_chain.append((url, response.status_code))
 
+            extra = {}
+            if scheme:
+                extra['wsgi.url_scheme'] = scheme
+
             # The test client doesn't handle external links,
             # but since the situation is simulated in test_client,
             # we fake things here by ignoring the netloc portion of the
             # redirected URL.
-            response = self.get(path, QueryDict(query), follow=False)
+            response = self.get(path, QueryDict(query), follow=False, **extra)
             response.redirect_chain = redirect_chain
 
             # Prevent loops

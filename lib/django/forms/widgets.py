@@ -10,8 +10,10 @@ from django.utils.html import escape, conditional_escape
 from django.utils.translation import ugettext
 from django.utils.encoding import StrAndUnicode, force_unicode
 from django.utils.safestring import mark_safe
-from django.utils import datetime_safe, formats
-from datetime import time
+from django.utils import formats
+import time
+import datetime
+from django.utils.formats import get_format
 from util import flatatt
 from urlparse import urljoin
 
@@ -75,12 +77,16 @@ class Media(StrAndUnicode):
 
     def add_js(self, data):
         if data:
-            self._js.extend([path for path in data if path not in self._js])
+            for path in data:
+                if path not in self._js:
+                    self._js.append(path)
 
     def add_css(self, data):
         if data:
             for medium, paths in data.items():
-                self._css.setdefault(medium, []).extend([path for path in paths if path not in self._css[medium]])
+                for path in paths:
+                    if not self._css.get(medium) or path not in self._css[medium]:
+                        self._css.setdefault(medium, []).append(path)
 
     def __add__(self, other):
         combined = Media()
@@ -309,6 +315,14 @@ class DateInput(Input):
         return super(DateInput, self).render(name, value, attrs)
 
     def _has_changed(self, initial, data):
+        # If our field has show_hidden_initial=True, initial will be a string
+        # formatted by HiddenInput using formats.localize_input, which is not
+        # necessarily the format used for this widget. Attempt to convert it.
+        try:
+            input_format = get_format('DATE_INPUT_FORMATS')[0]
+            initial = datetime.date(*time.strptime(initial, input_format)[:3])
+        except (TypeError, ValueError):
+            pass
         return super(DateInput, self)._has_changed(self._format_value(initial), data)
 
 class DateTimeInput(Input):
@@ -332,6 +346,14 @@ class DateTimeInput(Input):
         return super(DateTimeInput, self).render(name, value, attrs)
 
     def _has_changed(self, initial, data):
+        # If our field has show_hidden_initial=True, initial will be a string
+        # formatted by HiddenInput using formats.localize_input, which is not
+        # necessarily the format used for this widget. Attempt to convert it.
+        try:
+            input_format = get_format('DATETIME_INPUT_FORMATS')[0]
+            initial = datetime.datetime(*time.strptime(initial, input_format)[:6])
+        except (TypeError, ValueError):
+            pass
         return super(DateTimeInput, self)._has_changed(self._format_value(initial), data)
 
 class TimeInput(Input):
@@ -355,6 +377,14 @@ class TimeInput(Input):
         return super(TimeInput, self).render(name, value, attrs)
 
     def _has_changed(self, initial, data):
+        # If our field has show_hidden_initial=True, initial will be a string
+        # formatted by HiddenInput using formats.localize_input, which is not
+        # necessarily the format used for this  widget. Attempt to convert it.
+        try:
+            input_format = get_format('TIME_INPUT_FORMATS')[0]
+            initial = datetime.time(*time.strptime(initial, input_format)[3:6])
+        except (TypeError, ValueError):
+            pass
         return super(TimeInput, self)._has_changed(self._format_value(initial), data)
 
 class CheckboxInput(Widget):
@@ -382,7 +412,12 @@ class CheckboxInput(Widget):
             # A missing value means False because HTML form submission does not
             # send results for unselected checkboxes.
             return False
-        return super(CheckboxInput, self).value_from_datadict(data, files, name)
+        value = data.get(name)
+        # Translate true and false strings to boolean values.
+        values =  {'true': True, 'false': False}
+        if isinstance(value, basestring):
+            value = values.get(value.lower(), value)
+        return value
 
     def _has_changed(self, initial, data):
         # Sometimes data or initial could be None or u'' which should be the
@@ -452,9 +487,13 @@ class NullBooleanSelect(Select):
                 False: False}.get(value, None)
 
     def _has_changed(self, initial, data):
-        # Sometimes data or initial could be None or u'' which should be the
-        # same thing as False.
-        return bool(initial) != bool(data)
+        # For a NullBooleanSelect, None (unknown) and False (No)
+        # are not the same
+        if initial is not None:
+            initial = bool(initial)
+        if data is not None:
+            data = bool(data)
+        return initial != data
 
 class SelectMultiple(Select):
     def render(self, name, value, attrs=None, choices=()):
@@ -699,6 +738,11 @@ class MultiWidget(Widget):
             media = media + w.media
         return media
     media = property(_get_media)
+    
+    def __deepcopy__(self, memo):
+        obj = super(MultiWidget, self).__deepcopy__(memo)
+        obj.widgets = copy.deepcopy(self.widgets)
+        return obj
 
 class SplitDateTimeWidget(MultiWidget):
     """

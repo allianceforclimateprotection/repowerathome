@@ -3,10 +3,6 @@
 import sys
 import re
 from itertools import cycle as itertools_cycle
-try:
-    reversed
-except NameError:
-    from django.utils.itercompat import reversed     # Python 2.3 fallback
 
 from django.template import Node, NodeList, Template, Context, Variable
 from django.template import TemplateSyntaxError, VariableDoesNotExist, BLOCK_TAG_START, BLOCK_TAG_END, VARIABLE_TAG_START, VARIABLE_TAG_END, SINGLE_BRACE_START, SINGLE_BRACE_END, COMMENT_TAG_START, COMMENT_TAG_END
@@ -101,6 +97,8 @@ class FirstOfNode(Node):
         return u''
 
 class ForNode(Node):
+    child_nodelists = ('nodelist_loop', 'nodelist_empty')
+
     def __init__(self, loopvars, sequence, is_reversed, nodelist_loop, nodelist_empty=None):
         self.loopvars, self.sequence = loopvars, sequence
         self.is_reversed = is_reversed
@@ -121,14 +119,6 @@ class ForNode(Node):
             yield node
         for node in self.nodelist_empty:
             yield node
-
-    def get_nodes_by_type(self, nodetype):
-        nodes = []
-        if isinstance(self, nodetype):
-            nodes.append(self)
-        nodes.extend(self.nodelist_loop.get_nodes_by_type(nodetype))
-        nodes.extend(self.nodelist_empty.get_nodes_by_type(nodetype))
-        return nodes
 
     def render(self, context):
         if 'forloop' in context:
@@ -185,6 +175,8 @@ class ForNode(Node):
         return nodelist.render(context)
 
 class IfChangedNode(Node):
+    child_nodelists = ('nodelist_true', 'nodelist_false')
+
     def __init__(self, nodelist_true, nodelist_false, *varlist):
         self.nodelist_true, self.nodelist_false = nodelist_true, nodelist_false
         self._last_seen = None
@@ -215,6 +207,8 @@ class IfChangedNode(Node):
         return ''
 
 class IfEqualNode(Node):
+    child_nodelists = ('nodelist_true', 'nodelist_false')
+
     def __init__(self, var1, var2, nodelist_true, nodelist_false, negate):
         self.var1, self.var2 = var1, var2
         self.nodelist_true, self.nodelist_false = nodelist_true, nodelist_false
@@ -231,6 +225,8 @@ class IfEqualNode(Node):
         return self.nodelist_false.render(context)
 
 class IfNode(Node):
+    child_nodelists = ('nodelist_true', 'nodelist_false')
+
     def __init__(self, var, nodelist_true, nodelist_false=None):
         self.nodelist_true, self.nodelist_false = nodelist_true, nodelist_false
         self.var = var
@@ -243,14 +239,6 @@ class IfNode(Node):
             yield node
         for node in self.nodelist_false:
             yield node
-
-    def get_nodes_by_type(self, nodetype):
-        nodes = []
-        if isinstance(self, nodetype):
-            nodes.append(self)
-        nodes.extend(self.nodelist_true.get_nodes_by_type(nodetype))
-        nodes.extend(self.nodelist_false.get_nodes_by_type(nodetype))
-        return nodes
 
     def render(self, context):
         if self.var.eval(context):
@@ -599,7 +587,7 @@ def firstof(parser, token):
 
         {% filter force_escape %}
             {% firstof var1 var2 var3 "fallback value" %}
-	{% endfilter %}
+        {% endfilter %}
 
     """
     bits = token.split_contents()[1:]
@@ -818,8 +806,8 @@ def do_if(parser, token):
     Arguments and operators _must_ have a space between them, so
     ``{% if 1>2 %}`` is not a valid if tag.
 
-    All supported operators are: ``or``, ``and``, ``in``, ``==`` (or ``=``),
-    ``!=``, ``>``, ``>=``, ``<`` and ``<=``.
+    All supported operators are: ``or``, ``and``, ``in``, ``not in``
+    ``==`` (or ``=``), ``!=``, ``>``, ``>=``, ``<`` and ``<=``.
 
     Operator precedence follows Python.
     """
@@ -1075,6 +1063,13 @@ def templatetag(parser, token):
     return TemplateTagNode(tag)
 templatetag = register.tag(templatetag)
 
+# Regex for URL arguments including filters
+url_arg_re = re.compile(
+    r"(?:(%(name)s)=)?(%(value)s(?:\|%(name)s(?::%(value)s)?)*)" % {
+        'name':'\w+',
+        'value':'''(?:(?:'[^']*')|(?:"[^"]*")|(?:[\w\.-]+))'''},
+    re.VERBOSE)
+
 def url(parser, token):
     """
     Returns an absolute URL matching given view with its parameters.
@@ -1122,13 +1117,20 @@ def url(parser, token):
                 asvar = bits.next()
                 break
             else:
-                for arg in bit.split(","):
-                    if '=' in arg:
-                        k, v = arg.split('=', 1)
-                        k = k.strip()
-                        kwargs[k] = parser.compile_filter(v)
-                    elif arg:
-                        args.append(parser.compile_filter(arg))
+                end = 0
+                for i, match in enumerate(url_arg_re.finditer(bit)):
+                    if (i == 0 and match.start() != 0) or \
+                          (i > 0 and (bit[end:match.start()] != ',')):
+                        raise TemplateSyntaxError("Malformed arguments to url tag")
+                    end = match.end()
+                    name, value = match.group(1), match.group(2)
+                    if name:
+                        kwargs[name] = parser.compile_filter(value)
+                    else:
+                        args.append(parser.compile_filter(value))
+                if end != len(bit):
+                    raise TemplateSyntaxError("Malformed arguments to url tag")
+
     return URLNode(viewname, args, kwargs, asvar)
 url = register.tag(url)
 

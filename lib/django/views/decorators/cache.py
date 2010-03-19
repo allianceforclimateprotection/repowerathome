@@ -16,9 +16,10 @@ try:
 except ImportError:
     from django.utils.functional import wraps  # Python 2.3, 2.4 fallback.
 
-from django.utils.decorators import decorator_from_middleware_with_args, auto_adapt_to_methods
+from django.utils.decorators import decorator_from_middleware_with_args, available_attrs
 from django.utils.cache import patch_cache_control, add_never_cache_headers
 from django.middleware.cache import CacheMiddleware
+
 
 def cache_page(*args, **kwargs):
     # We need backwards compatibility with code which spells it this way:
@@ -48,18 +49,16 @@ def cache_page(*args, **kwargs):
     else:
         return decorator_from_middleware_with_args(CacheMiddleware)(cache_timeout=args[0], key_prefix=key_prefix)
 
+
 def cache_control(**kwargs):
-
     def _cache_controller(viewfunc):
-
         def _cache_controlled(request, *args, **kw):
             response = viewfunc(request, *args, **kw)
             patch_cache_control(response, **kwargs)
             return response
+        return wraps(viewfunc, assigned=available_attrs(viewfunc))(_cache_controlled)
+    return _cache_controller
 
-        return wraps(viewfunc)(_cache_controlled)
-
-    return auto_adapt_to_methods(_cache_controller)
 
 def never_cache(view_func):
     """
@@ -70,5 +69,4 @@ def never_cache(view_func):
         response = view_func(request, *args, **kwargs)
         add_never_cache_headers(response)
         return response
-    return wraps(view_func)(_wrapped_view_func)
-never_cache = auto_adapt_to_methods(never_cache)
+    return wraps(view_func, assigned=available_attrs(view_func))(_wrapped_view_func)

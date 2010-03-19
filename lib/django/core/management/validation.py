@@ -37,20 +37,39 @@ def get_validation_errors(outfile, app=None):
                 e.add(opts, '"%s": You can\'t use "id" as a field name, because each model automatically gets an "id" field if none of the fields have primary_key=True. You need to either remove/rename your "id" field or add primary_key=True to a field.' % f.name)
             if f.name.endswith('_'):
                 e.add(opts, '"%s": Field names cannot end with underscores, because this would lead to ambiguous queryset filters.' % f.name)
-            if isinstance(f, models.CharField) and f.max_length in (None, 0):
-                e.add(opts, '"%s": CharFields require a "max_length" attribute.' % f.name)
+            if isinstance(f, models.CharField):
+                try:
+                    max_length = int(f.max_length)
+                    if max_length <= 0:
+                        e.add(opts, '"%s": CharFields require a "max_length" attribute that is a positive integer.' % f.name)
+                except (ValueError, TypeError):
+                    e.add(opts, '"%s": CharFields require a "max_length" attribute that is a positive integer.' % f.name)
             if isinstance(f, models.DecimalField):
-                if f.decimal_places is None:
-                    e.add(opts, '"%s": DecimalFields require a "decimal_places" attribute.' % f.name)
-                if f.max_digits is None:
-                    e.add(opts, '"%s": DecimalFields require a "max_digits" attribute.' % f.name)
+                decimalp_msg ='"%s": DecimalFields require a "decimal_places" attribute that is a non-negative integer.'
+                try:
+                    decimal_places = int(f.decimal_places)
+                    if decimal_places < 0:
+                        e.add(opts, decimalp_msg % f.name)
+                except (ValueError, TypeError):
+                    e.add(opts, decimalp_msg % f.name)
+                mdigits_msg = '"%s": DecimalFields require a "max_digits" attribute that is a positive integer.'
+                try:
+                    max_digits = int(f.max_digits)
+                    if max_digits <= 0:
+                        e.add(opts,  mdigits_msg % f.name)
+                except (ValueError, TypeError):
+                    e.add(opts, mdigits_msg % f.name)
             if isinstance(f, models.FileField) and not f.upload_to:
                 e.add(opts, '"%s": FileFields require an "upload_to" attribute.' % f.name)
             if isinstance(f, models.ImageField):
+                # Try to import PIL in either of the two ways it can end up installed.
                 try:
                     from PIL import Image
                 except ImportError:
-                    e.add(opts, '"%s": To use ImageFields, you need to install the Python Imaging Library. Get it at http://www.pythonware.com/products/pil/ .' % f.name)
+                    try:
+                        import Image
+                    except ImportError:
+                        e.add(opts, '"%s": To use ImageFields, you need to install the Python Imaging Library. Get it at http://www.pythonware.com/products/pil/ .' % f.name)
             if isinstance(f, models.BooleanField) and getattr(f, 'null', False):
                 e.add(opts, '"%s": BooleanFields do not accept null values. Use a NullBooleanField instead.' % f.name)
             if f.choices:
@@ -58,7 +77,7 @@ def get_validation_errors(outfile, app=None):
                     e.add(opts, '"%s": "choices" should be iterable (e.g., a tuple or list).' % f.name)
                 else:
                     for c in f.choices:
-                        if not type(c) in (tuple, list) or len(c) != 2:
+                        if not isinstance(c, (list, tuple)) or len(c) != 2:
                             e.add(opts, '"%s": "choices" should be a sequence of two-tuples.' % f.name)
             if f.db_index not in (None, True, False):
                 e.add(opts, '"%s": "db_index" should be either None, True or False.' % f.name)
@@ -75,6 +94,10 @@ def get_validation_errors(outfile, app=None):
                 # so skip the next section
                 if isinstance(f.rel.to, (str, unicode)):
                     continue
+
+                # Make sure the related field specified by a ForeignKey is unique
+                if not f.rel.to._meta.get_field(f.rel.field_name).unique:
+                    e.add(opts, "Field '%s' under model '%s' must have a unique=True constraint." % (f.rel.field_name, f.rel.to.__name__))
 
                 rel_opts = f.rel.to._meta
                 rel_name = RelatedObject(f.rel.to, cls, f).get_accessor_name()
@@ -175,19 +198,20 @@ def get_validation_errors(outfile, app=None):
                     )
                 else:
                     seen_intermediary_signatures.append(signature)
-                seen_related_fk, seen_this_fk = False, False
-                for field in f.rel.through._meta.fields:
-                    if field.rel:
-                        if not seen_related_fk and field.rel.to == f.rel.to:
-                            seen_related_fk = True
-                        elif field.rel.to == cls:
-                            seen_this_fk = True
-                if not seen_related_fk or not seen_this_fk:
-                    e.add(opts, "'%s' has a manually-defined m2m relation "
-                        "through model %s, which does not have foreign keys "
-                        "to %s and %s" % (f.name, f.rel.through._meta.object_name,
-                            f.rel.to._meta.object_name, cls._meta.object_name)
-                    )
+                if not f.rel.through._meta.auto_created:
+                    seen_related_fk, seen_this_fk = False, False
+                    for field in f.rel.through._meta.fields:
+                        if field.rel:
+                            if not seen_related_fk and field.rel.to == f.rel.to:
+                                seen_related_fk = True
+                            elif field.rel.to == cls:
+                                seen_this_fk = True
+                    if not seen_related_fk or not seen_this_fk:
+                        e.add(opts, "'%s' is a manually-defined m2m relation "
+                            "through model %s, which does not have foreign keys "
+                            "to %s and %s" % (f.name, f.rel.through._meta.object_name,
+                                f.rel.to._meta.object_name, cls._meta.object_name)
+                        )
             elif isinstance(f.rel.through, basestring):
                 e.add(opts, "'%s' specifies an m2m relation through model %s, "
                     "which has not been installed" % (f.name, f.rel.through)
