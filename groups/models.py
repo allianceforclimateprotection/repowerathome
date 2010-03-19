@@ -5,6 +5,7 @@ from django.template.defaultfilters import slugify
 from geo.models import Location
 from records.models import Record
 from rah.models import Action, Profile
+from invite.models import Rsvp
         
 class GroupManager(models.Manager):
     def new_groups_with_memberships(self, user, limit=None):
@@ -232,7 +233,10 @@ class MembershipRequests(models.Model):
     
     def __unicode__(self):
         return u'%s request to join %s on %s' % (self.user, self.group, self.created)
-        
+
+"""
+Signals!
+"""
 def associate_with_geo_groups(sender, instance, **kwargs):
     user = instance.user
     GroupUsers.objects.filter(user=user, group__is_geo_group=True).delete()
@@ -242,5 +246,12 @@ def associate_with_geo_groups(sender, instance, **kwargs):
             if not geo_group:
                 geo_group = Group.objects.create_geo_group(location_type, instance.location)
             GroupUsers(user=user, group=geo_group).save()
-        
+
+def add_invited_user_to_group(sender, instance, **kwargs):
+    invitation = instance.invitation
+    if invitation.invite_type == "group":
+        group = Group.objects.get(pk=invitation.content_id)
+        GroupUsers.objects.get_or_create(user=instance.invitee, group=group)
+
 models.signals.post_save.connect(associate_with_geo_groups, sender=Profile)
+models.signals.post_save.connect(add_invited_user_to_group, sender=Rsvp)

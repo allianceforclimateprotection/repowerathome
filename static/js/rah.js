@@ -129,14 +129,7 @@ var rah = {
                 buttons: { "Give me a call": function() { $('#house_party_form').submit(); }}
             });
             
-            // Setup invite friend form, link, and dialog
-            $('#invite_friend_form_submit').hide();
-            $("#invite_friend_form").validate({rules: {to_email: { required: true, email: true }}});
-            $('#invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
-            $('#invite_friend_dialog').dialog({
-                title: 'Invite a friend', modal: true, autoOpen: false, 
-                buttons: { "Send Invitation": function() { $('#invite_friend_form_submit').click();}}
-            });
+            rah.mod_invite_friend.init();
             
             // Setup twitter update form, link, and dialog
             $("#twitter_post_dialog").validate({ rules: {status: { required: true, }}});
@@ -359,12 +352,26 @@ var rah = {
     page_group_detail: {
         init: function() {
             $("table").tablesorter();
+            rah.mod_invite_friend.init();
         }
     },
     
     page_group_list: {
         init: function() {
             rah.mod_search_widget.init();
+        }
+    },
+    
+    mod_invite_friend: {
+        init: function(){
+            // Setup invite friend form, link, and dialog
+            $('#invite_friend_form_submit').hide();
+            $("#invite_friend_form").validate({rules: {to_email: { required: true, email: true }}});
+            $('#invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
+            $('#invite_friend_dialog').dialog({
+                title: 'Invite a friend', modal: true, autoOpen: false, 
+                buttons: { "Send Invitation": function() { $('#invite_friend_form_submit').click();}}
+            });
         }
     },
     
