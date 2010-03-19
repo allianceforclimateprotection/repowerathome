@@ -177,7 +177,7 @@ def _group_detail(request, group):
     membership_pending = group.has_pending_membership(request.user)
     requesters = group.requesters_to_grant_or_deny(request.user)
     has_other_managers = group.has_other_managers(request.user)
-    invite_form = InviteForm(initial_data={content_id:group.id, content_id_sig:hash_val(group.id)})
+    invite_form = InviteForm(initial={'invite_type':'group', 'content_id':group.id})
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))
     
 def _forbidden(request, message="You do not have permissions."):
