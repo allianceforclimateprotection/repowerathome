@@ -161,7 +161,7 @@ class Record(DefaultModel):
 
     def get_absolute_url(self):
         content_objects = self.content_objects.all()
-        if content_objects:
+        if content_objects and content_objects[0].content_object:
             content_object = content_objects[0].content_object
             return content_object.get_absolute_url()
         else:
