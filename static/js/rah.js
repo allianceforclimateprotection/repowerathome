@@ -400,7 +400,7 @@ var rah = {
                 $("form", this).attr("action", $(ui.tab).attr("href"));
             });
             $("#delete_group_form").submit(function(){
-                return confirm("Are you sure you delete, this can not be undone?");
+                return confirm("Are you sure you delete? This cannot be undone.");
             })
         }
     },

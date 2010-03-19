@@ -33,7 +33,7 @@ class CreateDeleteGroup(unittest.TestCase):
         sel.wait_for_page_to_load("30000")
         sel.click("delete_group")
         sel.wait_for_page_to_load("30000")
-        self.failUnless(re.search(r"^Are you sure you delete, this can not be undone[\s\S]$", sel.get_confirmation()))
+        self.failUnless(re.search(r"^Are you sure you delete\? This cannot be undone\.$", sel.get_confirmation()))
         try: self.failUnless(sel.is_text_present("test group has been deleted."))
         except AssertionError, e: self.verificationErrors.append(str(e))
         sel.click("link=Logout")

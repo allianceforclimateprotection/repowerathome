@@ -102,6 +102,12 @@
             {% endfor %}
         </ul>
     {% endif %}
-    {% include "_invite_form.html" %}
+    {% if is_member %}
+        <h2>Magnify your Impact</h2>
+        <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend to this group</a>
+        <div id='invite_friend_dialog'>
+            {% include "_invite_form.html" %}
+        </div>
+    {% endif %}
 {% endblock %}
 {% block js %}page_group_detail{% endblock %}
