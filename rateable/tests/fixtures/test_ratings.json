@@ -1,7 +1,7 @@
 [
-    {"pk": 1, "model": "tests.post", "fields": {"content": "first test posting"}},
-    {"pk": 2, "model": "tests.post", "fields": {"content": "second test posting"}},
-    {"pk": 3, "model": "tests.post", "fields": {"content": "third test posting"}},
+    {"pk": 1, "model": "rateable.post", "fields": {"content": "first test posting"}},
+    {"pk": 2, "model": "rateable.post", "fields": {"content": "second test posting"}},
+    {"pk": 3, "model": "rateable.post", "fields": {"content": "third test posting"}},
     
     {
         "pk": 1, 
@@ -40,10 +40,10 @@
         }
     },
     
-    {"pk": 1, "model": "rateable.rating", "fields": {"content_type": ["tests", "post"], "object_pk": "1", "user": "1", "score": "1"}},
-    {"pk": 2, "model": "rateable.rating", "fields": {"content_type": ["tests", "post"], "object_pk": "1", "user": "2", "score": "0"}},
-    {"pk": 3, "model": "rateable.rating", "fields": {"content_type": ["tests", "post"], "object_pk": "2", "user": "1", "score": "1"}},
-    {"pk": 4, "model": "rateable.rating", "fields": {"content_type": ["tests", "post"], "object_pk": "2", "user": "2", "score": "1"}},
-    {"pk": 5, "model": "rateable.rating", "fields": {"content_type": ["tests", "post"], "object_pk": "3", "user": "1", "score": "1"}}
+    {"pk": 1, "model": "rateable.rating", "fields": {"content_type": ["rateable", "post"], "object_pk": "1", "user": "1", "score": "1"}},
+    {"pk": 2, "model": "rateable.rating", "fields": {"content_type": ["rateable", "post"], "object_pk": "1", "user": "2", "score": "0"}},
+    {"pk": 3, "model": "rateable.rating", "fields": {"content_type": ["rateable", "post"], "object_pk": "2", "user": "1", "score": "1"}},
+    {"pk": 4, "model": "rateable.rating", "fields": {"content_type": ["rateable", "post"], "object_pk": "2", "user": "2", "score": "1"}},
+    {"pk": 5, "model": "rateable.rating", "fields": {"content_type": ["rateable", "post"], "object_pk": "3", "user": "1", "score": "1"}}
 ]
     

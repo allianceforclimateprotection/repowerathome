@@ -12,7 +12,7 @@ class RatingManagerTest(TestCase):
     fixtures = ["test_ratings.json",]
     
     def setUp(self):
-        self.post_content_type = ContentType.objects.get(app_label="tests", model="post")
+        self.post_content_type = ContentType.objects.get(app_label="rateable", model="post")
         self.first_post = Post.objects.get(pk=1)
         self.second_post = Post.objects.get(pk=2)
         self.third_post = Post.objects.get(pk=3)
