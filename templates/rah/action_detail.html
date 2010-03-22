@@ -46,7 +46,7 @@
     {% endif %}
     <h2>Action Tools</h2>
     <p>
-        {% if request.user.is_autenticated and not progress.date_committed %}
+        {% if request.user.is_authenticated and not progress.date_committed %}
             <a href="{% url action_commit action.slug %}" class="commit_link">Make a Commitment</a><br/>
         {% endif %}
         <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
