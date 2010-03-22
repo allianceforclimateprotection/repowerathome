@@ -97,7 +97,7 @@ var rah = {
                     grid: { hoverable: true, clickable: true, backgroundColor: { colors: ["#DDD", "#FFF"] } },
                     legend: {show: false},
                     xaxis: {mode: "time",autoscaleMargin: 0.1,  minTickSize: [1, "day"]},
-                    yaxis: {min: 0, tickDecimals: 0, autoscaleMargin: 0.6,}
+                    yaxis: {min: 0, tickDecimals: 0, autoscaleMargin: 0.6}
                 });
                 $("#chart").bind("plothover", function (event, pos, item) {
                     if (item) {
@@ -132,14 +132,14 @@ var rah = {
             rah.mod_invite_friend.init();
             
             // Setup twitter update form, link, and dialog
-            $("#twitter_post_dialog").validate({ rules: {status: { required: true, }}});
+            $("#twitter_post_dialog").validate({ rules: {status: { required: true }}});
             $('.twitter_status').click(function(){ $('#twitter_post_dialog').dialog('open'); return false; });
             var form = $('#twitter_status_form');
             $('#twitter_post_dialog').dialog({
                 title: 'Tell your tweeps about us', modal: true, autoOpen: false,
                 buttons: (form.size() > 0 ? { "Update status": function() { form.submit(); } } : { })
             });
-        },
+        }
     },
     
     /**
@@ -409,7 +409,7 @@ var rah = {
             });
             $("#delete_group_form").submit(function(){
                 return confirm("Are you sure you delete? This cannot be undone.");
-            })
+            });
         }
     },
     
