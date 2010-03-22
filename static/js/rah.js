@@ -416,19 +416,19 @@ var rah = {
     mod_is_helpful_widget: {
         init: function() {
             $(".rateable_rate_form [name='next']").remove();
-            $(".rateable_rate_form").submit(function(event) {
-                var form = $(this);
-                var value = event.originalEvent.explicitOriginalTarget.value;
-                form.append("<input type='hidden' name='" + value + "' />");
-                $.ajax({
-                    url: form.attr("action"),
-                    type: form.attr("method"),
-                    data: form.serialize(),
-                    success: function(data) {
-                        form.parent("div").html(data);
-                    }
-                });
-                return false;
+            $(".rateable_rate_form :submit").click(function() {
+               var submit = $(this);
+               var form = submit.parents("form");
+               form.append("<input type='hidden' name='" + submit.val() + "' />");
+               $.ajax({
+                   url: form.attr("action"),
+                   type: form.attr("method"),
+                   data: form.serialize(),
+                   success: function(data) {
+                       form.parent("div").html(data);
+                   }
+               });
+               return false;
             });
         }
     },
