@@ -268,6 +268,7 @@ var rah = {
                 }
             });
             rah.mod_is_helpful_widget.init();
+            rah.mod_flag.init();
         }
     },
     
@@ -425,6 +426,28 @@ var rah = {
                     data: form.serialize(),
                     success: function(data) {
                         form.parent("div").html(data);
+                    }
+                });
+                return false;
+            });
+        }
+    },
+    
+    mod_flag: {
+        init: function() {
+            $(".flagged_flag_form [name='next']").remove();
+            $(".flagged_flag_form :submit").each(function() {
+                var button = $(this);
+                button.replaceWith("<a class='flag_submit_link' href='#'>" + button.val() + "</a>");
+            });
+            $(".flag_submit_link").click(function() {
+                var form = $(this).parents("form");
+                $.ajax({
+                    url: form.attr("action"),
+                    type: form.attr("method"),
+                    data: form.serialize(),
+                    success: function(data) {
+                        form.html(data);
                     }
                 });
                 return false;

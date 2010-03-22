@@ -1,3 +1,6 @@
 from django.conf.urls.defaults import *
 
-# place app url patterns here
+urlpatterns = patterns("flagged.views",
+    url(r"^flag/$", "flag", name="flagged-flag"),
+    url(r"^unflag/$", "unflag", name="flagged-unflag"),
+)

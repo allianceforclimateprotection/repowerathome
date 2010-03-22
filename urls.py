@@ -46,6 +46,7 @@ urlpatterns += patterns('',
     url(r'^rateable/', include('rateable.urls')),
     url(r'^groups/', include('groups.urls')),
     url(r'^invite/', include('invite.urls')),
+    url(r'^flagged/flag/$', 'flagged.views.flag', name='flagged-flag'),
 )
 
 if settings.DEBUG:

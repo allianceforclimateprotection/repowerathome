@@ -369,7 +369,7 @@ acronym {
 #invite_friend_dialog textarea, #twitter_post_dialog textarea, #feedback_dialog textarea{ width:100%; height: 100px; }
 
 /* @group comments */
-.comment .author { margin-top: -15px; }
+.comment .author { margin-top: 10px; }
 
 .comment_helpful_question { float: left; }
 /* @end */
@@ -458,6 +458,12 @@ th.headerSortUp, th.headerSortDown {
 /* @groups rateable */
 .rateable_rate_form_container { margin-bottom: 20px; }
 .rateable_rate_form * { padding-bottom: 0; }
+/* @end */
+
+/* @groups flagged */
+.flagged_flag_form, .flagged_flag_form * { display: inline; }
+.flagged_flag_form { margin-left: 10px; }
+.flag_submit_link { font-size: smaller; }
 /* @end */
 /*
 * jQuery UI CSS Framework
