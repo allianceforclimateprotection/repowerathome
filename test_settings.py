@@ -2,10 +2,8 @@ try:
     from settings import *
 except ImportError:
     print 'settings could not be imported'
-    pass
     
 DATABASE_ENGINE   = 'sqlite3'  # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-# DATABASE_NAME     = ':memory:' # Or path to database file if using sqlite3.
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -33,5 +31,3 @@ INSTALLED_APPS = (
     'django_extensions',
     'debug_toolbar',
 )
-
-EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'

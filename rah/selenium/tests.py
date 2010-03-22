@@ -172,6 +172,61 @@ class CommitToActions(unittest.TestCase):
 
     def tearDown(self):
         self.selenium.stop()
+        
+class MarkComments(unittest.TestCase):
+    def setUp(self):
+        self.verificationErrors = []
+        self.selenium = selenium("localhost", 4444, settings.SELENIUM_BROWSER, settings.SELENIUM_URL)
+        self.selenium.start()
+
+    def test_mark_comments(self):
+        sel = self.selenium
+        sel.set_speed(200)
+        sel.open("/#")
+        sel.click("link=Login")
+        sel.wait_for_page_to_load("30000")
+        sel.type("id_email", "test@repowerathome.com")
+        sel.type("id_password", "repotest10")
+        sel.click("//input[@value='Login']")
+        sel.wait_for_page_to_load("30000")
+        sel.click("link=Actions")
+        sel.wait_for_page_to_load("30000")
+        sel.click("link=Insulate your water heater")
+        sel.wait_for_page_to_load("30000")
+        sel.type("id_comment", "leaving a new comment")
+        sel.click("id_submit")
+        sel.wait_for_page_to_load("30000")
+        try: self.failUnless(sel.is_text_present("Thank you for your rating."))
+        except AssertionError, e: self.verificationErrors.append(str(e))
+        try: self.failUnless(sel.is_text_present("1 out of 1 user found this helpful."))
+        except AssertionError, e: self.verificationErrors.append(str(e))
+        sel.click("//div[@class='comment'][last()]/form/span/a[@class='flag_submit_link']")
+        try: self.failUnless(sel.is_text_present("Thanks for reporting this. A moderator will review your submission shortly."))
+        except AssertionError, e: self.verificationErrors.append(str(e))
+        sel.click("link=Logout")
+        sel.wait_for_page_to_load("30000")
+        sel.click("link=close")
+        sel.click("link=Login")
+        sel.wait_for_page_to_load("30000")
+        sel.type("id_email", "eric.buckley@climateprotect.org")
+        sel.type("id_password", "m0GBfgvL5lWR3tDj")
+        sel.click("//input[@value='Login']")
+        sel.wait_for_page_to_load("30000")
+        sel.click("link=Admin")
+        sel.wait_for_page_to_load("30000")
+        sel.click("//div[@id='content-main']/div[3]/table/tbody/tr/th/a")
+        sel.wait_for_page_to_load("30000")
+        sel.click("link=Test User")
+        sel.wait_for_page_to_load("30000")
+        sel.click("link=Delete")
+        sel.wait_for_page_to_load("30000")
+        sel.click("//input[@value=\"Yes, I'm sure\"]")
+        sel.wait_for_page_to_load("30000")
+        sel.click("link=Log out")
+        sel.wait_for_page_to_load("30000")
+
+    def tearDown(self):
+        self.selenium.stop()
 
 if __name__ == "__main__":
     unittest.main()
