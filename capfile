@@ -6,7 +6,7 @@ set :deploy_to, "/scripts/dev"
 set :scm, :git
 set :repository, "git@codebasehq-deploy:rah/rah/rah.git"
 set :branch, "master"
-set :revision, `git ls-remote origin #{branch} | awk 'BEGIN { FS = " " } ; { print $1 }'`.chomp.strip
+set :revision, `git ls-remote origin #{branch}`.split(" ")[0].chomp.strip
 set :username, `git config codebase.username`.chomp.strip
 set :api_key, `git config codebase.apikey`.chomp.strip
 
