@@ -13,11 +13,12 @@ from django.contrib.auth.models import User
 
 from models import Flag
 
+@login_required
 @require_POST
 @csrf_protect
 def flag(request, next=None, using=None):
-    content_type_pk = request.POST.get("content_type")
-    object_pk = request.POST.get("object_pk")
+    content_type_pk = request.POST.get("content_type", "-1")
+    object_pk = request.POST.get("object_pk", "-1")
     try:
         content_type = ContentType.objects.get(pk=content_type_pk)
         target = content_type.get_object_for_this_type(pk=object_pk)
@@ -25,6 +26,8 @@ def flag(request, next=None, using=None):
         raise Http404("No type found matching %s" % content_type_pk)
     except ObjectDoesNotExist:
         raise Http404("No object found matching %s" % object_pk)
+    except ValueError:
+        raise Http404("Invalid parameters %s, %s" % (content_type_pk, object_pk))
     success = Flag.objects.flag_content(content_type=content_type, object_pk=object_pk, user=request.user)
     
     if success:
@@ -47,7 +50,8 @@ def flag(request, next=None, using=None):
     response = loader.render_to_string(template_list, {"success": success}, context_instance=RequestContext(request))
     for message in request._messages: pass #if messages weren't used in the response, clear them out
     return HttpResponse(response)
-    
+
+@login_required
 @require_POST
 @csrf_protect
 def unflag(request, next=None, using=None):
