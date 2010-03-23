@@ -25,6 +25,7 @@ INSTALLED_APPS = (
     'tagging',
     'twitter_app',
     'search_widget',
+    'search_widget.tests',
     'groups',
     'sorl.thumbnail',
     'flagged',

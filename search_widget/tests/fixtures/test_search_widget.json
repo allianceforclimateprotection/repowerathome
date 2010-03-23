@@ -1,0 +1,9 @@
+[
+    {"pk": 1, "model": "search_widget.post", "fields": {"name": "first name", "content": "first test posting"}},
+    {"pk": 2, "model": "search_widget.post", "fields": {"name": "second name", "content": "second test posting"}},
+    {"pk": 3, "model": "search_widget.post", "fields": {"name": "third name", "content": "third test posting"}},
+
+    {"pk": 4, "model": "search_widget.post", "fields": {"name": "4th name", "content": "fourth post"}},
+    {"pk": 5, "model": "search_widget.post", "fields": {"name": "5th name", "content": "fifth post"}},
+    {"pk": 6, "model": "search_widget.post", "fields": {"name": "6th name", "content": "sixth post"}}
+]
