@@ -62,7 +62,7 @@ var rah = {
                     email:      { required: true, email: true, remote: { url: "/validate/", type: "post" } },
                     first_name: { required: true, minlength: 2 },
                     password1:  { required: true, minlength: 5 },
-        			password2:  { required: true, minlength: 5, equalTo: "#id_password1" }
+                    password2:  { required: true, minlength: 5, equalTo: "#id_password1" }
                 },
                 messages: {
                     email: { remote: "That email is already registered" },
@@ -154,7 +154,7 @@ var rah = {
                     email:      { required: true, email: true, remote: { url: "/validate/", type: "post" } },
                     first_name: { required: true, minlength: 2 },
                     password1:  { required: false, minlength: 5 },
-        			password2:  { required: false, minlength: 5, equalTo: "#id_password1" }
+                    password2:  { required: false, minlength: 5, equalTo: "#id_password1" }
                 },
                 messages: {
                     email: { remote: "That email is already registered" },
@@ -295,7 +295,7 @@ var rah = {
                 rules: {
                     old_password: { required: true },
                     new_password1: { required: true, minlength: 5 },
-        			new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
+                    new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
                 }
             });
         }
@@ -307,7 +307,7 @@ var rah = {
             $("#password_reset_confirm").validate({
                 rules: {
                     new_password1: { required: true, minlength: 5 },
-        			new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
+                    new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
                 }
             });
         }
@@ -344,7 +344,7 @@ var rah = {
                 rules: {
                     name: { required: true },
                     slug: { required: true },
-        			description: { required: true }
+                    description: { required: true }
                 }
             });
         }

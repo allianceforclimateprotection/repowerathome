@@ -6,11 +6,11 @@
     <a href='{% url group_create %}'>Create a group</a>
 </p>
 <div id='house_party_dialog'>
-	<form action="{% url rah.views.house_party %}" method="post" id="house_party_form">
-	    <p>We'd love to talk to you about hosting a house party.</p>
-		<div>
-		{{ house_party_form.as_p }}
-		</div>
+    <form action="{% url rah.views.house_party %}" method="post" id="house_party_form">
+        <p>We'd love to talk to you about hosting a house party.</p>
+        <div>
+        {{ house_party_form.as_p }}
+        </div>
         {% csrf_token %}
     </form>
 </div>
@@ -18,15 +18,15 @@
     {% include "_invite_form.html" %}
 </div>
 <div id='twitter_post_dialog'>
-	{% if user.get_profile.twitter_access_token %}
-		<form action="{% url twitter_oauth_post_status %}" method="post" id="twitter_status_form">
-			<div>{{ twitter_status_form.as_p }}</div>
-			{% csrf_token %}
-		</form>
-	{% else %}
-		<p>
-		    You need to <a href="{% url twitter_oauth_auth %}?next={{ request.path }}">link your account with Twitter</a> 
-		    before you can do this.
-		</p>
-	{% endif %}
+    {% if user.get_profile.twitter_access_token %}
+        <form action="{% url twitter_oauth_post_status %}" method="post" id="twitter_status_form">
+            <div>{{ twitter_status_form.as_p }}</div>
+            {% csrf_token %}
+        </form>
+    {% else %}
+        <p>
+            You need to <a href="{% url twitter_oauth_auth %}?next={{ request.path }}">link your account with Twitter</a> 
+            before you can do this.
+        </p>
+    {% endif %}
 </div>

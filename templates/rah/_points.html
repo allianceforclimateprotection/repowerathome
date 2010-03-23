@@ -1,22 +1,22 @@
 {% if is_others_profile %}
-	<h2>Their Points: {{ total_points }}</h2>
+    <h2>Their Points: {{ total_points }}</h2>
 {% else %}
-	<h2>Your Points: {{ total_points }}</h2>
+    <h2>Your Points: {{ total_points }}</h2>
 {% endif %}
 <ul>
     {% if points %}
         {% for point in points %}
             <li>
                 <p><b>{{point.task.action.name}}</b><br/>
-				<span class='points'>{{ point.points }} points</span>
-				<span class='reason'>{{ point.get_reason }}</span></p>
+                <span class='points'>{{ point.points }} points</span>
+                <span class='reason'>{{ point.get_reason }}</span></p>
             </li>
         {% endfor %}    
     {% else %}
-		{% if is_others_profile %}
-			<li>They don't have any points.</li>
-		{% else %}
-			<li>You don't have any points. Do something!</li>
-		{% endif %}
+        {% if is_others_profile %}
+            <li>They don't have any points.</li>
+        {% else %}
+            <li>You don't have any points. Do something!</li>
+        {% endif %}
     {% endif %}
 </ul>

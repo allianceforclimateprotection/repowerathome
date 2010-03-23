@@ -1,14 +1,14 @@
 <p>
     {% for error in form.role.errors %}
-	    <span class="error">{{ error|escape }}</span>
-	{% endfor %}
+        <span class="error">{{ error|escape }}</span>
+    {% endfor %}
     {{ form.role }}
     <input type="submit" name="change_membership" value="Submit"></input>
 </p>
 <p>
     {% for error in form.memberships.errors %}
-	    <span class="error">{{ error|escape }}</span>
-	{% endfor %}
+        <span class="error">{{ error|escape }}</span>
+    {% endfor %}
     <table>
         <thead>
             <tr>

@@ -1,20 +1,20 @@
 {% extends "rah/base.html" %}
 
 {% block content %}
-	<div id="breadcrumbs">
-	    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
-	    <a href="{% url rah.views.action_show %}">Actions</a> &rsaquo;
-	    {{action.name}}
-	</div>
-	<h1>{{action.name}}</h1>
-	{{action.content|safe|linebreaks}}
-	{% for task in action_tasks %}
-	<div class="action_detail_task_container">
-    	<form action="{% url rah.views.action_task task.id %}" class="action_task_submitter" method="post" accept-charset="utf-8">
+    <div id="breadcrumbs">
+        <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+        <a href="{% url rah.views.action_show %}">Actions</a> &rsaquo;
+        {{action.name}}
+    </div>
+    <h1>{{action.name}}</h1>
+    {{action.content|safe|linebreaks}}
+    {% for task in action_tasks %}
+    <div class="action_detail_task_container">
+        <form action="{% url rah.views.action_task task.id %}" class="action_task_submitter" method="post" accept-charset="utf-8">
             <div>
                 <input type="checkbox" name="task_completed" class="action_detail_task_checkbox"
-					{% if task.is_complete %}checked="checked"{% endif %}
-					{% if not user.is_authenticated %}disabled="disabled"{% endif %} />
+                    {% if task.is_complete %}checked="checked"{% endif %}
+                    {% if not user.is_authenticated %}disabled="disabled"{% endif %} />
                 <input type="hidden" name="task_id" value="{{task.id}}" />
                 <input type="submit" value="Update" style="display:none"/>
                 {% csrf_token %}
@@ -22,18 +22,18 @@
         </form>
         <div class="action_detail_task">
             <b>{{ task.sequence }}) {{ task.name }} ({{ task.points }} points)</b>
-        	{{task.content|safe|linebreaks}}        
+            {{task.content|safe|linebreaks}}        
         </div>
     </div>
-	{% endfor %}
-	<div id="comments">
-		{% with action as object %}
-			{% include 'comments/_comment_list.html' %}
-		{% endwith %}
-	</div>
-	<div id="commit_dialog">
+    {% endfor %}
+    <div id="comments">
+        {% with action as object %}
+            {% include 'comments/_comment_list.html' %}
+        {% endwith %}
+    </div>
+    <div id="commit_dialog">
         {% include 'rah/_action_commit.html' %}
-	</div>
+    </div>
 {% endblock %}
 {% block minorcol %}
     {% if progress.date_committed and not progress.is_completed %}
@@ -51,28 +51,28 @@
         {% endif %}
         <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
     </p>
-	<h2>Who's doing this?</h2>
-	<span class='total_users'>{{ num_users_completed }}</span> pe{{ num_users_completed|pluralize:"rson has,ople have" }} completed this action.<br/>
-	{% if num_users_completed %}
-		<ul class="whos_working">
-			{% for user in show_users_completed %}
-			    <li>{% safe_user_link user %} has completed this.</li>
-			{% endfor %}
-			{% if num_noshow_users_completed > 0 %}
-				{{ num_noshow_users_completed }} additional user{{ num_noshow_users_completed|pluralize:" has,s have" }} completed this.
-			{% endif %}
-		</ul>
-	{% endif %}
-	<span class='total_users'>{{ num_users_in_progress }}</span> pe{{ num_users_in_progress|pluralize:"rson is,ople are" }} working on it.<br/>
-	{% if num_users_in_progress %}
-		<ul class="whos_working">
-			{% for user in show_users_in_progress %}
-			    <li>{% safe_user_link user %} is working on this.</li>
-			{% endfor %}
-			{% if num_noshow_users_in_progress > 0 %}
-				{{ num_noshow_users_in_progress }} additional user{{ num_noshow_users_in_progress|pluralize:" has,s have" }} completed this.
-			{% endif %}
-		</ul>
-	{% endif %}
+    <h2>Who's doing this?</h2>
+    <span class='total_users'>{{ num_users_completed }}</span> pe{{ num_users_completed|pluralize:"rson has,ople have" }} completed this action.<br/>
+    {% if num_users_completed %}
+        <ul class="whos_working">
+            {% for user in show_users_completed %}
+                <li>{% safe_user_link user %} has completed this.</li>
+            {% endfor %}
+            {% if num_noshow_users_completed > 0 %}
+                {{ num_noshow_users_completed }} additional user{{ num_noshow_users_completed|pluralize:" has,s have" }} completed this.
+            {% endif %}
+        </ul>
+    {% endif %}
+    <span class='total_users'>{{ num_users_in_progress }}</span> pe{{ num_users_in_progress|pluralize:"rson is,ople are" }} working on it.<br/>
+    {% if num_users_in_progress %}
+        <ul class="whos_working">
+            {% for user in show_users_in_progress %}
+                <li>{% safe_user_link user %} is working on this.</li>
+            {% endfor %}
+            {% if num_noshow_users_in_progress > 0 %}
+                {{ num_noshow_users_in_progress }} additional user{{ num_noshow_users_in_progress|pluralize:" has,s have" }} completed this.
+            {% endif %}
+        </ul>
+    {% endif %}
 {% endblock %}
 {% block js %}page_action_detail{% endblock %}

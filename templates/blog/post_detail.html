@@ -5,29 +5,29 @@
 {% block body_id %}post_{{ object.id }}{% endblock %}
 
 {% block content_title %}
-	<h2>{{ object.title }}</h2>
-	<p class="other_posts">
-		{% if object.get_previous_by_publish %}
-			<a class="previous" href="{{ object.get_previous_post.get_absolute_url }}" title="View previous post">&laquo; {{ object.get_previous_post }}</a>
-		{% endif %}
-		{% if object.get_next_by_publish %}
-			| <a class="next" href="{{ object.get_next_post.get_absolute_url }}" title="View next post">{{ object.get_next_post }} &raquo;</a>
-		{% endif %}
-	</p>
+    <h2>{{ object.title }}</h2>
+    <p class="other_posts">
+        {% if object.get_previous_by_publish %}
+            <a class="previous" href="{{ object.get_previous_post.get_absolute_url }}" title="View previous post">&laquo; {{ object.get_previous_post }}</a>
+        {% endif %}
+        {% if object.get_next_by_publish %}
+            | <a class="next" href="{{ object.get_next_post.get_absolute_url }}" title="View next post">{{ object.get_next_post }} &raquo;</a>
+        {% endif %}
+    </p>
 {% endblock %}
 
 {% block content %}
-	<div class="post">
-		{% with object as post %}
-			<div>
-				{% include 'blog/_post_header.html' %}
-				<div class="post_body">{{ post.body|safe|linebreaks }}</div>
-			</div>
-		{% endwith %}
-	</div>
+    <div class="post">
+        {% with object as post %}
+            <div>
+                {% include 'blog/_post_header.html' %}
+                <div class="post_body">{{ post.body|safe|linebreaks }}</div>
+            </div>
+        {% endwith %}
+    </div>
 
-	<div id="comments">
-		{% include 'comments/_comment_list.html' %}
-	</div>
+    <div id="comments">
+        {% include 'comments/_comment_list.html' %}
+    </div>
 {% endblock %}
 {% block js %}page_post_detail{% endblock %}

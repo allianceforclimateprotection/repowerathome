@@ -14,7 +14,7 @@
         {% block extralinks %}{% endblock %}
     </head>
     <body>
-		<div id="loading" class="warning">Loading...</div>
+        <div id="loading" class="warning">Loading...</div>
         <div id="header-container">
             <div id="header">
                 <a href="/" title="Repower America" class="site-logo">Repower @ Home</a>
@@ -25,9 +25,9 @@
                         <a href="{% url login %}?next={{ request.path }}">Login</a> | <a href="{% url register %}">Sign Up</a>
                     {% endif %}
                     | <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a>
-					{% if user.is_staff %}
-						| <a href="{% url admin_root '' %}">Admin</a>
-					{% endif %}
+                    {% if user.is_staff %}
+                        | <a href="{% url admin_root '' %}">Admin</a>
+                    {% endif %}
                 </div>
                 <form action="/search" id="cse-search-box">
                     <div>
@@ -42,14 +42,14 @@
                     <a href="{% url rah.views.index %}">Home</a> |
                     <a href="{% url rah.views.action_show %}">Actions</a> |
                     <a href="{% url group_list %}">Groups</a> |
-					<a href="{% url blog_index %}">Blog</a>
+                    <a href="{% url blog_index %}">Blog</a>
                     {# <a href="">About us</a> #}
                 </div>
             </div>
         </div>
         <div id="message_box">
-			{% include '_messages.html' %}			
-		</div>
+            {% include '_messages.html' %}            
+        </div>
         <div id="content-container">
             <div id="major-col">
                 {% block content %}{% endblock %}

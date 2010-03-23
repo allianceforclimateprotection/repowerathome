@@ -1,13 +1,13 @@
 {% for field in form %}
     <div class="form_row">
-		<div>{{ field.label_tag }}</div>
-		<div>
-			{% if field.name == "slug" %}<span>http://{{ site }}/</span>{% endif %}
+        <div>{{ field.label_tag }}</div>
+        <div>
+            {% if field.name == "slug" %}<span>http://{{ site }}/</span>{% endif %}
             {{ field }}
-			{% for error in field.errors %}
-			    <span class="error">{{ error|escape }}</span>
-			{% endfor %}
-		</div>
-		<div class="help_text">{{ field.help_text }}</div>
-	</div>
+            {% for error in field.errors %}
+                <span class="error">{{ error|escape }}</span>
+            {% endfor %}
+        </div>
+        <div class="help_text">{{ field.help_text }}</div>
+    </div>
 {% endfor %}

@@ -10,15 +10,15 @@
                 {% with group_form as form %}
                     {% include "groups/_group_form.html" %}
                 {% endwith %}
-        		<p><input type="submit" name="change_group" value="Save Settings"></input></p>
-        		{% csrf_token %}
-        	</form>
-        	<form id="delete_group_form" action="" method="post">
-        	    <h3>Delete Group</h3>
-        	    <p>Deleting a group will immediately remove it from our system.<br/>Groups cannot be undeleted.</p>
-        	    <p><input type="submit" name="delete_group" value="Delete Group"></input></p>
-        	    {% csrf_token %}
-        	</form>
+                    <p><input type="submit" name="change_group" value="Save Settings"></input></p>
+                {% csrf_token %}
+            </form>
+            <form id="delete_group_form" action="" method="post">
+                <h3>Delete Group</h3>
+                <p>Deleting a group will immediately remove it from our system.<br/>Groups cannot be undeleted.</p>
+                <p><input type="submit" name="delete_group" value="Delete Group"></input></p>
+                {% csrf_token %}
+            </form>
         </div>
         <div id="members_tab">
             <form id="membership_form" action="" method="post">

@@ -1,30 +1,30 @@
 {% load comments %}
 
 {% if user.is_authenticated %}
-	<h3>Leave a Comment</h3>
-	{% get_comment_form for object as form %}
-	<form id="comment_form" action="{% comment_form_target %}" method="post">
-		<div>
-		{% for field in form %}
-			{% if field.is_hidden %}
-				{{ field }}
-			{% else %}
-				{% if field.name == "comment" or field.name == "honeypot" or field.name == "name" %}
-					{% if field.name != "name" or not user.get_full_name %}
-						{% if field.errors %}{{ field.errors }}{% endif %}
-						<p
-							{% if field.errors %} class="error"{% endif %}
-							{% ifequal field.name "honeypot" %} style="display:none;" {% endifequal %}>
-							{% ifequal field.name "name" %}{{ field.label }}{% endifequal %}
-							{{ field }}
-						</p>
-					{% endif %}
-				{% endif %}
-			{% endif %}
-		{% endfor %}
-		<input type="hidden" name="next" value="{{ object.get_absolute_url }}" />
-		<input type="submit" value="Add comment" id="id_submit" />
-		{% csrf_token %}
-		</div>
-	</form>
+    <h3>Leave a Comment</h3>
+    {% get_comment_form for object as form %}
+    <form id="comment_form" action="{% comment_form_target %}" method="post">
+        <div>
+        {% for field in form %}
+            {% if field.is_hidden %}
+                {{ field }}
+            {% else %}
+                {% if field.name == "comment" or field.name == "honeypot" or field.name == "name" %}
+                    {% if field.name != "name" or not user.get_full_name %}
+                        {% if field.errors %}{{ field.errors }}{% endif %}
+                        <p
+                            {% if field.errors %} class="error"{% endif %}
+                            {% ifequal field.name "honeypot" %} style="display:none;" {% endifequal %}>
+                            {% ifequal field.name "name" %}{{ field.label }}{% endifequal %}
+                            {{ field }}
+                        </p>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <input type="hidden" name="next" value="{{ object.get_absolute_url }}" />
+        <input type="submit" value="Add comment" id="id_submit" />
+        {% csrf_token %}
+        </div>
+    </form>
 {% endif %}
