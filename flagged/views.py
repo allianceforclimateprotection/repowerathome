@@ -39,11 +39,13 @@ def flag(request, next=None, using=None):
         return redirect(next)
         
     template_list = [
+        "flagged/%s/%s/flagged.html" % (content_type.model_class()._meta.app_label, content_type.model_class()._meta.module_name),
         "flagged/%s/flagged.html" % content_type.model_class()._meta.app_label,
         "flagged/flagged.html",
     ]
     if request.is_ajax():
-        template_list = [ 
+        template_list = [
+            "flagged/%s/%s/ajax/flagged.html" % (content_type.model_class()._meta.app_label, content_type.model_class()._meta.module_name),
             "flagged/%s/ajax/flagged.html" % content_type.model_class()._meta.app_label,
             "flagged/ajax/flagged.html",
         ] + template_list

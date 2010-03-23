@@ -28,6 +28,7 @@ INSTALLED_APPS = (
     'groups',
     'sorl.thumbnail',
     'flagged',
+    'flagged.tests',
     'django_extensions',
     'debug_toolbar',
 )
