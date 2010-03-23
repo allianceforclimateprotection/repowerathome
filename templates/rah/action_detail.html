@@ -7,6 +7,11 @@
         {{action.name}}
     </div>
     <h1>{{action.name}}</h1>
+    <span class='tag_list'>
+        {% for tag in action.tags %}
+            <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
+        {% endfor %}
+    </span>
     {{action.content|safe|linebreaks}}
     {% for task in action_tasks %}
     <div class="action_detail_task_container">
