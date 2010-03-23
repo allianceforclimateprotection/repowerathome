@@ -1,6 +1,6 @@
 {% load thumbnail %}
 
-<img class="group_image" src="{% thumbnail group.safe_image 75x75 %}" alt="group image" height="75" width="75" />
+<img class="group_image" src="{% thumbnail group.safe_image 75x75 crop='smart' %}" alt="group image" height="75" width="75" />
 {% if is_manager %}
     <span class="group_action">| <a href="{% url group_edit group.slug %}">Edit Group</a></span>
 {% endif %}
