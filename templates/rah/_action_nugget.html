@@ -6,7 +6,7 @@
             <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
         {% endfor %}
     </span>
-    <div class='content'>{{ action.content|safe|linebreaks }} (<a href='{% url rah.views.action_detail action.slug %}' class='tasks_link'>show list</a>)</div>
+    <div class='content'>{{ action.content|safe|linebreaks }} (<a href='{% url rah.views.action_detail action.slug %}' class='tasks_link'>toggle steps</a>)</div>
     <div class='task_list'>
         {% for actiontask in action.actiontasks %}
             <form action="{% url rah.views.action_task actiontask.id %}" class="action_task_submitter" method='post'>
