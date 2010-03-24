@@ -4,8 +4,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.http import Http404, HttpResponse
-from django.shortcuts import redirect, render_to_response
-from django.template import RequestContext
+from django.shortcuts import redirect
+from django.template import loader, RequestContext
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 
@@ -14,11 +14,12 @@ from django.contrib.auth.models import User
 from models import Rating
 from widgets import IsHelpfulWidget
 
+@login_required
 @require_POST
 @csrf_protect
 def rate(request, rating_widget=IsHelpfulWidget, next=None, using=None, success_message=None, error_message=None):
-    content_type_pk = request.POST.get("content_type")
-    object_pk = request.POST.get("object_pk")
+    content_type_pk = request.POST.get("content_type", "-1")
+    object_pk = request.POST.get("object_pk", "-1")
     try:
         content_type = ContentType.objects.get(pk=content_type_pk)
         target = content_type.get_object_for_this_type(pk=object_pk)
@@ -26,8 +27,11 @@ def rate(request, rating_widget=IsHelpfulWidget, next=None, using=None, success_
         raise Http404("No type found matching %s" % content_type_pk)
     except ObjectDoesNotExist:
         raise Http404("No object found matching %s" % object_pk)
-    # if the score is defined in the post data override that provided
-    score = rating_widget.determine_score(request.POST)
+    except ValueError:
+        raise Http404("Invalid parameters %s, %s" % (content_type_pk, object_pk))
+    score = rating_widget.determine_score(request.POST) #if the score is defined in the post data override that provided
+    if score == None:
+        raise Http404("Missing score value")
     rating, created = Rating.objects.create_or_update(content_type=content_type, object_pk=object_pk, 
         user=request.user, score=score)
     
@@ -40,14 +44,16 @@ def rate(request, rating_widget=IsHelpfulWidget, next=None, using=None, success_
         return redirect(next)
         
     template_list = [
+        "rateable/%s/%s/rated.html" % (content_type.model_class()._meta.app_label, content_type.model_class()._meta.module_name),
         "rateable/%s/rated.html" % content_type.model_class()._meta.app_label,
         "rateable/rated.html",
     ]
     if request.is_ajax():
         template_list = [ 
-            "rateable/%s/ajax/rated.html" % content_type.model_class()._meta.app_label,
-            "rateable/ajax/rated.html",
+        "rateable/%s/%s/ajax/rated.html" % (content_type.model_class()._meta.app_label, content_type.model_class()._meta.module_name),
+        "rateable/%s/ajax/rated.html" % content_type.model_class()._meta.app_label,
+        "rateable/ajax/rated.html",
         ] + template_list
-        for message in request._messages: #if messages weren't used in the response, clear them out
-            pass
-    return render_to_response(template_list, {"rating":rating}, context_instance=RequestContext(request))    
+    response = loader.render_to_string(template_list, {"rating": rating}, context_instance=RequestContext(request))
+    for message in request._messages: pass #if messages weren't used in the response, clear them out
+    return HttpResponse(response)   
