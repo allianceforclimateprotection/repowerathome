@@ -1,6 +1,6 @@
 {% extends "records/base.html" %}
 {% block activity_item %}
-    <a href="{% url profile record.user.id %}">{{ record.user.get_full_name }}</a> committed to  
+    {% safe_user_link record.user %} committed to complete the action
     <a href="{% url action_detail content_object.slug %}">{{ content_object.name }}</a> 
-    by {{ record.data.date_committed|date:"M j, Y" }}{% if record.points %} for {{ record.points }} points{% endif %}
+    by {{ record.data.date_committed|date:"M j, Y" }}{% if record.points %} (+{{ record.points }} points){% endif %}
 {% endblock %}

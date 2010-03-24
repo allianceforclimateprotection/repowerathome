@@ -1,5 +1,5 @@
 {% extends "records/base.html" %}
 {% block activity_item %}
-    <a href="{% url profile record.user.id %}">{{ record.user.get_full_name }}</a> requested info about hosting a house party
-    on {{ record.created|date:"M j, Y" }} {% if record.points %}for {{ record.points }} points{% endif %}
+    {% safe_user_link record.user %} requested info about hosting a house party
+    on {{ record.created|date:"M j, Y" }}{% if record.points %} (+{{ record.points }} points){% endif %}
 {% endblock %}

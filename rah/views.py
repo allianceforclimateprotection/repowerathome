@@ -125,10 +125,16 @@ def action_task(request, action_task_id):
 
         if request.POST.get('task_completed') and not record:
             action_task.complete_task(request.user)
-            messages.success(request, 'Great work, we have updated our records to show you completed %s' % (action_task))
+            is_complete = action_task.action.is_completed_for_user(request.user)
+            message = "Great Work! You completed this action." if is_complete else \
+                "Great work! We updated our records to show that you completed this step."
+            messages.success(request, message)
         else:
+            was_complete = action_task.action.is_completed_for_user(request.user)
             action_task.complete_task(request.user, undo=True)
-            messages.success(request, 'We have updated our records to show you have not completed %s' % (action_task))
+            message = "We updated our records to show that you have not completed this action." if was_complete else \
+                "We updated our records to show that you have not completed this step."
+            messages.success(request, message)
     
     if request.is_ajax():
         message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))

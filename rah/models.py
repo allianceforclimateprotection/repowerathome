@@ -102,6 +102,10 @@ class Action(DefaultModel):
         uap = UserActionProgress.objects.filter(action=self, user=user)[0:1]
         return uap[0].user_completes if uap else 0
         
+    def is_completed_for_user(self, user):
+        uap = UserActionProgress.objects.filter(action=self, user=user)[0:1]
+        return uap[0].is_completed == 1 if uap else False
+        
     def users_with_completes(self, limit=5):
         in_progress = UserActionProgress.objects.select_related().filter(action=self, is_completed=0)[:limit]
         completed = UserActionProgress.objects.select_related().filter(action=self, is_completed=1)[:limit]
@@ -162,7 +166,7 @@ class ActionTask(DefaultModel):
         obj.user_completes = new_completes
         obj.is_completed = new_completed
         obj.save()
-        
+        return new_completed == 1
         
     def get_absolute_url(self):
         return self.action.get_absolute_url()
