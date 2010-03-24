@@ -17,10 +17,11 @@ class UserNode(template.Node):
     def render(self, context):
         user = self.user_expr.resolve(context)
         current_user = context["request"].user
-        if user != current_user and user.get_profile().is_profile_private:
+        if user.id != current_user.id and user.get_profile().is_profile_private:
             return str(user.get_full_name())
         else:
-            return "<a href='%s'>%s</a>" % (reverse("profile", args=[user.id]), user.get_full_name())
+            name = "You" if user.id == current_user.id else user.get_full_name()
+            return "<a href='%s'>%s</a>" % (reverse("profile", args=[user.id]), name)
 
 @register.tag
 def safe_user_link(parser, token):
