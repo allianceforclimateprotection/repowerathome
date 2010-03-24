@@ -750,6 +750,11 @@ class Variable(object):
                         current = settings.TEMPLATE_STRING_IF_INVALID
                     else:
                         raise
+            except Exception, e:
+                if getattr(e, 'silent_variable_failure', False):
+                    current = settings.TEMPLATE_STRING_IF_INVALID
+                else:
+                    raise
 
         return current
 

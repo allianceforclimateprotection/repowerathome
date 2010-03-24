@@ -2,6 +2,7 @@ import datetime
 import decimal
 import re
 import time
+import math
 
 import django.utils.copycompat as copy
 
@@ -578,7 +579,7 @@ class CharField(Field):
 
     def get_prep_value(self, value):
         return self.to_python(value)
-    
+
     def formfield(self, **kwargs):
         # Passing max_length to forms.CharField means that the value's length
         # will be validated twice. This is considered acceptable since we want
@@ -881,6 +882,12 @@ class IntegerField(Field):
         if value is None:
             return None
         return int(value)
+
+    def get_prep_lookup(self, lookup_type, value):
+        if (lookup_type == 'gte' or lookup_type == 'lt') \
+           and isinstance(value, float):
+                value = math.ceil(value)
+        return super(IntegerField, self).get_prep_lookup(lookup_type, value)
 
     def get_internal_type(self):
         return "IntegerField"
