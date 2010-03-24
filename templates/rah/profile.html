@@ -1,4 +1,6 @@
 {% extends "rah/base.html" %}
+{% load records %}
+
 {% block content %}
     <div id="chart"></div>
     <script type="text/javascript" charset="utf-8">
@@ -72,7 +74,7 @@
     {% if records %}
         <h2>Recent Activity</h2>
         {% for rec in records %}
-            {{ rec.render }}
+            {% render_record rec %}
         {% endfor %}
     {% endif %}
 {% endblock %}

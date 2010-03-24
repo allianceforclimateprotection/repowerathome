@@ -2,7 +2,7 @@ import base64, time
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.template import Context, loader
+from django.template import RequestContext, loader
 from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 
@@ -148,16 +148,15 @@ class Record(DefaultModel):
     class Meta:
         ordering = ["-created"]
             
-    def render(self):
+    def render(self, request):
         # TODO: Add a param to allow rendering specifically for the chart tooltip?
         if self.is_batched:
             template_file = "records/%s_batch.html" % self.activity.slug
         else:
             template_file = "records/%s.html" % self.activity.slug
-        template = loader.get_template(template_file)
         content_object = self.content_objects.all()
         if content_object: content_object = content_object[0].content_object
-        return template.render(Context({"record": self, "content_object":content_object}))
+        return loader.render_to_string(template_file, {"record": self, "content_object":content_object}, context_instance=RequestContext(request))
 
     def get_absolute_url(self):
         content_objects = self.content_objects.all()

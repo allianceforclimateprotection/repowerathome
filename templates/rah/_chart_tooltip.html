@@ -1,3 +1,5 @@
+{% load records %}
+
 {% for record in records %}
-    <b>{{ record.render }}</b><br/>
+    <b>{% render_record record %}</b><br/>
 {% endfor %}

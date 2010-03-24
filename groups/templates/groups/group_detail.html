@@ -1,4 +1,5 @@
 {% extends "rah/base.html" %}
+{% load records %}
 
 {% block extralinks %}
 {% if group.slug %}
@@ -72,7 +73,7 @@
             </h2>
             <ul>
             {% for record in group_records %}
-                <li>{{ record.render }}</li>
+                <li>{% render_record record %}</li>
             {% endfor %}
             </ul>
         {% endif %}

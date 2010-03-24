@@ -10,6 +10,7 @@ class GroupActivityFeed(Feed):
     feed_type = Atom1Feed
     
     def get_object(self, request, group_slug):
+        self.request = request
         return get_object_or_404(Group, slug=group_slug)
 
     def title(self, group):
@@ -28,7 +29,7 @@ class GroupActivityFeed(Feed):
         return group.group_records(30)
         
     def item_description(self, record):
-        return record.render()
+        return record.render(self.request)
         
     def item_link(self, record):
         return record.get_absolute_url()
