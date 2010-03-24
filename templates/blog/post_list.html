@@ -13,6 +13,10 @@
 {% endblock %}
 
 {% block content %}
+    <div id="breadcrumbs">
+        <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+        Blog
+    </div>
     <div class="post_list">
         {% for post in object_list %}
             <div>

@@ -17,6 +17,11 @@
 {% endblock %}
 
 {% block content %}
+    <div id="breadcrumbs">
+        <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+        <a href="{% url blog_index %}">Blog</a> &rsaquo;
+        {{ object.title }}
+    </div>
     <div class="post">
         {% with object as post %}
             <div>

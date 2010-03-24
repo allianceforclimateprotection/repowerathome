@@ -10,6 +10,11 @@
 {% endblock %}
 
 {% block content %}
+    <div id="breadcrumbs">
+        <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+        <a href="{% url blog_index %}">Blog</a> &rsaquo;
+        {{ category.title }}
+    </div>
     <div class="post_list">
         {% for post in object_list %}
             <div>
