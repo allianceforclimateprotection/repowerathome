@@ -90,6 +90,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'flagged',
     'invite',
+    'dated_static',
 )
 
 FIXTURE_DIR = ('fixtures',)

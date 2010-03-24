@@ -32,4 +32,5 @@ INSTALLED_APPS = (
     'flagged.tests',
     'django_extensions',
     'debug_toolbar',
+    'dated_static',
 )

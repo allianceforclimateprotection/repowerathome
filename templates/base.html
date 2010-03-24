@@ -1,11 +1,17 @@
+{% load dated_static %}
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
     <head>
         <title>{% block title %}{% endblock %} | Repower@Home</title>
         <meta name="google-site-verification" content="LKUJZqwKMnEGjg_dQNKL-2eLLK3yvftU0RKv7SuymGQ" />
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-        <link rel="shortcut icon" href="{{ MEDIA_URL }}images/theme/favico.ico"/>
-        <link rel="stylesheet" href="{{ MEDIA_URL }}css/style{%if not debug%}_min{%endif%}.css" type="text/css" media="screen" charset="utf-8"/>
+        <link rel="shortcut icon" href="{% dated_static 'images/theme/favico.ico' %}"/>
+        {% if debug %}
+            <link rel="stylesheet" href="{% dated_static 'css/style.css' %}" type="text/css" media="screen" charset="utf-8"/>
+        {% else %}
+            <link rel="stylesheet" href="{% dated_static 'css/style_min.css' %}" type="text/css" media="screen" charset="utf-8"/>
+        {% endif %}
         <script type="text/javascript">
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', 'UA-11623269-1']);
@@ -87,9 +93,17 @@
             var rah_name = "{% block js %}{% endblock %}";
             var media_url = "{{ MEDIA_URL }}"; // contains trailing slash
         </script>
-        <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}js/js_libs{%if not debug%}_min{%endif%}.js"></script>
+        {% if debug %}
+            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/js_libs.js' %}"></script>
+        {% else %}
+            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/js_libs_min.js' %}"></script>
+        {% endif %}
         {% block extrajs %}{% endblock %}
-        <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}js/rah{%if not debug%}_min{%endif%}.js"></script>
+        {% if debug %}
+            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/rah.js' %}"></script>
+        {% else %}
+            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/rah_min.js' %}"></script>
+        {% endif %}
         <script type="text/javascript">
             (function() {
                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
