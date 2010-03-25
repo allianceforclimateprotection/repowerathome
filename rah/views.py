@@ -280,8 +280,6 @@ def house_party(request):
         if form.is_valid() and form.send(request.user):
             Record.objects.create_record(request.user, 'mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
-        else:
-            pass
     return redirect('rah.views.index')
 
 def invite_friend(request):
@@ -290,28 +288,14 @@ def invite_friend(request):
         if form.is_valid() and form.send(request.user):
             Record.objects.create_record(request.user, 'mag_invite_friend')
             messages.add_message(request, messages.SUCCESS, 'Invitation sent. Thanks!')
-        else:
-            pass
     return redirect('rah.views.index')
-
 
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))
 
-@login_required
-@require_POST
-def post_comment(request, next=None, using=None):
-    """
-    wrapper view around the django.contrib.comments post_comment view, this way if a user specifies their name in a comment,
-    we can capture it and use it to update their profile
-    """
-    name = request.POST.get('name')
-    if name and request.user.get_full_name() == '':
-        request.user.first_name = name
-        request.user.save()
-    response = comments.post_comment(request, next, using)
+def comment_message(sender, comment, request, **kwargs):
     messages.add_message(request, messages.SUCCESS, 'Thanks for the comment.')
-    return response
+comments.signals.comment_was_posted.connect(comment_message)
     
 def forbidden(request, message="You do not have permissions."):
     from django.http import HttpResponseForbidden

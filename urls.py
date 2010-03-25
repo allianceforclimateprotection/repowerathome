@@ -24,11 +24,10 @@ urlpatterns = patterns('rah.views',
     url(r'^user/(?P<user_id>\d+)/$', 'profile', name='profile'),
     url(r'^user/edit/(?P<user_id>\d+)/$', 'profile_edit', name='profile_edit'),
     (r'^validate/$', 'validate_field'),
-    (r'^houseparty/$', 'house_party'),
-    (r'^invitefriend/$', 'invite_friend'),
+    url(r'^houseparty/$', 'house_party', name='house_party'),
+    url(r'^invitefriend/$', 'invite_friend', name='invite_friend'),
     (r'^feedback/$', 'feedback'),
     (r'^search/$', 'search'),
-    url(r'^comments/post/$', 'post_comment', name='post_comment'),
 )
 
 urlpatterns += patterns('',
