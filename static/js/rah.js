@@ -262,9 +262,12 @@ var rah = {
     
     mod_comment_form: {
         init: function() {
-            $("#comment_form").validate({
+            $(".comment_form").validate({
                 rules: {
-                    name: { required: true }
+                    comment:    { required: true, maxlength: 3000 }
+                },
+                messages: {
+                    comment: { maxlength: "comment must be less than 3000 characters" }
                 }
             });
             rah.mod_is_helpful_widget.init();

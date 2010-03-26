@@ -1,4 +1,5 @@
 {% extends "rah/base.html" %}
+{% load comments %}
 
 {% block content %}
     <div id="breadcrumbs">
@@ -33,7 +34,8 @@
     {% endfor %}
     <div id="comments">
         {% with action as object %}
-            {% include 'comments/_comment_list.html' %}
+            {% render_comment_list for object %}
+            {% render_comment_form for object %}
         {% endwith %}
     </div>
     <div id="commit_dialog">

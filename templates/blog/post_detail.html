@@ -1,4 +1,5 @@
 {% extends "blog/base_blog.html" %}
+{% load comments %}
 
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{{ block.super }} post_detail{% endblock %}
@@ -32,7 +33,8 @@
     </div>
 
     <div id="comments">
-        {% include 'comments/_comment_list.html' %}
+        {% render_comment_list for object %}
+        {% render_comment_form for object %}
     </div>
 {% endblock %}
 {% block js %}page_post_detail{% endblock %}

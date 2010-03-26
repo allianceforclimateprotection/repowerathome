@@ -34,3 +34,9 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'dated_static',
 )
+
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,
+    'HIDE_DJANGO_SQL': True,
+    'SHOW_TOOLBAR_CALLBACK': lambda x: False,
+}
