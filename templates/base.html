@@ -21,9 +21,9 @@
     </head>
     <body>
         <div id="loading" class="warning">Loading...</div>
-        <div id="header-container">
+        <div id="header_container">
             <div id="header">
-                <a href="/" title="Repower America" class="site-logo">Repower @ Home</a>
+                <a href="/" title="Repower America" id="header_logo"><img src="{% dated_static 'images/theme/logo.png' %}" alt="Repower at Home logo"/></a>
                 <div id="header-links">
                     {% if user.is_authenticated %}
                         {{ user }} | <a href="{% url rah.views.profile_edit user.id %}">Edit your profile</a> | <a href="{% url logout %}">Logout</a>
@@ -35,7 +35,7 @@
                         | <a href="{% url admin_root '' %}">Admin</a>
                     {% endif %}
                 </div>
-                <form action="/search" id="cse-search-box">
+                <form action="/search" id="cse_search_box">
                     <div>
                         <input type="hidden" name="cx" value="004464471324017850671:spsjawaq-zy" />
                         <input type="hidden" name="cof" value="FORID:10" />
@@ -53,39 +53,39 @@
                 </div>
             </div>
         </div>
-        <div id="message_box">
-            {% include '_messages.html' %}            
+        <div id="content_container">
+	        <div id="message_box">
+	            {% include '_messages.html' %}            
+	        </div>
+			<div id="content">
+	            <div id="major_col">
+	                {% block content %}{% endblock %}
+	            </div>
+	            <div id="minor_col">
+	                {% block minorcol %}{% endblock %}
+	            </div>				
+			</div>
         </div>
-        <div id="content-container">
-            <div id="major-col">
-                {% block content %}{% endblock %}
-            </div>
-            <div id="minor-col">
-                {% block minorcol %}{% endblock %}
-            </div>
-        </div>
-        <div id="footer-container">
+        <div id="footer_container">
             <div id="footer">
-                <div class="search-container">
-                    <div class="copy">
-                        <div class="copyright">
-                            Copyright © The Alliance for Climate Protection 2009. All Rights Reserved.
-                        </div>
-                        <div class="footer-links">
-                            <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> | 
-                            <a href="http://www.climateprotectionactionfund.org/">Climate Protection Action Fund</a> | 
-                            <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a> | 
-                            <a href="http://www.repoweramerica.org/terms-of-use">Terms of Use</a> | 
-                            <a href="http://www.repoweramerica.org/privacy-policy">Privacy Policy</a>
-                        </div>
-                        <div class="learn">
-                            The Repower America Web site is shared by the Alliance for Climate Protection and the 
-                            Climate Protection Action Fund.<br/>
-                            <a href="/about/learn-more-about-repower-america/">Learn more</a> about the distinction 
-                            between the efforts of these two organizations through Repower America.
-                        </div>
-                    </div>
-                </div>
+				<div id="footer_copy">
+					<p>
+	                    Copyright &copy; The Alliance for Climate Protection 2010. All Rights Reserved.
+	                </p>
+	                <p>
+	                    <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> | 
+	                    <a href="http://www.climateprotectionactionfund.org/">Climate Protection Action Fund</a> | 
+	                    <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a> | 
+	                    <a href="http://www.repoweramerica.org/terms-of-use">Terms of Use</a> | 
+	                    <a href="http://www.repoweramerica.org/privacy-policy">Privacy Policy</a>
+	                </p>
+	                <p>
+	                    The Repower America Web site is shared by the Alliance for Climate Protection and the 
+	                    Climate Protection Action Fund.<br/>
+	                    <a href="/about/learn-more-about-repower-america/">Learn more</a> about the distinction 
+	                    between the efforts of these two organizations through Repower America.
+	                </p>					
+				</div>
             </div>
         </div>
         <div id="feedback_dialog"></div>

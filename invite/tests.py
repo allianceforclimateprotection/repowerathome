@@ -1,4 +1,5 @@
 from django.test import TestCase
+from invite.models import Invitation, Rsvp
 
 class SimpleTest(TestCase):
     def test_basic_addition(self):
