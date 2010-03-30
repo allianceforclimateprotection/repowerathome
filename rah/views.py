@@ -43,7 +43,13 @@ def index(request):
         'form': form,
         'success': success
     }, context_instance=RequestContext(request))
-    
+
+def privacy_policy(request):
+    return render_to_response("rah/privacy_policy.html", {}, context_instance=RequestContext(request))
+
+def terms_of_use(request):
+    return render_to_response("rah/terms_of_use.html", {}, context_instance=RequestContext(request))
+ 
 def logout(request):
     response = auth.logout(request)
     messages.success(request, "You have successfully logged out.", extra_tags="sticky")
