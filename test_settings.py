@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'debug_toolbar',
     'dated_static',
+    'notification',
 )
 
 DEBUG_TOOLBAR_CONFIG = {
