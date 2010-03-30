@@ -147,6 +147,10 @@ var rah = {
     **/
     page_profile_edit: {
         init: function(){
+            $("#profile_edit_tabs").tabs();
+            $("#profile_edit_tabs").bind("tabsselect", function(event, ui){
+                $("form", this).attr("action", $(ui.tab).attr("href"));
+            });
             // Validate the registration form
             $("#profile_edit_form").validate({
                 rules: {
@@ -159,6 +163,21 @@ var rah = {
                 messages: {
                     email: { remote: "That email is already registered" },
                     zipcode: { remote: "We couldn't locate this zipcode" }
+                }
+            });
+            var global_group_notifications = $("#id_global_group_notifications");
+            global_group_notifications.change(function() {
+                rah.page_profile_edit.toggle_group_notifications(this);
+            });
+            rah.page_profile_edit.toggle_group_notifications(global_group_notifications);
+        },
+        toggle_group_notifications: function(toggle_switch) {
+            var global_on = $(toggle_switch).attr("checked");
+            $("#group_notifications_form ul").each(function() {
+                if(global_on) {
+                    $(this).hide();
+                } else {
+                    $(this).show();
                 }
             });
         }

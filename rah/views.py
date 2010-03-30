@@ -175,27 +175,39 @@ def profile(request, user_id):
     }, context_instance=RequestContext(request))
 
 @login_required
+@csrf_protect
 def profile_edit(request, user_id):
     if request.user.id <> int(user_id):
         return forbidden(request, "Sorry, but you do not have permissions to edit this profile.")
     
     profile = request.user.get_profile()
+    account_form = AccountForm(instance=request.user)
+    profile_form = ProfileEditForm(instance=profile, initial={
+        'zipcode': profile.location.zipcode if profile.location else '',})
+    group_notifications_form = GroupNotificationsForm(user=request.user)
+    
     if request.method == 'POST':
-        profile_form = ProfileEditForm(request.POST, instance=profile)
-        account_form = AccountForm(request.POST, instance=request.user)
-        if profile_form.is_valid() and account_form.is_valid():
-            profile_form.save()
-            account_form.save()
-            messages.add_message(request, messages.SUCCESS, 'Your profile has been updated.')
-    else:
-        account_form = AccountForm(instance=request.user)
-        profile_form = ProfileEditForm(instance=profile, initial={
-            'zipcode': profile.location.zipcode if profile.location else '',
-        })
+        if "edit_account" in request.POST:
+            profile_form = ProfileEditForm(request.POST, instance=profile)
+            account_form = AccountForm(request.POST, instance=request.user)
+            if profile_form.is_valid() and account_form.is_valid():
+                profile_form.save()
+                account_form.save()
+                messages.add_message(request, messages.SUCCESS, 'Your profile has been updated.')
+                return redirect("profile_edit", user_id=request.user.id)
+        elif "edit_group_notifications" in request.POST:
+            group_notifications_form = GroupNotificationsForm(user=request.user, data=request.POST)
+            if group_notifications_form.is_valid():
+                group_notifications_form.save()
+                messages.add_message(request, messages.SUCCESS, 'Your group notifications have been updated.')
+                return redirect("profile_edit", user_id=request.user.id)
+        else:
+            messages.error(request, 'No action specified.')
 
     return render_to_response('rah/profile_edit.html', {
         'profile_form': profile_form,
         'account_form': account_form,
+        'group_notification_form': group_notifications_form,
         'profile': profile,
     }, context_instance=RequestContext(request))
 
