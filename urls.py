@@ -28,6 +28,8 @@ urlpatterns = patterns('rah.views',
     url(r'^invitefriend/$', 'invite_friend', name='invite_friend'),
     (r'^feedback/$', 'feedback'),
     (r'^search/$', 'search'),
+    url(r'^terms/$', 'terms_of_use', name='terms_of_use'),
+    url(r'^privacy/$', 'privacy_policy', name='privacy_policy'),
 )
 
 urlpatterns += patterns('',
