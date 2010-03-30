@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth.models import User
 from django.contrib.messages import constants
 from django.core import mail, management, files
@@ -9,7 +11,7 @@ from django.test.client import Client
 from geo.models import Location
 from rah.models import Profile, Action
 
-from models import Group, GroupUsers, MembershipRequests
+from models import Group, GroupUsers, MembershipRequests, DiscussionBlacklist
 
 class GroupTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_groups.json", "test_actions.json", "test_actiontasks.json",]
@@ -158,6 +160,42 @@ class GroupTest(TestCase):
         self.failUnlessEqual(ri.parents(), [])
         self.failUnlessEqual(washington_county.parents(), [ri])
         self.failUnlessEqual(ashaway.parents(), [ri, washington_county])
+        
+    def test_groups_not_blacklisted_by_user(self):
+        groups = list(Group.objects.groups_not_blacklisted_by_user(self.user))
+        self.failUnlessEqual(groups, [])
+        
+        GroupUsers.objects.create(group=self.yankees, user=self.user, is_manager=True)
+        GroupUsers.objects.create(group=self.sabres, user=self.user)
+        GroupUsers.objects.create(group=self.ny, user=self.user, is_manager=True)
+        groups = list(Group.objects.groups_not_blacklisted_by_user(self.user))
+        self.failUnlessEqual(groups, [self.yankees, self.sabres, self.ny])
+        
+        DiscussionBlacklist.objects.create(group=self.yankees, user=self.user)
+        DiscussionBlacklist.objects.create(group=self.sabres, user=self.user)
+        groups = list(Group.objects.groups_not_blacklisted_by_user(self.user))
+        self.failUnlessEqual(groups, [self.ny])
+        
+        DiscussionBlacklist.objects.get(group=self.sabres, user=self.user).delete()
+        groups = list(Group.objects.groups_not_blacklisted_by_user(self.user))
+        self.failUnlessEqual(groups, [self.sabres, self.ny])
+        
+    def test_users_not_blacklisted(self):
+        user_net = User.objects.create(username="2", email="test@test.net")
+        user_edu = User.objects.create(username="3", email="test@test.edu")
+        self.failUnlessEqual(list(self.yankees.users_not_blacklisted()), [])
+        
+        GroupUsers.objects.create(group=self.yankees, user=self.user, is_manager=True)
+        GroupUsers.objects.create(group=self.yankees, user=user_net)
+        GroupUsers.objects.create(group=self.yankees, user=user_edu)
+        self.failUnlessEqual(list(self.yankees.users_not_blacklisted()), [self.user, user_net, user_edu])
+        
+        DiscussionBlacklist.objects.create(group=self.yankees, user=self.user)
+        DiscussionBlacklist.objects.create(group=self.yankees, user=user_edu)
+        self.failUnlessEqual(list(self.yankees.users_not_blacklisted()), [user_net])
+        
+        DiscussionBlacklist.objects.get(group=self.yankees, user=user_edu).delete()
+        self.failUnlessEqual(list(self.yankees.users_not_blacklisted()), [user_net, user_edu])
 
 class GroupCreateViewTest(TestCase):
     def setUp(self):
@@ -182,7 +220,7 @@ class GroupCreateViewTest(TestCase):
         self.failUnlessEqual(test_group.slug, "test-group")
         self.failUnlessEqual(test_group.description, "This is a test group")
         self.failUnlessEqual(test_group.membership_type, "O")
-        self.failUnlessEqual(test_group.image.name, "group_images/%s.jpeg" % test_group.pk)
+        self.failUnless(re.match("group_images/%s(_\d+)?\.jpeg" % test_group.pk, test_group.image.name))
         test_group.image.delete()
     
     def test_missing_required(self):

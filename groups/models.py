@@ -6,6 +6,7 @@ from geo.models import Location
 from records.models import Record
 from rah.models import Action, Profile
 from invite.models import Rsvp
+from notification import models as notification
         
 class GroupManager(models.Manager):
     def new_groups_with_memberships(self, user, limit=None):
@@ -61,6 +62,9 @@ class GroupManager(models.Manager):
         geo_group.save()
         return geo_group
         
+    def groups_not_blacklisted_by_user(self, user):
+        return self.filter(users=user).exclude(pk__in=user.email_blacklisted_group_set.all())
+        
 class Group(models.Model):
     MEMBERSHIP_CHOICES = (
         ('O', 'Open membership'),
@@ -109,6 +113,7 @@ class Group(models.Model):
     parent = models.ForeignKey("self", null=True, blank=True, related_name="children")
     users = models.ManyToManyField(User, through="GroupUsers")
     requesters = models.ManyToManyField(User, through="MembershipRequests", related_name="requested_group_set")
+    email_blacklisted = models.ManyToManyField(User, through="DiscussionBlacklist", related_name="email_blacklisted_group_set")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = GroupManager()
@@ -207,6 +212,9 @@ class Group(models.Model):
             return Group.LOCATION_URL[self.location_type](self.sample_location)
         return ("group_detail", [str(self.slug)])
         
+    def users_not_blacklisted(self):
+        return User.objects.filter(group=self).exclude(pk__in=self.email_blacklisted.all())
+        
     def __unicode__(self):
         return u'%s' % self.name
         
@@ -233,6 +241,21 @@ class MembershipRequests(models.Model):
     
     def __unicode__(self):
         return u'%s request to join %s on %s' % (self.user, self.group, self.created)
+        
+class DiscussionBlacklist(models.Model):
+    """
+    Any user listed in this table will not recieve discussion emails for the group
+    they are linked to.
+    """
+    user = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
+    created = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ("user", "group",)
+        
+    def __unicode__(self):
+        return u"%s will not recieve emails for %s discussions" % (self.user, self.group)
 
 """
 Signals!
