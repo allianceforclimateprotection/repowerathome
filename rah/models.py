@@ -143,10 +143,8 @@ class ActionTask(DefaultModel):
     def complete_task(self, user, undo=False):
         if undo:
             ActionTaskUser.objects.filter(user=user, actiontask=self).delete()
-            Record.objects.void_record(user, 'action_task_complete', self)
         else:
             ActionTaskUser(user=user, actiontask=self).save()
-            Record.objects.create_record(user, 'action_task_complete', self)
         
         # Maintain denomed columns on Action and UserActionProgress 
         action = self.action
