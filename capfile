@@ -38,7 +38,7 @@ namespace :deploy do
     
     desc "Update Repo"
     task :update, :roles => :app do
-        run "cd #{deploy_to}; git pull"
+        run "cd #{deploy_to}; git pull origin #{branch}"
     end
     
     desc "Min JS and CSS files"
