@@ -32,35 +32,20 @@ class GroupManager(models.Manager):
         query = self.filter(slug=slug)
         geo_groups.append((location_type, query[0] if query else None))
         parent_key = Group.LOCATION_PARENT[location_type]
-        if parent_key:
+        while parent_key:
             size = Group.LOCATION_SIZE[location_type](location)
             parent_size = Group.LOCATION_SIZE[parent_key](location)
             if parent_size > size:
                 geo_groups = geo_groups + self.user_geo_group_tuple(user, parent_key)
+                break
+            else:
+                parent_key = Group.LOCATION_PARENT[parent_key]
         return geo_groups
 
-    def create_geo_group(self, location_type, location):
+    def create_geo_group(self, location_type, location, parent):
         name = Group.LOCATION_NAME[location_type](location)
         slug = Group.LOCATION_SLUG[location_type](location)
-        parent_key = Group.LOCATION_PARENT[location_type]
-        parent = None
-        if parent_key:
-            parent_slug = Group.LOCATION_SLUG[parent_key](location)
-            parent_query = self.filter(slug=parent_slug)
-            if parent_query:
-                parent = parent_query[0]
-            else:
-                size = Group.LOCATION_SIZE[location_type](location)
-                while parent_key:
-                    parent_size = Group.LOCATION_SIZE[parent_key](location)
-                    if parent_size > size:
-                        parent = self.create_geo_group(parent_key, location)
-                        break
-                    else:
-                        parent_key = Group.LOCATION_PARENT[parent_key]
-        geo_group = Group(name=name, slug=slug, is_geo_group=True, location_type=location_type, sample_location=location, parent=parent)
-        geo_group.save()
-        return geo_group
+        return Group.objects.create(name=name, slug=slug, is_geo_group=True, location_type=location_type, sample_location=location, parent=parent)
         
     def groups_not_blacklisted_by_user(self, user):
         return self.filter(users=user).exclude(pk__in=user.email_blacklisted_group_set.all())
@@ -265,10 +250,12 @@ def associate_with_geo_groups(sender, instance, **kwargs):
     GroupUsers.objects.filter(user=user, group__is_geo_group=True).delete()
     if instance.location:
         geo_groups = Group.objects.user_geo_group_tuple(user, 'P')
+        parent = None
         for location_type, geo_group in reversed(geo_groups):
             if not geo_group:
-                geo_group = Group.objects.create_geo_group(location_type, instance.location)
+                geo_group = Group.objects.create_geo_group(location_type, instance.location, parent)
             GroupUsers(user=user, group=geo_group).save()
+            parent = geo_group
 
 def add_invited_user_to_group(sender, instance, **kwargs):
     invitation = instance.invitation

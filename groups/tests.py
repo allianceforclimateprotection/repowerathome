@@ -53,6 +53,19 @@ class GroupTest(TestCase):
         self.failUnlessEqual(dc.location_type, "P")
         self.failUnlessEqual(dc.parent, None)
         
+    def test_set_geo_group_already_existing(self):
+        management.call_command("loaddata", "test_geo_dc.json", verbosity=0)
+        location = Location.objects.get(zipcode="20001")
+        place = Group.objects.create_geo_group("P", location, None)
+        profile = self.user.get_profile()
+        profile.location = Location.objects.get(zipcode="20004")
+        profile.save()
+        dc = Group.objects.user_geo_group_tuple(self.user, 'P')[0][1]
+        self.failUnlessEqual(dc.name, "Washington, District Of Columbia")
+        self.failUnlessEqual(dc.slug, "dc-district-of-columbia-washington")
+        self.failUnlessEqual(dc.location_type, "P")
+        self.failUnlessEqual(dc.parent, None)
+        
     def test_is_joinable(self):
         self.failUnlessEqual(self.yankees.is_joinable(), True)
         self.failUnlessEqual(self.ny.is_joinable(), False)
@@ -469,19 +482,19 @@ class GeoGroupViewTest(TestCase):
         self.asahway = Location.objects.get(zipcode="02804")
     
     def test_state_geo_group(self):
-        group = Group.objects.create_geo_group("S", self.asahway)
+        group = Group.objects.create_geo_group("S", self.asahway, None)
         url = reverse("geo_group_state", args=["RI"])
         response = self.client.get(url)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
     
     def test_county_geo_group(self):
-        group = Group.objects.create_geo_group("C", self.asahway)
+        group = Group.objects.create_geo_group("C", self.asahway, None)
         url = reverse("geo_group_county", args=["RI", "washington-county"])
         response = self.client.get(url)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
     
     def test_place_geo_group(self):
-        group = Group.objects.create_geo_group("P", self.asahway)
+        group = Group.objects.create_geo_group("P", self.asahway, None)
         url = reverse("geo_group_place", args=["RI", "washington-county", "ashaway"])
         response = self.client.get(url)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
