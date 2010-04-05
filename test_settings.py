@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'dated_static',
     'notification',
+    'actions',
 )
 
 DEBUG_TOOLBAR_CONFIG = {

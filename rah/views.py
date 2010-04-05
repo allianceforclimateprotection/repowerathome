@@ -12,8 +12,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.sites.models import Site
+
 from tagging.models import Tag
 from invite.forms import InviteForm
+from actions.models import Action
 from rah.models import *
 from records.models import *
 from rah.forms import *
@@ -96,58 +98,6 @@ def register(request):
         'form': form,
     }, context_instance=RequestContext(request))
 
-def action_show(request, tag_slug=None):
-    """Show all actions by Category"""
-    try:
-        tag = Tag.objects.get(name=tag_slug)
-    except Tag.DoesNotExist:
-        tag = None
-    actions = Action.objects.actions_by_completion_status(request.user, tag)[0]
-    tags = Action.tags.cloud()
-    return render_to_response('rah/action_show.html', {'actions':actions, 'tags':tags, 'tag_filter':tag}, context_instance=RequestContext(request))
-
-def action_detail(request, action_slug):
-    """Detail page for an action"""
-    # Lookup the action
-    action = get_object_or_404(Action, slug=action_slug)
-    action_tasks = action.get_action_tasks_by_user(request.user)
-    
-    num_users_in_progress, show_users_in_progress, num_users_completed, show_users_completed = action.users_with_completes(5)
-    
-    num_noshow_users_in_progress = num_users_in_progress - len(show_users_in_progress)
-    num_noshow_users_completed = num_users_completed - len(show_users_completed)
-    
-    progress = request.user.get_action_progress(action) if request.user.is_authenticated() else None
-    commit_form = ActionCommitForm()
-    
-    return render_to_response('rah/action_detail.html', locals(), context_instance=RequestContext(request))
-
-@login_required
-def action_task(request, action_task_id):
-    #  Handle the POST if a task is being completed
-    action_task = get_object_or_404(ActionTask, id=action_task_id)
-    if request.method == 'POST':
-        record = ActionTaskUser.objects.filter(user=request.user, actiontask=action_task)
-
-        if request.POST.get('task_completed') and not record:
-            action_task.complete_task(request.user)
-            is_complete = action_task.action.is_completed_for_user(request.user)
-            message = "Great Work! You completed this action." if is_complete else \
-                "Great work! We updated our records to show that you completed this step."
-            messages.success(request, message)
-        else:
-            was_complete = action_task.action.is_completed_for_user(request.user)
-            action_task.complete_task(request.user, undo=True)
-            message = "We updated our records to show that you have not completed this action." if was_complete else \
-                "We updated our records to show that you have not completed this step."
-            messages.success(request, message)
-    
-    if request.is_ajax():
-        message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))
-        dict = { 'completed_tasks': action_task.action.completes_for_user(request.user), 'message_html': message_html }
-        return HttpResponse(json.dumps(dict))
-    else:
-        return redirect('rah.views.action_detail', action_slug=action_task.action.slug)
 
 def profile(request, user_id):
     """docstring for profile"""
@@ -156,7 +106,7 @@ def profile(request, user_id):
     if request.user <> user and user.get_profile().is_profile_private:
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
         
-    recommended, in_progress, completed = Action.objects.actions_by_completion_status(user)[1:4]
+    recommended, committed, completed = Action.objects.actions_by_status(user)[1:4]
     twitter_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
     })
@@ -166,7 +116,7 @@ def profile(request, user_id):
     tooltips = [tooltip_template.render(Context({"records": chart_point.records, "request": request})) for chart_point in chart_points]
     return render_to_response('rah/profile.html', {
         'total_points': user.get_profile().total_points,
-        'in_progress': in_progress,
+        'committed': committed,
         'completed': completed,
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'house_party_form': HousePartyForm(),
@@ -215,28 +165,6 @@ def profile_edit(request, user_id):
         'account_form': account_form,
         'group_notification_form': group_notifications_form,
         'profile': profile,
-    }, context_instance=RequestContext(request))
-
-@csrf_protect
-@login_required
-def action_commit(request, action_slug):
-    action = get_object_or_404(Action, slug=action_slug)
-    progress = request.user.get_action_progress(action)
-    if request.method == 'POST':
-        commit_form = ActionCommitForm(request.POST)
-        if commit_form.is_valid():
-            commit_form.save(action, request.user)
-            data = {'date_committed': commit_form.cleaned_data['date_committed']}
-            Record.objects.create_record(request.user, 'action_commitment', action, data=data)
-            messages.add_message(request, messages.SUCCESS, 'We updated your commitment successfully')
-            return redirect("action_detail", action_slug=action.slug)
-    else:
-        initial = {'date_committed': progress.date_committed} if progress else None
-        commit_form = ActionCommitForm(initial=initial)
-    
-    return render_to_response('rah/action_commit.html', {
-        'action': action,
-        'commit_form': commit_form,
     }, context_instance=RequestContext(request))
 
 @csrf_protect

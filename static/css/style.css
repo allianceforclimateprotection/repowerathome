@@ -323,7 +323,7 @@ ul{
     border-top: 2px solid #333;
 }
 .action_nugget .title { color: #407cf3; font-weight: bold; }
-.action_nugget .total_points {
+.action_nugget .points {
     float: right;
     font-weight: bold;
     font-size: larger;

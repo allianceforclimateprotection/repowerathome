@@ -188,27 +188,6 @@ class AccountForm(forms.ModelForm):
         else:
              raise ValidationError('This email address has already been registered in our system.')
 
-class ActionAdminForm(forms.ModelForm):
-    class Meta:
-        model = Action
-
-    def clean_slug(self):
-        import re
-        data = self.cleaned_data['slug']
-        
-        if not re.search('^[a-z0-9-]+$', data):
-            raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
-    
-        return data
-
-class ActionCommitForm(forms.Form):
-    date_committed = forms.DateField(label="Commit date", required=False)
-    cancel_commitment = forms.BooleanField(required=False)
-    
-    def save(self, action, user):
-        date = None if self.cleaned_data['cancel_commitment'] else self.cleaned_data['date_committed']
-        user.set_action_commitment(action, date)
-        
 class HousePartyForm(forms.Form):
     phone_number = forms.CharField()
     call_time = forms.ChoiceField(choices=(('anytime', 'Anytime'), ('morning', 'Morning'), ('afternoon', 'Afternoon'), ('evening', 'Evening')))

@@ -1,36 +1,4 @@
 [
-    {
-        "pk": 16, 
-        "model": "rah.action", 
-        "fields": {
-            "updated": "2010-02-18 10:29:40", 
-            "users_committed": 0, 
-            "name": "Insulate your water heater", 
-            "created": "2009-12-10 12:36:58", 
-            "users_in_progress": 0, 
-            "content": "If the outside of your water heater feels warm, heat is escaping and your system could benefit from additional insulation.", 
-            "users_completed": 0, 
-            "teaser": "Insulate your water heater", 
-            "total_points": 25, 
-            "slug": "insulate-water-heater", 
-            "total_tasks": 3
-        }
-    }, 
-    {
-        "pk": 17, 
-        "model": "rah.action", 
-        "fields": {
-            "updated": "2010-02-02 14:39:47", 
-            "users_committed": 0, 
-            "name": "Replace your outdated refrigerator", 
-            "created": "2009-12-10 12:37:00", 
-            "users_in_progress": 0, 
-            "content": "An Energy Star-rated refrigerator gives your kitchen a sleek, fresh look while saving a ton of energy. ", 
-            "users_completed": 0, 
-            "teaser": "Replace your outdated refrigerator ", 
-            "total_points": 30, 
-            "slug": "replace-your-outdated-refrigerator", 
-            "total_tasks": 2
-        }
-    }
+    {"pk": 16, "model": "actions.action", "fields": {"updated": "2010-04-01 15:36:10", "users_committed": 0, "name": "Insulate your water heater", "created": "2009-12-10 12:36:58", "content": "Your hot water heater needs a Snuggie &mdash; I mean, \"insulating blanket\" &mdash; if it has an R-value of less than 24.  Don't know your hot water heater's R-value...or even what an R-value is? Relax. Journey to your basement or utility closet and touch the outside of your water heater.  Warm to the touch?   That's your money escaping!<cite>Ibid.</cite>\r\n\r\nFix it with these three easy steps:\r\n\r\n<h3>Step 1: Size your hot water heater</h3>\r\nYou'll need to know the gallon size of your hot water tank. Your manual has this information, but if you're like us, your manual is long gone.\r\n\r\nNo big.  Most residential hot water heaters hold 30-50 gallons.<cite>Nunan, Jon. \"<a href=\"http://www.servicemagic.com/article.show.Hot-Water-Needs.8976.html\">Hot Water Needs</a>\" Service Magic. n.d. 20 Jan. 2010</cite> Unless your house is unusually big, you can work with this number.\r\n\r\n<h3>Step 2: Buy an insulation kit</h3>\r\nArmed with the knowledge about your heater's size, head to your local hardware store. While shopping for water heater blankets, you'll come across a happy surprise: insulating blankets are down right <i>cheap</i>. Most sell for under $20. Since they'll save you a bundle on hot water costs, you'll easily recoup your investment in less than a year,<cite>Based on calculations from http://www.energystar.gov/index.cfm?c=products.pr_pie</cite> and keep saving money for years to come. \r\n\r\nOkay, let's pick the right blanket and start saving money right away. Buy one that fits your water heater and has an R-value of 8 or more.<cite>\"<a href=\"http://www.energysavers.gov/your_home/water_heating/index.cfm/mytopic=13070\">Energy Savers: Insulate Your Water Heater Tank for Energy Savings</a>.\" U.S. Department of Energy. 24 March 2009. 3 March 2010.</cite> Then head back home and get it installed.\r\n\r\n<h3>Step 3: Install the insulation</h3>\r\nYour time is now! If you have an electric hot water heater, you can easily install the insulation yourself. This video will give you the low-down, but all you need is scissors and a couple of free minutes. \r\n<center><object width=\"425\" height=\"344\"><param name=\"movie\" value=\"http://www.youtube.com/v/EDzaa-6j7O8&hl=en_US&fs=1&color1=0x3a3a3a&color2=0x999999\"></param><param name=\"allowFullScreen\" value=\"true\"></param><param name=\"allowscriptaccess\" value=\"always\"></param><embed src=\"http://www.youtube.com/v/EDzaa-6j7O8&hl=en_US&fs=1&color1=0x3a3a3a&color2=0x999999\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"425\" height=\"344\"></embed></object></center>\r\nInstalling blankets on gas and oil powered heaters is a bit trickier. You want to make sure you keep the insulation away from both the bottom and top of the heater. We recommend having a qualified professional do it for you. Safety first!\r\n", "users_completed": 0, "teaser": "Keep your hot water heater warm and toasty with a hot water heater blanket. Its a Snuggie for your hot water heater that can save 10% on your water heating costs!<cite>\"<a href=\"http://www.energysavers.gov/your_home/water_heating/index.cfm/mytopic=13070\">Energy Savers: Insulate Your Water Heater Tank for Energy Savings</a>.\" U.S. Department of Energy. 24 March 2009. 3 March 2010.</cite>", "points": 40, "slug": "insulate-water-heater"}}, 
+    {"pk": 17, "model": "actions.action", "fields": {"updated": "2010-04-01 15:35:22", "users_committed": 0, "name": "Replace your outdated refrigerator ", "created": "2009-12-10 12:37:00", "content": "Your refrigerator is the biggest energy-guzzling appliance in your home.<cite><a href=\"http://www1.eere.energy.gov/consumer/tips/appliances.html\">\"Energy Savers Tip: Appliances</a>.\" Department of Energy. 22 Jan 2009. 30 March 2010.</cite> By replacing it with a newer model, you can really cut your energy use. A new refrigerator uses 30-40% less energy than a 10-year-old unit.<cite>Statistic for a typical, new 18.5-cu.-ft. refrigerator with top-mount freezer (without a through-the-door ice dispenser). \"<a href=\"http://www.fypower.org/res/efficient-appliances/refrigerator.html\">Residential Sector: Efficient Refrigerators</a>.\" <i>Flex Your Power</i>. 30 March 2010.</cite> There's nothing shallow about those savings. \r\n\r\n<h3>Seeing Stars</h3>\r\n<img align=\"left\" src=\"http://rahstatic.s3.amazonaws.com/actionmedia/EnergyStarLogo.jpg\" height=\"15%\" width=\"15%\">Look for the blue Energy Star label when selecting your appliance. Energy Star refrigerators use 20% less energy than similar, non-certified models.<cite>\"<a href=\"http://energystar.custhelp.com/cgi-bin/energystar.cfg/php/enduser/std_adp.php?p_faqid=4912>What's more energy efficient, a refrigerator with a top-mounted freezers, bottom-mounted freezer, or a side-by-side?</a>\" ENERGY STAR. 9 Sept. 2009. 20 Jan. 2010.</cite> <a href=\"http://www.energystar.gov/index.cfm?fuseaction=refrig.calculator\">This calculator</a> will tell you how much more energy you current fridge is wasting when compared to a new model. You can find an Energy Star model for almost any type of refrigerator, giving you access to all the latest features.\r\n\r\n", "users_completed": 0, "teaser": "Old refrigerators not only look worn and outdated, but they're much more inefficient and expensive to operate than new, sleek models. Instead of starting a remodel by putting in new tiles, why not start with an investment that will pay you dividends every month on your energy bill? ", "points": 70, "slug": "replace-your-outdated-refrigerator"}}
 ]
