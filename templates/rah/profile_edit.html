@@ -16,19 +16,17 @@
                     <a id="link_with_twitter" href="{% url twitter_oauth_auth %}">Link your account with twitter</a>
                 {% endif %}
             </p>
-            <form action="" method="post" id="profile_edit_form">
-                <div>
-                    {{account_form.as_p}}
-                    {{profile_form.as_p}}
-                    <input type="submit" name="edit_account" value="Save profile" />
-                    {% csrf_token %}
-                </div>
+            <form id="profile_edit_form" action="" method="post">
+                {{account_form.as_p}}
+                {{profile_form.as_p}}
+                <p><input type="submit" name="edit_account" value="Save profile" /></p>
+                {% csrf_token %}
             </form>
         </div>
         <div id="notifications_tab">
             <form id="group_notifications_form" action="" method="post">
                 {{ group_notification_form.as_p }}
-                <input type="submit" name="edit_group_notifications" value="Save notifications" />
+                <p><input type="submit" name="edit_group_notifications" value="Save notifications" /></p>
                 {% csrf_token %}
             </form>
         </div>

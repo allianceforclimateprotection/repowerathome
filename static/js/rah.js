@@ -47,6 +47,7 @@ var rah = {
             });
             rah.mod_messages.init();
             rah.mod_ajax_setup.init();
+            rah.mod_validate_setup.init();
         }
     },
     
@@ -163,7 +164,7 @@ var rah = {
                 messages: {
                     email: { remote: "That email is already registered" },
                     zipcode: { remote: "We couldn't locate this zipcode" }
-                }
+                },
             });
             var global_group_notifications = $("#id_global_group_notifications");
             global_group_notifications.change(function() {
@@ -473,6 +474,14 @@ var rah = {
                     }
                 });
                 return false;
+            });
+        }
+    },
+    
+    mod_validate_setup: {
+        init: function() {
+            $.validator.setDefaults({
+                submitHandler: function(form) { form.submit(); }
             });
         }
     }

@@ -74,7 +74,7 @@ def group_join(request, group_id):
             messages.error(request, "A problem occured, if this persits please contact feedback@repowerathome.com", extra_tags="sticky")
     return redirect("group_detail", group_slug=group.slug)
 
-@login_required    
+@login_required
 def group_membership_request(request, group_id, user_id, action):
     group = get_object_or_404(Group, id=group_id, is_geo_group=False)
     user = get_object_or_404(User, id=user_id)
