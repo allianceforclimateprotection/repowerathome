@@ -50,7 +50,7 @@ blockquote, q {
 body {
     font: 15px/22px Arial, Times, 'Times New Roman', serif;
     color: #000;
-    background: #D6E9F7 url(bg_page.jpg) no-repeat top center;
+    background: #B6DAF0 url(../images/theme/bg_page.jpg) no-repeat top center;
 }
 
 /** Elements **/
