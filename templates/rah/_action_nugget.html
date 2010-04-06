@@ -6,19 +6,5 @@
             <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
         {% endfor %}
     </span>
-    <div class='content'>{{ action.content|safe|linebreaks }} (<a href='{% url rah.views.action_detail action.slug %}' class='tasks_link'>toggle steps</a>)</div>
-    <div class='task_list'>
-        {% for actiontask in action.actiontasks %}
-            <form action="{% url rah.views.action_task actiontask.id %}" class="action_task_submitter" method='post'>
-                <p>
-                    <input type='checkbox' name='task_completed' 
-                    {% if actiontask.completed %}checked='checked'{% endif %} 
-                    {% if not user.is_authenticated or is_others_profile %}disabled='disabled' {% endif %}/>
-                    {{ actiontask.sequence }}) 
-                    {{ actiontask.name }}
-                    ({{ actiontask.points }} points)
-                </p>
-            </form>
-        {% endfor %}
-    </div>
+    <div class='content'>{{ action.teaser|safe|linebreaks }}</div>
 </div>
