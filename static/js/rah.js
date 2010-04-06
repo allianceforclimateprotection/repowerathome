@@ -194,36 +194,42 @@ var rah = {
             rah.mod_comment_form.init();
             
             // $("#house_party_form").validate({rules: {phone_number: { required: true }}});
-            
-            $('.commit_link').click(function(){ $('#commit_dialog').dialog('open'); return false; });
-            $('.commit_cancel_link').click(function(){
-                $("#id_cancel_commitment").attr("checked", "checked");
-                $('#commit_form').submit();
+            $(".action_form *:has(.date_commit_field)").hide()
+            $(".commit_trigger").click(function(){
+                $("#commit_widget").dialog("open");
                 return false;
             });
-            $('#commit_dialog').dialog({
-                title: 'Make a Commitment', modal: true, resizable: false, draggable: false, autoOpen: false, 
+            $("#commit_widget").dialog({
+                title: "Make a Commitment", modal: true, resizable: false, 
+                    draggable: false, autoOpen: false, 
                 width: 550,
                 height: 450,
                 open: function(){
-                    $("#commit_form").hide();
-                    $("#commit_calendar").datepicker({
+                    var widget = $(this);
+                    widget.find(".commit_calendar").datepicker({
                         dateFormat: 'yy-mm-dd', 
                         maxDate: '+2y', 
                         minDate: '0', 
                         numberOfMonths: 2, 
                         onSelect: function(dateText, inst) { 
-                            $("#id_date_committed").val(dateText);
+                            $(".date_commit_field").val(dateText);
                         }
                     });
                 },
                 buttons: { 
                     "Commit": function() {
-                        $('#commit_form').submit(); 
-                        $('#commit_dialog').dialog('close');
+                        $("#commit_widget").dialog("close");
+                        var form = $(".action_form:first");
+                        form.append("<input type='hidden' name='commitment' />");
+                        form.submit();
                     }
                 }
             });
+            $(".commit_cancel").click(function(){
+                var form = $(".action_form:first");
+                form.append("<input type='hidden' name='cancel' />");
+                form.submit();
+            })
         }
     },
     

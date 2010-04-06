@@ -13,15 +13,16 @@
             <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
         {% endfor %}
     </span>
-    {{ action.content|safe|linebreaks }}
+    {% render_template_snippet action.content %}
     <div id="comments">
         {% with action as object %}
             {% render_comment_list for object %}
             {% render_comment_form for object %}
         {% endwith %}
     </div>
-    <div id="commit_dialog">
-        {% include "actions/_action_commit.html" %}
+    <div id="commit_widget">
+        <p>When do you think you'll complete this action?</p>
+        <div class="commit_calendar"></div>
     </div>
 {% endblock %}
 {% block minorcol %}
@@ -29,14 +30,14 @@
         <h2>Commitment</h2>
         <p>
             You committed to complete this action by {{ progress.date_committed }}. 
-            (<a href="{% url action_commit action.slug %}" class="commit_link">Update</a> or 
-            <a href="{% url action_commit action.slug %}" class="commit_cancel_link">Cancel</a>)
+            (<a href="#" class="commit_trigger">Update</a> or 
+            <a href="#" class="commit_cancel">Cancel</a>)
         </p>
     {% endif %}
     <h2>Action Tools</h2>
     <p>
         {% if request.user.is_authenticated and not progress.date_committed %}
-            <a href="{% url action_commit action.slug %}" class="commit_link">Make a Commitment</a><br/>
+            <a href="#" class="commit_trigger">Make a Commitment</a><br/>
         {% endif %}
         <a href="{% url feedback %}" class="feedback_link">Feedback</a>
     </p>

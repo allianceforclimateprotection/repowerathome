@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 
 def local_join(x):
@@ -16,3 +17,6 @@ def hash_val(value):
         hash_string = unicode(value)
 
     return hashlib.sha1("%s%s" % (SECRET_KEY, hash_string)).hexdigest()
+    
+def strip_quotes(val):
+    return val[1:-1] if re.match("""^('.*')|(".*")$""", val) else val

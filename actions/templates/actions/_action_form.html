@@ -1,0 +1,9 @@
+<form class="action_form" name="action_form" action="" method="post">
+    {{ action_form.as_p }}
+    <div class="action_form_buttons">
+        <input type="submit" name="complete" value="{{ complete_title }}" />
+        <input class="commit_trigger" type="submit" name="commitment" 
+            value="{{ commitment_title }}" />
+    </div>
+    {% csrf_token %}
+</form>

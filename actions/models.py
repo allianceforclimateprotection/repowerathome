@@ -18,8 +18,8 @@ class ActionManager(models.Manager):
         return actions, recommended, committed, completed
 
 class Action(models.Model):
-    name = models.CharField(max_length=255)
-    slug = models.SlugField()
+    name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(unique=True)
     teaser = models.TextField()
     content = models.TextField()
     points = models.IntegerField(default=0)
@@ -46,6 +46,9 @@ class UserActionProgress(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        unique_together = ("user", "action",)
+    
     def __unicode__(self):
         return u"%s is working on %s" % (self.user, self.action)
         
@@ -59,6 +62,9 @@ class ActionForm(models.Model):
     form_name = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ("action", "form_name",)
     
     def __unicode__(self):
         return u"%s is using form %s" % (self.action, self.form_name)
@@ -74,6 +80,9 @@ class ActionFormData(models.Model):
     data = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ("action_form", "user",)
     
     def __unicode__(self):
         return u"%s is working on %s" (self.user, self.action_form)

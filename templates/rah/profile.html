@@ -12,7 +12,7 @@
         <div class="actions_block" id="actions_in_progress">
             <h2>In Progress Actions</h2>
             {% for action in in_progress %}
-                {% include 'rah/_action_nugget.html' %}
+                {% include 'actions/_action_nugget.html' %}
             {% endfor %}
         </div>
     {% endif %}
@@ -20,7 +20,7 @@
         <div class="actions_block" id="actions_recommended">
             <h2>Recommended Actions</h2>
             {% for action in recommended %}
-                {% include 'rah/_action_nugget.html' %}
+                {% include 'actions/_action_nugget.html' %}
             {% endfor %}
         </div>
     {% endif %}
@@ -45,7 +45,7 @@
         <h2>Commitments</h2>
         <p>
         {% for row in commitment_list %}
-            <a href="{% url rah.views.action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed}}<br/>
+            <a href="{% url action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed}}<br/>
         {% endfor %}
         </p>
     {% endif %}
@@ -67,7 +67,7 @@
         <h2>Completed Actions</h2>
         <p>
         {% for action in completed %}
-            <a href="{% url rah.views.action_detail action.slug %}">{{action.name}}</a> ({{action.total_points}} points)<br/>
+            <a href="{% url action_detail action.slug %}">{{action.name}}</a> ({{action.total_points}} points)<br/>
         {% endfor %}
         </p>
     {% endif %}

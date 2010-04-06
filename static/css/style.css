@@ -279,6 +279,10 @@ ul{
     margin-left:40px;
 }
 
+.action_form_buttons {
+    margin: 10px 0;
+}
+
 /* Logged in Homepage */
 #actions_recommended .task_list{
     display:none;
