@@ -1,14 +1,11 @@
 import os
-
 from django import forms
 from django.core.urlresolvers import resolve, reverse
 from django.contrib.auth.models import User
-
 from PIL.Image import open as pil_open
-
 from geo.models import Location
-
-from models import Group, GroupUsers
+from utils import hash_val
+from models import Group, GroupUsers, Discussion
 
 class GroupForm(forms.ModelForm):
     IMAGE_FORMATS = {"PNG": "png", "JPEG": "jpeg", "GIF": "gif"}
@@ -26,7 +23,8 @@ class GroupForm(forms.ModelForm):
     
     class Meta:
         model = Group
-        exclude = ("is_featured", "is_geo_group", "location_type", "sample_location", "parent", "users", "requesters", "email_blacklisted",)
+        exclude = ("is_featured", "is_geo_group", "location_type", "sample_location", 
+                   "parent", "users", "requesters", "email_blacklisted", "disc_moderation", "disc_post_perm",)
         widgets = {
             "membership_type": forms.RadioSelect
         }
@@ -96,4 +94,59 @@ class MembershipForm(forms.Form):
         elif role == "D":
             memberships.delete()
         else:
-            raise NameError("Role option %s does not exist" % role)         
+            raise NameError("Role option %s does not exist" % role)
+
+class DiscussionSettingsForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ("disc_moderation", "disc_post_perm", )
+        widgets = {
+            "disc_moderation": forms.RadioSelect,
+            "disc_post_perm": forms.RadioSelect
+        }
+
+class DiscussionCreateForm(forms.Form):
+    subject = forms.CharField()
+    body = forms.CharField(widget=forms.Textarea)
+    parent_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+    parent_id_sig = forms.CharField(widget=forms.HiddenInput, required=False)
+    
+    def __init__(self, *args, **kwargs):
+        super(DiscussionCreateForm, self).__init__(*args, **kwargs)
+        # If a parent_id was passed in, sign it
+        if 'parent_id' in self.initial:
+            self.fields['parent_id_sig'].initial = hash_val(self.initial.get('parent_id'))
+            self.fields['subject'].widget = forms.HiddenInput()
+    
+    def clean_parent_id(self):
+        """Verify the parent_id_sig"""
+        parent_id = self.cleaned_data['parent_id']
+        if parent_id:
+            sig_check = hash_val(parent_id)
+            if parent_id and sig_check <> self.data['parent_id_sig']:
+                raise forms.ValidationError('Parent ID is currupted')
+        return parent_id
+
+class DiscussionApproveForm(forms.ModelForm):
+    class Meta:
+        model = Discussion
+        fields = ['is_public']
+        widgets = {
+            "is_public": forms.HiddenInput
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super(DiscussionApproveForm, self).__init__(*args, **kwargs)
+        self.fields['is_public'].initial = True
+
+class DiscussionRemoveForm(forms.ModelForm):
+    class Meta:
+        model = Discussion
+        fields = ['is_removed']
+        widgets = {
+            "is_removed": forms.HiddenInput
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(DiscussionRemoveForm, self).__init__(*args, **kwargs)
+        self.fields['is_removed'].initial = True

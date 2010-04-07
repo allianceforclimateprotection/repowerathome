@@ -1,6 +1,5 @@
 {% extends "rah/base.html" %}
 {% load records %}
-
 {% block extralinks %}
 {% if group.slug %}
     <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower@Home Group Activity" />
@@ -61,7 +60,17 @@
             </tbody>
         </table>
     </div>
-    
+
+    <div id="group_discussion_list" class="group_section">
+    	<h2>Discussions</h2>
+		{% if is_poster %}
+			<a href="{% url group_disc_create group.slug %}">Start new discussion</a> | 	
+		{% endif %}
+		<a href="{% url group_disc_list group.slug %}">See all discussions</a>
+		
+		{% include "groups/_group_disc_list.html" %}
+    </div>
+
     <div id="group_activity" class="group_section">
         {% if group_records %}
             <h2>Group Activity

@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.comments.models import Comment
 from django.db import models
 from django.template.defaultfilters import slugify
 
@@ -8,7 +9,7 @@ from rah.models import Profile
 from actions.models import Action
 from invite.models import Rsvp
 from notification import models as notification
-        
+   
 class GroupManager(models.Manager):
     def new_groups_with_memberships(self, user, limit=None):
         groups = self.all().order_by("-created")
@@ -52,6 +53,14 @@ class GroupManager(models.Manager):
         return self.filter(users=user).exclude(pk__in=user.email_blacklisted_group_set.all())
         
 class Group(models.Model):
+    DISC_MODERATION = (
+        (1, 'Yes, a manager must approve all discussions',),
+        (0, 'No, members can post discussions directly',),
+    )
+    DISC_POST_PERM = (
+        (0, 'Members and managers',),
+        (1, 'Only managers',),
+    )
     MEMBERSHIP_CHOICES = (
         ('O', 'Open membership'),
         ('C', 'Closed membership'),
@@ -103,6 +112,8 @@ class Group(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = GroupManager()
+    disc_moderation = models.IntegerField(choices=DISC_MODERATION, default=0, null=True, verbose_name="Moderate discussions?")
+    disc_post_perm = models.IntegerField(choices=DISC_POST_PERM, default=0, null=True,  verbose_name="Who can post discussions?")
     
     def is_joinable(self):
         return not self.is_geo_group
@@ -188,7 +199,19 @@ class Group(models.Model):
         
     def number_of_managers(self):
         return GroupUsers.objects.filter(group=self, is_manager=True).count()
-        
+
+    def is_poster(self, user):
+        """True if a user is allowed to post discussions to this group"""
+        if user.is_authenticated() and (self.is_user_manager(user) or (self.is_member(user) and self.disc_post_perm == 0)):
+            return True
+        return False
+    
+    def moderate_disc(self, user):
+        """True if disc needs to be moderated"""
+        if self.disc_moderation == 0 and self.is_member(user) or self.is_user_manager(user):
+            return False
+        return True
+    
     @models.permalink
     def get_absolute_url(self):
         if self.is_geo_group:
@@ -241,6 +264,27 @@ class DiscussionBlacklist(models.Model):
     def __unicode__(self):
         return u"%s will not recieve emails for %s discussions" % (self.user, self.group)
 
+class DiscussionManager(models.Manager):
+    def get_query_set(self):
+        return super(DiscussionManager, self).get_query_set().filter(is_removed=False)
+
+class Discussion(models.Model):
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+    user = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    parent = models.ForeignKey("Discussion", null=True)
+    is_public = models.BooleanField(default=False)
+    is_removed = models.BooleanField(default=False)
+    reply_count = models.IntegerField(null=True)
+    objects = DiscussionManager()
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ("group_disc_detail", [self.group.slug, self.id])
+
 """
 Signals!
 """
@@ -262,5 +306,13 @@ def add_invited_user_to_group(sender, instance, **kwargs):
         group = Group.objects.get(pk=invitation.content_id)
         GroupUsers.objects.get_or_create(user=instance.invitee, group=group)
 
+def update_discussion_reply_count(sender, instance, **kwargs):
+    if instance.parent_id and kwargs['created']:
+        parent = Discussion.objects.get(pk=instance.parent_id)
+        reply_count = Discussion.objects.filter(parent=instance.parent_id, is_public=True).count()
+        parent.reply_count = reply_count
+        parent.save()
+
 models.signals.post_save.connect(associate_with_geo_groups, sender=Profile)
 models.signals.post_save.connect(add_invited_user_to_group, sender=Rsvp)
+models.signals.post_save.connect(update_discussion_reply_count, sender=Discussion)

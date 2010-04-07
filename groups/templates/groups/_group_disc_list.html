@@ -1,0 +1,18 @@
+{% for disc in discs %}
+{% if disc.is_public or is_manager or disc.user.id == user.id %}
+	<h2><a href="{% url group_disc_detail group.slug,disc.id %}">{{disc.subject}}</a></h2>
+	<div>Posted by {{disc.user}} on {{disc.created}}</div>
+	<div>
+		{% if disc.reply_count %}
+			{% ifequal disc.reply_count 1 %}
+				1 reply
+			{% else %}
+				{{disc.reply_count}} replies
+			{% endifequal %}
+		{% else %}
+			0 replies
+		{% endif %}
+	</div>
+	<br/>
+{% endif %}
+{% endfor %}

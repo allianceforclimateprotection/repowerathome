@@ -13,7 +13,190 @@ from geo.models import Location
 from rah.models import Profile
 from actions.models import Action
 
-from models import Group, GroupUsers, MembershipRequests, DiscussionBlacklist
+from models import Group, GroupUsers, MembershipRequests, DiscussionBlacklist, Discussion
+        
+class GroupDiscViews(TestCase):
+    fixtures = ["test_groups.json"]
+    
+    def setUp(self):
+        self.group_user = User.objects.create_user(username="gu", email="gu@test.com", password="gu")
+        self.group_manager = User.objects.create_user(username="gm", email="gm@test.com", password="gm")
+        self.group = Group.objects.get(slug="yankees")
+        GroupUsers.objects.create(group=self.group, user=self.group_user)
+        GroupUsers.objects.create(group=self.group, user=self.group_manager, is_manager=True)
+        from utils import hash_val
+        self.discs = {
+            'd1': {"subject": "tc1 subject", "body": "tc1 body"},
+            'd2': {"subject": "tc2 subject", "body": "tc2 body", "parent_id": 1, "parent_id_sig": hash_val(1)}
+        }
+        
+        self.urls = {
+            'group_disc_create': reverse("group_disc_create", kwargs={"group_slug": self.group.slug}),
+            'group_disc_list': reverse("group_disc_list", kwargs={"group_slug": self.group.slug}),
+            'd1': reverse("group_disc_detail", kwargs={"group_slug": self.group.slug, "disc_id": 1}),
+            'd1_remove': reverse("group_disc_remove", kwargs={"group_slug": self.group.slug, "disc_id": 1}),
+            'd1_approve': reverse("group_disc_approve", kwargs={"group_slug": self.group.slug, "disc_id": 1}),
+            'd2': reverse("group_disc_detail", kwargs={"group_slug": self.group.slug, "disc_id": 2}),
+        }
+    
+    def test_create_discussion_get(self):
+        # from pprint import pprint
+        # pprint(response.__dict__, indent=2)
+        
+        # Anon users should get redirected to login
+        response = self.client.get(self.urls['group_disc_create'], follow=True)
+        self.assertRedirects(response, "/login/?next=%2Fyankees%2Fdiscussions%2Fcreate%2F")
+        
+        # As a group member
+        self.client.login(username="gu", password="gu")
+        response = self.client.get(self.urls['group_disc_create'])
+        self.failUnlessEqual(response.status_code, 200)
+        self.failUnlessEqual(response.template[0].name, "groups/group_disc_create.html")
+        
+        # As a group manager
+        self.client.logout()
+        self.client.login(username="gm", password="gm")
+        response = self.client.get(self.urls['group_disc_create'])
+        self.failUnlessEqual(response.status_code, 200)
+        self.failUnlessEqual(response.template[0].name, "groups/group_disc_create.html")
+        
+    def test_create_discussion_post(self):
+        # login an create a disc
+        self.client.login(username="gu", password="gu")
+        response = self.client.post(self.urls['group_disc_create'], self.discs['d1'], follow=True)
+        self.assertRedirects(response, self.urls['d1'])
+        
+        # Make sure the disc saved to the database correctly
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.subject, self.discs['d1']['subject'])
+        self.failUnlessEqual(disc.body, self.discs['d1']['body'])
+        self.failUnlessEqual(disc.is_public, True)
+        self.failUnlessEqual(disc.is_removed, False)
+        self.failUnlessEqual(disc.user, self.group_user)
+        self.failUnlessEqual(disc.group, self.group)
+        self.failUnlessEqual(disc.parent_id, None)
+        
+        # Check out the detail page
+        response = self.client.get(self.urls['d1'])
+        self.failUnlessEqual(response.status_code, 200)
+        self.failUnlessEqual(response.template[0].name, "groups/group_disc_detail.html")
+        
+        # Check out the detail page
+        response = self.client.get(self.urls['d1'])
+        self.failUnlessEqual(response.status_code, 200)
+        self.failUnlessEqual(response.template[0].name, "groups/group_disc_detail.html")
+    
+    def test_create_discussion_reply(self):
+        self.client.login(username="gu", password="gu")
+        self.client.post(self.urls['group_disc_create'], self.discs['d1'])
+        self.client.logout()
+        
+        # Create a reply and make sure we're redirected back to the parent
+        self.client.login(username="gm", password="gm")
+        response = self.client.post(self.urls['group_disc_create'], self.discs['d2'], follow=True)
+        self.assertRedirects(response, self.urls['d1'])
+        
+        disc = Discussion.objects.get(pk=2)
+        self.failUnlessEqual(disc.subject, self.discs['d2']['subject'])
+        self.failUnlessEqual(disc.body, self.discs['d2']['body'])
+        self.failUnlessEqual(disc.is_public, True)
+        self.failUnlessEqual(disc.is_removed, False)
+        self.failUnlessEqual(disc.user, self.group_manager)
+        self.failUnlessEqual(disc.group, self.group)
+        self.failUnlessEqual(disc.parent_id, 1)
+    
+    def test_approve_comment(self):
+        self.group.disc_moderation = 1
+        self.group.save()
+        
+        self.client.login(username="gu", password="gu")
+        self.client.post(self.urls['group_disc_create'], self.discs['d1'])
+        
+        # Make sure the comment is not public
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.is_public, False)
+        self.discs['d1']['is_public'] = disc.is_public
+        
+        # Try to approve comment as group member
+        response = self.client.post(self.urls['d1_approve'], {'is_public': True})
+        self.assertRedirects(response, self.urls['d1'])
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.is_public, False)
+        
+        # Try to approve the comment as anon user
+        self.client.logout()
+        response = self.client.post(self.urls['d1_approve'], {'is_public': True})
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.is_public, False)
+        
+        # Approve the comment as group manager
+        self.client.login(username="gm", password="gm")
+        response = self.client.post(self.urls['d1_approve'], {'is_public': True})
+        self.assertRedirects(response, self.urls['d1'])
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.is_public, True)
+        
+    def test_remove_comment(self):
+        # Post a message as a group user
+        self.client.login(username="gu", password="gu")
+        self.client.post(self.urls['group_disc_create'], self.discs['d1'])
+        self.client.post(self.urls['group_disc_create'], self.discs['d2'])
+        
+        # Make sure the comment posted
+        d1 = Discussion.objects.get(pk=1)
+        d2 = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(d1.is_removed, False)
+        self.failUnlessEqual(d2.is_removed, False)
+        
+        # try to remove as group user
+        response = self.client.post(self.urls['d1_remove'], {'is_removed': True})
+        self.assertRedirects(response, self.urls['d1'])
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.is_removed, False)
+        
+        # try to remove as an anon user
+        self.client.logout()
+        response = self.client.post(self.urls['d1_remove'], {'is_removed': True}, follow=True)
+        self.assertRedirects(response, "/login/?next=%2Fgroups%2Fyankees%2Fdiscussions%2F1%2Fremove")
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.is_removed, False)
+        
+        # remove as group manager
+        self.client.login(username="gm", password="gm")
+        response = self.client.post(self.urls['d1_remove'], {'is_removed': True})
+        self.assertRedirects(response, self.urls['group_disc_list'])
+        disc_count = Discussion.objects.filter(pk=1).count()
+        self.failUnlessEqual(disc_count, 0)
+        
+    def test_only_manager_can_post(self):
+        self.group.disc_post_perm = 1
+        self.group.save()
+        
+        # Try to post as anon
+        response = self.client.post(self.urls['group_disc_create'], self.discs['d1'])
+        self.failUnlessEqual(response.status_code, 302)
+        self.failUnlessEqual(Discussion.objects.all().count(), 0)
+        
+        # Try to post as a group user (not manager)
+        self.client.login(username="gu", password="gu")
+        response = self.client.post(self.urls['group_disc_create'], self.discs['d1'])
+        self.failUnlessEqual(response.status_code, 403)
+        self.failUnlessEqual(Discussion.objects.all().count(), 0)
+        self.client.logout()
+        
+        # Try to post as a group manager
+        self.client.login(username="gm", password="gm")
+        response = self.client.post(self.urls['group_disc_create'], self.discs['d1'])
+        self.assertRedirects(response, self.urls['d1'])
+        self.failUnlessEqual(Discussion.objects.all().count(), 1)
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.id, 1)
+        
+    def test_discussions_list(self):
+        response = self.client.get(self.urls['group_disc_list'])
+        self.failUnlessEqual(response.status_code, 200)
+        self.failUnlessEqual(response.template[0].name, "groups/group_disc_list.html")
+
 
 class GroupTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_groups.json", "test_actions.json",]
@@ -77,6 +260,43 @@ class GroupTest(TestCase):
         self.failUnlessEqual(self.sabres.is_public(), False)
         self.failUnlessEqual(self.ny.is_public(), True)
     
+    def test_is_poster(self):
+        # User who isn't a member of the group
+        self.failUnlessEqual(self.sabres.is_poster(self.user), False)    
+    
+        # User who is a member of the group
+        gu = GroupUsers.objects.create(group=self.sabres, user=self.user)
+        self.failUnlessEqual(self.sabres.is_poster(self.user), True)
+        
+        # User is a member, but only managers can post
+        self.sabres.disc_post_perm = 1
+        self.sabres.save()
+        self.failUnlessEqual(self.sabres.is_poster(self.user), False)
+        
+        # User is a manager
+        gu.is_manager = True
+        gu.save()
+        self.failUnlessEqual(self.sabres.is_poster(self.user), True)
+    
+    def test_moderate_disc(self):
+        # User who isn't a member of the group
+        self.failUnlessEqual(self.sabres.moderate_disc(self.user), True)    
+    
+        # User who is a member of the group
+        gu = GroupUsers.objects.create(group=self.sabres, user=self.user)
+        self.failUnlessEqual(self.sabres.moderate_disc(self.user), False)
+        
+        # User is a member, but managers must moderate
+        self.sabres.disc_moderation = 1
+        self.sabres.save()
+        self.failUnlessEqual(self.sabres.moderate_disc(self.user), True)
+        
+        # User is a manager
+        gu.is_manager = True
+        gu.save()
+        self.failUnlessEqual(self.sabres.moderate_disc(self.user), False)
+    
+    # TODO: This test makes no sense!
     def test_is_member(self):
         self.failUnlessEqual(self.yankees.safe_image(), "images/yankees.jpg")
         self.failUnlessEqual(self.sabres.safe_image(), "images/theme/default_group.png")
@@ -619,6 +839,17 @@ class GroupEditViewTest(TestCase):
         response = self.client.post(self.url, {"delete_group": "True"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "groups/group_list.html")
         self.failUnless(not Group.objects.filter(pk=self.group.pk).exists())
+
+    def test_discussion_settings(self):
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        self.client.login(username="test@test.com", password="test")
+        self.failUnlessEqual(self.group.disc_moderation, 0)
+        self.failUnlessEqual(self.group.disc_post_perm, 0)
+        response = self.client.post(self.url, {"disc_moderation": 1, "disc_post_perm": 1, "discussion_settings": 1}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
+        group = Group.objects.get(pk=self.group.pk)
+        self.failUnlessEqual(group.disc_moderation, 1)
+        self.failUnlessEqual(group.disc_post_perm, 1)
         
     def test_invalid_change_membership(self):
         GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
@@ -640,4 +871,15 @@ class GroupEditViewTest(TestCase):
         errors = response.context["membership_form"].errors
         self.failUnlessEqual(errors, {})
         self.failUnless(self.group.is_user_manager(new_user))
-        
+    
+    
+class BaseballViews(TestCase):
+    fixtures = ["test_groups.json"]
+
+    def setUp(self):
+        self.group = Group.objects.get(slug="yankees")
+
+    def test_does_team_suck(self):
+        self.failUnlessEqual(self.group.name, "Yes")
+    
+    

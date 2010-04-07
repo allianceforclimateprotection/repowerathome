@@ -1,5 +1,6 @@
 from smtplib import SMTPException
 
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -15,8 +16,8 @@ from records.models import Record
 from invite.forms import InviteForm
 from utils import hash_val
 
-from models import Group, GroupUsers, MembershipRequests
-from forms import GroupForm, MembershipForm
+from models import Group, GroupUsers, MembershipRequests, Discussion
+from forms import GroupForm, MembershipForm, DiscussionSettingsForm, DiscussionCreateForm, DiscussionApproveForm, DiscussionRemoveForm
 
 @login_required
 @csrf_protect
@@ -143,6 +144,16 @@ def group_edit(request, group_slug):
                 return redirect("group_edit", group_slug=group.slug)
             else:
                 membership_form = MembershipForm(group=group)
+                discussions_form = DiscussionSettingsForm(instance=group)
+        if "discussion_settings" in request.POST:
+            discussions_form = DiscussionSettingsForm(request.POST, instance=group)
+            if discussions_form.is_valid():
+                group = discussions_form.save()
+                messages.success(request, "%s has been updated." % group)
+                return redirect("group_edit", group_slug=group.slug)
+            else:
+                membership_form = MembershipForm(group=group)
+                group_form = GroupForm(instance=group)
         elif "delete_group" in request.POST:
             group.delete()
             messages.success(request, "%s has been deleted." % group)
@@ -159,14 +170,101 @@ def group_edit(request, group_slug):
                     return redirect("group_detail", group_slug=group.slug)
             else:
                 group_form = GroupForm(instance=group)
+                discussions_form = DiscussionSettingsForm(instance=group)
         else:
             messages.error(request, "No action specified.")
     else:
         group_form = GroupForm(instance=group)
         membership_form = MembershipForm(group=group)
+        discussions_form = DiscussionSettingsForm(instance=group)
     site = Site.objects.get_current()
     requesters = group.requesters_to_grant_or_deny(request.user)
     return render_to_response("groups/group_edit.html", locals(), context_instance=RequestContext(request))
+
+@login_required
+@csrf_protect
+def group_disc_create(request, group_slug):
+    group = Group.objects.get(slug=group_slug)
+    if not group.is_poster(request.user):
+        return _forbidden(request)
+    if request.method == "POST":
+        disc_form = DiscussionCreateForm(request.POST)
+        if disc_form.is_valid():
+            group = Group.objects.get(slug=group_slug)
+            disc = Discussion.objects.create(
+                subject=disc_form.cleaned_data['subject'],
+                body=disc_form.cleaned_data['body'], 
+                parent_id=disc_form.cleaned_data['parent_id'], 
+                user=request.user, 
+                group=group,
+                is_public=not group.moderate_disc(request.user),
+            )
+            messages.success(request, "Discussion posted")
+            return_to = disc_form.cleaned_data['parent_id'] if disc_form.cleaned_data['parent_id'] else disc.id
+            return redirect("group_disc_detail", group_slug=group.slug, disc_id=return_to)
+    else:
+        disc_form = DiscussionCreateForm()
+    return render_to_response("groups/group_disc_create.html", locals(), context_instance=RequestContext(request)) 
+
+def group_disc_detail(request, group_slug, disc_id):
+    disc = get_object_or_404(Discussion, id=disc_id, parent=None)
+    group = Group.objects.get(slug=group_slug)
+    is_poster = group.is_poster(request.user)
+    is_manager = group.is_user_manager(request.user)
+    approve_form = DiscussionApproveForm()
+    remove_form = DiscussionRemoveForm()
+    discs = Discussion.objects.filter(parent=disc).order_by("created")
+    disc_form = DiscussionCreateForm(initial={'parent_id':disc.id, 'subject':"Re: %s" % disc.subject})
+    return render_to_response("groups/group_disc_detail.html", locals(), context_instance=RequestContext(request))
+
+@login_required
+@csrf_protect
+def group_disc_approve(request, group_slug, disc_id):
+    disc = get_object_or_404(Discussion, id=disc_id)
+    group = Group.objects.get(slug=group_slug)
+    form = DiscussionApproveForm(request.POST, instance=disc)
+    if request.method == "POST" and form.is_valid() and group.is_user_manager(request.user):
+        form.save()
+        messages.success(request, "Discussion approved")
+    
+    return_to = disc.parent_id if disc.parent_id else disc.id
+    return redirect("group_disc_detail", group_slug=group_slug, disc_id=return_to)
+
+@login_required
+@csrf_protect
+def group_disc_remove(request, group_slug, disc_id):
+    disc = get_object_or_404(Discussion, id=disc_id)
+    group = Group.objects.get(slug=group_slug)
+    form = DiscussionRemoveForm(request.POST, instance=disc)
+
+    if request.method == "POST" and form.is_valid() and group.is_user_manager(request.user):
+        form.save()
+        messages.success(request, "Discussion removed")
+        if disc.parent_id:
+            return redirect("group_disc_detail", group_slug=group_slug, disc_id=disc.parent_id)
+        else:
+            return redirect("group_disc_list", group_slug=group_slug)
+    
+    return redirect("group_disc_detail", group_slug=group_slug, disc_id=disc.id)
+    
+def group_disc_list(request, group_slug):
+    group = Group.objects.get(slug=group_slug)
+    paginator = Paginator(Discussion.objects.filter(parent=None), 20)
+    is_poster = group.is_poster(request.user)
+    is_manager = group.is_user_manager(request.user)
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    
+    # If page request is out of range, deliver last page of results.
+    try:
+        discs = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        discs = paginator.page(paginator.num_pages)
+    
+    return render_to_response("groups/group_disc_list.html", locals(), context_instance=RequestContext(request))
 
 def _group_detail(request, group):
     popular_actions = group.completed_actions_by_user()
@@ -174,9 +272,11 @@ def _group_detail(request, group):
     group_records = group.group_records(10)
     is_member = group.is_member(request.user)
     is_manager = group.is_user_manager(request.user)
+    is_poster = group.is_poster(request.user)
     membership_pending = group.has_pending_membership(request.user)
     requesters = group.requesters_to_grant_or_deny(request.user)
     has_other_managers = group.has_other_managers(request.user)
+    discs = Discussion.objects.filter(parent=None).order_by("-created")[:5]
     invite_form = InviteForm(initial={'invite_type':'group', 'content_id':group.id})
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))
     
