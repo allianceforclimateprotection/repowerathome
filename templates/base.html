@@ -6,7 +6,7 @@
         <title>{% block title %}{% endblock %} | Repower@Home</title>
         <meta name="google-site-verification" content="LKUJZqwKMnEGjg_dQNKL-2eLLK3yvftU0RKv7SuymGQ" />
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-        <link rel="shortcut icon" href="{% dated_static 'images/theme/favico.ico' %}"/>
+        <link rel="shortcut icon" href="{% dated_static 'images/theme/favicon.ico' %}"/>
         {% if debug %}
             <link rel="stylesheet" href="{% dated_static 'css/style.css' %}" type="text/css" media="screen" charset="utf-8"/>
         {% else %}
@@ -74,7 +74,6 @@
 	                </p>
 	                <p>
 	                    <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> | 
-	                    <a href="http://www.climateprotectionactionfund.org/">Climate Protection Action Fund</a> | 
 	                    <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a> | 
 	                    <a href="{% url terms_of_use %}">Terms of Use</a> | 
 	                    <a href="{% url privacy_policy %}">Privacy Policy</a>
