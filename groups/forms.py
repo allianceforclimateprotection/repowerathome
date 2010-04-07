@@ -26,7 +26,8 @@ class GroupForm(forms.ModelForm):
     
     class Meta:
         model = Group
-        exclude = ("is_featured", "is_geo_group", "location_type", "sample_location", "parent", "users", "requesters", "email_blacklisted",)
+        exclude = ("is_featured", "is_geo_group", "location_type", "sample_location", 
+                   "parent", "users", "requesters", "email_blacklisted", "disc_moderation", "disc_post_perm",)
         widgets = {
             "membership_type": forms.RadioSelect
         }
@@ -96,4 +97,13 @@ class MembershipForm(forms.Form):
         elif role == "D":
             memberships.delete()
         else:
-            raise NameError("Role option %s does not exist" % role)         
+            raise NameError("Role option %s does not exist" % role)
+
+class DiscussionSettingsForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ("disc_moderation", "disc_post_perm", )
+        widgets = {
+            "disc_moderation": forms.RadioSelect,
+            "disc_post_perm": forms.RadioSelect
+        }

@@ -52,6 +52,14 @@ class GroupManager(models.Manager):
         return self.filter(users=user).exclude(pk__in=user.email_blacklisted_group_set.all())
         
 class Group(models.Model):
+    DISC_MODERATION = (
+        (1, 'Yes, a manager must approve all discussions',),
+        (0, 'No, members can post discussions directly',),
+    )
+    DISC_POST_PERM = (
+        (0, 'Members and managers',),
+        (1, 'Only managers',),
+    )
     MEMBERSHIP_CHOICES = (
         ('O', 'Open membership'),
         ('C', 'Closed membership'),
@@ -103,6 +111,8 @@ class Group(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = GroupManager()
+    disc_moderation = models.IntegerField(choices=DISC_MODERATION, default=0, null=True, verbose_name="Moderate discussions?")
+    disc_post_perm = models.IntegerField(choices=DISC_POST_PERM, default=0, null=True,  verbose_name="Who can post discussions?")
     
     def is_joinable(self):
         return not self.is_geo_group

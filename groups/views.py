@@ -16,7 +16,7 @@ from invite.forms import InviteForm
 from utils import hash_val
 
 from models import Group, GroupUsers, MembershipRequests
-from forms import GroupForm, MembershipForm
+from forms import GroupForm, MembershipForm, DiscussionSettingsForm
 
 @login_required
 @csrf_protect
@@ -143,6 +143,16 @@ def group_edit(request, group_slug):
                 return redirect("group_edit", group_slug=group.slug)
             else:
                 membership_form = MembershipForm(group=group)
+                discussions_form = DiscussionSettingsForm(instance=group)
+        if "discussion_settings" in request.POST:
+            discussions_form = DiscussionSettingsForm(request.POST, instance=group)
+            if discussions_form.is_valid():
+                group = discussions_form.save()
+                messages.success(request, "%s has been updated." % group)
+                return redirect("group_edit", group_slug=group.slug)
+            else:
+                membership_form = MembershipForm(group=group)
+                group_form = GroupForm(instance=group)
         elif "delete_group" in request.POST:
             group.delete()
             messages.success(request, "%s has been deleted." % group)
@@ -159,11 +169,13 @@ def group_edit(request, group_slug):
                     return redirect("group_detail", group_slug=group.slug)
             else:
                 group_form = GroupForm(instance=group)
+                discussions_form = DiscussionSettingsForm(instance=group)
         else:
             messages.error(request, "No action specified.")
     else:
         group_form = GroupForm(instance=group)
         membership_form = MembershipForm(group=group)
+        discussions_form = DiscussionSettingsForm(instance=group)
     site = Site.objects.get_current()
     requesters = group.requesters_to_grant_or_deny(request.user)
     return render_to_response("groups/group_edit.html", locals(), context_instance=RequestContext(request))
