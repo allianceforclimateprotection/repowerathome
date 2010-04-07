@@ -4,7 +4,8 @@ from django.template.defaultfilters import slugify
 
 from geo.models import Location
 from records.models import Record
-from rah.models import Action, Profile
+from rah.models import Profile
+from actions.models import Action
 from invite.models import Rsvp
 from notification import models as notification
         
@@ -122,32 +123,28 @@ class Group(models.Model):
         """
         what actions have been completed by users in this group and how many users have completed each action
         """
+        fields = ", ".join(["%s.%s" % (Action._meta.db_table, f.column) for f in Action._meta.fields])
         return Action.objects.raw("""
-        SELECT DISTINCT rah_action.id, rah_action.created, rah_action.updated, rah_action.name, rah_action.slug,
-            rah_action.teaser, rah_action.content, rah_action.total_tasks, rah_action.total_points,
-            rah_action.users_in_progress, rah_action.users_completed, rah_action.users_committed,
-            COUNT(DISTINCT rah_useractionprogress.user_id) AS completes_in_group
-        FROM rah_action
-        INNER JOIN rah_useractionprogress ON (rah_action.id = rah_useractionprogress.action_id)
-        INNER JOIN groups_groupusers ON (rah_useractionprogress.user_id = groups_groupusers.user_id)
+        SELECT DISTINCT %s, COUNT(DISTINCT actions_useractionprogress.user_id) AS completes_in_group
+        FROM actions_action
+        INNER JOIN actions_useractionprogress ON (actions_action.id = actions_useractionprogress.action_id)
+        INNER JOIN groups_groupusers ON (actions_useractionprogress.user_id = groups_groupusers.user_id)
         WHERE groups_groupusers.group_id = %s
-        AND rah_useractionprogress.is_completed = 1
-        GROUP BY rah_action.id, rah_action.created, rah_action.updated, rah_action.name, rah_action.slug,
-            rah_action.teaser, rah_action.content, rah_action.total_tasks, rah_action.total_points,
-            rah_action.users_in_progress, rah_action.users_completed, rah_action.users_committed
+        AND actions_useractionprogress.is_completed = 1
+        GROUP BY %s
         ORDER BY completes_in_group DESC
-        """ % self.id)
+        """ % (fields, self.id, fields))
 
     def members_ordered_by_points(self):
         return User.objects.raw("""
         SELECT auth_user.id, auth_user.username, auth_user.first_name, auth_user.last_name, auth_user.email, auth_user.password, 
             auth_user.is_staff, auth_user.is_active, auth_user.is_superuser, auth_user.last_login, auth_user.date_joined, rah_profile.total_points,
-            SUM(rah_useractionprogress.is_completed) AS actions_completed, 
-            COUNT(rah_useractionprogress.date_committed) AS actions_committed,
+            SUM(actions_useractionprogress.is_completed) AS actions_completed, 
+            COUNT(actions_useractionprogress.date_committed) AS actions_committed,
             (SELECT MAX(created) FROM records_record WHERE user_id = auth_user.id) AS last_active
         FROM auth_user 
         INNER JOIN groups_groupusers ON (auth_user.id = groups_groupusers.user_id)
-        LEFT OUTER JOIN rah_useractionprogress ON (auth_user.id = rah_useractionprogress.user_id)
+        LEFT OUTER JOIN actions_useractionprogress ON (auth_user.id = actions_useractionprogress.user_id)
         LEFT OUTER JOIN rah_profile ON (auth_user.id = rah_profile.user_id)
         WHERE groups_groupusers.group_id = %s
         GROUP BY auth_user.id, auth_user.username, auth_user.first_name, auth_user.last_name, auth_user.email, auth_user.password,

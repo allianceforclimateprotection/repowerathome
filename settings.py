@@ -92,6 +92,7 @@ INSTALLED_APPS = (
     'invite',
     'dated_static',
     'notification',
+    'actions',
 )
 
 FIXTURE_DIR = ('fixtures',)

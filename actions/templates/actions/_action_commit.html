@@ -1,0 +1,16 @@
+{% extends "rah/base.html" %}
+{% load comments %}
+
+{% block content %}
+    <p>
+        When do you think you'll complete this action?
+    </p>
+    <div id="commit_calendar"></div>
+    <form action="{% url action_commit action.slug %}" method="post" id="commit_form">
+        <div>
+            {{action_form.as_p}}
+            <input type="submit" value="Submit" id="commit_submit"/>
+        </div>
+        {% csrf_token %}
+    </form>
+{% endblock %}
