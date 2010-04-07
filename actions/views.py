@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader
 from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_POST
 
 from tagging.models import Tag
 from records.models import Record
@@ -35,12 +34,13 @@ def action_detail(request, action_slug):
     vars.update(locals())
     return render_to_response("actions/action_detail.html", vars, RequestContext(request))
         
-@require_POST
 @login_required
 @csrf_protect
 def action_complete(request, action_slug):
     """invoked when a user marks an action as completed"""
     action = get_object_or_404(Action, slug=action_slug)
+    if request.method == "GET":
+        return redirect("action_detail", action_slug=action.slug)
     action_complete_form = ActionCompleteForm(user=request.user, action=action, data=request.POST)
     if action_complete_form.is_valid():
         action_complete_form.save()
@@ -50,11 +50,12 @@ def action_complete(request, action_slug):
     vars.update(locals())
     return render_to_response("actions/action_detail.html", vars, RequestContext(request))
     
-@require_POST
 @login_required
 @csrf_protect
 def action_undo(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
+    if request.method == "GET":
+        return redirect("action_detail", action_slug=action.slug)
     action_undo_form = ActionUndoForm(user=request.user, action=action, data=request.POST)
     if action_undo_form.is_valid():
         action_undo_form.save()
@@ -64,11 +65,12 @@ def action_undo(request, action_slug):
     vars.update(locals())
     return render_to_response("actions/action_detail.html", vars, RequestContext(request))
     
-@require_POST
 @login_required
 @csrf_protect
 def action_commit(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
+    if request.method == "GET":
+        return redirect("action_detail", action_slug=action.slug)
     action_commit_form = ActionCommitForm(user=request.user, action=action, data=request.POST)
     if action_commit_form.is_valid():
         action_commit_form.save()
