@@ -356,7 +356,7 @@ ul{
 .whos_working { margin-left: 25px; font-size: 0.9em; }
 
 /* @group groups */
-.group_section { margin-bottom: 25px; }
+.group_section { margin-bottom: 20px; }
 
 #group_form { margin-top: 30px; }
 
@@ -370,7 +370,9 @@ ul{
 
 .group_parent { font-size: 0.7em; }
 
-.group_image { float: left; margin-right: 10px; }
+.group_image, .group_details { float: left; }
+
+.group_details { padding-left: 10px; }
 
 .group_description { font-size: 0.8em; }
 

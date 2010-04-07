@@ -1,21 +1,25 @@
 {% load thumbnail %}
 
 <img class="group_image" src="{% thumbnail group.safe_image 75x75 crop='smart' %}" alt="group image" height="75" width="75" />
-{% if is_manager %}
-    <span class="group_action">| <a href="{% url group_edit group.slug %}">Edit Group</a></span>
-{% endif %}
-{% if group.is_joinable and is_member %}
-    <a class="group_action" href="{% url group_leave group.id %}">Leave Group</a>
-{% endif %}
-<h1><a href="{{ group.get_absolute_url }}">{{ group.name }}</a></h1>
-{% for parent in group.parents %}
-    <span class="group_parent"><a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
-        {% if not forloop.last %}
-            >
-        {% endif %}
-    </span>
-{% endfor %}
-<p class="group_description">{{ group.description }}</p>
-<div class="membership_type">
-    Group Membership: {% if group.is_public %}Open{% else %}Closed{% endif %}
+<div class="group_details">
+    {% if is_manager %}
+        <span class="group_action">| <a href="{% url group_edit group.slug %}">Edit Group</a></span>
+    {% endif %}
+    {% if group.is_joinable and is_member %}
+        <a class="group_action" href="{% url group_leave group.id %}">Leave Group</a>
+    {% endif %}
+    <h1><a href="{{ group.get_absolute_url }}">{{ group.name }}</a></h1>
+    {% for parent in group.parents %}
+        <span class="group_parent">
+            <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
+            {% if not forloop.last %}&gt;{% endif %}
+        </span>
+    {% endfor %}
+    {% if group.description %}
+        <p class="group_description">{{ group.description }}</p>
+    {% endif %}
+    <div class="membership_type">
+        Group Membership: {% if group.is_public %}Open{% else %}Closed{% endif %}
+    </div>
 </div>
+<br class="spacer" />
