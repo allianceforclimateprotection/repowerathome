@@ -1,9 +1,26 @@
-<form class="action_form" name="action_form" action="" method="post">
-    {{ action_form.as_p }}
-    <div class="action_form_buttons">
-        <input type="submit" name="complete" value="{{ complete_title }}" />
-        <input class="commit_trigger" type="submit" name="commitment" 
-            value="{{ commitment_title }}" />
-    </div>
-    {% csrf_token %}
-</form>
+<div class="action_forms">
+    {% if not progress.is_completed %}
+        <form class="action_complete_form" name="action_complete_form" method="post"
+            action="{% url action_complete action.slug %}">
+            {{ action_complete_form.as_p }}
+            <p><input type="submit" value="{{ complete_title }}" /></p>
+            {% csrf_token %}
+        </form>
+
+        <form class="action_commit_form" name="action_commit_form" method="post"
+            action="{% url action_commit action.slug %}">
+            {{ action_commit_form.as_p }}
+            <p><input type="submit" class="commit_trigger" value="{{ commit_title }}" /></p>
+            {% csrf_token %}
+        </form>
+    {% else %}
+        <form class="action_undo_form" name="action_undo_form" method="post"
+            action="{% url action_undo action.slug %}">
+            {{ action_undo_form.as_p }}
+            <p><input type="submit" value="{{ undo_title }}" /></p>
+            {% csrf_token %}
+        </form>
+    {% endif %}
+
+    <br class="spacer" />
+</div>

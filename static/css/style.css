@@ -279,8 +279,9 @@ ul{
     margin-left:40px;
 }
 
-.action_form_buttons {
-    margin: 10px 0;
+.action_complete_form, .action_commit_form {
+    float: left;
+    margin: 10px 5px;
 }
 
 /* Logged in Homepage */

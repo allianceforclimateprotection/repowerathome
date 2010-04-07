@@ -194,7 +194,7 @@ var rah = {
             rah.mod_comment_form.init();
             
             // $("#house_party_form").validate({rules: {phone_number: { required: true }}});
-            $(".action_form *:has(.date_commit_field)").hide()
+            $(".date_commit_field").parent().hide();
             $(".commit_trigger").click(function(){
                 $("#commit_widget").dialog("open");
                 return false;
@@ -219,17 +219,11 @@ var rah = {
                 buttons: { 
                     "Commit": function() {
                         $("#commit_widget").dialog("close");
-                        var form = $(".action_form:first");
-                        form.append("<input type='hidden' name='commitment' />");
+                        var form = $(".action_commit_form:first");
                         form.submit();
                     }
                 }
             });
-            $(".commit_cancel").click(function(){
-                var form = $(".action_form:first");
-                form.append("<input type='hidden' name='cancel' />");
-                form.submit();
-            })
         }
     },
     

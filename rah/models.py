@@ -20,30 +20,12 @@ class DefaultModel(models.Model):
 class User(AuthUser):
     class Meta:
         proxy = True
-
-    def set_action_commitment(self, action, date_committed):
-        """date_committed can be set to None to remove a commitment"""
-        uap = UserActionProgress.objects.filter(action=action, user=self)
-        if uap:
-            row = uap[0]
-            row.date_committed = date_committed
-            row.save()
-        else:
-            row = UserActionProgress(action=action, user=self, date_committed=date_committed).save()
-        return row
-    
-    def get_action_progress(self, action):
-        try:
-            return UserActionProgress.objects.get(action=action, user=self)
-        except UserActionProgress.DoesNotExist: pass
-        return None
     
     def get_commit_list(self):
-        return UserActionProgress.objects.select_related().filter(user=self, is_completed=0, date_committed__isnull=False).order_by("date_committed")
+        return UserActionProgress.objects.select_related().filter(user=self, is_completed=False, date_committed__isnull=False).order_by("date_committed")
         
     def __unicode__(self):
         return u'%s' % (self.get_full_name())
-    
 
 class Signup(models.Model):
     email = models.EmailField(max_length=255)

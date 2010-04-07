@@ -13,7 +13,9 @@
             <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
         {% endfor %}
     </span>
-    {% render_template_snippet action.content %}
+    <div class="action_content">
+        {% render_template_snippet action.content %}
+    </div>
     <div id="comments">
         {% with action as object %}
             {% render_comment_list for object %}
@@ -31,7 +33,7 @@
         <p>
             You committed to complete this action by {{ progress.date_committed }}. 
             (<a href="#" class="commit_trigger">Update</a> or 
-            <a href="#" class="commit_cancel">Cancel</a>)
+            <a href="{% url action_cancel action.slug %}" class="commit_cancel">Cancel</a>)
         </p>
     {% endif %}
     <h2>Action Tools</h2>

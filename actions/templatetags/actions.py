@@ -9,13 +9,15 @@ from utils import strip_quotes
 register = template.Library()
 
 class ActionFormNode(template.Node):
-    def __init__(self, complete_title, commitment_title):
+    def __init__(self, complete_title="I've done this", 
+        commit_title="Commit to do this later", undo_title="My mistake, I haven't done this"):
         self.complete_title = complete_title
-        self.commitment_title = commitment_title
+        self.commit_title = commit_title
+        self.undo_title = undo_title
 
     def render(self, context):
-        values = {"complete_title": self.complete_title, 
-            "commitment_title": self.commitment_title}
+        values = {"complete_title": self.complete_title, "commit_title": self.commit_title,
+            "undo_title": self.undo_title}
         context.push()
         value = render_to_string("actions/_action_form.html", values, context)
         context.pop()
@@ -23,16 +25,18 @@ class ActionFormNode(template.Node):
 
 @register.tag
 def action_form(parser, token):
-    try:
-        tag_name, complete_title, commitment_title = token.split_contents()
-    except ValueError:
-        raise template.TemplateSyntaxError, \
-            "%(tag_name)s tag requires 2 arguments {%% %(tag_name)s \
-            [complete_title] [commitment_title] %%}" % \
-            {"tag_name": token.contents.split()[0]}
-    complete_title = strip_quotes(complete_title)
-    commitment_title = strip_quotes(commitment_title)
-    return ActionFormNode(complete_title, commitment_title)
+    arguments = token.split_contents()
+    if len(arguments) > 4:
+        raise template.TemplateSyntaxError, "%(tag_name)s tag takes 3 arguments at most {%% %(tag_name)s \
+            [complete_title] [commit_title] [undo_title] %%}" % {"tag_name": token.contents.split()[0]}
+    params = []
+    if len(arguments) > 1:
+        params.append(strip_quotes(arguments[1]))
+    if len(arguments) > 2:
+        params.append(strip_quotes(arguments[2]))
+    if len(arguments) > 3:
+        params.append(strip_quotes(arguments[3]))
+    return ActionFormNode(*params)
     
 class TemplateSnippetNode(template.Node):
     def __init__(self, filter_expr):

@@ -24,20 +24,11 @@ class ChartPoint(TestCase):
 class UserTest(TestCase):
     def setUp(self):
         create_test_users_and_action_tasks(self)
-    
-    def test_set_action_commitment(self):
-        from datetime import date
-        date_committed = date.today()
-        self.u1.set_action_commitment(self.a, date_committed)
-        
-        uap = UserActionProgress.objects.filter(user=self.u1, action=self.a)
-        self.failUnlessEqual(len(uap), 1)
-        self.failUnlessEqual(uap[0].date_committed, date_committed)
 
     def test_get_commit_list(self):
         from datetime import date
         date_committed = date.today()
-        self.u1.set_action_commitment(self.a, date_committed)
+        UserActionProgress.objects.create(user=self.u1, action=self.a, date_committed=date_committed)
         
         commit_list = self.u1.get_commit_list()
         self.failUnlessEqual(len(commit_list), 1)

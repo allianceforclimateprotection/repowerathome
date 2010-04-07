@@ -41,7 +41,7 @@ tagging.register(Action)
 class UserActionProgress(models.Model):
     user = models.ForeignKey(User)
     action = models.ForeignKey(Action)
-    is_completed = models.IntegerField(default=0)
+    is_completed = models.BooleanField(default=False)
     date_committed = models.DateField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -91,7 +91,7 @@ class ActionFormData(models.Model):
 SIGNALS!
 """
 def update_action_aggregates(sender, instance, **kwargs):
-    instance.action.users_completed = UserActionProgress.objects.filter(action=instance.action, is_completed=1).count()
+    instance.action.users_completed = UserActionProgress.objects.filter(action=instance.action, is_completed=True).count()
     instance.action.users_committed = UserActionProgress.objects.filter(action=instance.action, date_committed__isnull=False).count()
     instance.action.save()
 
