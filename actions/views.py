@@ -9,7 +9,7 @@ from tagging.models import Tag
 from records.models import Record
 
 from models import Action, UserActionProgress
-from forms import ActionCompleteForm, ActionUndoForm, ActionCommitForm
+from forms import ActionCommitForm
 
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
@@ -26,11 +26,7 @@ def action_detail(request, action_slug):
     """Detail page for an action"""
     action = get_object_or_404(Action, slug=action_slug)
     vars = _default_action_vars(action, request.user)
-    if vars["progress"] != None and vars["progress"].is_completed:
-        action_undo_form = ActionUndoForm(user=request.user, action=action)
-    else:
-        action_complete_form = ActionCompleteForm(user=request.user, action=action)
-        action_commit_form = ActionCommitForm(user=request.user, action=action)
+    action_commit_form = ActionCommitForm(user=request.user, action=action)
     vars.update(locals())
     return render_to_response("actions/action_detail.html", vars, RequestContext(request))
         
@@ -41,14 +37,9 @@ def action_complete(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
     if request.method == "GET":
         return redirect("action_detail", action_slug=action.slug)
-    action_complete_form = ActionCompleteForm(user=request.user, action=action, data=request.POST)
-    if action_complete_form.is_valid():
-        action_complete_form.save()
+    if action.complete_for_user(request.user):
         messages.success(request, "Thanks for completing this action.")
-        return redirect("action_detail", action_slug=action.slug)
-    vars = _default_action_vars(action, request.user)
-    vars.update(locals())
-    return render_to_response("actions/action_detail.html", vars, RequestContext(request))
+    return redirect("action_detail", action_slug=action.slug)
     
 @login_required
 @csrf_protect
@@ -56,14 +47,9 @@ def action_undo(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
     if request.method == "GET":
         return redirect("action_detail", action_slug=action.slug)
-    action_undo_form = ActionUndoForm(user=request.user, action=action, data=request.POST)
-    if action_undo_form.is_valid():
-        action_undo_form.save()
+    if action.undo_for_user(request.user):
         messages.success(request, "We have corrected the mistake.")
-        return redirect("action_detail", action_slug=action.slug)
-    vars = _default_action_vars(action, request.user)
-    vars.update(locals())
-    return render_to_response("actions/action_detail.html", vars, RequestContext(request))
+    return redirect("action_detail", action_slug=action.slug)
     
 @login_required
 @csrf_protect
@@ -81,20 +67,15 @@ def action_commit(request, action_slug):
     return render_to_response("actions/action_detail.html", vars, RequestContext(request))
     
 @login_required
+@csrf_protect
 def action_cancel(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
     if request.method == "POST":    
-        try:
-            uap = UserActionProgress.objects.get(user=request.user, action=action)
-            uap.date_committed = None
-            uap.save()
+        if action.cancel_for_user(request.user):
             messages.success(request, "Sorry to see you can not make the commitment.")
-        except UserActionProgress.DoesNotExisit:
-            pass
         return redirect("action_detail", action_slug=action.slug)
     return render_to_response("actions/action_cancel.html", locals(), RequestContext(request))
     
-
 def _default_action_vars(action, user):
     users_completed = User.objects.filter(useractionprogress__action=action, 
         useractionprogress__is_completed=1)[:5]

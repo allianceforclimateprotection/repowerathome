@@ -2,7 +2,6 @@
     {% if not progress.is_completed %}
         <form class="action_complete_form" name="action_complete_form" method="post"
             action="{% url action_complete action.slug %}">
-            {{ action_complete_form.as_p }}
             <p><input type="submit" value="{{ complete_title }}" /></p>
             {% csrf_token %}
         </form>
@@ -16,7 +15,6 @@
     {% else %}
         <form class="action_undo_form" name="action_undo_form" method="post"
             action="{% url action_undo action.slug %}">
-            {{ action_undo_form.as_p }}
             <p><input type="submit" value="{{ undo_title }}" /></p>
             {% csrf_token %}
         </form>

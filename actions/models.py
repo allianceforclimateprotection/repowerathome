@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from records.models import Record
 import tagging
 
 class ActionManager(models.Manager):
@@ -29,7 +30,47 @@ class Action(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = ActionManager()
-
+    
+    def complete_for_user(self, user):
+        uap, created = UserActionProgress.objects.get_or_create(user=user, action=self)
+        was_completed = uap.is_completed
+        uap.is_completed = True
+        uap.save()
+        if not was_completed:
+            Record.objects.create_record(user, "action_complete", self)
+            
+    def undo_for_user(self, user):
+        try:
+            uap = UserActionProgress.objects.get(user=user, action=self)
+            was_completed = uap.is_completed
+            uap.is_completed = False
+            uap.save()
+            if was_completed:
+                Record.objects.void_record(user, "action_complete", self)
+        except UserActionProgress.DoesNotExist:
+            return False
+        return True
+            
+    def commit_for_user(self, user, date):
+        uap, c = UserActionProgress.objects.get_or_create(user=user, action=self)
+        was_committed = uap.date_committed != None
+        uap.date_committed = date
+        uap.save()
+        if not was_committed:
+            Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
+            
+    def cancel_for_user(self, user):
+        try:
+            uap = UserActionProgress.objects.get(user=user, action=self)
+            was_committed = uap.date_committed != None
+            uap.date_committed = None
+            uap.save()
+            if was_committed:
+                Record.objects.void_record(user, "action_commitment", self)
+        except UserActionProgress.DoesNotExist:
+            return False
+        return True
+        
     def __unicode__(self):
         return u"%s" % self.name
 

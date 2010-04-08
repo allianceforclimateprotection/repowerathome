@@ -1,9 +1,10 @@
 from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
 
-from rah.models import User, Profile
-from actions.models import Action, UserActionProgress
 from records.models import Activity, Record
+from actions.models import Action, UserActionProgress
+
+from models import User, Profile
 
 def create_test_users_and_action_tasks(object):
     """
@@ -36,11 +37,6 @@ class UserTest(TestCase):
         commit_item = commit_list[0]
         self.failUnlessEqual(commit_item.action, self.a)
         self.failUnlessEqual(commit_item.date_committed, date_committed)
-
-class ActionTest(TestCase):
-    def setUp(self):
-        create_test_users_and_action_tasks(self)
-        
         
 class ProfileTest(TestCase):
     def setUp(self):
