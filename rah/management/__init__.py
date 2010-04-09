@@ -5,7 +5,7 @@ def create_default_users(app, created_models, verbosity, **kwargs):
     from django.contrib.auth.models import User
     from django.core.management import call_command
     if User in created_models and kwargs.get('interactive', True):
-        msg = "\nYou just installed Django's auth system, woudl you like to install the " \
+        msg = "\nYou just installed Django's auth system, would you like to install the " \
                 "standard set of RAH users? (yes/no): "
         confirm = raw_input(msg)
         while 1:
