@@ -1,3 +1,4 @@
+import datetime
 import re
 
 from django.contrib.auth.models import User
@@ -128,8 +129,43 @@ class GroupTest(TestCase):
         pass
     
     def test_group_records(self):
-        # TODO: redo group records tests
-        pass
+        user_2 = User.objects.create(username="2", email="test@test.edu")
+        Profile.objects.filter(user=user_2).update(is_profile_private=True)
+        user_3 = User.objects.create(username="3", email="test@test.net")
+        
+        GroupUsers.objects.create(group=self.yankees, user=self.user)
+        GroupUsers.objects.create(group=self.yankees, user=user_2)
+        GroupUsers.objects.create(group=self.yankees, user=user_3)
+        
+        iwh = Action.objects.get(slug="insulate-water-heater")
+        ror = Action.objects.get(slug="replace-your-outdated-refrigerator")
+        
+        today = datetime.date.today()
+        
+        iwh.complete_for_user(self.user)
+        iwh.commit_for_user(user_2, today)
+        iwh.complete_for_user(user_3)
+        
+        ror.commit_for_user(self.user, today)
+        ror.complete_for_user(user_2)
+        ror.commit_for_user(user_3, today)
+        
+        iwh.undo_for_user(user_3)
+        ror.cancel_for_user(user_2)
+        
+        records = self.yankees.group_records()
+        self.failUnlessEqual(len(records), 3)
+        
+        ror_3, ror_1, iwh_1 = records
+        self.failUnlessEqual(ror_3.user, user_3)
+        self.failUnlessEqual(ror_3.content_objects.all()[0].content_object, ror)
+        self.failUnlessEqual(ror_1.user, self.user)
+        self.failUnlessEqual(ror_1.content_objects.all()[0].content_object, ror)
+        self.failUnlessEqual(iwh_1.user, self.user)
+        self.failUnlessEqual(iwh_1.content_objects.all()[0].content_object, iwh)
+        
+        records = self.yankees.group_records(2)
+        self.failUnlessEqual(len(records), 2)
     
     def test_has_pending_membership(self):
         self.failUnlessEqual(self.yankees.has_pending_membership(self.user), False)
