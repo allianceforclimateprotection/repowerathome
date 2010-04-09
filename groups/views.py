@@ -15,8 +15,8 @@ from records.models import Record
 from invite.forms import InviteForm
 from utils import hash_val
 
-from models import Group, GroupUsers, MembershipRequests
-from forms import GroupForm, MembershipForm, DiscussionSettingsForm
+from models import Group, GroupUsers, MembershipRequests, Discussion
+from forms import GroupForm, MembershipForm, DiscussionSettingsForm, DiscussionCreate
 
 @login_required
 @csrf_protect
@@ -180,6 +180,35 @@ def group_edit(request, group_slug):
     requesters = group.requesters_to_grant_or_deny(request.user)
     return render_to_response("groups/group_edit.html", locals(), context_instance=RequestContext(request))
 
+@login_required
+@csrf_protect
+def group_disc_create(request, group_slug):
+    if request.method == "POST":
+        form = DiscussionCreate(request.POST)
+        if form.is_valid():
+            group = Group.objects.get(slug=group_slug)
+            disc = Discussion.objects.create(
+                body=form.cleaned_data['body'], 
+                subject=form.cleaned_data['subject'], 
+                user=request.user, 
+                group=group
+            )
+            messages.success(request, "New discussion started")
+            return redirect("group_disc_detail", group_slug=group.slug, disc_id=disc.id)
+    else:
+        form = DiscussionCreate()
+    return render_to_response("groups/group_disc_create.html", locals(), context_instance=RequestContext(request)) 
+
+def group_disc_detail(request, group_slug, disc_id):
+    disc = Discussion.objects.get(pk=disc_id)
+    group = Group.objects.get(slug=group_slug)
+    return render_to_response("groups/group_disc_detail.html", locals(), context_instance=RequestContext(request))
+
+def group_disc_list(request, group_slug):
+    discs = Discussion.objects.all()[:10]
+    group = Group.objects.get(slug=group_slug)
+    return render_to_response("groups/group_disc_list.html", locals(), context_instance=RequestContext(request))
+
 def _group_detail(request, group):
     popular_actions = group.completed_actions_by_user()
     top_members = group.members_ordered_by_points()
@@ -189,6 +218,7 @@ def _group_detail(request, group):
     membership_pending = group.has_pending_membership(request.user)
     requesters = group.requesters_to_grant_or_deny(request.user)
     has_other_managers = group.has_other_managers(request.user)
+    discs = Discussion.objects.all()[:5]
     invite_form = InviteForm(initial={'invite_type':'group', 'content_id':group.id})
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))
     

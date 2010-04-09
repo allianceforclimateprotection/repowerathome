@@ -1,0 +1,12 @@
+{% extends "rah/base.html" %}
+
+{% block content %}
+<form action="" method="post" accept-charset="utf-8">
+	{{form.as_p}}
+	<p><input type="submit" value="Start discussion"/></p>
+	{% csrf_token %}
+</form>
+{% endblock %}
+{% block minorcol %}
+{% endblock %}
+{% block js %}{% endblock %}

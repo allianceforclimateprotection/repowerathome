@@ -8,7 +8,7 @@ from PIL.Image import open as pil_open
 
 from geo.models import Location
 
-from models import Group, GroupUsers
+from models import Group, GroupUsers, Discussion
 
 class GroupForm(forms.ModelForm):
     IMAGE_FORMATS = {"PNG": "png", "JPEG": "jpeg", "GIF": "gif"}
@@ -107,3 +107,8 @@ class DiscussionSettingsForm(forms.ModelForm):
             "disc_moderation": forms.RadioSelect,
             "disc_post_perm": forms.RadioSelect
         }
+
+class DiscussionCreate(forms.ModelForm):
+    class Meta:
+        model = Discussion
+        fields = ("subject", "body",)

@@ -1,0 +1,18 @@
+{% extends "rah/base.html" %}
+{% load comments %}
+{% block content %}
+<h2>{{disc.subject}}</h2>
+<div>
+	{{disc.body|linebreaks}}
+</div>
+<div>
+	Posted by {{disc.user}} on {{disc.created}}
+</div>
+{% with disc as object %}
+	{% render_comment_list for object %}
+	{% render_comment_form for object %}
+{% endwith %}
+{% endblock %}
+{% block minorcol %}
+{% endblock %}
+{% block js %}{% endblock %}

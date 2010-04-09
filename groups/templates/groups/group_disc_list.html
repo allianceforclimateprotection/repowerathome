@@ -1,0 +1,12 @@
+{% extends "rah/base.html" %}
+
+{% block content %}
+{% for disc in discs %}
+	<h2><a href="{% url group_disc_detail group.slug,disc.id %}">{{disc.subject}}</a></h2>
+	<div>Posted by {{disc.user}} on {{disc.created}}</div>
+	<br/>
+{% endfor %}
+{% endblock %}
+{% block minorcol %}
+{% endblock %}
+{% block js %}{% endblock %}

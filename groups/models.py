@@ -249,6 +249,18 @@ class DiscussionBlacklist(models.Model):
     def __unicode__(self):
         return u"%s will not recieve emails for %s discussions" % (self.user, self.group)
 
+class Discussion(models.Model):
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+    user = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ("group_disc_detail", [self.group.slug, self.id])
+
 """
 Signals!
 """
