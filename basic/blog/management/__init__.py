@@ -1,5 +1,5 @@
 from django.db.models import get_models, signals
-from django.contrib.auth import models as auth_app
+from basic.blog import models as blog_app
 
 def create_default_posts(app, created_models, verbosity, **kwargs):
     from basic.blog.models import Post
@@ -16,5 +16,5 @@ def create_default_posts(app, created_models, verbosity, **kwargs):
                 call_command("loaddata", "basic/blog/fixtures/post.json", verbosity=0, interactive=True)
             break
 
-signals.post_syncdb.connect(create_default_posts,
-    sender=auth_app, dispatch_uid="rah.management.create_default_posts")
+signals.post_syncdb.connect(create_default_posts, sender=blog_app, 
+    dispatch_uid="rah.management.create_default_posts")

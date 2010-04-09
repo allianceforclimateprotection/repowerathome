@@ -16,5 +16,5 @@ def create_default_users(app, created_models, verbosity, **kwargs):
                 call_command("loaddata", "fixtures/auth.json", verbosity=0, interactive=True)
             break
 
-signals.post_syncdb.connect(create_default_users,
-    sender=auth_app, dispatch_uid="rah.management.create_default_users")
+signals.post_syncdb.connect(create_default_users, sender=auth_app,
+    dispatch_uid="rah.management.create_default_users")
