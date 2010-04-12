@@ -89,7 +89,7 @@ class RecordManager(models.Manager):
             activity = Activity.objects.get(slug=activity)
 
         # Figure out how many points we're going to give.
-        points = content_object.points if hasattr(content_object, "points") else activity.points
+        points = content_object.points if activity.use_content_object_for_points else activity.points
 
         # Add a new content_object (and don't create a new record) if this is batachable
         if activity.batch_time_minutes and content_object:
@@ -132,6 +132,7 @@ class Activity(DefaultModel):
     points = models.IntegerField(default=0)
     users = models.ManyToManyField(User, through="Record")
     batch_time_minutes = models.IntegerField("batch time in minutes", default=0, blank=True)
+    use_content_object_for_points = models.BooleanField(default=False)
     
     def __unicode__(self):
         return u'%s' % (self.slug)

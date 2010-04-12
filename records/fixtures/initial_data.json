@@ -7,6 +7,7 @@
             "points": 0, 
             "batch_time_minutes": 0, 
             "slug": "action_complete", 
+            "use_content_object_for_points": 1,
             "created": "2010-02-19 18:10:12"
         }
     },
@@ -17,7 +18,8 @@
             "updated": "2010-02-19 18:10:12", 
             "points": 20, 
             "batch_time_minutes": 0, 
-            "slug": "action_commitment", 
+            "slug": "action_commitment",
+            "use_content_object_for_points": 0, 
             "created": "2010-02-19 18:10:12"
         }
     }, 
@@ -28,7 +30,8 @@
             "updated": "2010-02-19 18:10:12", 
             "points": 50, 
             "batch_time_minutes": 0, 
-            "slug": "mag_tweet", 
+            "slug": "mag_tweet",
+            "use_content_object_for_points": 0, 
             "created": "2010-02-19 18:10:12"
         }
     }, 
@@ -39,7 +42,8 @@
             "updated": "2010-02-19 18:10:12", 
             "points": 20, 
             "batch_time_minutes": 0, 
-            "slug": "mag_invite_friend", 
+            "slug": "mag_invite_friend",
+            "use_content_object_for_points": 0, 
             "created": "2010-02-19 18:10:12"
         }
     }, 
@@ -50,7 +54,8 @@
             "updated": "2010-02-19 18:10:12", 
             "points": 20, 
             "batch_time_minutes": 0, 
-            "slug": "mag_request_party_host_info", 
+            "slug": "mag_request_party_host_info",
+            "use_content_object_for_points": 0, 
             "created": "2010-02-19 18:10:12"
         }
     }, 
@@ -61,7 +66,8 @@
             "updated": "2010-02-19 18:10:12", 
             "points": 5, 
             "batch_time_minutes": 0, 
-            "slug": "group_create", 
+            "slug": "group_create",
+            "use_content_object_for_points": 0, 
             "created": "2010-02-19 18:10:12"
         }
     }, 
@@ -72,7 +78,8 @@
             "updated": "2010-02-19 18:10:12", 
             "points": 5, 
             "batch_time_minutes": 0, 
-            "slug": "comment_mark_useful", 
+            "slug": "comment_mark_useful",
+            "use_content_object_for_points": 0, 
             "created": "2010-02-19 18:10:12"
         }
     }, 
@@ -83,7 +90,8 @@
             "updated": "2010-02-19 18:10:12", 
             "points": 5, 
             "batch_time_minutes": 0, 
-            "slug": "comment_create", 
+            "slug": "comment_create",
+            "use_content_object_for_points": 0, 
             "created": "2010-02-19 18:10:12"
         }
     }
