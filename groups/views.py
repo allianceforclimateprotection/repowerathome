@@ -1,5 +1,6 @@
 from smtplib import SMTPException
 
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -214,8 +215,21 @@ def group_disc_detail(request, group_slug, disc_id):
     return render_to_response("groups/group_disc_detail.html", locals(), context_instance=RequestContext(request))
 
 def group_disc_list(request, group_slug):
-    discs = Discussion.objects.filter(parent=None)[:10]
     group = Group.objects.get(slug=group_slug)
+    paginator = Paginator(Discussion.objects.filter(parent=None), 20)
+    
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    
+    # If page request is out of range, deliver last page of results.
+    try:
+        discs = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        discs = paginator.page(paginator.num_pages)
+    
     return render_to_response("groups/group_disc_list.html", locals(), context_instance=RequestContext(request))
 
 def _group_detail(request, group):

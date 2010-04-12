@@ -1,0 +1,29 @@
+{% ifnotequal paginator.paginator.num_pages 1 %}
+	<div class="item-pagination">
+		{{paginator.start_index}} &ndash; {{paginator.end_index}} of {{paginator.paginator.count}}
+
+		{% ifequal paginator.number 1 %}
+            First
+		{% else %}
+			<a href="?page=1">First</a>
+        {% endifequal %}
+		|
+        {% if paginator.has_previous %}
+            <a href="?page={{ paginator.previous_page_number }}">&laquo; Previous</a>
+		{% else %}
+			&laquo; Previous
+        {% endif %}
+		|
+        {% if paginator.has_next %}
+            <a href="?page={{ paginator.next_page_number }}">Next &raquo;</a>
+		{% else %}
+			Next &raquo;
+        {% endif %}
+		|
+        {% ifequal paginator.number paginator.paginator.num_pages %}
+            Last
+		{% else %}
+			<a href="?page={{ paginator.paginator.num_pages }}">Last</a>
+        {% endifequal %}
+	</div>
+{% endifnotequal %}

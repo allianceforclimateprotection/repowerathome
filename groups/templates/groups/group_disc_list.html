@@ -1,7 +1,12 @@
 {% extends "rah/base.html" %}
 {% load comments %}
 {% block content %}
-	{% include "groups/_group_disc_list.html" %}
+	{% with discs.object_list as discs %}
+		{% include "groups/_group_disc_list.html" %}
+	{% endwith %}
+	{% with discs as paginator %}
+		{% include "paginators/item_paginator.html" %}
+	{% endwith %}
 {% endblock %}
 {% block minorcol %}{% endblock %}
 {% block js %}{% endblock %}
