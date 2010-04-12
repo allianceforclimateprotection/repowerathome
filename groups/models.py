@@ -210,6 +210,7 @@ class GroupUsers(models.Model):
     
     class Meta:
         unique_together = ("user", "group",)
+        verbose_name_plural = "group users"
     
     def __unicode__(self):
         return u'%s belongs to group %s' % (self.user, self.group)

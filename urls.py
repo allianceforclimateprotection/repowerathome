@@ -17,6 +17,9 @@ from basic.blog.models import Category, BlogRoll
 admin.site.unregister(Category)
 admin.site.unregister(BlogRoll)
 
+from tagging.models import TaggedItem
+admin.site.unregister(TaggedItem)
+
 from basic.blog.feeds import BlogPostsFeed
 from groups.feeds import GroupActivityFeed
 from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm

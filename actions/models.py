@@ -71,6 +71,11 @@ class Action(models.Model):
             return False
         return True
         
+    def tag_list(self):
+        tag_names = [t.name for t in self.tags]
+        return ", ".join(tag_names) if tag_names else ""
+    tag_list.short_description = "Tags"
+        
     def __unicode__(self):
         return u"%s" % self.name
 

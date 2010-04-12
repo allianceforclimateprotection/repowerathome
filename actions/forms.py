@@ -1,8 +1,9 @@
 from django import forms
 
 from records.models import Record
+from tagging.models import Tag
 
-from models import UserActionProgress
+from models import Action, UserActionProgress
 
 class BaseActionForm(forms.Form):
     def __init__(self, user, action, *args, **kwargs):
@@ -16,3 +17,19 @@ class ActionCommitForm(BaseActionForm):
         
     def save(self):
         self.action.commit_for_user(self.user, self.cleaned_data["date_committed"])
+        
+class ActionAdminForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), 
+        widget=forms.CheckboxSelectMultiple)
+        
+    def __init__(self, *args, **kwargs):
+        super(ActionAdminForm, self).__init__(*args, **kwargs)
+        self.fields["tags"].initial = [t.pk for t in self.instance.tags]
+    
+    class Meta:
+        model = Action
+        
+    def save(self, *args, **kwargs):
+        tags = self.cleaned_data["tags"]
+        self.instance.tags = " ".join([t.name for t in tags]) if tags else ""
+        return super(ActionAdminForm, self).save(*args, **kwargs)
