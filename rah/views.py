@@ -31,20 +31,8 @@ def index(request):
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
         return profile(request, request.user.id)
-    
-    # Setup and handle email form on logged out home page
-    success = False
-    if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            new_user = form.save()
-            success = True
-    else:
-        form = SignupForm()
-    return render_to_response("rah/home_logged_out.html", {
-        'form': form,
-        'success': success
-    }, context_instance=RequestContext(request))
+        
+    return render_to_response("rah/home_logged_out.html", context_instance=RequestContext(request))
 
 def privacy_policy(request):
     return render_to_response("rah/privacy_policy.html", {}, context_instance=RequestContext(request))

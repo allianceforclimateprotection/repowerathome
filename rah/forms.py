@@ -11,7 +11,7 @@ from django.core.urlresolvers import resolve, Resolver404
 from django.forms.widgets import CheckboxSelectMultiple
 from django.template import Context, loader
 
-from rah.models import *
+from rah.models import User, Profile, Feedback
 from geo.models import Location
 
 class SlugField(forms.CharField):
@@ -118,18 +118,6 @@ class AuthenticationForm(forms.Form):
 
    def get_user(self):
        return self.user_cache
-
-class SignupForm(forms.ModelForm):
-    class Meta:
-        model = Signup
-        fields = ("email","zipcode",)
-
-    def clean_zipcode(self):
-        data = self.cleaned_data['zipcode']
-        if (not data.isdigit()) or (len(data) <> 5):
-            raise forms.ValidationError("Please enter a valid 5 digit zipcode")
-
-        return data
 
 class FeedbackForm(forms.ModelForm):
     class Meta:

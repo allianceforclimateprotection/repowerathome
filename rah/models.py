@@ -27,13 +27,6 @@ class User(AuthUser):
     def __unicode__(self):
         return u'%s' % (self.get_full_name())
 
-class Signup(models.Model):
-    email = models.EmailField(max_length=255)
-    zipcode = models.CharField(max_length=5)
-
-    def __unicode__(self):
-        return u'%s' % (self.email)
-
 class Feedback(DefaultModel):
     user = models.ForeignKey(AuthUser, null=True)
     url = models.CharField(max_length=255, default='')

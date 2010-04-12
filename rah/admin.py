@@ -1,9 +1,8 @@
 from django.contrib import admin
-from models import Signup, Profile
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 
-class SignupAdmin(admin.ModelAdmin):
-    list_display = ('email', 'zipcode')
-    search_fields = ('email', 'zipcode')
+from models import Profile
 
-admin.site.register(Signup, SignupAdmin)
+# admin.site.register(User, UserAdmin)
 admin.site.register(Profile)
