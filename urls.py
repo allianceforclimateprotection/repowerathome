@@ -1,13 +1,27 @@
-import settings
 from django.conf.urls.defaults import *
-from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
+from django.contrib import admin
+
+from actions import admin as actions_admin
+from basic.blog import admin as blog_admin
+from rah import admin as rah_admin
+from django.contrib.comments import admin as comments_admin
+from geo import admin as geo_admin
+from groups import admin as groups_admin
+from tagging import admin as tagging_admin
+
+from django.contrib.auth.models import Group, User
+admin.site.unregister(Group)
+admin.site.unregister(User)
+
+from basic.blog.models import Category, BlogRoll
+admin.site.unregister(Category)
+admin.site.unregister(BlogRoll)
 
 from basic.blog.feeds import BlogPostsFeed
 from groups.feeds import GroupActivityFeed
+from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
 
-# Uncomment the next two lines to enable the admin:
-from django.contrib import admin
-admin.autodiscover()
+import settings
 
 urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
