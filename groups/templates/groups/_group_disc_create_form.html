@@ -1,0 +1,5 @@
+<form action="{% url group_disc_create group.slug %}" method="post" accept-charset="utf-8">
+	{{disc_form.as_p}}
+	<p><input type="submit" value="Submit"/></p>
+	{% csrf_token %}
+</form>

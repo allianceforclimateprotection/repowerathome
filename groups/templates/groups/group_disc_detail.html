@@ -1,5 +1,4 @@
 {% extends "rah/base.html" %}
-{% load comments %}
 {% block content %}
 <h2>{{disc.subject}}</h2>
 <div>
@@ -8,10 +7,20 @@
 <div>
 	Posted by {{disc.user}} on {{disc.created}}
 </div>
-{% with disc as object %}
-	{% render_comment_list for object %}
-	{% render_comment_form for object %}
-{% endwith %}
+<br/>
+{% for disc in discs %}
+	<div>
+		{{disc.body|linebreaks}}
+	</div>
+	<div>
+		<i>--Posted by {{disc.user}} on {{disc.created}}</i>
+	</div>
+	<br/>
+{% endfor %}
+{% if is_poster %}
+	{% include "groups/_group_disc_create_form.html" %}
+{% endif %}
+
 {% endblock %}
 {% block minorcol %}
 {% endblock %}

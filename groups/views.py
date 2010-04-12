@@ -183,29 +183,38 @@ def group_edit(request, group_slug):
 @login_required
 @csrf_protect
 def group_disc_create(request, group_slug):
+    group = Group.objects.get(slug=group_slug)
+    if not group.is_poster(request.user):
+        return _forbidden(request)
     if request.method == "POST":
-        form = DiscussionCreate(request.POST)
-        if form.is_valid():
+        disc_form = DiscussionCreate(request.POST)
+        if disc_form.is_valid():
             group = Group.objects.get(slug=group_slug)
             disc = Discussion.objects.create(
-                body=form.cleaned_data['body'], 
-                subject=form.cleaned_data['subject'], 
+                subject=disc_form.cleaned_data['subject'],
+                body=disc_form.cleaned_data['body'], 
+                parent_id=disc_form.cleaned_data['parent_id'], 
                 user=request.user, 
-                group=group
+                group=group,
+                is_public=not group.moderate_disc(request.user),
             )
-            messages.success(request, "New discussion started")
-            return redirect("group_disc_detail", group_slug=group.slug, disc_id=disc.id)
+            messages.success(request, "Discussion posted")
+            return_to = disc_form.cleaned_data['parent_id'] if disc_form.cleaned_data['parent_id'] else disc.id
+            return redirect("group_disc_detail", group_slug=group.slug, disc_id=return_to)
     else:
-        form = DiscussionCreate()
+        disc_form = DiscussionCreate()
     return render_to_response("groups/group_disc_create.html", locals(), context_instance=RequestContext(request)) 
 
 def group_disc_detail(request, group_slug, disc_id):
-    disc = Discussion.objects.get(pk=disc_id)
+    disc = get_object_or_404(Discussion, id=disc_id, parent=None)
     group = Group.objects.get(slug=group_slug)
+    is_poster = group.is_poster(request.user)
+    discs = Discussion.objects.filter(parent=disc).order_by("created")
+    disc_form = DiscussionCreate(initial={'parent_id':disc.id, 'subject':"Re: %s" % disc.subject})
     return render_to_response("groups/group_disc_detail.html", locals(), context_instance=RequestContext(request))
 
 def group_disc_list(request, group_slug):
-    discs = Discussion.objects.all()[:10]
+    discs = Discussion.objects.filter(parent=None)[:10]
     group = Group.objects.get(slug=group_slug)
     return render_to_response("groups/group_disc_list.html", locals(), context_instance=RequestContext(request))
 
@@ -215,10 +224,11 @@ def _group_detail(request, group):
     group_records = group.group_records(10)
     is_member = group.is_member(request.user)
     is_manager = group.is_user_manager(request.user)
+    is_poster = group.is_poster(request.user)
     membership_pending = group.has_pending_membership(request.user)
     requesters = group.requesters_to_grant_or_deny(request.user)
     has_other_managers = group.has_other_managers(request.user)
-    discs = Discussion.objects.all()[:5]
+    discs = Discussion.objects.filter(parent=None)[:5]
     invite_form = InviteForm(initial={'invite_type':'group', 'content_id':group.id})
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))
     

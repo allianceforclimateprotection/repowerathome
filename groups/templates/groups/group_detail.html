@@ -1,6 +1,6 @@
 {% extends "rah/base.html" %}
 {% load records %}
-
+{% load comments %}
 {% block extralinks %}
 {% if group.slug %}
     <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower@Home Group Activity" />
@@ -64,13 +64,13 @@
 
     <div id="group_discussion_list" class="group_section">
     	<h2>Discussions</h2>
-		<a href="{% url group_disc_create group.slug %}">Start new discussion</a> | 
+		{% if is_poster %}
+			<a href="{% url group_disc_create group.slug %}">Start new discussion</a> | 	
+		{% endif %}
 		<a href="{% url group_disc_list group.slug %}">See all discussions</a>
-		{% for disc in discs %}
-			<h3><a href="{% url group_disc_detail group.slug,disc.id %}">{{disc.subject}}</a></h3>
-			<div>Posted by {{disc.user}} on {{disc.created}}</div>
-			<br/>
-		{% endfor %}
+		
+		{% get_comment_list for group as comment_list%}
+		{% include "groups/_group_disc_list.html" %}
     </div>
 
     <div id="group_activity" class="group_section">

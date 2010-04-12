@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.comments.models import Comment
 from django.db import models
 from django.template.defaultfilters import slugify
 
@@ -8,7 +9,7 @@ from rah.models import Profile
 from actions.models import Action
 from invite.models import Rsvp
 from notification import models as notification
-        
+   
 class GroupManager(models.Manager):
     def new_groups_with_memberships(self, user, limit=None):
         groups = self.all().order_by("-created")
@@ -197,7 +198,19 @@ class Group(models.Model):
         
     def number_of_managers(self):
         return GroupUsers.objects.filter(group=self, is_manager=True).count()
-        
+
+    def is_poster(self, user):
+        """True if a user is allowed to post discussions to this group"""
+        if user.is_authenticated() and (self.is_user_manager(user) or (self.is_member(user) and self.disc_post_perm == 0)):
+            return True
+        return False
+    
+    def moderate_disc(self, user):
+        """True if disc moderation is on and this user is not a manager. False means disc must be moderated"""
+        if self.disc_moderation == 1 and not self.is_user_manager(user):
+            return True
+        return False
+    
     @models.permalink
     def get_absolute_url(self):
         if self.is_geo_group:
@@ -256,6 +269,9 @@ class Discussion(models.Model):
     group = models.ForeignKey(Group)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    parent = models.ForeignKey("Discussion", null=True)
+    is_public = models.BooleanField(default=False)
+    reply_count = models.IntegerField(null=True)
     
     @models.permalink
     def get_absolute_url(self):
@@ -282,5 +298,13 @@ def add_invited_user_to_group(sender, instance, **kwargs):
         group = Group.objects.get(pk=invitation.content_id)
         GroupUsers.objects.get_or_create(user=instance.invitee, group=group)
 
+def update_discussion_reply_count(sender, instance, **kwargs):
+    if instance.parent_id and kwargs['created']:
+        parent = Discussion.objects.get(pk=instance.parent_id)
+        reply_count = Discussion.objects.filter(parent=instance.parent_id).count()
+        parent.reply_count = reply_count
+        parent.save()
+
 models.signals.post_save.connect(associate_with_geo_groups, sender=Profile)
 models.signals.post_save.connect(add_invited_user_to_group, sender=Rsvp)
+models.signals.post_save.connect(update_discussion_reply_count, sender=Discussion)
