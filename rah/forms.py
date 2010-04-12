@@ -14,18 +14,6 @@ from django.template import Context, loader
 from rah.models import User, Profile, Feedback
 from geo.models import Location
 
-class SlugField(forms.CharField):
-    def __init__(self, *args, **kwargs):
-        super(SlugField, self).__init__(*args, **kwargs)
-
-    def clean(self, value):
-        import re
-        
-        if not re.search('^[a-z0-9-]+$', value):
-            raise forms.ValidationError("Slugs can only contain lowercase letters a-z, number 0-9, and a hyphen")
-    
-        return data
-
 class RegistrationForm(forms.ModelForm):
     """
     A form that creates a user, with no privileges, from the given email and password.
