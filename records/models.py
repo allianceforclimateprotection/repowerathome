@@ -56,16 +56,6 @@ class SerializedDataField(models.TextField):
     def get_db_prep_save(self, value):
         if value is None: return
         return base64.b64encode(pickle.dumps(value))
-        
-class DefaultModel(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        abstract = True
-
-    def __unicode__(self):
-            return u'%s' % (self.name)
 
 class RecordManager(models.Manager):
     def get_query_set(self):
@@ -127,23 +117,27 @@ class RecordManager(models.Manager):
 
         return chart_points
 
-class Activity(DefaultModel):
+class Activity(models.Model):
     slug = models.SlugField()
     points = models.IntegerField(default=0)
     users = models.ManyToManyField(User, through="Record")
     batch_time_minutes = models.IntegerField("batch time in minutes", default=0, blank=True)
     use_content_object_for_points = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
     def __unicode__(self):
         return u'%s' % (self.slug)
 
-class Record(DefaultModel):
+class Record(models.Model):
     user = models.ForeignKey(User)
     activity = models.ForeignKey(Activity)
     points = models.IntegerField(default=0)
     data = SerializedDataField(blank=True, null=True)
     is_batched = models.BooleanField(default=False)
     void = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     objects = RecordManager()
     
     class Meta:
