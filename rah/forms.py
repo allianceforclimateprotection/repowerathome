@@ -125,13 +125,17 @@ class FeedbackForm(forms.ModelForm):
         msg.send()
         
 class ProfileEditForm(forms.ModelForm):
+    about = forms.CharField(max_length=255, required=False, label="About you")   
+    zipcode = forms.CharField(max_length=5, required=False)
+    is_profile_private = forms.BooleanField(label="Make Profile Private", required=False)
+    
     class Meta:
         model = Profile
         fields = ("zipcode", "building_type", "about", "is_profile_private")
     
-    about = forms.CharField(max_length=255, required=False, label="About you")   
-    zipcode = forms.CharField(max_length=5, required=False)
-    is_profile_private = forms.BooleanField(label="Make Profile Private", required=False)
+    def __init__(self, *args, **kwargs):
+        super(ProfileEditForm, self).__init__(*args, **kwargs)
+        self.fields["zipcode"].initial = self.instance.location.zipcode if self.instance.location else ""
     
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
@@ -144,7 +148,6 @@ class ProfileEditForm(forms.ModelForm):
             self.instance.location = Location.objects.get(zipcode=data)
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
-
 
 class AccountForm(forms.ModelForm):
     """docstring for AccountForm"""

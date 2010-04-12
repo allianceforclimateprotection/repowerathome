@@ -126,8 +126,7 @@ def profile_edit(request, user_id):
     
     profile = request.user.get_profile()
     account_form = AccountForm(instance=request.user)
-    profile_form = ProfileEditForm(instance=profile, initial={
-        'zipcode': profile.location.zipcode if profile.location else '',})
+    profile_form = ProfileEditForm(instance=profile)
     group_notifications_form = GroupNotificationsForm(user=request.user)
     
     if request.method == 'POST':
