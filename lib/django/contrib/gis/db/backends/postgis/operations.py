@@ -413,7 +413,8 @@ class PostGISOperations(DatabaseOperations, BaseSpatialOperations):
                 # Responsibility of callers to perform error handling.
                 raise
         finally:
-            cursor.close()
+            # Close out the connection.  See #9437.
+            self.connection.close()
         return row[0]
 
     def postgis_geos_version(self):
@@ -536,12 +537,14 @@ class PostGISOperations(DatabaseOperations, BaseSpatialOperations):
                     op = op(self.geom_func_prefix, value[1])
                 elif lookup_type in self.distance_functions and lookup_type != 'dwithin':
                     if not field.geography and field.geodetic(self.connection):
-                        # Geodetic distances are only availble from Points to PointFields.
-                        if field.geom_type != 'POINT':
-                            raise ValueError('PostGIS spherical operations are only valid on PointFields.')
+                        # Geodetic distances are only availble from Points to
+                        # PointFields on PostGIS 1.4 and below.
+                        if not self.connection.ops.geography:
+                            if field.geom_type != 'POINT':
+                                raise ValueError('PostGIS spherical operations are only valid on PointFields.')
 
-                        if str(geom.geom_type) != 'Point':
-                            raise ValueError('PostGIS geometry distance parameter is required to be of type Point.')
+                            if str(geom.geom_type) != 'Point':
+                                raise ValueError('PostGIS geometry distance parameter is required to be of type Point.')
 
                         # Setting up the geodetic operation appropriately.
                         if nparams == 3 and value[2] == 'spheroid':

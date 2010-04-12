@@ -167,6 +167,7 @@ def fields_for_model(model, fields=None, exclude=None, widgets=None, formfield_c
     in the ``fields`` argument.
     """
     field_list = []
+    ignored = []
     opts = model._meta
     for f in opts.fields + opts.many_to_many:
         if not f.editable:
@@ -182,9 +183,14 @@ def fields_for_model(model, fields=None, exclude=None, widgets=None, formfield_c
         formfield = formfield_callback(f, **kwargs)
         if formfield:
             field_list.append((f.name, formfield))
+        else:
+            ignored.append(f.name)
     field_dict = SortedDict(field_list)
     if fields:
-        field_dict = SortedDict([(f, field_dict.get(f)) for f in fields if (not exclude) or (exclude and f not in exclude)])
+        field_dict = SortedDict(
+            [(f, field_dict.get(f)) for f in fields
+                if ((not exclude) or (exclude and f not in exclude)) and (f not in ignored)]
+        )
     return field_dict
 
 class ModelFormOptions(object):
@@ -448,10 +454,10 @@ class BaseModelFormSet(BaseFormSet):
             if not qs.ordered:
                 qs = qs.order_by(self.model._meta.pk.name)
 
-            if self.max_num > 0:
-                self._queryset = qs[:self.max_num]
-            else:
-                self._queryset = qs
+            # Removed queryset limiting here. As per discussion re: #13023
+            # on django-dev, max_num should not prevent existing
+            # related objects/inlines from being displayed.
+            self._queryset = qs
         return self._queryset
 
     def save_new(self, form, commit=True):
@@ -649,7 +655,7 @@ class BaseModelFormSet(BaseFormSet):
 def modelformset_factory(model, form=ModelForm, formfield_callback=lambda f: f.formfield(),
                          formset=BaseModelFormSet,
                          extra=1, can_delete=False, can_order=False,
-                         max_num=0, fields=None, exclude=None):
+                         max_num=None, fields=None, exclude=None):
     """
     Returns a FormSet class for the given Django model class.
     """
@@ -799,7 +805,7 @@ def _get_foreign_key(parent_model, model, fk_name=None, can_fail=False):
 def inlineformset_factory(parent_model, model, form=ModelForm,
                           formset=BaseInlineFormSet, fk_name=None,
                           fields=None, exclude=None,
-                          extra=3, can_order=False, can_delete=True, max_num=0,
+                          extra=3, can_order=False, can_delete=True, max_num=None,
                           formfield_callback=lambda f: f.formfield()):
     """
     Returns an ``InlineFormSet`` for the given kwargs.

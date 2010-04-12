@@ -206,6 +206,7 @@ class ModelAdmin(BaseModelAdmin):
     change_form_template = None
     change_list_template = None
     delete_confirmation_template = None
+    delete_selected_confirmation_template = None
     object_history_template = None
 
     # Actions
@@ -273,6 +274,7 @@ class ModelAdmin(BaseModelAdmin):
             js.extend(['js/jquery.min.js', 'js/actions.min.js'])
         if self.prepopulated_fields:
             js.append('js/urlify.js')
+            js.append('js/prepopulate.js')
         if self.opts.get_ordered_objects():
             js.extend(['js/getElementsBySelector.js', 'js/dom-drag.js' , 'js/admin/ordering.js'])
 
@@ -1179,7 +1181,7 @@ class InlineModelAdmin(BaseModelAdmin):
     fk_name = None
     formset = BaseInlineFormSet
     extra = 3
-    max_num = 0
+    max_num = None
     template = None
     verbose_name = None
     verbose_name_plural = None
@@ -1200,6 +1202,7 @@ class InlineModelAdmin(BaseModelAdmin):
         js = ['js/jquery.min.js', 'js/inlines.min.js']
         if self.prepopulated_fields:
             js.append('js/urlify.js')
+            js.append('js/prepopulate.js')
         if self.filter_vertical or self.filter_horizontal:
             js.extend(['js/SelectBox.js' , 'js/SelectFilter2.js'])
         return forms.Media(js=['%s%s' % (settings.ADMIN_MEDIA_PREFIX, url) for url in js])
