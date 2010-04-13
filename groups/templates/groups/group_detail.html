@@ -1,6 +1,5 @@
 {% extends "rah/base.html" %}
 {% load records %}
-{% load comments %}
 {% block extralinks %}
 {% if group.slug %}
     <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower@Home Group Activity" />
@@ -69,7 +68,6 @@
 		{% endif %}
 		<a href="{% url group_disc_list group.slug %}">See all discussions</a>
 		
-		{% get_comment_list for group as comment_list%}
 		{% include "groups/_group_disc_list.html" %}
     </div>
 

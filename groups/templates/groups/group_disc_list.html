@@ -1,12 +1,21 @@
 {% extends "rah/base.html" %}
-{% load comments %}
 {% block content %}
+	<h2>Discussions</h2>
 	{% with discs.object_list as discs %}
 		{% include "groups/_group_disc_list.html" %}
 	{% endwith %}
 	{% with discs as paginator %}
 		{% include "paginators/item_paginator.html" %}
 	{% endwith %}
+
+	{% if is_poster %}
+		<a href="{% url group_disc_create group.slug %}">Start new discussion</a>
+	{% else %}
+		{% if group.is_joinable %}
+			You must be a member of this group to post discussions. 
+			<a href="{% url group_join group.id %}">Join this Group.</a>
+		{% endif %}
+	{% endif %}
 {% endblock %}
 {% block minorcol %}{% endblock %}
 {% block js %}{% endblock %}

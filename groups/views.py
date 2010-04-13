@@ -207,7 +207,7 @@ def group_disc_create(request, group_slug):
     return render_to_response("groups/group_disc_create.html", locals(), context_instance=RequestContext(request)) 
 
 def group_disc_detail(request, group_slug, disc_id):
-    disc = get_object_or_404(Discussion, id=disc_id, parent=None, is_public=True)
+    disc = get_object_or_404(Discussion, id=disc_id, parent=None)
     group = Group.objects.get(slug=group_slug)
     is_poster = group.is_poster(request.user)
     is_manager = group.is_user_manager(request.user)
@@ -221,8 +221,10 @@ def group_disc_detail(request, group_slug, disc_id):
 @csrf_protect
 def group_disc_approve(request, group_slug, disc_id):
     disc = get_object_or_404(Discussion, id=disc_id)
+    group = Group.objects.get(slug=group_slug)
     form = DiscussionApproveForm(request.POST, instance=disc)
-    if request.method == "POST" and form.is_valid():
+    
+    if request.method == "POST" and form.is_valid() and group.is_user_manager(request.user):
         form.save()
         messages.success(request, "Discussion approved")
     
@@ -233,8 +235,10 @@ def group_disc_approve(request, group_slug, disc_id):
 @csrf_protect
 def group_disc_remove(request, group_slug, disc_id):
     disc = get_object_or_404(Discussion, id=disc_id)
+    group = Group.objects.get(slug=group_slug)
     form = DiscussionRemoveForm(request.POST, instance=disc)
-    if request.method == "POST" and form.is_valid():
+
+    if request.method == "POST" and form.is_valid() and group.is_user_manager(request.user):
         form.save()
         messages.success(request, "Discussion removed")
     
@@ -245,8 +249,9 @@ def group_disc_remove(request, group_slug, disc_id):
     
 def group_disc_list(request, group_slug):
     group = Group.objects.get(slug=group_slug)
-    paginator = Paginator(Discussion.objects.filter(parent=None, is_public=True), 20)
-    
+    paginator = Paginator(Discussion.objects.filter(parent=None), 20)
+    is_poster = group.is_poster(request.user)
+    is_manager = group.is_user_manager(request.user)
     # Make sure page request is an int. If not, deliver first page.
     try:
         page = int(request.GET.get('page', '1'))
@@ -271,7 +276,7 @@ def _group_detail(request, group):
     membership_pending = group.has_pending_membership(request.user)
     requesters = group.requesters_to_grant_or_deny(request.user)
     has_other_managers = group.has_other_managers(request.user)
-    discs = Discussion.objects.filter(parent=None, is_public=True).order_by("-created")[:5]
+    discs = Discussion.objects.filter(parent=None).order_by("-created")[:5]
     invite_form = InviteForm(initial={'invite_type':'group', 'content_id':group.id})
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))
     
