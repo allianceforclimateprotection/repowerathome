@@ -105,14 +105,14 @@ class DiscussionSettingsForm(forms.ModelForm):
             "disc_post_perm": forms.RadioSelect
         }
 
-class DiscussionCreate(forms.Form):
+class DiscussionCreateForm(forms.Form):
     subject = forms.CharField()
     body = forms.CharField(widget=forms.Textarea)
     parent_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
     parent_id_sig = forms.CharField(widget=forms.HiddenInput, required=False)
     
     def __init__(self, *args, **kwargs):
-        super(DiscussionCreate, self).__init__(*args, **kwargs)
+        super(DiscussionCreateForm, self).__init__(*args, **kwargs)
         # If a parent_id was passed in, sign it
         if 'parent_id' in self.initial:
             self.fields['parent_id_sig'].initial = hash_val(self.initial.get('parent_id'))
@@ -126,3 +126,27 @@ class DiscussionCreate(forms.Form):
             if parent_id and sig_check <> self.data['parent_id_sig']:
                 raise forms.ValidationError('Parent ID is currupted')
         return parent_id
+
+class DiscussionApproveForm(forms.ModelForm):
+    class Meta:
+        model = Discussion
+        fields = ['is_public']
+        widgets = {
+            "is_public": forms.HiddenInput
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super(DiscussionApproveForm, self).__init__(*args, **kwargs)
+        self.fields['is_public'].initial = True
+
+class DiscussionRemoveForm(forms.ModelForm):
+    class Meta:
+        model = Discussion
+        fields = ['is_removed']
+        widgets = {
+            "is_removed": forms.HiddenInput
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(DiscussionRemoveForm, self).__init__(*args, **kwargs)
+        self.fields['is_removed'].initial = True

@@ -29,4 +29,6 @@ urlpatterns = patterns('groups.views',
     url(r'^(?P<group_slug>[a-z0-9-]+)/discussions/$', 'group_disc_list', name='group_disc_list'),
     url(r'^(?P<group_slug>[a-z0-9-]+)/discussions/create$', 'group_disc_create', name='group_disc_create'),
     url(r'^(?P<group_slug>[a-z0-9-]+)/discussions/(?P<disc_id>\d+)$', 'group_disc_detail', name='group_disc_detail'),
+    url(r'^(?P<group_slug>[a-z0-9-]+)/discussions/(?P<disc_id>\d+)/remove$', 'group_disc_remove', name='group_disc_remove'),
+    url(r'^(?P<group_slug>[a-z0-9-]+)/discussions/(?P<disc_id>\d+)/approve$', 'group_disc_approve', name='group_disc_approve'),
 )

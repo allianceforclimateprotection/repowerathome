@@ -262,6 +262,10 @@ class DiscussionBlacklist(models.Model):
     def __unicode__(self):
         return u"%s will not recieve emails for %s discussions" % (self.user, self.group)
 
+class DiscussionManager(models.Manager):
+    def get_query_set(self):
+        return super(DiscussionManager, self).get_query_set().filter(is_removed=False)
+
 class Discussion(models.Model):
     subject = models.CharField(max_length=255)
     body = models.TextField()
@@ -271,7 +275,9 @@ class Discussion(models.Model):
     updated = models.DateTimeField(auto_now=True)
     parent = models.ForeignKey("Discussion", null=True)
     is_public = models.BooleanField(default=False)
+    is_removed = models.BooleanField(default=False)
     reply_count = models.IntegerField(null=True)
+    objects = DiscussionManager()
     
     @models.permalink
     def get_absolute_url(self):
@@ -301,7 +307,7 @@ def add_invited_user_to_group(sender, instance, **kwargs):
 def update_discussion_reply_count(sender, instance, **kwargs):
     if instance.parent_id and kwargs['created']:
         parent = Discussion.objects.get(pk=instance.parent_id)
-        reply_count = Discussion.objects.filter(parent=instance.parent_id).count()
+        reply_count = Discussion.objects.filter(parent=instance.parent_id, is_public=True).count()
         parent.reply_count = reply_count
         parent.save()
 

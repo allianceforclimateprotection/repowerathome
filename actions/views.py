@@ -106,6 +106,7 @@ def _default_action_vars(action, user):
         progress = UserActionProgress.objects.get(action=action, user=user)
     except UserActionProgress.DoesNotExist:
         progress = None
+    # TODO: Don't use vars as a variable name. It's a python built-in
     vars = dict(locals())
     del vars["action"]
     del vars["user"]
