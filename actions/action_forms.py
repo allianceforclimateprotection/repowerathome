@@ -16,7 +16,7 @@ class VampireSlayerWidget(forms.RadioSelect):
             kwargs["attrs"] = html_class
         return super(VampireSlayerWidget, self).__init__(*args, **kwargs)
 
-class VampirePowerWorksheetForm (forms.Form):
+class VampirePowerWorksheetForm(forms.Form):
     television = forms.ChoiceField(required=False, choices=VAMPIRE_OPTIONS, widget=VampireSlayerWidget)
     dvd_player = forms.ChoiceField(required=False, choices=VAMPIRE_OPTIONS, widget=VampireSlayerWidget)
     cable_box = forms.ChoiceField(required=False, choices=VAMPIRE_OPTIONS, widget=VampireSlayerWidget)

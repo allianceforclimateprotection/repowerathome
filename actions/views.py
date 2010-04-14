@@ -1,6 +1,9 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader
 from django.views.decorators.csrf import csrf_protect
@@ -8,7 +11,7 @@ from django.views.decorators.csrf import csrf_protect
 from tagging.models import Tag
 from records.models import Record
 
-from models import Action, UserActionProgress
+from models import Action, UserActionProgress, ActionForm, ActionFormData
 from forms import ActionCommitForm
 import action_forms
 
@@ -77,6 +80,23 @@ def action_cancel(request, action_slug):
             messages.success(request, "Sorry to see you can not make the commitment.")
         return redirect("action_detail", action_slug=action.slug)
     return render_to_response("actions/action_cancel.html", locals(), RequestContext(request))
+
+@login_required
+@csrf_protect
+def save_action_from(request, action_slug, form_name):
+    action = get_object_or_404(Action, slug=action_slug)
+    action_form = get_object_or_404(ActionForm, action=action, form_name=form_name)
+    if request.method == "GET":
+        return redirect("action_detail", action_slug=action.slug)
+    afd, c = ActionFormData.objects.get_or_create(action_form=action_form, user=request.user)
+    data = request.POST.copy()
+    if "csrfmiddlewaretoken" in data:
+        del data["csrfmiddlewaretoken"]
+    afd.data = json.dumps(data)
+    afd.save()
+    if request.is_ajax():
+        return HttpResponse("")
+    return redirect("action_detail", action_slug=action.slug)
     
 def _default_action_vars(action, user):
     users_completed = User.objects.filter(useractionprogress__action=action, 
@@ -98,5 +118,6 @@ def _default_action_vars(action, user):
 def _build_action_form_vars(action, user):
     forms = {}
     for form in action.action_forms_with_data(user):
-        forms[form.var_name] = getattr(action_forms, form.form_name)(form.data)
+        data = json.loads(form.data) if form.data else None
+        forms[form.var_name] = getattr(action_forms, form.form_name)(data=data)
     return forms

@@ -257,7 +257,9 @@ var rah = {
                     });
                     return false;
                 });
+                var form = $("#vampire_worksheet_form");
                 $(".vampire_slayer").click(function(){
+                    $.post(form.attr("action"), form.serialize());
                     setTimeout(function() {
                         scroller.nextPage();
                     }, 1000);
