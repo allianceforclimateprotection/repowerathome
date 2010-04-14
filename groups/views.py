@@ -198,6 +198,7 @@ def group_disc_create(request, group_slug):
                 user=request.user, 
                 group=group,
                 is_public=not group.moderate_disc(request.user),
+                reply_count=None if disc_form.cleaned_data['parent_id'] else 0
             )
             messages.success(request, "Discussion posted")
             return_to = disc_form.cleaned_data['parent_id'] if disc_form.cleaned_data['parent_id'] else disc.id

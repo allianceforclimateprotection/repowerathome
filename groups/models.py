@@ -307,7 +307,7 @@ def add_invited_user_to_group(sender, instance, **kwargs):
         GroupUsers.objects.get_or_create(user=instance.invitee, group=group)
 
 def update_discussion_reply_count(sender, instance, **kwargs):
-    if instance.parent_id and kwargs['created']:
+    if instance.parent_id:
         parent = Discussion.objects.get(pk=instance.parent_id)
         reply_count = Discussion.objects.filter(parent=instance.parent_id, is_public=True).count()
         parent.reply_count = reply_count

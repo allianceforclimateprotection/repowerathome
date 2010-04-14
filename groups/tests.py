@@ -37,12 +37,10 @@ class GroupDiscViews(TestCase):
             'd1_remove': reverse("group_disc_remove", kwargs={"group_slug": self.group.slug, "disc_id": 1}),
             'd1_approve': reverse("group_disc_approve", kwargs={"group_slug": self.group.slug, "disc_id": 1}),
             'd2': reverse("group_disc_detail", kwargs={"group_slug": self.group.slug, "disc_id": 2}),
+            'd2_remove': reverse("group_disc_remove", kwargs={"group_slug": self.group.slug, "disc_id": 2}),
         }
     
     def test_create_discussion_get(self):
-        # from pprint import pprint
-        # pprint(response.__dict__, indent=2)
-        
         # Anon users should get redirected to login
         response = self.client.get(self.urls['group_disc_create'], follow=True)
         self.assertRedirects(response, "/login/?next=%2Fyankees%2Fdiscussions%2Fcreate%2F")
@@ -196,8 +194,24 @@ class GroupDiscViews(TestCase):
         response = self.client.get(self.urls['group_disc_list'])
         self.failUnlessEqual(response.status_code, 200)
         self.failUnlessEqual(response.template[0].name, "groups/group_disc_list.html")
-
-
+    
+    def test_reply_count_signal(self):
+        self.client.login(username="gm", password="gm")
+        self.client.post(self.urls['group_disc_create'], self.discs['d1'])
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.reply_count, 0)
+        
+        # Add a reply
+        self.client.post(self.urls['group_disc_create'], self.discs['d2'])
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.reply_count, 1)
+        
+        # Remove the reply
+        response = self.client.post(self.urls['d2_remove'], {'is_removed': True})
+        disc = Discussion.objects.get(pk=1)
+        self.failUnlessEqual(disc.reply_count, 0)
+    
+    
 class GroupTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_groups.json", "test_actions.json",]
     
