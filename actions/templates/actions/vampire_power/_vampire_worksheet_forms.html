@@ -1,0 +1,39 @@
+<form id="vampire_worksheet_form" action="" method="post">
+    <ul id="vampire_worksheet_wizard_nav">
+        <li><a id="t0" href="#get_started"></a></li>
+        <li><a id="t1" href="#television">1</a></li>
+        <li><a id="t2" href="#dvd_player">2</a></li>
+        <li><a id="t3" href="#cable_box">3</a></li>
+        <li><a id="t4" href="#game_system">4</a></li>
+        <li><a id="t5" href="#cell_phone">5</a></li>
+        <li><a id="t6" href="#monitor">6</a></li>
+    </ul>
+    <div id="vampire_worksheet_wizard">
+        <ul class="items">
+            <li class="worksheet">
+                {% include "actions/vampire_power/_get_started.html" %}
+            </li>
+            <li id="television" class="worksheet">
+                {% include "actions/vampire_power/_television.html" %}
+            </li>
+            <li id="dvd_player" class="worksheet">
+                {% include "actions/vampire_power/_dvd_player.html" %}
+            </li>
+            <li id="cable_box" class="worksheet">
+                {% include "actions/vampire_power/_cable_box.html" %}
+            </li>
+            <li id="game_system" class="worksheet">
+                {% include "actions/vampire_power/_game_system.html" %}
+            </li>
+            <li id="cell_phone" class="worksheet">
+                {% include "actions/vampire_power/_cell_phone.html" %}
+            </li>
+            <li id="monitor" class="worksheet">
+                {% include "actions/vampire_power/_monitor.html" %}
+            </li>
+        </ul>
+    </div>
+</form>
+<script>
+    var rich_action_name = "vampire_power";
+</script>

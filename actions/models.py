@@ -75,7 +75,15 @@ class Action(models.Model):
         tag_names = [t.name for t in self.tags]
         return ", ".join(tag_names) if tag_names else ""
     tag_list.short_description = "Tags"
-        
+    
+    def action_forms_with_data(self, user):
+        return ActionForm.objects.filter(action=self).extra(
+                select_params = (user.id,),
+                select = { "data": """SELECT afd.data
+                                        FROM actions_actionformdata afd
+                                        WHERE afd.user_id = %s
+                                        AND actions_actionform.id = afd.action_form_id"""})
+    
     def __unicode__(self):
         return u"%s" % self.name
 
@@ -97,7 +105,7 @@ class UserActionProgress(models.Model):
     
     def __unicode__(self):
         return u"%s is working on %s" % (self.user, self.action)
-        
+
 class ActionForm(models.Model):
     """
     ActionForm is used to link a worksheet form to an action.  Since we will use
@@ -106,6 +114,7 @@ class ActionForm(models.Model):
     """
     action = models.ForeignKey(Action)
     form_name = models.CharField(max_length=100)
+    var_name = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     

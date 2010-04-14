@@ -10,6 +10,7 @@ from records.models import Record
 
 from models import Action, UserActionProgress
 from forms import ActionCommitForm
+import action_forms
 
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
@@ -25,10 +26,11 @@ def action_show(request, tag_slug=None):
 def action_detail(request, action_slug):
     """Detail page for an action"""
     action = get_object_or_404(Action, slug=action_slug)
-    vars = _default_action_vars(action, request.user)
+    default_vars = _default_action_vars(action, request.user)
+    default_vars.update(_build_action_form_vars(action, request.user))
     action_commit_form = ActionCommitForm(user=request.user, action=action)
-    vars.update(locals())
-    return render_to_response("actions/action_detail.html", vars, RequestContext(request))
+    default_vars.update(locals())
+    return render_to_response("actions/action_detail.html", default_vars, RequestContext(request))
         
 @login_required
 @csrf_protect
@@ -62,9 +64,9 @@ def action_commit(request, action_slug):
         action_commit_form.save()
         messages.success(request, "Thanks for making a commitment.")
         return redirect("action_detail", action_slug=action.slug)
-    vars = _default_action_vars(action, request.user)
-    vars.update(locals())
-    return render_to_response("actions/action_detail.html", vars, RequestContext(request))
+    default_vars = _default_action_vars(action, request.user)
+    default_vars.update(locals())
+    return render_to_response("actions/action_detail.html", default_vars, RequestContext(request))
     
 @login_required
 @csrf_protect
@@ -84,13 +86,17 @@ def _default_action_vars(action, user):
         useractionprogress__date_committed__isnull=False)[:5]
     noshow_users_committed = action.users_committed - users_committed.count()
     progress = None
-    if user.is_authenticated():        
+    if user.is_authenticated():
         try:
             progress = UserActionProgress.objects.get(action=action, user=user)
-        except UserActionProgress.DoesNotExist:
-            pass
-    # TODO: Don't use vars as a variable name. It's a python built-in
-    vars = dict(locals())
-    del vars["action"]
-    del vars["user"]
-    return vars 
+        except UserActionProgress.DoesNotExist: pass
+    default_vars = dict(locals())
+    del default_vars["action"]
+    del default_vars["user"]
+    return default_vars
+    
+def _build_action_form_vars(action, user):
+    forms = {}
+    for form in action.action_forms_with_data(user):
+        forms[form.var_name] = getattr(action_forms, form.form_name)(form.data)
+    return forms

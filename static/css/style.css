@@ -474,6 +474,44 @@ th.headerSortUp, th.headerSortDown {
 .flagged_flag_form { margin-left: 10px; }
 .flag_submit_link { font-size: smaller; }
 /* @end */
+
+/* @groups vampire_power */
+#vampire_worksheet_form {
+    width: 480px;
+    height: 250px;
+    border: 3px solid black;
+    margin: 10px 25px;
+}
+#vampire_worksheet_wizard_nav {
+    display: none;
+    float: right;
+}
+#vampire_worksheet_wizard_nav li {
+    float: left;
+    list-style-type: none;
+    padding: 5px;
+}
+#vampire_worksheet_wizard_nav li .active {
+    border: 1px solid grey;
+}
+#vampire_worksheet_wizard {
+    width: 480px;
+    height: 250px;
+    position: relative;
+    overflow: hidden;
+    clear: both;
+}
+#vampire_worksheet_wizard .items { 
+    width: 20000em;
+    clear: both;
+    position: absolute;
+} 
+#vampire_worksheet_wizard .worksheet {
+    padding: 20px 30px;
+    width: 480px;
+    float: left; 
+}
+/* @end */
 /*
 * jQuery UI CSS Framework
 * Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)

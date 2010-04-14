@@ -231,6 +231,39 @@ var rah = {
                     }
                 }
             });
+            if(undefined !== window.rich_action_name){
+                try{
+                    rah["rich_actions"][rich_action_name].init();
+                }catch(err){}
+            }
+        }
+    },
+    
+    rich_actions: {
+        vampire_power: {
+            init: function(){
+                var scroller = $("#vampire_worksheet_form").scrollable({ 
+                    size: 1, 
+                    clickable: false,
+                    api: true
+                });
+                $("#vampire_worksheet_form").navigator({
+                    navi: "#vampire_worksheet_wizard_nav",
+                    naviItem: "a"
+                });
+                $("#get_started").click(function(){
+                    $("#vampire_worksheet_wizard_nav").slideDown("fast", function(){
+                        scroller.nextPage();
+                    });
+                    return false;
+                });
+                $(".vampire_slayer").click(function(){
+                    setTimeout(function() {
+                        scroller.nextPage();
+                    }, 1000);
+                });
+                
+            }
         }
     },
     
