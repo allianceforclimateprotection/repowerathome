@@ -223,7 +223,6 @@ def group_disc_approve(request, group_slug, disc_id):
     disc = get_object_or_404(Discussion, id=disc_id)
     group = Group.objects.get(slug=group_slug)
     form = DiscussionApproveForm(request.POST, instance=disc)
-    
     if request.method == "POST" and form.is_valid() and group.is_user_manager(request.user):
         form.save()
         messages.success(request, "Discussion approved")
@@ -241,11 +240,12 @@ def group_disc_remove(request, group_slug, disc_id):
     if request.method == "POST" and form.is_valid() and group.is_user_manager(request.user):
         form.save()
         messages.success(request, "Discussion removed")
+        if disc.parent_id:
+            return redirect("group_disc_detail", group_slug=group_slug, disc_id=disc.parent_id)
+        else:
+            return redirect("group_disc_list", group_slug=group_slug)
     
-    if disc.parent_id:
-        return redirect("group_disc_detail", group_slug=group_slug, disc_id=disc.parent_id)
-    else:
-        return redirect("group_disc_list", group_slug=group_slug)
+    return redirect("group_disc_detail", group_slug=group_slug, disc_id=disc.id)
     
 def group_disc_list(request, group_slug):
     group = Group.objects.get(slug=group_slug)

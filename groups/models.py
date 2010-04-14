@@ -206,10 +206,10 @@ class Group(models.Model):
         return False
     
     def moderate_disc(self, user):
-        """True if disc moderation is on and this user is not a manager. False means disc must be moderated"""
-        if self.disc_moderation == 1 and not self.is_user_manager(user):
-            return True
-        return False
+        """True if disc needs to be moderated"""
+        if self.disc_moderation == 0 and self.is_member(user) or self.is_user_manager(user):
+            return False
+        return True
     
     @models.permalink
     def get_absolute_url(self):
