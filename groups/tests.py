@@ -13,7 +13,7 @@ from rah.models import Profile
 from actions.models import Action
 
 from models import Group, GroupUsers, MembershipRequests, DiscussionBlacklist, Discussion
-
+        
 class GroupDiscViews(TestCase):
     fixtures = ["test_groups.json"]
     
@@ -835,3 +835,15 @@ class GroupEditViewTest(TestCase):
         errors = response.context["membership_form"].errors
         self.failUnlessEqual(errors, {})
         self.failUnless(self.group.is_user_manager(new_user))
+    
+    
+class BaseballViews(TestCase):
+    fixtures = ["test_groups.json"]
+
+    def setUp(self):
+        self.group = Group.objects.get(slug="yankees")
+
+    def test_does_team_suck(self):
+        self.failUnlessEqual(self.group.name, "Yes")
+    
+    
