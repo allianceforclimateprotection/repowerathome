@@ -245,24 +245,39 @@ var rah = {
                 var scroller = $("#vampire_worksheet_form").scrollable({ 
                     size: 1, 
                     clickable: false,
+                    item: "* .worksheet",
                     api: true
                 });
                 $("#vampire_worksheet_form").navigator({
-                    navi: "#vampire_worksheet_wizard_nav",
+                    navi: ".vampire_worksheet_wizard_nav",
                     naviItem: "a"
                 });
+                var nav = $("ul.vampire_worksheet_wizard_nav");
                 $("#get_started").click(function(){
-                    $("#vampire_worksheet_wizard_nav").slideDown("fast", function(){
+                    nav.slideDown("fast", function(){
                         scroller.nextPage();
                     });
                     return false;
                 });
+                if(!(typeof(vampire_worksheet_started) == "undefined") && vampire_worksheet_started) {
+                    nav.show();
+                    scroller.end(0);
+                }
                 var form = $("#vampire_worksheet_form");
                 $(".vampire_slayer").click(function(){
                     $.post(form.attr("action"), form.serialize());
+                    var input_selected = $(this);
+                    var plan_value = $("." + input_selected.attr("name") + " .slay_method");
+                    plan_value.text(input_selected.parent().text());
                     setTimeout(function() {
                         scroller.nextPage();
-                    }, 1000);
+                    }, 500);
+                });
+                
+                $(".slay_method + a").click(function(){
+                    page = $(this).attr("href");
+                    nav.find("a[href='" + page + "']").click();
+                    return false;
                 });
                 
             }

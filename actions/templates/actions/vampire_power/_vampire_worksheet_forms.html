@@ -1,6 +1,6 @@
 <form id="vampire_worksheet_form" method="post"
     action="{% url save_action_from action.slug 'VampirePowerWorksheetForm' %}">
-    <ul id="vampire_worksheet_wizard_nav">
+    <ul class="vampire_worksheet_wizard_nav">
         <li><a id="t0" href="#get_started"></a></li>
         <li><a id="t1" href="#television">1</a></li>
         <li><a id="t2" href="#dvd_player">2</a></li>
@@ -8,6 +8,7 @@
         <li><a id="t4" href="#game_system">4</a></li>
         <li><a id="t5" href="#cell_phone">5</a></li>
         <li><a id="t6" href="#monitor">6</a></li>
+        <li><a id="t7" href="#plan">Plan</a></li>
     </ul>
     <div id="vampire_worksheet_wizard">
         <ul class="items">
@@ -32,10 +33,18 @@
             <li id="monitor" class="worksheet">
                 {% include "actions/vampire_power/_monitor.html" %}
             </li>
+            <li id="plan" class="worksheet">
+                {% include "actions/vampire_power/_plan.html" %}
+            </li>
         </ul>
     </div>
     {% csrf_token %}
 </form>
-<script>
+<script type="text/javascript" charset="utf-8">
     var rich_action_name = "vampire_power";
 </script>
+{% if vampire_worksheet_form.data %}
+    <script type="text/javascript" charset="utf-8">
+        var vampire_worksheet_started = true;
+    </script>
+{% endif %}

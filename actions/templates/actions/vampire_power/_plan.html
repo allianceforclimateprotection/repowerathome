@@ -1,0 +1,103 @@
+<h3>My plan of attack</h3>
+<p>Total plan savings: $<span id="vampire_savings_total">0</span> annually</p>
+
+<table>
+    <thead>
+        <tr>
+            <td>Device (vampire)</td>
+            <td>Slay Method</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="television">
+            <td>Television</td>
+            <td>
+                <span class="slay_method">
+                    {% with vampire_worksheet_form.television as f %}
+                        {% for value, label in f.field.choices %}
+                            {% if value == f.data %}
+                                {{ label }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </span>
+                (<a href="#television">change</a>)
+            </td>
+        </tr>
+        <tr class="dvd_player">
+            <td>DVD player</td>
+            <td>
+                <span class="slay_method">
+                    {% with vampire_worksheet_form.dvd_player as f %}
+                        {% for value, label in f.field.choices %}
+                            {% if value == f.data %}
+                                {{ label }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </span>
+                (<a href="#dvd_player">change</a>)
+            </td>
+        </tr>
+        <tr class="cable_box">
+            <td>Cable box</td>
+            <td>
+                <span class="slay_method">
+                    {% with vampire_worksheet_form.cable_box as f %}
+                        {% for value, label in f.field.choices %}
+                            {% if value == f.data %}
+                                {{ label }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </span>
+                (<a href="#cable_box">change</a>)
+            </td>
+        </tr>
+        <tr class="game_system">
+            <td>Video game system</td>
+            <td>
+                <span class="slay_method">
+                    {% with vampire_worksheet_form.game_system as f %}
+                        {% for value, label in f.field.choices %}
+                            {% if value == f.data %}
+                                {{ label }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </span>
+                (<a href="#game_system">change</a>)
+            </td>
+        </tr>
+        <tr class="cell_phone">
+            <td>Cell phone charger</td>
+            <td>
+                <span class="slay_method">
+                    {% with vampire_worksheet_form.cell_phone as f %}
+                        {% for value, label in f.field.choices %}
+                            {% if value == f.data %}
+                                {{ label }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </span>
+                (<a href="#cell_phone">change</a>)
+            </td>
+        </tr>
+        <tr class="monitor">
+            <td>Computer monitor</td>
+            <td>
+                <span class="slay_method">
+                    {% with vampire_worksheet_form.monitor as f %}
+                        {% for value, label in f.field.choices %}
+                            {% if value == f.data %}
+                                {{ label }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </span>
+                (<a href="#monitor">change</a>)
+            </td>
+        </tr>
+    </tbody>
+</table>

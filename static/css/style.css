@@ -478,25 +478,29 @@ th.headerSortUp, th.headerSortDown {
 /* @groups vampire_power */
 #vampire_worksheet_form {
     width: 480px;
-    height: 250px;
+    height: 350px;
     border: 3px solid black;
     margin: 10px 25px;
+    position: relative;
 }
-#vampire_worksheet_wizard_nav {
+ul.vampire_worksheet_wizard_nav {
     display: none;
     float: right;
+    position: absolute;
+    right: 0;
+    z-index: 1;
 }
-#vampire_worksheet_wizard_nav li {
+ul.vampire_worksheet_wizard_nav li {
     float: left;
     list-style-type: none;
     padding: 5px;
 }
-#vampire_worksheet_wizard_nav li .active {
+ul.vampire_worksheet_wizard_nav li .active {
     border: 1px solid grey;
 }
 #vampire_worksheet_wizard {
     width: 480px;
-    height: 250px;
+    height: 350px;
     position: relative;
     overflow: hidden;
     clear: both;
