@@ -1,2 +1,4 @@
 <img src="not_here.jpg" alt="cell phone charger" />
-{{ vampire_worksheet_form.cell_phone }}
+<form method="post" action="{% url save_action_from action.slug 'VampirePowerWorksheetForm' %}">
+    {{ vampire_worksheet_form.cell_phone }}
+</form>

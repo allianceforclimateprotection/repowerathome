@@ -92,7 +92,12 @@ def save_action_from(request, action_slug, form_name):
     data = request.POST.copy()
     if "csrfmiddlewaretoken" in data:
         del data["csrfmiddlewaretoken"]
-    afd.data = json.dumps(data)
+    if afd.data:
+        existing = json.loads(afd.data)
+        existing.update(data.items())
+        afd.data = json.dumps(existing)
+    else:
+        afd.data = json.dumps(data)
     afd.save()
     if request.is_ajax():
         return HttpResponse("")

@@ -1,5 +1,4 @@
-<form id="vampire_worksheet_form" method="post"
-    action="{% url save_action_from action.slug 'VampirePowerWorksheetForm' %}">
+<div id="vampire_worksheet">
     <ul class="vampire_worksheet_wizard_nav">
         <li><a id="t0" href="#get_started"></a></li>
         <li><a id="t1" href="#television">1</a></li>
@@ -39,7 +38,7 @@
         </ul>
     </div>
     {% csrf_token %}
-</form>
+</div>
 <script type="text/javascript" charset="utf-8">
     var rich_action_name = "vampire_power";
 </script>

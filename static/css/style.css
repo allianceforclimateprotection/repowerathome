@@ -476,7 +476,7 @@ th.headerSortUp, th.headerSortDown {
 /* @end */
 
 /* @groups vampire_power */
-#vampire_worksheet_form {
+#vampire_worksheet {
     width: 480px;
     height: 350px;
     border: 3px solid black;

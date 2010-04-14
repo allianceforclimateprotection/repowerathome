@@ -242,13 +242,13 @@ var rah = {
     rich_actions: {
         vampire_power: {
             init: function(){
-                var scroller = $("#vampire_worksheet_form").scrollable({ 
+                var scroller = $("#vampire_worksheet").scrollable({ 
                     size: 1, 
                     clickable: false,
                     item: "* .worksheet",
                     api: true
                 });
-                $("#vampire_worksheet_form").navigator({
+                $("#vampire_worksheet").navigator({
                     navi: ".vampire_worksheet_wizard_nav",
                     naviItem: "a"
                 });
@@ -263,8 +263,8 @@ var rah = {
                     nav.show();
                     scroller.end(0);
                 }
-                var form = $("#vampire_worksheet_form");
                 $(".vampire_slayer").click(function(){
+                    var form = $(this).parents("form");
                     $.post(form.attr("action"), form.serialize());
                     var input_selected = $(this);
                     var plan_value = $("." + input_selected.attr("name") + " .slay_method");

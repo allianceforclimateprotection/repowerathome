@@ -1,2 +1,4 @@
 <img src="not_here.jpg" alt="dvd player" />
-{{ vampire_worksheet_form.dvd_player }}
+<form method="post" action="{% url save_action_from action.slug 'VampirePowerWorksheetForm' %}">
+    {{ vampire_worksheet_form.dvd_player }}
+</form>
