@@ -314,11 +314,14 @@ ul{
     margin-left:40px;
 }
 
-.action_complete_form, .action_commit_form {
+.action_complete_form, .action_commit_form, .action_undo_form {
     float: left;
     margin: 10px 5px;
+    text-align: center;
 }
-
+.action_committment, .action_undo {
+    font-size: 0.8em;
+}
 /* Logged in Homepage */
 #actions_recommended .task_list{
     display:none;
@@ -478,7 +481,7 @@ th.headerSortUp, th.headerSortDown {
 /* @groups vampire_power */
 #vampire_worksheet {
     width: 480px;
-    height: 350px;
+    height: 400px;
     border: 3px solid black;
     margin: 10px 25px;
     position: relative;
@@ -500,7 +503,7 @@ ul.vampire_worksheet_wizard_nav li .active {
 }
 #vampire_worksheet_wizard {
     width: 480px;
-    height: 350px;
+    height: 400px;
     position: relative;
     overflow: hidden;
     clear: both;

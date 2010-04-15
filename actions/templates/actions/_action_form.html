@@ -1,24 +1,41 @@
 <div class="action_forms">
     {% if not progress.is_completed %}
+        {% if not progress.date_committed %}
+            <form class="action_commit_form" name="action_commit_form" method="post"
+                action="{% url action_commit action.slug %}">
+                {{ action_commit_form.as_p }}
+                <p><input type="submit" class="commit_trigger" value="{{ commit_title }}" /></p>
+                {% csrf_token %}
+            </form>
+        {% else %}
+            <form class="action_commit_form" name="action_commit_form" method="post"
+                action="{% url action_commit action.slug %}">
+                {{ action_commit_form.as_p }}
+                {% csrf_token %}
+                <h4>{{ days_till_commitment }} day{{ days_till_commitment|pluralize }} remaining</h4>
+                <p class="action_committment">
+                    You committed to complete<br />
+                    this plan by {{ progress.date_committed|date }}<br />
+                    (<a href="#" class="commit_trigger">change date</a> |
+                    <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
+                </p>
+            </form>
+        {% endif %}
         <form class="action_complete_form" name="action_complete_form" method="post"
             action="{% url action_complete action.slug %}">
             <p><input type="submit" value="{{ complete_title }}" /></p>
             {% csrf_token %}
         </form>
-
-        <form class="action_commit_form" name="action_commit_form" method="post"
-            action="{% url action_commit action.slug %}">
-            {{ action_commit_form.as_p }}
-            <p><input type="submit" class="commit_trigger" value="{{ commit_title }}" /></p>
-            {% csrf_token %}
-        </form>
     {% else %}
         <form class="action_undo_form" name="action_undo_form" method="post"
             action="{% url action_undo action.slug %}">
-            <p><input type="submit" value="{{ undo_title }}" /></p>
+            <h4>You've done this action!</h4>
+            <h5><a href="{% url action_show %}">Find more actions</a></h5>
+            <p class="action_undo">
+                If this was a mistake, <a href="#" class="undo_trigger">click to undo</a>.
+            </p>
             {% csrf_token %}
         </form>
     {% endif %}
-
     <br class="spacer" />
 </div>

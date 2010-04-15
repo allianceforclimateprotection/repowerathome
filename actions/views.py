@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from django.contrib import messages
@@ -114,6 +115,9 @@ def _default_action_vars(action, user):
     if user.is_authenticated():
         try:
             progress = UserActionProgress.objects.get(action=action, user=user)
+            if progress.date_committed:
+                days_till_commitment = progress.date_committed - datetime.date.today()
+                days_till_commitment = days_till_commitment.days if days_till_commitment.days > 0 else 0
         except UserActionProgress.DoesNotExist: pass
     default_vars = dict(locals())
     del default_vars["action"]

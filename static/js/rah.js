@@ -206,6 +206,9 @@ var rah = {
                 $("#commit_widget").dialog("open");
                 return false;
             });
+            $(".undo_trigger").click(function(){
+                $(this).parents("form").submit();
+            })
             $("#commit_widget").dialog({
                 title: "Make a Commitment", modal: true, resizable: false, 
                     draggable: false, autoOpen: false, 
@@ -285,7 +288,7 @@ var rah = {
                     }, 500);
                 });
                 
-                $(".slay_method a").click(function(){
+                $(".slay_link a").click(function(){
                     page = $(this).attr("href");
                     nav.find("a[href='" + page + "']").click();
                     return false;
