@@ -269,6 +269,7 @@ var rah = {
                     var input_selected = $(this);
                     var plan_value = $("." + input_selected.attr("name") + " .slay_method");
                     plan_value.text(input_selected.parent().text());
+                    $("." + input_selected.attr("name") + " .slay_link").show();
                     var worksheet = input_selected.parents(".worksheet");
                     var offset = 1;
                     worksheet.nextAll().each(function(){
@@ -284,7 +285,7 @@ var rah = {
                     }, 500);
                 });
                 
-                $(".slay_method + a").click(function(){
+                $(".slay_method a").click(function(){
                     page = $(this).attr("href");
                     nav.find("a[href='" + page + "']").click();
                     return false;
