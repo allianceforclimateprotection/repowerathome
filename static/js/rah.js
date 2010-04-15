@@ -269,8 +269,18 @@ var rah = {
                     var input_selected = $(this);
                     var plan_value = $("." + input_selected.attr("name") + " .slay_method");
                     plan_value.text(input_selected.parent().text());
+                    var worksheet = input_selected.parents(".worksheet");
+                    var offset = 1;
+                    worksheet.nextAll().each(function(){
+                        if($(this).find(".vampire_slayer:checked").length == 0) {
+                            return false;
+                        }
+                        /* increment the offset, as we want to skip ahead and find
+                        a worksheet that hasn't been filled out */
+                        offset++; 
+                    });
                     setTimeout(function() {
-                        scroller.nextPage();
+                        scroller.move(offset);
                     }, 500);
                 });
                 
