@@ -9,7 +9,7 @@ from records.models import Record
 from models import Action, UserActionProgress
 
 class ActionTest(TestCase):
-    fixtures = ["action.json"]
+    fixtures = ["actions.json"]
     
     def setUp(self):
         self.user = User.objects.create_user(username="test", password="test", email="test@test.com")
