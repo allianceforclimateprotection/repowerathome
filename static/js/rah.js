@@ -268,10 +268,17 @@ var rah = {
                 }
                 $(".vampire_slayer").click(function(){
                     var form = $(this).parents("form");
-                    $.post(form.attr("action"), form.serialize());
+                    /* save the worksheet data */
+                    $.post(form.attr("action"), form.serialize(), function(data){
+                        $("#vampire_savings_total").text(data["total_savings"]);
+                    }, "json");
+                    
+                    /* set the slay method in the plan sheet */
                     var input_selected = $(this);
                     var plan_value = $("." + input_selected.attr("name") + " .slay_method");
                     plan_value.text(input_selected.parent().text());
+                    
+                    /* skip to the next incomplete worksheet */
                     $("." + input_selected.attr("name") + " .slay_link").show();
                     var worksheet = input_selected.parents(".worksheet");
                     var offset = 1;

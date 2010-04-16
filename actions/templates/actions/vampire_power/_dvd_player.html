@@ -1,4 +1,8 @@
 <img src="not_here.jpg" alt="dvd player" />
+<div>
+    Savings: 
+    $<span class="vampire_savings">{{ vampire_worksheet_form.dvd_player.field.savings }}</span>
+</div>
 <form method="post" action="{% url save_action_from action.slug 'VampirePowerWorksheetForm' %}">
     {{ vampire_worksheet_form.dvd_player }}
 </form>

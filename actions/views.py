@@ -96,12 +96,15 @@ def save_action_from(request, action_slug, form_name):
     if afd.data:
         existing = json.loads(afd.data)
         existing.update(data.items())
-        afd.data = json.dumps(existing)
+        data = existing
+        afd.data = json.dumps(data)
     else:
         afd.data = json.dumps(data)
     afd.save()
     if request.is_ajax():
-        return HttpResponse("")
+        form = getattr(action_forms, form_name)(data=data)
+        ajax_data_func = getattr(form, "ajax_data", None)
+        return HttpResponse(json.dumps(ajax_data_func() if ajax_data_func else None))
     return redirect("action_detail", action_slug=action.slug)
     
 def _default_action_vars(action, user):

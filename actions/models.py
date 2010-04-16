@@ -132,7 +132,8 @@ class ActionFormData(models.Model):
     """
     action_form = models.ForeignKey(ActionForm)
     user = models.ForeignKey(User)
-    data = models.CharField(max_length=255)
+    data = models.TextField()
+    # TODO: make ActionFormData.data a serialized field
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
