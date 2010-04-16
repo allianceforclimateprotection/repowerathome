@@ -1,8 +1,0 @@
-<img src="not_here.jpg" alt="cell phone charger" />
-<div>
-    Savings: 
-    $<span class="vampire_savings">{{ vampire_worksheet_form.cell_phone.field.savings }}</span>
-</div>
-<form method="post" action="{% url save_action_from action.slug 'VampirePowerWorksheetForm' %}">
-    {{ vampire_worksheet_form.cell_phone }}
-</form>

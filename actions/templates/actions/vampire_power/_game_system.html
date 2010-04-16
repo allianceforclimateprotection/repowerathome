@@ -1,8 +1,0 @@
-<img src="not_here.jpg" alt="NES" />
-<div>
-    Savings: 
-    $<span class="vampire_savings">{{ vampire_worksheet_form.game_system.field.savings }}</span>
-</div>
-<form method="post" action="{% url save_action_from action.slug 'VampirePowerWorksheetForm' %}">
-    {{ vampire_worksheet_form.game_system }}
-</form>

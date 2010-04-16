@@ -480,8 +480,8 @@ th.headerSortUp, th.headerSortDown {
 
 /* @groups vampire_power */
 #vampire_worksheet {
-    width: 480px;
-    height: 400px;
+    width: 650px;
+    height: 550px;
     border: 3px solid black;
     margin: 10px 25px;
     position: relative;
@@ -502,8 +502,8 @@ ul.vampire_worksheet_wizard_nav li .active {
     border: 1px solid grey;
 }
 #vampire_worksheet_wizard {
-    width: 480px;
-    height: 400px;
+    width: 650px;
+    height: 550px;
     position: relative;
     overflow: hidden;
     clear: both;
@@ -512,11 +512,42 @@ ul.vampire_worksheet_wizard_nav li .active {
     width: 20000em;
     clear: both;
     position: absolute;
+    list-style-type: none;
+    margin-left: -20px;
 } 
 #vampire_worksheet_wizard .worksheet {
     padding: 20px 30px;
-    width: 480px;
+    width: 650px;
     float: left; 
+}
+#vampire_worksheet_wizard .slayer_recommended {
+    font-size: 0.7em;
+    font-weight: bold;
+    color: #92C139;
+}
+
+#vampire_worksheet_wizard #get_started {
+    font-size: 2.0em;
+    font-weight: bold;
+    padding: 10px;
+    border: 2px solid black;
+    background-color: #92C139;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    
+}
+
+#vampire_worksheet_wizard .vampire_device_image {
+    float: left;
+}
+
+#vampire_worksheet_wizard .vampire_savings_container {
+    float: left;
+}
+
+#vampire_worksheet_wizard .vampire_savings {
+    font-size: 1.2em;
+    font-weight: bold;
 }
 /* @end */
 /*

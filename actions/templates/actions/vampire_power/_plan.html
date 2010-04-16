@@ -12,66 +12,30 @@
         </tr>
     </thead>
     <tbody>
-        <tr class="television">
-            <td>Television</td>
-            <td>
-                {% with vampire_worksheet_form.television as f %}
-                    {% with "television" as vampire %}
-                        {% include "actions/vampire_power/_slayer_method.html" %}
-                    {% endwith %}
-                {% endwith %}
-            </td>
-        </tr>
-        <tr class="dvd_player">
-            <td>DVD player</td>
-            <td>
-                {% with vampire_worksheet_form.dvd_player as f %}
-                    {% with "dvd_player" as vampire %}
-                        {% include "actions/vampire_power/_slayer_method.html" %}
-                    {% endwith %}
-                {% endwith %}
-            </td>
-        </tr>
-        <tr class="cable_box">
-            <td>Cable box</td>
-            <td>
-                {% with vampire_worksheet_form.cable_box as f %}
-                    {% with "cable_box" as vampire %}
-                        {% include "actions/vampire_power/_slayer_method.html" %}
-                    {% endwith %}
-                {% endwith %}
-            </td>
-        </tr>
-        <tr class="game_system">
-            <td>Video game system</td>
-            <td>
-                {% with vampire_worksheet_form.game_system as f %}
-                    {% with "game_system" as vampire %}
-                        {% include "actions/vampire_power/_slayer_method.html" %}
-                    {% endwith %}
-                {% endwith %}
-            </td>
-        </tr>
-        <tr class="cell_phone">
-            <td>Cell phone charger</td>
-            <td>
-                {% with vampire_worksheet_form.cell_phone as f %}
-                    {% with "cell_phone" as vampire %}
-                        {% include "actions/vampire_power/_slayer_method.html" %}
-                    {% endwith %}
-                {% endwith %}
-            </td>
-        </tr>
-        <tr class="monitor">
-            <td>Computer monitor</td>
-            <td>
-                {% with vampire_worksheet_form.monitor as f %}
-                    {% with "monitor" as vampire %}
-                        {% include "actions/vampire_power/_slayer_method.html" %}
-                    {% endwith %}
-                {% endwith %}
-            </td>
-        </tr>
+        {% for field in vampire_worksheet_form %}
+            <tr class="{{ field.name }}">
+                <td>{{ field.label }}</td>
+                <td>
+                    {% if field.data %}
+                        <span class="slay_method">
+                            {% for value, label in field.field.choices %}
+                                {% if value == field.data %}{{ label }}{% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="slay_link">
+                            (<a href="#{{ field.name }}">change</a>)
+                        </span>
+                    {% else %}
+                        <span class="slay_method">
+                            <span class="slay_link"><a href="#{{ field.name }}">Slay me</a></span>
+                        </span>
+                        <span class="slay_link" style="display: none;">
+                            (<a href="#{{ field.name }}">change</a>)
+                        </span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
     </tbody>
 </table>
 
