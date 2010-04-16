@@ -60,10 +60,12 @@ a {
 }
 a:hover { color: #00AAD8 }
 h1, h2, h3, h4, h5, h6 {
-    font-family: Arial, Verdana, sans-serif;
-    font-weight: bold;
+    font-family:"superclarendon-1", "superclarendon-2", serif;
+    font-weight:400;
+    font-style: normal;
 }
-h1, h2 { font-size: 20px; }
+h1 { font-size: 24px; }
+h2 { font-size: 20px; }
 h3 { font-size: 18px; }
 h4 { font-size: 17px; }
 h5 { font-size: 16px; }
@@ -211,13 +213,17 @@ ul{
 }
 
 /** Header **/
-#header_container{
-	height:119px;
+#header_bg{
+    height:119px;
+    width:100%;
 	background: url(../images/theme/bg_header.png) no-repeat top center;
+}
+#header_container{
+	background: url(../images/theme/bg_header_repeat.png) repeat-x top center;
 }
 #header_logo {
 	position:absolute;
-	left:323px;
+	left:319px;
 	top:12px;
 }
 
@@ -226,13 +232,42 @@ ul{
     right:0px;
     top:20px;
 }
-#nav {
+
+#nav_logged_in{
     position:absolute;
-    left:0;
-    top:78px;
-    font-size:24px;
-    font-weight:bold;
+    font-size:0px;
+    top:64px;
+    left:42px;
 }
+#nav_logged_out{
+    position:absolute;
+    font-size:0px;
+    top:64px;
+    left:115px;
+}
+#nav_login{width:88px; background: url(../images/theme/nav_sprite.png) -169px 92px;}
+#nav_login:hover{background-position: -169px 46px;}
+#nav_home{width:119px; background: url(../images/theme/nav_sprite.png) -257px 92px;}
+#nav_home:hover{background-position: -257px 46px;}
+#nav_actions{width:141px; background: url(../images/theme/nav_sprite.png) -376px 92px;}
+#nav_actions:hover{background-position: -376px 46px;}
+#nav_community{width:185px; background: url(../images/theme/nav_sprite.png) -517px 92px;}
+#nav_community:hover{background-position: -517px 46px;}
+#nav_blog{width:114px; background: url(../images/theme/nav_sprite.png) -702px 92px;}
+#nav_blog:hover{background-position: -702px 46px;}
+#nav_signup{width:98px; background: url(../images/theme/nav_sprite.png) -816px 92px;}
+#nav_signup:hover{background-position: -816px 46px;}
+#nav_welcome{width:169px; background: url(../images/theme/nav_sprite.png) 0px 92px;}
+#nav_welcome:hover{background-position: 0px 46px;}
+#nav_dashboard{width:169px; background: url(../images/theme/nav_sprite.png) -914px 92px;}
+#nav_dashboard:hover{background-position: -914px 46px;}
+#nav_feedback{width:117px; background: url(../images/theme/nav_sprite.png) -1083px 92px;}
+#nav_feedback:hover{background-position: -1083px 46px;}
+
+
+#nav_logged_out a, #nav_logged_in a{color:#a8ce61; display:block; height:46px; float:left;}
+#nav_logged_out a:hover, #nav_logged_in a:hover{color:#90b54b;}
+
 #header-links {
     position:absolute;
     right:0px;

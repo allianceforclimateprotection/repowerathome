@@ -18,6 +18,12 @@ var rah = {
     **/
     base: {
         init: function(){
+            // Setup TypeKit
+            try{Typekit.load();}catch(e){}
+            
+            // Hide the nav text content
+            $(".nav a").text("");
+            
             // Setup Feedback dialog
             $("#feedback_dialog").dialog({
                 modal:true,

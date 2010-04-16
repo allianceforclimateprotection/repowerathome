@@ -83,10 +83,12 @@ def _default_action_vars(action, user):
     users_committed = User.objects.filter(useractionprogress__action=action, 
         useractionprogress__date_committed__isnull=False)[:5]
     noshow_users_committed = action.users_committed - users_committed.count()
-    try:
-        progress = UserActionProgress.objects.get(action=action, user=user)
-    except UserActionProgress.DoesNotExist:
-        progress = None
+    progress = None
+    if user.is_authenticated():        
+        try:
+            progress = UserActionProgress.objects.get(action=action, user=user)
+        except UserActionProgress.DoesNotExist:
+            pass
     # TODO: Don't use vars as a variable name. It's a python built-in
     vars = dict(locals())
     del vars["action"]
