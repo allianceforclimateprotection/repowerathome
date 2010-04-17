@@ -44,7 +44,7 @@ class ChartPointTest(TestCase):
         jan_1_2010 = ChartPoint(datetime.date(2010, 1, 1))
         self.failUnlessEqual(jan_1_2010.get_date_as_milli_from_epoch(), 1262304000000)
         
-class RecordTest(TestCase):
+class RecordManagerTest(TestCase):
     fixtures = ["test_actions.json",]
     
     def setUp(self):
@@ -86,4 +86,28 @@ class RecordTest(TestCase):
         self.failUnlessEqual(rec_4.points, 5)
         self.failUnlessEqual(len(rec_4.content_objects.all()), 0)
         
+    def test_create_batch_records(self):
+        # TODO: at some point in the future when this is being used, we should write a unit test
+        pass
+    
+    def test_void_record(self):
+        self.test_create_record()
+        
+        Record.objects.void_record(self.user, "action_complete", self.iwh)
+        self.failUnlessRaises(Record.DoesNotExist, Record.objects.get, pk=self.rec_1.pk)
+        
+    def test_void_record_with_activity(self):
+        cmu_activity = Activity.objects.get(slug="comment_mark_useful")
+        rec_4 = Record.objects.create_record(self.user, cmu_activity)
+        
+        Record.objects.void_record(self.user, cmu_activity)
+        self.failUnlessRaises(Record.DoesNotExist, Record.objects.get, pk=rec_4.pk)
+        
+    def test_get_chart_data(self):
+        chart_data = Record.objects.get_chart_data(self.user)
+        self.failUnlessEqual(len(chart_data), 1)
+        chart_point = chart_data[0]
+        self.failUnlessEqual(chart_point.date, datetime.date.today())
+        self.failUnlessEqual(chart_point.points, 160)
+        self.failUnlessEqual(chart_point.records, [self.rec_1, self.rec_2, self.rec_3])
         

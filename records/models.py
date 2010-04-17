@@ -101,10 +101,13 @@ class RecordManager(models.Manager):
         record.save()
         return record
 
-    def void_record(self, user, activity, content_object):
+    def void_record(self, user, activity, content_object=None):
         if not isinstance(activity, Activity):
             activity = Activity.objects.get(slug=activity)
-        record = Record.objects.filter(user=user, activity=activity, content_objects__object_id=content_object.id)[0:1]
+        record_query = Record.objects.filter(user=user, activity=activity)
+        if content_object:
+            record_query = record_query.filter(content_objects__object_id=content_object.id)
+        record = record_query[0:1]
         if record:
             record[0].void = True
             record[0].save()
