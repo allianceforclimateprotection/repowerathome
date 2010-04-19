@@ -1,11 +1,11 @@
 import datetime
 
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from records.models import ChartPoint, Record, Activity
 from actions.models import Action
 from rah.models import User
-
 
 def create_test_users_and_action_tasks(object):
     """
@@ -74,7 +74,7 @@ class RecordManagerTest(TestCase):
         self.failUnlessEqual(self.rec_1.user, self.user)
         ac_activity = Activity.objects.get(slug="action_complete")
         self.failUnlessEqual(self.rec_1.activity, ac_activity)
-        self.failUnlessEqual(self.rec_1.points,40)
+        self.failUnlessEqual(self.rec_1.points, 40)
         self.failUnlessEqual(self.rec_1.content_objects.all()[0].content_object, self.iwh)
 
     def test_create_record_with_activity(self):
@@ -111,3 +111,36 @@ class RecordManagerTest(TestCase):
         self.failUnlessEqual(chart_point.points, 160)
         self.failUnlessEqual(chart_point.records, [self.rec_1, self.rec_2, self.rec_3])
         
+class RecordTest(TestCase):
+    fixtures = ["test_actions.json",]
+    
+    def setUp(self):
+        self.user = User.objects.create_user(username="test", password="test", email="test@test.com")
+        self.iwh = Action.objects.get(slug="insulate-water-heater")
+        
+    def test_get_absolute_url(self):
+        self.rec_1 = Record.objects.create_record(self.user, "action_complete", self.iwh)
+        self.rec_2 = Record.objects.create_record(self.user, "mag_tweet")
+        
+        self.failUnlessEqual(self.rec_1.get_absolute_url(), reverse("action_detail", args=[self.iwh.slug]))
+        self.failUnlessEqual(self.rec_2.get_absolute_url(), reverse("profile", args=[self.user.id]))
+        
+    def test_update_profile_points(self):
+        self.failUnlessEqual(self.user.get_profile().total_points, 0)
+        
+        self.rec_1 = Record.objects.create_record(self.user, "action_complete", self.iwh)
+        self.user = User.objects.get(pk=self.user.pk)
+        self.failUnlessEqual(self.user.get_profile().total_points, 40)
+        
+        self.rec_2 = Record.objects.create_record(self.user, "mag_tweet")
+        self.user = User.objects.get(pk=self.user.pk)
+        self.failUnlessEqual(self.user.get_profile().total_points, 90)
+        
+        
+        Record.objects.void_record(self.user, "mag_tweet")
+        self.user = User.objects.get(pk=self.user.pk)
+        self.failUnlessEqual(self.user.get_profile().total_points, 40)
+        
+        Record.objects.void_record(self.user, "action_complete", self.iwh)
+        self.user = User.objects.get(pk=self.user.pk)
+        self.failUnlessEqual(self.user.get_profile().total_points, 0)
