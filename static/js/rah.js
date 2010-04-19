@@ -21,6 +21,9 @@ var rah = {
             // Setup TypeKit
             try{Typekit.load();}catch(e){}
             
+            // setup buttons
+            $("button, input:submit, a.button").button();
+            
             // Hide the nav text content
             $(".nav a").text("");
             
