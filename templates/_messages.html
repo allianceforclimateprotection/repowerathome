@@ -5,7 +5,7 @@
                 {% if "ga_track_pageview" in message.tags %}
                     <script type="text/javascript">_gaq.push(['_trackPageview', '{{ message }}']);</script>
                 {% else %}
-                    {{ message }} <a href="#" class="dismiss">close</a>
+                    {{ message|safe }} <a href="#" class="dismiss">close</a>
                 {% endif %}
             </li>          
         {% endfor %}
