@@ -124,7 +124,7 @@ class FeedbackForm(forms.ModelForm):
     comment = forms.CharField(widget=forms.Textarea, required=False, label="Your Comments")
     beta_group = forms.BooleanField(help_text="""Check here if you would like to be a part 
                                                 of our alpha group and receive information 
-                                                on new features before they launch.""", label="", required=False)
+                                                on new features before they launch.""", label="", required=False, widget=forms.HiddenInput)
     def send(self, user):
         template = loader.get_template('rah/feedback_email.html')
         context  = { 'feedback': self.cleaned_data, 'user': user, }
