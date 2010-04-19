@@ -50,10 +50,10 @@
     {% if action.users_completed %}
         <ul class="whos_working">
             {% for user in users_completed %}
-                <li>{% safe_user_link user %} has completed this.</li>
+                <li>{% safe_user_link user %}</li>
             {% endfor %}
             {% if noshow_users_completed > 0 %}
-                {{ noshow_users_completed }} additional user{{ noshow_users_completed|pluralize:" has,s have" }} completed this.
+                {{ noshow_users_completed }} additional user{{ noshow_users_completed|pluralize }}
             {% endif %}
         </ul>
     {% endif %}
@@ -61,10 +61,10 @@
     {% if action.users_committed %}
         <ul class="whos_working">
             {% for user in users_committed %}
-                <li>{% safe_user_link user %} has committed to this.</li>
+                <li>{% safe_user_link user %}</li>
             {% endfor %}
             {% if noshow_users_committed > 0 %}
-                {{ noshow_users_committed }} additional user{{ noshow_users_committed|pluralize:" has,s have" }} committed to this.
+                {{ noshow_users_committed }} additional user{{ noshow_users_committed|pluralize }}
             {% endif %}
         </ul>
     {% endif %}

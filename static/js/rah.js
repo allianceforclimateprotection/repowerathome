@@ -207,7 +207,7 @@ var rah = {
                 return false;
             });
             $(".undo_trigger").click(function(){
-                $(this).parents("form").submit();
+                $(".action_undo_form").submit();
             })
             $("#commit_widget").dialog({
                 title: "Make a Commitment", modal: true, resizable: false, 

@@ -43,8 +43,8 @@ def action_complete(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
     if request.method == "GET":
         return redirect("action_detail", action_slug=action.slug)
-    if action.complete_for_user(request.user):
-        messages.success(request, "Thanks for completing this action.")
+    action.complete_for_user(request.user)
+    messages.success(request, "Nice work! We've updated your profile, so all your friends can see your progress (<a href='#' class='undo_trigger'>Undo</a>)")
     return redirect("action_detail", action_slug=action.slug)
     
 @login_required
@@ -54,7 +54,7 @@ def action_undo(request, action_slug):
     if request.method == "GET":
         return redirect("action_detail", action_slug=action.slug)
     if action.undo_for_user(request.user):
-        messages.success(request, "We have corrected the mistake.")
+        messages.success(request, "No worries. We've updated the record. Let us know when you're finished with this action.")
     return redirect("action_detail", action_slug=action.slug)
     
 @login_required
@@ -109,10 +109,10 @@ def save_action_from(request, action_slug, form_name):
     
 def _default_action_vars(action, user):
     users_completed = User.objects.filter(useractionprogress__action=action, 
-        useractionprogress__is_completed=1)[:5]
+        useractionprogress__is_completed=1).order_by("-useractionprogress__updated")[:5]
     noshow_users_completed = action.users_completed - users_completed.count()
     users_committed = User.objects.filter(useractionprogress__action=action, 
-        useractionprogress__date_committed__isnull=False)[:5]
+        useractionprogress__date_committed__isnull=False).order_by("-useractionprogress__updated")[:5]
     noshow_users_committed = action.users_committed - users_committed.count()
     progress = None
     if user.is_authenticated():

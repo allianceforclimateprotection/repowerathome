@@ -9,8 +9,8 @@ from utils import strip_quotes
 register = template.Library()
 
 class ActionFormNode(template.Node):
-    def __init__(self, complete_title="I've done this", 
-        commit_title="Commit to do this later", undo_title="My mistake, I haven't done this"):
+    def __init__(self, complete_title="I completed this action!", 
+        commit_title="Commit to do this later", undo_title="Wait - I'm still working on this action."):
         self.complete_title = complete_title
         self.commit_title = commit_title
         self.undo_title = undo_title
