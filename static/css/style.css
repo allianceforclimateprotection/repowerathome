@@ -200,12 +200,12 @@ ul{
 #header_container{
     width:100%; 
     position:relative;
-	background: url(../images/theme/header_container.png) repeat-x top center;
+    background: url(../images/theme/header_container.png) repeat-x top center;
 }
 #header_bg{
     height:114px;
     width:100%;
-	background: url(../images/theme/header_bg.png) no-repeat top center;
+	background: url(../images/theme/header_bg.png) no-repeat top center;		
 }
 #header{position:relative;}
 #header_logo {
