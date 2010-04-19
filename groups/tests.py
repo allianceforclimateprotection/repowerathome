@@ -894,6 +894,4 @@ class BaseballViews(TestCase):
         self.group = Group.objects.get(slug="yankees")
 
     def test_does_team_suck(self):
-        self.failUnlessEqual(self.group.name, "Yes")
-    
-    
+        self.failUnlessEqual(self.group.name, "yankees")

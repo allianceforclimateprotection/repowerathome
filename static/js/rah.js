@@ -206,6 +206,9 @@ var rah = {
                 $("#commit_widget").dialog("open");
                 return false;
             });
+            $(".undo_trigger").click(function(){
+                $(this).parents("form").submit();
+            })
             $("#commit_widget").dialog({
                 title: "Make a Commitment", modal: true, resizable: false, 
                     draggable: false, autoOpen: false, 
@@ -231,6 +234,74 @@ var rah = {
                     }
                 }
             });
+            if(undefined !== window.rich_action_name){
+                try{
+                    rah["rich_actions"][rich_action_name].init();
+                }catch(err){}
+            }
+        }
+    },
+    
+    rich_actions: {
+        vampire_power: {
+            init: function(){
+                var scroller = $("#vampire_worksheet").scrollable({ 
+                    size: 1, 
+                    clickable: false,
+                    item: "* .worksheet",
+                    api: true
+                });
+                $("#vampire_worksheet").navigator({
+                    navi: ".vampire_worksheet_wizard_nav",
+                    naviItem: "a"
+                });
+                var nav = $("ul.vampire_worksheet_wizard_nav");
+                $("#get_started").click(function(){
+                    nav.slideDown("fast", function(){
+                        scroller.nextPage();
+                    });
+                    return false;
+                });
+                if(!(typeof(vampire_worksheet_started) == "undefined") && vampire_worksheet_started) {
+                    nav.show();
+                    scroller.end(0);
+                }
+                $(".vampire_slayer").click(function(){
+                    var form = $(this).parents("form");
+                    /* save the worksheet data */
+                    $.post(form.attr("action"), form.serialize(), function(data){
+                        $("#vampire_savings_total").text(data["total_savings"]);
+                    }, "json");
+                    
+                    /* set the slay method in the plan sheet */
+                    var input_selected = $(this);
+                    var plan_value = $("." + input_selected.attr("name") + " .slay_method");
+                    plan_value.text(input_selected.parent().text());
+                    
+                    /* skip to the next incomplete worksheet */
+                    $("." + input_selected.attr("name") + " .slay_link").show();
+                    var worksheet = input_selected.parents(".worksheet");
+                    var offset = 1;
+                    worksheet.nextAll().each(function(){
+                        if($(this).find(".vampire_slayer:checked").length == 0) {
+                            return false;
+                        }
+                        /* increment the offset, as we want to skip ahead and find
+                        a worksheet that hasn't been filled out */
+                        offset++; 
+                    });
+                    setTimeout(function() {
+                        scroller.move(offset);
+                    }, 500);
+                });
+                
+                $(".slay_link a").click(function(){
+                    page = $(this).attr("href");
+                    nav.find("a[href='" + page + "']").click();
+                    return false;
+                });
+                
+            }
         }
     },
     

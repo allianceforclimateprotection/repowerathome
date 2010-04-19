@@ -1,0 +1,33 @@
+<div id="vampire_worksheet">
+    <ul class="vampire_worksheet_wizard_nav">
+        <li><a id="t0" href="#get_started"></a></li>
+        {% for field in vampire_worksheet_form %}
+            <li><a id="t{{ forloop.counter }}" href="#{{ field.name }}">{{ forloop.counter }}</a></li>
+        {% endfor %}
+        <li><a id="t7" href="#plan">Plan</a></li>
+    </ul>
+    <div id="vampire_worksheet_wizard">
+        <ul class="items">
+            <li class="worksheet">
+                {% include "actions/vampire_power/_get_started.html" %}
+            </li>
+            {% for field in vampire_worksheet_form %}
+                <li class="worksheet">
+                    {% include "actions/vampire_power/_device.html" %}
+                </li>
+            {% endfor %}
+            <li id="plan" class="worksheet">
+                {% include "actions/vampire_power/_plan.html" %}
+            </li>
+        </ul>
+    </div>
+    {% csrf_token %}
+</div>
+<script type="text/javascript" charset="utf-8">
+    var rich_action_name = "vampire_power";
+</script>
+{% if vampire_worksheet_form.data %}
+    <script type="text/javascript" charset="utf-8">
+        var vampire_worksheet_started = true;
+    </script>
+{% endif %}

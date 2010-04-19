@@ -1,0 +1,42 @@
+<h3>My plan of attack</h3>
+<p>
+    Total plan savings:
+    $<span id="vampire_savings_total">{{ vampire_worksheet_form.total_savings }}</span> annually
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <td>Device (vampire)</td>
+            <td>Slay Method</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for field in vampire_worksheet_form %}
+            <tr class="{{ field.name }}">
+                <td>{{ field.label }}</td>
+                <td>
+                    {% if field.data %}
+                        <span class="slay_method">
+                            {% for value, label in field.field.choices %}
+                                {% if value == field.data %}{{ label }}{% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="slay_link">
+                            (<a href="#{{ field.name }}">change</a>)
+                        </span>
+                    {% else %}
+                        <span class="slay_method">
+                            <span class="slay_link"><a href="#{{ field.name }}">Slay me</a></span>
+                        </span>
+                        <span class="slay_link" style="display: none;">
+                            (<a href="#{{ field.name }}">change</a>)
+                        </span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% action_form "I completed my plan!" "Commit to my plan" %}

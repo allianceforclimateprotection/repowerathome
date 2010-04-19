@@ -13,7 +13,7 @@ def create_default_actions(app, created_models, verbosity, **kwargs):
                 confirm = raw_input('Please enter either "yes" or "no": ')
                 continue
             if confirm == 'yes':
-                call_command("loaddata", "actions/fixtures/action.json", verbosity=0, interactive=True)
+                call_command("loaddata", "actions/fixtures/actions.json", verbosity=0, interactive=True)
             break
 
 signals.post_syncdb.connect(create_default_actions, sender=actions_app, 

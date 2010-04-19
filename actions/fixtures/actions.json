@@ -82,7 +82,7 @@
 		"users_committed": 0, 
 		"name": "Cut standby power",
 		"created": "2009-12-10 12:40:57",
-		"content": "Many appliances in your home continually draw power, even when they're off. Speakers, televisions, DVD players, and video game systesms all use vampire power. In fact, 75% of the power used by these appliances is consumed when they are switched off.<cite>Department of Energy, <a href=\"http://www.energy.gov/applianceselectronics.htm\">Appliances & Electronics</a></cite>\r\n\r\nThis power is called \"standby\" or \"vampire\" power. Total waste from vampire power accounts for around 10% of your electricity bill,<cite>Lawerence Berkley National Laboratory, <a href=\"http://standby.lbl.gov/faq.html\">Standby Power: FAQs</a></cite> and vampire power costs Americans more than $3 billion in annual energy costs.<cite>\"<a href=\"http://globaltechforum.eiu.com/index.asp?layout=rich_story&channelid=3&categoryid=10&title=Pulling+the+plug+on+standby+power&doc_id=8293\">Pulling the plug on standby power</a>.\" <i>The Economist</i>. 10 March 2006.</cite> {% action_form %}",
+		"content": "Many appliances in your home continually draw power, even when they're off. Speakers, televisions, DVD players, and video game systesms all use vampire power. In fact, 75% of the power used by these appliances is consumed when they are switched off.<cite>Department of Energy, <a href=\"http://www.energy.gov/applianceselectronics.htm\">Appliances & Electronics</a></cite>\r\n\r\nThis power is called \"standby\" or \"vampire\" power. Total waste from vampire power accounts for around 10% of your electricity bill,<cite>Lawerence Berkley National Laboratory, <a href=\"http://standby.lbl.gov/faq.html\">Standby Power: FAQs</a></cite> and vampire power costs Americans more than $3 billion in annual energy costs.<cite>\"<a href=\"http://globaltechforum.eiu.com/index.asp?layout=rich_story&channelid=3&categoryid=10&title=Pulling+the+plug+on+standby+power&doc_id=8293\">Pulling the plug on standby power</a>.\" <i>The Economist</i>. 10 March 2006.</cite>",
 		"users_completed": 0, 
 		"teaser": "Standby power AKA vampire power is a frightening thing. It refers to the power used by your home appliances <i>even when they're switched off</i>. Slay the vampires in your home now.",
 		"points": 20, 
@@ -273,5 +273,13 @@
 		"users_completed": 0, 
 		"teaser": "Get in the groove with this money-saving habit.",
 		"points": 5, 
-		"slug": "save-with-manual-thermostat"}}
+		"slug": "save-with-manual-thermostat"}},
+		
+	{"pk": 1, 
+	    "model": "actions.actionform", 
+	    "fields": {"action": 23, 
+	    "form_name": "VampirePowerWorksheetForm", 
+	    "updated": "2010-04-15 17:23:26", 
+	    "var_name": "vampire_worksheet_form", 
+	    "created": "2010-04-15 17:23:08"}}
 ]

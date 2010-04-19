@@ -8,4 +8,5 @@ urlpatterns = patterns('actions.views',
     url(r'^(?P<action_slug>[a-z0-9-]+)/undo$', 'action_undo', name='action_undo'),
     url(r'^(?P<action_slug>[a-z0-9-]+)/commit$', 'action_commit', name='action_commit'),
     url(r'^(?P<action_slug>[a-z0-9-]+)/cancel$', 'action_cancel', name='action_cancel'),
+    url(r'^(?P<action_slug>[a-z0-9-]+)/(?P<form_name>\w+)/save', 'save_action_from', name='save_action_from'),
 )
