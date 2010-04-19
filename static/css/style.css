@@ -265,6 +265,12 @@ ul{
 #footer_copy p{color:#FFF; text-align:center;}
 
 
+/* Minor Col */
+#minor_col_sign {width:178px; height:70px; background: url(../images/theme/sprite_minor_col.png) 0px -6px;}
+#minor_col_host {width:178px; height:80px; background: url(../images/theme/sprite_minor_col.png) 0px -106px;}
+#minor_col_find {width:178px; height:80px; background: url(../images/theme/sprite_minor_col.png) 0px -216px;}
+#minor_col_ord { width:178px; height:9px;  background: url(../images/theme/sprite_minor_col.png) 0px -306px;}
+
 /* Breadcrumbs */
 #breadcrumbs {font-size:12px; margin-bottom:20px;}
 

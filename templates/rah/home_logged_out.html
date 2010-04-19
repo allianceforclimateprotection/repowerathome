@@ -4,7 +4,9 @@
 {% endblock %}
 {% block content %}
 <div class="grid_3 alpha">
-	<img src="/static/images/rich_actions/vampire/large.png" width="740" height="402"/>
+	<a href="{% url action_detail 'cut-standby-power' %}">
+		<img src="/static/images/rich_actions/vampire/large.png" width="740" height="402"/>
+	</a>
 	<div class="clear"></div> 
 	<div class="grid_1 alpha">
 		<img src="/static/images/index/home_make_a_plan.png" width="240" height="147"/>
@@ -20,6 +22,12 @@
 	<h2>Get started</h2>
 	<p>Gain full access to Repower at Home's features. It's free!</p>
 	<p><a href="{% url register %}" title="">Create your account</a></p>
+	<div id="minor_col_sign"></div>
+	<div id="minor_col_ord"></div>
+	<div id="minor_col_host"></div>
+	<div id="minor_col_ord"></div>
+	<div id="minor_col_find"></div>
+	<div id="minor_col_ord"></div>
 </div>
 <div class="clear"></div>
 {% endblock %}
