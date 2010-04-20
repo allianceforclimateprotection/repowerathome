@@ -209,6 +209,13 @@ input {
     left: 11px;
 }
 
+.overset label.error {
+    color: #DE6060;;
+    position: absolute;
+    top: 60px;
+    background-color: transparent;
+}
+
 .hidden {
     display: none;
 }

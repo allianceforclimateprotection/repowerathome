@@ -1,7 +1,7 @@
 {% extends "rah/base.html" %}
 {% block content %}
 <h1>Create an account</h1>
-<form action="" method="post" id="registration_form">
+<form action="" method="post" id="registration_form" autocomplete="off">
     {% for field in form %}
         <p class="overset">
             {{ field.label_tag }}
