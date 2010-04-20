@@ -1,0 +1,9 @@
+[
+    {"pk": 1, 
+    "model": "actions.actionform", 
+    "fields": {"action": 23, 
+    "form_name": "VampirePowerWorksheetForm", 
+    "updated": "2010-04-15 17:23:26", 
+    "var_name": "vampire_worksheet_form", 
+    "created": "2010-04-15 17:23:08"}}
+]
