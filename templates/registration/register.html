@@ -1,11 +1,9 @@
 {% extends "rah/base.html" %}
 {% block content %}
 <h1>Create an account</h1>
-<form action="" method="post" id="registration_form">
-    <div>
-        {{ form.as_p }}          
-        <input type="submit" value="Register"/>
-    </div>
+<form action="" method="post" id="registration_form" autocomplete="off">
+    {% include "rah/_overset_form.html" %}
+    <p><input type="submit" value="Register"/></p>
     {% csrf_token %}
 </form>
 <a href="{% url django.contrib.auth.views.login %}">Log in</a> | 

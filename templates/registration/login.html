@@ -1,9 +1,9 @@
 {% extends "rah/base.html" %}
 {% block content %}
-    <form action="" method="post">
-        <div>{{form.as_p}}</div>
-        <input type="submit" value="Login" />
-        <input type="hidden" name="next" value="{{ next|escape }}" />
+    <form action="" method="post" autocomplete="false">
+        {% include "rah/_overset_form.html" %}
+        <p><input type="submit" value="Login" /></p>
+        <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
         {% csrf_token %}
     </form>
     <a href="{% url rah.views.register %}">Register</a> | 

@@ -26,7 +26,7 @@
 <script type="text/javascript" charset="utf-8">
     var rich_action_name = "vampire_power";
 </script>
-{% if vampire_worksheet_form.data %}
+{% if vampire_worksheet_form.data or progress.is_completed or progress.date_committed %}
     <script type="text/javascript" charset="utf-8">
         var vampire_worksheet_started = true;
     </script>
