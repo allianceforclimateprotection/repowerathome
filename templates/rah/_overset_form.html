@@ -1,0 +1,13 @@
+{% for field in form %}
+    <p class="overset {% if field.errors %}error{% endif %}">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+            <label class="error" for="{{ field.auto_id }}">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </label>
+        {% endif %}
+    </p>
+{% endfor %}

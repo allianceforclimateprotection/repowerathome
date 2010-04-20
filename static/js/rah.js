@@ -206,9 +206,9 @@ var rah = {
             var global_on = $(toggle_switch).attr("checked");
             $("#group_notifications_form ul").each(function() {
                 if(global_on) {
-                    $(this).hide();
+                    $(this).parent().hide();
                 } else {
-                    $(this).show();
+                    $(this).parent().show();
                 }
             });
         }

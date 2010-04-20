@@ -2,12 +2,7 @@
 {% block content %}
 <h1>Create an account</h1>
 <form action="" method="post" id="registration_form" autocomplete="off">
-    {% for field in form %}
-        <p class="overset">
-            {{ field.label_tag }}
-            {{ field }}
-        </p>
-    {% endfor %}
+    {% include "rah/_overset_form.html" %}
     <p><input type="submit" value="Register"/></p>
     {% csrf_token %}
 </form>

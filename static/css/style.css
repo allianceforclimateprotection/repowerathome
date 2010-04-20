@@ -166,12 +166,22 @@ ul{
 }
 
 /* @group form styling */
-input {
+input, select {
     font-family: "superclarendon-1", "superclarendon-2", serif;
     font-weight: 700;
     font-style: normal;
     margin-top: 20px;
 }
+form li label {
+    position: relative;
+}
+form ul {
+    list-style-type: none;
+}
+form input[type="checkbox"] {
+    width: 15px;
+}
+
 .overset {
     position: relative;
 }
@@ -186,7 +196,13 @@ input {
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
 }
-.overset input.error {
+.overset input[type="checkbox"] {
+    width: 15px;
+}
+.overset[class~="error"] {
+    background: transparent;
+}
+.overset input.error, .overset[class~="error"] input {
     color: #DE6060;
     background: url(../images/theme/input_text_error_background.png) repeat-x;
 }
@@ -204,18 +220,15 @@ input {
     font-weight: 700;
     font-style: normal;
     font-size: 16px;
-    color: #84CBD6;
     top: 31px;
     left: 11px;
 }
-
 .overset label.error {
     color: #DE6060;;
     position: absolute;
     top: 60px;
     background-color: transparent;
 }
-
 .hidden {
     display: none;
 }
