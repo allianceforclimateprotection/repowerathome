@@ -2,6 +2,7 @@
 {% load search_widget %}
 
 {% block content %}
+    <div class="grid_3 alpha">
     {% if new_groups %}
         <h3>New Groups</h3>
         <ol>
@@ -17,12 +18,13 @@
             {% endfor %}
         </ol>
     {% endif %}
-{% endblock %}
-{% block minorcol %}
-    <h2>About Groups</h2>
-    <p class="group_description">Groups help you share your achievements and see what your friends are doing. You can also use groups to organize energy efficiency campaigns and competitions in your neighborhood, school, or community. Search below to find a group, or start your own.</p>
-    <a href="{% url group_create %}">Create a Group</a>
-    <h3 class="search_title">Find a Group</h3>
-    {% search_widget group_search %}
+    </div>
+    <div class="grid_1 omega">
+        <h2>About Groups</h2>
+        <p class="group_description">Groups help you share your achievements and see what your friends are doing. You can also use groups to organize energy efficiency campaigns and competitions in your neighborhood, school, or community. Search below to find a group, or start your own.</p>
+        <a class="button" href="{% url group_create %}">Create a Group</a>
+        <h3 class="search_title">Find a Group</h3>
+        {% search_widget group_search %}
+    </div>
 {% endblock %}
 {% block js %}page_group_list{% endblock %}

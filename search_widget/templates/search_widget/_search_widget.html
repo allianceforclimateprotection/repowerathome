@@ -1,10 +1,12 @@
 <form class="search_widget" action="{{ path }}" method="get">
     <h3>{{ search_title }}</h3>
-    <p>
-        <input class="search_value" name="search" type="text"></input>
+    <div class="search_fields">
+        <span class="form_row">
+            <input class="search_value" name="search" type="text"></input>
+        </span>
         <input class="search_button" type="submit" value="Search"></input>
-    </p>
-    <ol class="search_results">
+    </div>
+    <ol class="search_results hidden">
         {{ search_results|safe }}
     </ol>
 </form>

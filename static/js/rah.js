@@ -66,7 +66,7 @@ var rah = {
     **/
     mod_overset: {
         init: function(){
-            $(".overset input").blur(function(){
+            $(".overset input, .overset textarea").blur(function(){
                var field = $(this);
                var label = field.prev("label");
                if(field.val() == "") {
@@ -75,7 +75,7 @@ var rah = {
                    label.removeClass("inside");
                }
             }).blur();
-            $(".overset input").focus(function(){
+            $(".overset input, .overset textarea").focus(function(){
                $(this).prev("label").removeClass("inside");
             });
         }
@@ -509,7 +509,12 @@ var rah = {
                     type: form.attr("method"),
                     data: form.serialize(),
                     success: function(data) {
-                        $(".search_results", form).html(data);
+                        if(data.trim().length > 0) {
+                            $(".search_results").removeClass("hidden");
+                            $(".search_results", form).html(data);
+                        } else {
+                            $(".search_results").addClass("hidden");
+                        }
                     }
                 });
                 return false;

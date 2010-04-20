@@ -1,5 +1,5 @@
 {% for field in form %}
-    <p class="overset {% if field.errors %}error{% endif %}">
+    <div class="form_row overset {% if field.errors %}error{% endif %}">
         {{ field.label_tag }}
         {{ field }}
         {% if field.errors %}
@@ -9,5 +9,5 @@
                 {% endfor %}
             </label>
         {% endif %}
-    </p>
+    </div>
 {% endfor %}
