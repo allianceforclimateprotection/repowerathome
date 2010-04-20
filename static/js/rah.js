@@ -23,6 +23,7 @@ var rah = {
             
             // setup buttons
             $("button, input:submit, a.button").button();
+            rah.mod_overset.init();
             
             // Hide the nav text content
             $(".nav a").text("");
@@ -57,6 +58,26 @@ var rah = {
             rah.mod_messages.init();
             rah.mod_ajax_setup.init();
             rah.mod_validate_setup.init();
+        }
+    },
+    
+    /**
+    * setup all of the overset inputs
+    **/
+    mod_overset: {
+        init: function(){
+            $(".overset input").blur(function(){
+               var field = $(this);
+               var label = field.prev("label");
+               if(field.val() == "") {
+                   label.addClass("inside");
+               } else {
+                   label.removeClass("inside");
+               }
+            }).blur();
+            $(".overset input").focus(function(){
+               $(this).prev("label").removeClass("inside");
+            });
         }
     },
     

@@ -15,13 +15,17 @@ from django.template import Context, loader
 from rah.models import User, Profile, Feedback
 from geo.models import Location
 
-class RegistrationForm(forms.ModelForm):
+class DefaultRahForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(DefaultRahForm, self).__init__(label_suffix="", *args, **kwargs)
+
+class RegistrationForm(DefaultRahForm):
     """
     A form that creates a user, with no privileges, from the given email and password.
     """
     email = forms.EmailField(label='Email')
     first_name = forms.CharField(min_length=2)
-    zipcode = forms.CharField(max_length=5, required=False)
+    zipcode = forms.CharField(max_length=10, required=False)
     password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
     
