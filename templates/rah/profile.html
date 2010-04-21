@@ -1,45 +1,41 @@
 {% extends "rah/base.html" %}
 {% load records %}
 {% block content %}
-<div class="grid_3 alpha">
-    <div id="chart"></div>
-    <script type="text/javascript" charset="utf-8">
-        /* <![CDATA[ */
-        var chart_data = {{chart_data|safe}};
-        /* ]]> */
-    </script>
-    {% if in_progress %}
-        <div class="actions_block" id="actions_in_progress">
-            <h2>In Progress Actions</h2>
-            {% for action in in_progress %}
-                {% include 'actions/_action_nugget.html' %}
-            {% endfor %}
-        </div>
-    {% endif %}
-    {% if recommended %}
-        <div class="actions_block" id="actions_recommended">
-            <h2>Recommended Actions</h2>
-            {% for action in recommended %}
-                {% include 'actions/_action_nugget.html' %}
-            {% endfor %}
-        </div>
-    {% endif %}
-</div>
-<div class="grid_1 omega">
-	<div>
+<div class="grid_1 alpha">
+	<div id="tongue">
         <img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
-        <h2>{{ profile.user }}</h2><br class="spacer"/>
-        <p>
+        <div id="tongue_username">{{ profile.user }}</div>
         {% if profile.location %}
-            <b>Location: </b>{{ profile.location }}<br/>
+            <div id="tongue_location">
+				<span class="icon_from"></span> {{ profile.location }}
+			</div>
         {% endif %}
-        {% if profile.building_type %}
-            <b>Home:</b> {{ profile.get_building_type_display }}<br/>
-        {% endif %}
-        {% if profile.about %}
-            <b>About: </b>{{ profile.about }}<br/>
-        {% endif %}
-        </p>
+		<div class="spacer"></div>
+		{% if user.is_authenticated and not is_others_profile %}
+			<div id="tongue_links">
+				<a href="{% url rah.views.profile_edit user.id %}">Edit your profile</a> &ndash; <a href="{% url logout %}">Logout</a>
+			</div>
+		{% endif %}
+		<div id="tongue_points">
+			{{ profile.total_points }}<span> points</span>
+		</div>
+		{# <div id="tongue_prizes"> #}
+		{# 	Prizes you've won #}
+		{# </div> #}
+		<div id="tongue_activity">
+			Activity
+			<div>
+				<a href="#" title="View progress chart"><img src="/static/images/theme/tongue_graph.gif" alt="graph"/></a>
+			</div>
+		</div>
+        {# {% if profile.building_type %} #}
+        {#     <b>Home:</b> {{ profile.get_building_type_display }}<br/> #}
+        {# {% endif %} #}
+        {# {% if profile.about %} #}
+        {#     <b>About: </b>{{ profile.about }}<br/> #}
+        {# {% endif %} #}
+		
+		<div class="spacer"></div>
     </div>
     {% if commitment_list %}
         <h2>Commitments</h2>
@@ -76,6 +72,30 @@
         {% for rec in records %}
             {% render_record rec %}
         {% endfor %}
+    {% endif %}
+</div>
+<div class="grid_2 omega">
+    <div id="chart"></div>
+    <script type="text/javascript" charset="utf-8">
+        /* <![CDATA[ */
+        var chart_data = {{chart_data|safe}};
+        /* ]]> */
+    </script>
+    {% if in_progress %}
+        <div class="actions_block" id="actions_in_progress">
+            <h2>In Progress Actions</h2>
+            {% for action in in_progress %}
+                {% include 'actions/_action_nugget.html' %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if recommended %}
+        <div class="actions_block" id="actions_recommended">
+            <h2>Recommended Actions</h2>
+            {% for action in recommended %}
+                {% include 'actions/_action_nugget.html' %}
+            {% endfor %}
+        </div>
     {% endif %}
 </div>
 {% endblock %}

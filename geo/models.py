@@ -13,4 +13,4 @@ class Location(models.Model):
     recruit = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return u'%s, %s (%s)' % (self.name, self.st, self.zipcode)
+        return u'%s, %s' % (self.name, self.st)

@@ -353,10 +353,29 @@ a.button:hover {
 #minor_col_sign {width:178px; height:70px; background: url(../images/theme/sprite_minor_col.png) 0px -6px;}
 #minor_col_host {width:178px; height:80px; background: url(../images/theme/sprite_minor_col.png) 0px -106px;}
 #minor_col_find {width:178px; height:72px; background: url(../images/theme/sprite_minor_col.png) 0px -216px;}
-#minor_col_ord { width:178px; height:9px;  background: url(../images/theme/sprite_minor_col.png) 0px -290px;}
+.minor_col_ord { width:178px; height:9px;  background: url(../images/theme/sprite_minor_col.png) 0px -290px;}
+
+/* tongue */
+#tongue { 
+    color: #FFF;
+    font-size:11px;
+    background: #6EC3D1 url(../images/theme/sprite_minor_col.png) repeat-x 0px -416px; 
+    margin-top:-3px;
+    padding: 28px 12px 20px 12px;
+    -moz-border-radius-bottomleft: 8px; -webkit-border-bottom-left-radius: 8px; border-bottom-left-radius: 8px; -moz-border-radius-bottomright: 8px; -webkit-border-bottom-right-radius: 8px; border-bottom-right-radius: 8px;
+}
+#tongue_username {font-size: 20px; font-weight:bold; margin-top:4px; }
+#tongue_location span{ margin-bottom:-5px;}
+#tongue_location {font-size:15px; white-space:nowrap;}
+#tongue_links {margin:10px 0px;}
+#tongue a {color: #FFF; text-decoration:underline;}
+#tongue_points { font-size: 72px; font-weight:bold; margin:30px 0px;}
+#tongue_points span { font-size: 22px; font-weight:bold;}
+#tongue_activity {border-top:1px solid #92d2dd;}
 
 /* spite icons */
 .icon_gt {background: url(../images/theme/sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
+.icon_from {background: url(../images/theme/sprite_minor_col.png) -20px -323px;  width:35px; height:17px; display:inline-block;}
 
 /* Breadcrumbs */
 #breadcrumbs {font-size:12px; margin-bottom:20px;}
@@ -404,9 +423,9 @@ a.button:hover {
 /* @group profile */
 .gravatar {
     float: left;
-    width: 40px;
-    height: 40px;
-    margin-right:5px;
+    width: 50px;
+    height: 50px;
+    margin-right:12px;
     border:1px solid #333;
 }
 .profile_attributes { margin-left: 85px; }

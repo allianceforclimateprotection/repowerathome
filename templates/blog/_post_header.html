@@ -1,4 +1,4 @@
-<h2 class="title">{{ post.title }}</h2>
+<h2 class="title"><a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a></h2>
 <div class='profile_heading'>
     <img class='gravatar' src="{{ post.author.get_profile.get_gravatar_url }}" alt="user gravatar" />
     <div class="profile_attributes">
