@@ -53,9 +53,9 @@
                 {% for user in top_members %}
                     <tr>
                         <td>{% safe_user_link user %}</td>
-                        <td>{{ user.actions_committed }}</td>
-                        <td>{{ user.actions_completed }}</td>
-                        <td>{{ user.total_points }}</td>
+                        <td>{{ user.actions_committed|default_if_none:0 }}</td>
+                        <td>{{ user.actions_completed|default_if_none:0 }}</td>
+                        <td>{{ user.total_points}}</td>
                         <td>{{ user.last_active|date:"M j, Y" }}</td>
                     </tr>
                 {% endfor %}

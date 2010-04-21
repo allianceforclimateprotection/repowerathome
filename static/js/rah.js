@@ -509,7 +509,8 @@ var rah = {
                     type: form.attr("method"),
                     data: form.serialize(),
                     success: function(data) {
-                        if(data.trim().length > 0) {
+                        data = jQuery.trim(data)
+                        if(data.length > 0) {
                             $(".search_results").removeClass("hidden");
                             $(".search_results", form).html(data);
                         } else {
