@@ -383,6 +383,11 @@ a.button:hover {
 .spacer { clear: both; }
 .atom_link { margin-left: 5px; }
 
+/* Login signup register page*/
+#login_form, #registration_form {margin-top:50px;}
+#login_form {margin-left:90px;}
+#registration_form { margin-left:60px;}
+
 /* Action Detail page */
 .action_detail_task_container {
     position:relative;

@@ -55,7 +55,7 @@
 						</div>
                     {% else %}
 						<div id="nav_logged_out" class="nav">
-							<a href="{% url login %}" id="nav_login">Login</a>
+							<a href="{% url login %}?next={{ request.path }}" id="nav_login">Login</a>
 		                    <a href="{% url index %}" id="nav_home">Home</a>
 		                    <a href="{% url action_show %}" id="nav_actions">Actions</a>
 		                    <a href="{% url group_list %}" id="nav_community">Community</a>

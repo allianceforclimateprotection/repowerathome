@@ -1,8 +1,10 @@
 import json, logging
 
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth import login as auth_login
 from django.contrib.comments.views import comments
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader
@@ -16,9 +18,9 @@ from django.contrib.sites.models import Site
 from tagging.models import Tag
 from invite.forms import InviteForm
 from actions.models import Action
-from rah.models import *
-from records.models import *
-from rah.forms import *
+from rah.models import User, Profile
+from records.models import Record
+from rah.forms import RegistrationForm, AuthenticationForm, HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm
 from settings import GA_TRACK_PAGEVIEW, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
@@ -83,9 +85,57 @@ def register(request):
     else:
         form = RegistrationForm()
     return render_to_response("registration/register.html", {
-        'form': form,
+        'register_form': form,
+        'login_form': AuthenticationForm()
     }, context_instance=RequestContext(request))
 
+@csrf_protect
+def login(request, template_name='registration/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AuthenticationForm):
+    """Displays the login form and handles the login action."""
+
+    redirect_to = request.REQUEST.get(redirect_field_name, '')
+    
+    if request.method == "POST":
+        form = authentication_form(data=request.POST)
+        if form.is_valid():
+            # Light security check -- make sure redirect_to isn't garbage.
+            if not redirect_to or ' ' in redirect_to:
+                redirect_to = settings.LOGIN_REDIRECT_URL
+            
+            # Heavier security check -- redirects to http://example.com should 
+            # not be allowed, but things like /view/?param=http://example.com 
+            # should be allowed. This regex checks if there is a '//' *before* a
+            # question mark.
+            elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
+                    redirect_to = settings.LOGIN_REDIRECT_URL
+            
+            # Okay, security checks complete. Log the user in.
+            auth_login(request, form.get_user())
+
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+
+            return HttpResponseRedirect(redirect_to)
+
+    else:
+        form = authentication_form(request)
+    
+    request.session.set_test_cookie()
+    
+    if Site._meta.installed:
+        current_site = Site.objects.get_current()
+    else:
+        current_site = RequestSite(request)
+    
+    return render_to_response(template_name, {
+        'login_form': form,
+        'register_form': RegistrationForm(),
+        redirect_field_name: redirect_to,
+        'site': current_site,
+        'site_name': current_site.name,
+    }, context_instance=RequestContext(request))
 
 def profile(request, user_id):
     """docstring for profile"""
@@ -193,9 +243,10 @@ def validate_field(request):
     # Valid if there are no other users using that email address
     if request.POST.get("email"):
         from django.core.validators import email_re # OPTIMIZE Is it ok to have imports at the function level?
-        if email_re.search(request.POST.get("email")) and not User.objects.filter(email__exact = request.POST.get("email")):
+        email = request.POST.get("email")
+        if email_re.search(email) and not User.objects.filter(email__exact = email):
             valid = True
-        if request.user.is_authenticated() and request.user.email == request.POST.get("email"):
+        if request.user.is_authenticated() and request.user.email == email:
             valid = True
     
     # Valid if zipcode is in our location table
@@ -213,14 +264,6 @@ def house_party(request):
         if form.is_valid() and form.send(request.user):
             Record.objects.create_record(request.user, 'mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
-    return redirect('rah.views.index')
-
-def invite_friend(request):
-    if request.method == 'POST':
-        form = InviteFriendForm(request.POST)
-        if form.is_valid() and form.send(request.user):
-            Record.objects.create_record(request.user, 'mag_invite_friend')
-            messages.add_message(request, messages.SUCCESS, 'Invitation sent. Thanks!')
     return redirect('rah.views.index')
 
 def search(request):

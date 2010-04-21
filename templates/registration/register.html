@@ -1,12 +1,26 @@
 {% extends "rah/base.html" %}
 {% block content %}
-<h1>Create an account</h1>
-<form action="" method="post" id="registration_form" autocomplete="off">
-    {% include "rah/_overset_form.html" %}
-    <p><input type="submit" value="Register"/></p>
-    {% csrf_token %}
-</form>
-<a href="{% url django.contrib.auth.views.login %}">Log in</a> | 
-<a href="{% url django.contrib.auth.views.password_reset %}">Recover password</a>
+<div class="grid_2 alpha">
+	<form action="{% url login %}" method="post" id="login_form" autocomplete="off">
+		<h1>Sign In</h1>
+		{% with login_form as form %}
+	    	{% include "rah/_overset_form.html" %}
+		{% endwith %}
+	    <p><input type="submit" value="Login" /></p>
+	    {% csrf_token %}
+		<a href="{% url password_reset %}">Recover password</a>	
+	</form>
+</div>
+<div class="grid_2 omega">
+	<form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
+		<h1>Create an account</h1>
+		{% with register_form as form %}
+	    	{% include "rah/_overset_form.html" %}
+		{% endwith %}
+		<p><input type="submit" value="Register"/></p>
+	    <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
+	    {% csrf_token %}
+	</form>
+</div>
 {% endblock %}
 {% block js %}page_register{% endblock %}

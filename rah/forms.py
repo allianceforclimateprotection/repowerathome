@@ -23,7 +23,7 @@ class RegistrationForm(DefaultRahForm):
     """
     A form that creates a user, with no privileges, from the given email and password.
     """
-    email = forms.EmailField(label='Email')
+    email = forms.EmailField(label='Email', widget=forms.TextInput(attrs={'id':'email_register'}))
     first_name = forms.CharField(min_length=2)
     zipcode = forms.CharField(max_length=10, required=False)
     password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)

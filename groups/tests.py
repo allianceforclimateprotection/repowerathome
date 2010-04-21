@@ -477,7 +477,7 @@ class GroupCreateViewTest(TestCase):
     
     def test_login_required(self):
         response = self.client.get(self.group_create_url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        self.failUnlessEqual(response.template[0].name, "registration/register.html")
         self.client.login(username="test@test.com", password="test")
         response = self.client.get(self.group_create_url, follow=True)
         self.failUnlessEqual(response.template[0].name, "groups/group_create.html")
@@ -533,7 +533,7 @@ class GroupLeaveViewTest(TestCase):
     
     def test_login_required(self):
         response = self.client.get(self.group_leave_url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        self.failUnlessEqual(response.template[0].name, "registration/register.html")
     
     def test_invalid_group_id(self):
         self.client.login(username="test@test.com", password="test")
@@ -581,7 +581,7 @@ class GroupJoinViewTest(TestCase):
     
     def test_login_required(self):
         response = self.client.get(self.group_join_url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        self.failUnlessEqual(response.template[0].name, "registration/register.html")
     
     def test_invalid_group_id(self):
         self.client.login(username="test@test.com", password="test")
@@ -648,7 +648,7 @@ class GroupMembershipRequestViewTest(object):
     
     def test_login_required(self):
         response = self.client.get(self.url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        self.failUnlessEqual(response.template[0].name, "registration/register.html")
     
     def test_invalid_group_id(self):
         self.client.login(username="test@test.com", password="test")
@@ -802,7 +802,7 @@ class GroupEditViewTest(TestCase):
     
     def test_login_required(self):
         response = self.client.get(self.url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        self.failUnlessEqual(response.template[0].name, "registration/register.html")
     
     def test_not_a_manager(self):
         self.client.login(username="test@test.com", password="test")
