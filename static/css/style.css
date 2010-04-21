@@ -352,8 +352,11 @@ a.button:hover {
 /* Minor Col */
 #minor_col_sign {width:178px; height:70px; background: url(../images/theme/sprite_minor_col.png) 0px -6px;}
 #minor_col_host {width:178px; height:80px; background: url(../images/theme/sprite_minor_col.png) 0px -106px;}
-#minor_col_find {width:178px; height:80px; background: url(../images/theme/sprite_minor_col.png) 0px -216px;}
-#minor_col_ord { width:178px; height:9px;  background: url(../images/theme/sprite_minor_col.png) 0px -306px;}
+#minor_col_find {width:178px; height:72px; background: url(../images/theme/sprite_minor_col.png) 0px -216px;}
+#minor_col_ord { width:178px; height:9px;  background: url(../images/theme/sprite_minor_col.png) 0px -290px;}
+
+/* spite icons */
+.icon_gt {background: url(../images/theme/sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
 
 /* Breadcrumbs */
 #breadcrumbs {font-size:12px; margin-bottom:20px;}
@@ -384,16 +387,6 @@ a.button:hover {
 .action_committment, .action_undo {
     font-size: 0.8em;
 }
-/* Logged in Homepage */
-#actions_recommended .task_list{
-    display:none;
-}
-
-/* Action Show page */
-#action_show .task_list{
-    display:none;
-}
-
 
 /* Chart */
 #chart{
@@ -419,22 +412,22 @@ a.button:hover {
 .profile_attributes { margin-left: 85px; }
 /* @end */
 
-/* @group action_nugget */
-.action_nugget {
-    margin-bottom: 5px;
-    margin-top: 5px;
-    padding-top:10px;
-    position: relative;
-    border-top: 2px solid #333;
-}
-.action_nugget .title { color: #407cf3; font-weight: bold; }
-.action_nugget .points {
-    float: right;
-    font-weight: bold;
-    font-size: larger;
-}
+/* action_nugget */
+.action_nugget { margin-top: 5px; padding:15px; position: relative; background-color: #E4F0FA; -moz-border-radius: 18px; -webkit-border-radius: 18px; border-radius: 18px;}
+.action_nugget_teaser p { color: #74a01f;}
+.action_nugget a{ color: #2f6c35; }
+.action_nugget_title {margin-bottom:10px;}
+.action_nugget_points { float:right; font-weight: bold;}
+.action_nugget_learn_more { font-style: italic; text-decoration:underline; }
+.action_nugget_tags {margin-top:35px; margin-bottom:15px;}
 .action_nugget .completion { font-weight: bold; }
-/* @end */
+
+/* Minor Nav */
+#minor_nav {list-style-type: none;}
+#minor_nav li { border-bottom: 1px solid #5fbdcc; padding:6px;}
+#minor_nav li a {color:#9c9c9c;}
+#minor_nav li a:hover {color:#5fbdcc;}
+.minor_nav_last {border-bottom: none !important;}
 
 /* Magnify stuff*/
 #twitter_post_dialog, #invite_friend_dialog, #house_party_dialog { display: none; }
@@ -538,8 +531,24 @@ th.headerSortUp, th.headerSortDown {
 
 /* @group Tags */
 .tag_cloud { list-style: none; }
-
-.tag { padding: 2px; background-color: #BCBCBC; font-size: 0.7em; padding: 2px 4px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
+.tag_cloud li {margin-top:10px;}
+.tag { 
+    padding: 7px 14px !important;
+    border:1px solid #FFF;
+    background-color: #FFF;
+    text-transform: uppercase;
+    color: #c0c0c0 !important;
+    font-weight: bold;
+    font-size: 0.7em; 
+    padding: 2px 4px; 
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+    border-radius: 5px;
+}
+a.tag:hover {
+    border:1px solid #c0c0c0;
+    color: #c0c0c0;
+}
 /* @end */
 
 /* Activity Stream */

@@ -1,6 +1,19 @@
 {% extends "rah/base.html" %}
 {% block content %}
-    <div id="breadcrumbs">
+<div class="grid_1 alpha">
+	<ul id="minor_nav">
+		{% for tag in tags %}
+            <li {% if forloop.last %} class="minor_nav_last"{% endif %}>
+				<span class="icon_gt"></span>
+				<a href='{% url action_tag tag %}'>
+					{{ tag.name|deslug }} ({{ tag.count }})
+				</a>
+			</li>
+        {% endfor %}
+	</ul>
+</div>
+<div class="grid_3 omega">
+	<div id="breadcrumbs">
         <a href="{% url index %}">Home</a> &rsaquo;
         {% if tag_filter %}
             <a href="{% url action_show %}">Actions</a> &rsaquo;
@@ -9,19 +22,21 @@
             Actions
         {% endif %}
     </div>
-    <div id="action_show">
-        {% for action in actions %}
-            {% include 'actions/_action_nugget.html' %}
-            <br class='spacer' />
-        {% endfor %}
-    </div>
-{% endblock %}
-{% block minorcol %}
-    <h2>Tags</h2>
-    <ul class="tag_cloud">
-        {% for tag in tags %}
-            <li><a class="tag" href='{% url action_tag tag %}'>{{ tag.name|deslug }} ({{ tag.count }})</a></li>
-        {% endfor %}
-    </ul>
+	<img src="/static/images/theme/benefits.jpg"/>
+	<div class="clear"></div>
+	<div class="grid_2 alpha">
+		<h2>Featured Actions</h2>
+	    <div id="action_show">
+	        {% for action in actions %}
+	            {% include 'actions/_action_nugget.html' %}
+	            <br class='spacer' />
+	        {% endfor %}
+	    </div>
+	</div>
+	<div class="grid_1 omega">
+		
+	</div>
+</div>
+
 {% endblock %}
 {% block js %}page_action_show{% endblock %}

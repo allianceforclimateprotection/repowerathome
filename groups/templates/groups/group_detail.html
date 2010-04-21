@@ -6,7 +6,9 @@
 {% endif %}
 {% endblock %}
 
+
 {% block content %}
+<div class="grid_3 alpha">
     <div id="group_header" class="group_section">
         {% include "groups/_group_header.html" %}
     </div>
@@ -87,9 +89,8 @@
             </ul>
         {% endif %}
     </div>
-
-{% endblock %}
-{% block minorcol %}
+</div>
+<div class="grid_1 omega">
     {% if group.is_joinable and not is_member and not membership_pending %}
         <a href="{% url group_join group.id %}">Join this Group</a>
     {% endif %}
@@ -118,5 +119,6 @@
             {% include "_invite_form.html" %}
         </div>
     {% endif %}
+</div>
 {% endblock %}
 {% block js %}page_group_detail{% endblock %}

@@ -1,5 +1,6 @@
 {% extends "rah/base.html" %}
 {% block content %}
+<div class="grid_3 alpha">
     <div id="group_edit_tabs">
         <ul>
             <li><a href="#group_tab">Group</a></li>
@@ -37,8 +38,8 @@
 			</form>
 		</div>
     </div>
-{% endblock %}
-{% block minorcol %}
+</div>
+<div class="grid_1 omega">
     {% if requesters %}
         <h2>Membership Requests</h2>
         <ul>
@@ -53,5 +54,6 @@
             {% endfor %}
         </ul>
     {% endif %}
+</div>
 {% endblock %}
 {% block js %}page_group_edit{% endblock %}
