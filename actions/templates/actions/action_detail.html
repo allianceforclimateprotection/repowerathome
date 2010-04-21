@@ -2,6 +2,7 @@
 {% load comments %}
 
 {% block content %}
+<div class="grid_3 alpha">
     <div id="breadcrumbs">
         <a href="{% url index %}">Home</a> &rsaquo;
         <a href="{% url action_show %}">Actions</a> &rsaquo;
@@ -26,8 +27,8 @@
         <p>When do you think you'll complete this action?</p>
         <div class="commit_calendar"></div>
     </div>
-{% endblock %}
-{% block minorcol %}
+</div>
+<div class="grid_1 omega">
     {% if progress.date_committed and not progress.is_completed %}
         <h2>Commitment</h2>
         <p>
@@ -68,5 +69,8 @@
             {% endif %}
         </ul>
     {% endif %}
+
+</div>
+
 {% endblock %}
 {% block js %}page_action_detail{% endblock %}

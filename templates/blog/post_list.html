@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="grid_3 alpha">
     <div id="breadcrumbs">
         <a href="{% url rah.views.index %}">Home</a> &rsaquo;
         Blog
@@ -28,7 +29,6 @@
                     <span>(<a href="{{ post.get_absolute_url }}" title="View this post">read more</a>)</span>
                 </h4>
             </div>
-            <div>------------------------------------------------------------</div>
         {% endfor %}
     </div>
     
@@ -38,9 +38,8 @@
             <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
         </a>
     </h6>
-{% endblock %}
-
-{% block minorcol %}
+</div>
+<div class="grid_1 omega">
     {% get_blog_categories as category_list %}
     {% if category_list %}
         <h2>Categories</h2>
@@ -54,4 +53,5 @@
         {% endfor %}
         </ul>
     {% endif %}
+</div>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "rah/base.html" %}
 {% load records %}
-
 {% block content %}
+<div class="grid_3 alpha">
     <div id="chart"></div>
     <script type="text/javascript" charset="utf-8">
         /* <![CDATA[ */
@@ -24,9 +24,9 @@
             {% endfor %}
         </div>
     {% endif %}
-{% endblock %}
-{% block minorcol %}
-    <div>
+</div>
+<div class="grid_1 omega">
+	<div>
         <img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
         <h2>{{ profile.user }}</h2><br class="spacer"/>
         <p>
@@ -77,8 +77,8 @@
             {% render_record rec %}
         {% endfor %}
     {% endif %}
+</div>
 {% endblock %}
-
 {% block extrajs %}
     <!--[if IE]><script type="text/javascript" charset="utf-8" src="{{MEDIA_URL}}js/excanvas.min.js"></script><![endif]-->
     <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}js/jquery.flot.min.js"></script>
