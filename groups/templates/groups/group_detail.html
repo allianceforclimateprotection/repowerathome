@@ -92,7 +92,7 @@
 </div>
 <div class="grid_1 omega">
     {% if group.is_joinable and not is_member and not membership_pending %}
-        <a href="{% url group_join group.id %}">Join this Group</a>
+        <a class="button" href="{% url group_join group.id %}">Join Group</a>
     {% endif %}
     {% if membership_pending %}
         <span class="membership_status">Your membership status is currently <b>pending</b>.</span>
