@@ -702,7 +702,7 @@ class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, [self.requester.email])
         self.failUnlessEqual(email.subject, "Group Membership Response")
-        self.failUnless("Congratulations" in email.body)
+        self.failUnless("approved your access" in email.body)
         
 
 class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
@@ -723,7 +723,7 @@ class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, [self.requester.email])
         self.failUnlessEqual(email.subject, "Group Membership Response")
-        self.failUnless("Sorry" in email.body)
+        self.failUnless("turned down" in email.body)
 
 class GroupDetailViewTest(TestCase):
     def setUp(self):

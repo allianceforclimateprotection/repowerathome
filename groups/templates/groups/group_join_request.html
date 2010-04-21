@@ -1,4 +1,21 @@
-{{ user }} has requested to join {{ group }}.  Please login to Repower@Home to either
-approve to deny their membership request.
-
-http://{{ domain }}{{ group.get_absolute_url }}
+<p>
+    Hi all,<br />
+    Your group, {{ group }}, is all the rage right now. {{ user.get_full_name }} <br />
+    ({{ user.email }}) just requested to join.
+</p>
+<p>
+    Click here to <a href="http://{{ domain }}{% url group_approve group.id user.id %}">accept</a> 
+    or <a href="http://{{ domain }}{% url group_deny group.id user.id %}">deny</a> the request
+</p>
+<p>
+    Thanks for steering your group towards a more efficient future!
+</p>
+<p>
+    Remember, {{ group }} is a private group. Anyone who wants to join the <br />
+    group has to get your nod first. To make it public, 
+    <a href="http://{{ domain }}{% url group_edit group.slug %}">modify your group setting.</a>
+</p>
+<p>
+    Kudos,<br />
+    The Repower at Home team
+</p>

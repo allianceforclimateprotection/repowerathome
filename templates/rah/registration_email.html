@@ -1,10 +1,34 @@
-Hello, 
-
-{{ user }}, thanks for registering at Repower@Home, we're happy to see that you're committed to
-reducing your energy use at home and hope we can help.
-
-
-http://{{ domain }}
-
-Regards,
-The Repower@Home team
+<p>
+    Welcome {{ user.first_name }}!<br />
+    Congratulations on your new Repower at Home account. You’ve taken your first step on the path<br /> 
+    towards a smarter home and a cleaner world.
+</p>
+<p>
+    At Repower at Home, cool cats like you are getting together to save energy, save money,<br /> 
+    and save the world.
+</p>
+<p>
+    Can’t wait to get started? <a href="http://{{ domain }}{% url login %}">Click here to log in</a>.
+</p>
+<p>
+    With so much to do, where should you begin?  Here are some bright ideas:
+    <ul>
+        <li>Jump in and complete this month’s <a href="http://{{ domain }}{% url index %}">featured action</a>.</li>
+        <li>Get plugged in to your local energy efficiency scene by <a href="http://{{ domain }}{% url group_list %}">
+            finding a group</a>.</li> 
+        <li>Are you the first to arrive at the party? 
+            <a href="http://{{ domain }}{% url group_create %}">Start a group</a> for your 
+            neighborhood, school,<br />
+            church, or knitting club. Then, organize your group to take action together.</li> 
+        <li>Spread the word! <a href="http://{{ domain }}{% url index %}">Tweet it out</a>, 
+            <a href="http://{{ domain }}{% url index %}">invite friends</a>, send some smoke 
+            signals, whatever. Let <br />
+            everyone know about all the good you’re doing, and how they can join in on the fun.</li>
+</p>
+<p>
+    As you cruise around the site, let us know what you think by dropping us a line at feedback@repowerathome.com.
+</p>
+<p>
+    Welcome home,<br /> 
+    The Repower at Home team
+</p>
