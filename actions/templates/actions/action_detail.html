@@ -18,6 +18,7 @@
         {% render_template_snippet action.content %}
     </div>
     <div id="comments">
+        <div id="comments_divider"></div>
         {% with action as object %}
             {% render_comment_list for object %}
             {% render_comment_form for object %}

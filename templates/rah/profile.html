@@ -43,7 +43,7 @@
         <h2>Commitments</h2>
         <p>
         {% for row in commitment_list %}
-            <a href="{% url action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed}}<br/>
+            <a href="{% url action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed|date}}<br/>
         {% endfor %}
         </p>
     {% endif %}
