@@ -78,7 +78,7 @@ def action_cancel(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
     if request.method == "POST":    
         if action.cancel_for_user(request.user):
-            messages.success(request, "Sorry to see you can not make the commitment.")
+            messages.success(request, "We cancelled your commitment. If you're having trouble completing an action, try asking a question. Other members will be happy to help!")
         return redirect("action_detail", action_slug=action.slug)
     return render_to_response("actions/action_cancel.html", locals(), RequestContext(request))
 

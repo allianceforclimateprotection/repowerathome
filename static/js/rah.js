@@ -69,6 +69,7 @@ var rah = {
             $(".overset input, .overset textarea").blur(function(){
                var field = $(this);
                var label = field.prev("label");
+               console.log(label.text());
                if(field.val() == "") {
                    label.addClass("inside");
                } else {

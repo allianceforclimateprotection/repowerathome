@@ -182,7 +182,6 @@ a.button:hover {
 }
 
 .form_row {
-    position: relative;
     padding: 20px 0 25px 0;
     width: 320px;
 }
@@ -220,7 +219,6 @@ a.button:hover {
     background: url(../images/theme/input_text_error_background.png) repeat-x;
 }
 .form_row label {
-    display: block;
     font-family: helvetica;
     font-size: 12px;
     color: #C1C1C1;
@@ -229,13 +227,14 @@ a.button:hover {
     left: 0;
 }
 .overset {
-    padding: 20px 0 25px 0;
+    position: relative;
 }
 .overset label.inside {
     font-family: "superclarendon-1", "superclarendon-2", serif;
     font-weight: 700;
     font-style: normal;
     font-size: 16px;
+    position: absolute;
     top: 31px;
     left: 11px;
 }
@@ -301,6 +300,17 @@ a.button:hover {
     position:absolute;
     right:0px;
     top:15px;
+}
+#cse_search_box_form label.inside {
+    font-family: "superclarendon-1", "superclarendon-2", serif;
+    font-weight: 700;
+    font-style: normal;
+    color: #C1C1C1;
+    font-size: 16px;
+    position: absolute;
+    display: block;
+    top: -1px;
+    left: 11px;
 }
 #cse_search_box{
     font-size:14px;
@@ -610,8 +620,13 @@ th.headerSortUp, th.headerSortDown {
 .search_fields {
     width: 100%;
 }
+.search_widget label.inside {
+    display: block;
+    top: 16px;
+    left: 11px;
+}
 .search_widget .search_value { 
-    width: 39%;
+    width: 62%;
 }
 .search_widget .search_results { 
     border: 2px solid #A1D3E4; 
