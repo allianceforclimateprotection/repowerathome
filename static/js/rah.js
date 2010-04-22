@@ -69,7 +69,6 @@ var rah = {
             $(".overset input, .overset textarea").blur(function(){
                var field = $(this);
                var label = field.prev("label");
-               console.log(label.text());
                if(field.val() == "") {
                    label.addClass("inside");
                } else {
@@ -124,8 +123,7 @@ var rah = {
                 // Add an additional datapoint at the beginning to represent 0 points
                 yesterday = chart_data['point_data'][0][0] - (60*60*24*1000*1);
                 chart_data['point_data'].unshift([yesterday, 0]);
-                chart_data["tooltips"].unshift("");
-                                
+                
                 var plot = $.plot($("#chart"), [ { data: chart_data['point_data'] }], {
                     series: {
                         lines: { show: true },
@@ -150,7 +148,7 @@ var rah = {
                     if (index == 0){
                         return;
                     }
-                    $('<div class="chart_tooltip">' + chart_data["tooltips"][index] + '</div>').css( {
+                    $('<div class="chart_tooltip">' + chart_data["tooltips"][index-1] + '</div>').css( {
                         position: 'absolute',
                         display: 'none',
                         top: y - 18,
