@@ -157,6 +157,14 @@ var rah = {
                     }).appendTo("body").fadeIn(300);
                 }
             }
+            $('#chart_dialog').dialog({
+                title: 'Chart', modal: true, resizable: true, draggable: true, autoOpen: false, width: 630,
+                buttons: { "Close": function() { $('#chart_dialog').dialog('close'); }}
+            });
+            $("#chart_dialog_link").click(function(){
+                $('#chart_dialog').dialog('open');
+                return false;
+            });
             
             // Setup house party form, link, and dialog
             $("#house_party_form").validate({rules: {phone_number: { required: true }}});
