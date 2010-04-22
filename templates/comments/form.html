@@ -1,7 +1,7 @@
 {% load comments %}
 
-{% if user.is_authenticated %}
-    <h3>Leave a Comment</h3>
+{% if request.user.is_authenticated %}
+    <h2 id="comments_form_heading">Leave a comment</h2>
     {% if object %}
         {% get_comment_form for object as form %}
     {% endif %}
@@ -22,7 +22,7 @@
             {% endif %}
         {% endfor %}
         <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ object.get_absolute_url }}{% endif %}" />
-        <input type="submit" value="Add comment" id="id_submit" />
+        <input type="submit" value="ADD YOUR COMMENT" id="add_comment_submit" />
         {% csrf_token %}
         </div>
     </form>
