@@ -297,11 +297,23 @@ a.button:hover {
 	left:319px;
 	top:12px;
 }
-#header #cse_search_box{
+#header #cse_search_box_form{
     position:absolute;
     right:0px;
-    top:20px;
+    top:15px;
 }
+#cse_search_box{
+    font-size:14px;
+    color:#9ac059;
+    padding:3px 10px;
+    width:180px;
+    border:1px solid #638a19;
+    background: #e2eb9d url(../images/theme/input_text_search_background.png) repeat-x;
+}
+#cse_search_box_submit{
+    padding:2px 6px;
+}
+
 #nav_logged_in{
     position:absolute;
     font-size:0px;
