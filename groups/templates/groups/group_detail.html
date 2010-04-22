@@ -66,11 +66,16 @@
     <div id="group_discussion_list" class="group_section">
     	<h2>Discussions</h2>
 		{% if is_poster %}
-			<a href="{% url group_disc_create group.slug %}">Start new discussion</a> | 	
+			<a href="{% url group_disc_create group.slug %}">Start new discussion</a>
 		{% endif %}
-		<a href="{% url group_disc_list group.slug %}">See all discussions</a>
+		{% if not is_poster and not discs %}
+			No discussions yet.
+		{% endif %}
 		
-		{% include "groups/_group_disc_list.html" %}
+		{% if discs %}	
+			{% include "groups/_group_disc_list.html" %}
+			<a href="{% url group_disc_list group.slug %}">See all discussions</a>	
+		{% endif %}
     </div>
 
     <div id="group_activity" class="group_section">

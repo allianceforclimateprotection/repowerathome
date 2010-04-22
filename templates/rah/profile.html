@@ -2,43 +2,7 @@
 {% load records %}
 {% block content %}
 <div class="grid_1 alpha">
-	<div id="tongue">
-        <img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
-        <div id="tongue_username">{{ profile.user }}</div>
-        {% if profile.location %}
-            <div id="tongue_location">
-				<span class="icon_from"></span> {{ profile.location }}
-			</div>
-        {% endif %}
-		<div class="spacer"></div>
-		{% if user.is_authenticated and not is_others_profile %}
-			<div id="tongue_links">
-				<a href="{% url rah.views.profile_edit user.id %}">Edit your profile</a> &ndash; <a href="{% url logout %}">Logout</a>
-			</div>
-		{% endif %}
-		<div id="tongue_points">
-			{{ profile.total_points }}<span> points</span>
-		</div>
-		{# <div id="tongue_prizes"> #}
-		{# 	Prizes you've won #}
-		{# </div> #}
-		<div id="tongue_activity">
-			Activity
-			<div>
-				<a href="#chart" id="chart_dialog_link" title="View progress chart">
-					<img src="/static/images/theme/tongue_graph.gif" alt="graph"/>
-				</a>
-			</div>
-		</div>
-        {# {% if profile.building_type %} #}
-        {#     <b>Home:</b> {{ profile.get_building_type_display }}<br/> #}
-        {# {% endif %} #}
-        {# {% if profile.about %} #}
-        {#     <b>About: </b>{{ profile.about }}<br/> #}
-        {# {% endif %} #}
-		
-		<div class="spacer"></div>
-    </div>
+	{% include "rah/_tongue.html" %}
     {% if commitment_list %}
         <h2>Commitments</h2>
         <p>
@@ -76,23 +40,32 @@
         {% endfor %}
     {% endif %}
 </div>
-<div class="grid_2 omega">
-    {% if in_progress %}
-        <div class="actions_block" id="actions_in_progress">
-            <h2>In Progress Actions</h2>
-            {% for action in in_progress %}
-                {% include 'actions/_action_nugget.html' %}
-            {% endfor %}
-        </div>
-    {% endif %}
-    {% if recommended %}
-        <div class="actions_block" id="actions_recommended">
-            <h2>Recommended Actions</h2>
-            {% for action in recommended %}
-                {% include 'actions/_action_nugget.html' %}
-            {% endfor %}
-        </div>
-    {% endif %}
+<div class="grid_3 omega">
+	<a href="{% url action_detail 'eliminate-standby-vampire-power' %}">
+		<img src="/static/images/rich_actions/vampire/large.png" width="740" height="402"/>
+	</a>
+	<div class="spacer"></div>
+	<div class="grid_2 alpha">
+	    {% if in_progress %}
+	        <div class="actions_block" id="actions_in_progress">
+	            <h2>In Progress Actions</h2>
+	            {% for action in in_progress %}
+	                {% include 'actions/_action_nugget.html' %}
+	            {% endfor %}
+	        </div>
+	    {% endif %}
+	    {% if recommended %}
+	        <div class="actions_block" id="actions_recommended">
+	            <h2>Recommended Actions</h2>
+	            {% for action in recommended %}
+	                {% include 'actions/_action_nugget.html' %}
+	            {% endfor %}
+	        </div>
+	    {% endif %}
+	</div>
+	<div class="grid_1 omega">
+		third
+	</div>
 </div>
 <div id="chart_dialog">
     <script type="text/javascript" charset="utf-8">
