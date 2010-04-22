@@ -165,7 +165,7 @@ class Group(models.Model):
 
     def group_records(self, limit=None):
         records = Record.objects.filter(user__group=self)
-        records = Record.objects.exclude(user__profile__is_profile_private=True)
+        records = records.exclude(user__profile__is_profile_private=True)
         records = records.select_related().order_by("-created")
         return records[:limit] if limit else records
         
