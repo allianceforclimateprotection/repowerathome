@@ -1,16 +1,20 @@
 {% extends "rah/base.html" %}
 {% block content %}
 <div class="grid_1 alpha">
-	<div id="tongue_signup">
-		<form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
-			<h1>Sign Up!</h1>
-			{% with register_form as form %}
-		    	{% include "rah/_overset_form.html" %}
-			{% endwith %}
-			<p><input type="submit" value="Sign me up" id="register_submit"/></p>
-		    {% csrf_token %}
-		</form>
-    </div>
+	{% if not profile %}
+		<div id="tongue_signup">
+			<form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
+				<h1>Sign Up!</h1>
+				{% with register_form as form %}
+			    	{% include "rah/_overset_form.html" %}
+				{% endwith %}
+				<p><input type="submit" value="Sign me up" id="register_submit"/></p>
+			    {% csrf_token %}
+			</form>
+	    </div>
+	{% else %}
+		{% include "rah/_tongue.html" %}
+	{% endif %}
 	<ul id="minor_nav">
 		{% for tag in tags %}
             <li {% if forloop.last %} class="minor_nav_last"{% endif %}>

@@ -26,6 +26,7 @@ def action_show(request, tag_slug=None):
         actions = Action.tagged.with_any(tag_filter)
     tags = Action.tags.cloud()
     register_form = RegistrationForm()
+    profile = request.user.get_profile() if request.user.is_authenticated() else None
     return render_to_response("actions/action_show.html", locals(), 
         context_instance=RequestContext(request))
 

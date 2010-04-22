@@ -2,43 +2,7 @@
 {% load records %}
 {% block content %}
 <div class="grid_1 alpha">
-	<div id="tongue">
-        <img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
-        <div id="tongue_username">{{ profile.user }}</div>
-        {% if profile.location %}
-            <div id="tongue_location">
-				<span class="icon_from"></span> {{ profile.location }}
-			</div>
-        {% endif %}
-		<div class="spacer"></div>
-		{% if user.is_authenticated and not is_others_profile %}
-			<div id="tongue_links">
-				<a href="{% url rah.views.profile_edit user.id %}">Edit your profile</a> &ndash; <a href="{% url logout %}">Logout</a>
-			</div>
-		{% endif %}
-		<div id="tongue_points">
-			{{ profile.total_points }}<span> points</span>
-		</div>
-		{# <div id="tongue_prizes"> #}
-		{# 	Prizes you've won #}
-		{# </div> #}
-		<div id="tongue_activity">
-			Activity
-			<div>
-				<a href="#chart" id="chart_dialog_link" title="View progress chart">
-					<img src="/static/images/theme/tongue_graph.gif" alt="graph"/>
-				</a>
-			</div>
-		</div>
-        {# {% if profile.building_type %} #}
-        {#     <b>Home:</b> {{ profile.get_building_type_display }}<br/> #}
-        {# {% endif %} #}
-        {# {% if profile.about %} #}
-        {#     <b>About: </b>{{ profile.about }}<br/> #}
-        {# {% endif %} #}
-		
-		<div class="spacer"></div>
-    </div>
+	{% include "rah/_tongue.html" %}
     {% if commitment_list %}
         <h2>Commitments</h2>
         <p>
