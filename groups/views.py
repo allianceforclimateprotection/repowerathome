@@ -254,7 +254,7 @@ def group_disc_remove(request, group_slug, disc_id):
     
 def group_disc_list(request, group_slug):
     group = Group.objects.get(slug=group_slug)
-    paginator = Paginator(Discussion.objects.filter(parent=None), 20)
+    paginator = Paginator(Discussion.objects.filter(parent=None, group=group), 20)
     is_poster = group.is_poster(request.user)
     is_manager = group.is_user_manager(request.user)
     # Make sure page request is an int. If not, deliver first page.
