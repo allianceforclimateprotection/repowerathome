@@ -466,7 +466,10 @@ var rah = {
             $("#id_name").keyup(function() {
                 var slug = $("#id_slug");
                 if(!slug.data("changed")) {
+                    slug.focus();
                     slug.val(URLify($(this).val(), 50));
+                    slug.blur();
+                    $(this).focus();
                 }
             });
             

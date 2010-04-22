@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.http import Http404
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Context, loader, RequestContext
@@ -68,7 +68,9 @@ def group_join(request, group_id):
         context = { "user": request.user, "group": group, "domain": Site.objects.get_current().domain, }
         manager_emails = [user_dict["email"] for user_dict in User.objects.filter(group=group, groupusers__is_manager=True).values("email")]
         try:
-            send_mail("Group Join Request", template.render(Context(context)), None, manager_emails, fail_silently=False)
+            msg = EmailMessage("Group Join Request", template.render(Context(context)), None, manager_emails)
+            msg.content_subtype = "html"
+            msg.send()
             MembershipRequests.objects.create(group=group, user=request.user)
             messages.success(request, "You have made a request to join %s, a manager should grant or deny your membership shortly." % group, extra_tags="sticky")
         except SMTPException, e:
@@ -87,20 +89,22 @@ def group_membership_request(request, group_id, user_id, action):
             GroupUsers.objects.create(group=group, user=user, is_manager=False)
             membership_request.delete()
             if __send_response_email(request, group, user, True):
-                messages.success(request, "%s has been added to the group" % user)
+                messages.success(request, "%s has been added to the group" % user.get_full_name())
         elif action == "deny":
             membership_request.delete()
             if __send_response_email(request, group, user, False):
-                messages.success(request, "%s has been denied access to the group" % user)
+                messages.success(request, "%s has been denied access to the group" % user.get_full_name())
     else:
-        messages.error(request, "%s has not requested to join this group" % user)
+        messages.error(request, "%s has not requested to join this group" % user.get_full_name())
     return redirect("group_detail", group_slug=group.slug)
     
 def __send_response_email(request, group, user, approved):
     template = loader.get_template("groups/group_membership_response.html")
-    context = { "approved": approved, "group": group, "domain": Site.objects.get_current().domain, }
+    context = { "approved": approved, "group": group, "domain": Site.objects.get_current().domain, "user": user, }
+    msg = EmailMessage("Group Membership Response", template.render(Context(context)), None, [user.email])
+    msg.content_subtype = "html"
     try:
-        send_mail("Group Membership Response", template.render(Context(context)), None, [user.email], fail_silently=False)
+        msg.send()
         return True
     except SMTPException, e:
         messages.error(request, "A problem occured, if this persits please contact feedback@repowerathome.com", extra_tags="sticky")

@@ -71,8 +71,9 @@ class RegistrationForm(DefaultRahForm):
     def save(self, *args, **kwargs):
         template = loader.get_template("rah/registration_email.html")
         context = {"user": self.instance, "domain": Site.objects.get_current().domain,}
-        send_mail("Registration", template.render(Context(context)), None, 
-            [self.instance.email], fail_silently=False)
+        msg = EmailMessage("Registration", template.render(Context(context)), None, [self.instance.email])
+        msg.content_subtype = "html"
+        msg.send()
         return super(RegistrationForm, self).save(*args, **kwargs)
 
 class AuthenticationForm(forms.Form):

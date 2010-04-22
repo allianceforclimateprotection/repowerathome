@@ -11,7 +11,7 @@
                     <div class="group_section">
                         {% include "groups/_group_header.html" %}
                         {% if group.is_joinable and not group.is_member and not group.membership_pending %}
-                            <a href="{% url group_join group.id %}">Join this Group</a>
+                            <a class="button" href="{% url group_join group.id %}">Join Group</a>
                         {% endif %}
                     </div>
                 </li>

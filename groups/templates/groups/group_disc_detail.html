@@ -10,7 +10,7 @@
 {% else %}
 	{% if group.is_joinable %}
 		You must be a member of this group to post discussions. 
-		<a href="{% url group_join group.id %}">Join this Group.</a>
+		<a class="button" href="{% url group_join group.id %}">Join Group</a>
 	{% endif %}
 {% endif %}
 

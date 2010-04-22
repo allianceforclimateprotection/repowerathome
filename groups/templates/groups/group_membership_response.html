@@ -1,7 +1,40 @@
 {% if approved %}
-Congratulations you have been approved to join {{ group }}.
+    <p>
+        Hi {{ user.first_name }},<br />
+        You’re in! The group administrator just approved your access to {{ group }}.
+    </p>
+    <p>
+        Click here to go to <a href="http://{{ domain }}{{ group.get_absolute_url }}">{{ group }}</a>
+    </p>
+    <p>
+        On the group page, you can see what your fellow members are doing and how you <br />
+        stack up. That means now is the time to get your upgrade on! If you’ve already <br />
+        checked off the <a href="http://{{ domain }}{% url index %}">featured action</a>, 
+        browse the <a href="http://{{ domain }}{% url action_show %}">action library</a> to find 
+        your next move.<br />
+        The more actions you do, the more points you and your new group will earn.
+    </p>
+    <p>
+        Cheers,<br />
+        The Repower at Home team
+    </p>
 {% else %}
-Sorry, you have been denied to join {{ group }}.
+    <p>
+        Hi {{ user.first_name }},<br />
+        A group administrator turned down your request to join {{ group }}. But <br />
+        no worries! There are tons of groups on Repower at Home, including the one that’s <br />
+        perfect for you.
+    </p>
+    <p>
+        <a href="http://{{ domain }}{% url group_list %}">Click here to find more groups</a><br />
+        <a href="http://{{ domain }}{% url group_create %}">Click here to create your own</a>
+    </p>
+    <p>
+        Remember, only closed groups need administrator approval. You can join any  <br />
+        of the open groups at anytime.
+    </p>
+    <p>
+        Cheers,<br />
+        The Repower at Home team
+    </p>
 {% endif %}
-
-http://{{ domain }}{{ group.get_absolute_url }}
