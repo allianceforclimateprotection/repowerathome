@@ -1,8 +1,11 @@
 from django import forms
 from smtplib import SMTPException
+
+from django.contrib.sites.models import Site
 from django.core.mail import send_mail, EmailMessage
 from django.template import Context, loader
 from django.contrib import messages
+
 from utils import hash_val
 from models import Invitation
 
@@ -33,15 +36,13 @@ class InviteForm(forms.Form):
         content_id  = self.cleaned_data['content_id']
         invite = Invitation.objects.invite(from_user, to_email, invite_type, content_id)
         template = loader.get_template('emails/%s.html' % invite_type)
-        context = { 'from_user': from_user, 'note': self.cleaned_data['note'], "invite": invite }
+        context = { 'from_user': from_user, 'note': self.cleaned_data['note'], 
+            "invite": invite, "domain": Site.objects.get_current().domain, }
+        msg = EmailMessage('Invitation from %s to Repower@Home' % from_user.get_full_name(),
+                template.render(Context(context)), None, [to_email])
+        msg.content_subtype = "html"
         try:
-            send_mail(
-                'Invitation from %s to Repower@Home' % from_user.get_full_name(), 
-                template.render(Context(context)),
-                None, 
-                [to_email], 
-                fail_silently=False
-            )
+            msg.send()
         except SMTPException, e:
             return False
         return True
