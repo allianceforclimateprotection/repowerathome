@@ -254,7 +254,7 @@ def group_disc_remove(request, group_slug, disc_id):
     
 def group_disc_list(request, group_slug):
     group = Group.objects.get(slug=group_slug)
-    paginator = Paginator(Discussion.objects.filter(parent=None), 20)
+    paginator = Paginator(Discussion.objects.filter(parent=None, group=group), 20)
     is_poster = group.is_poster(request.user)
     is_manager = group.is_user_manager(request.user)
     # Make sure page request is an int. If not, deliver first page.
@@ -281,7 +281,7 @@ def _group_detail(request, group):
     membership_pending = group.has_pending_membership(request.user)
     requesters = group.requesters_to_grant_or_deny(request.user)
     has_other_managers = group.has_other_managers(request.user)
-    discs = Discussion.objects.filter(parent=None).order_by("-created")[:5]
+    discs = Discussion.objects.filter(parent=None, group=group).order_by("-created")[:5]
     invite_form = InviteForm(initial={'invite_type':'group', 'content_id':group.id})
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))
     
