@@ -14,6 +14,8 @@ from records.models import Record
 
 from models import Action, UserActionProgress, ActionForm, ActionFormData
 from forms import ActionCommitForm
+from rah.forms import RegistrationForm
+
 import action_forms
 
 def action_show(request, tag_slug=None):
@@ -23,6 +25,7 @@ def action_show(request, tag_slug=None):
         tag_filter = get_object_or_404(Tag, name=tag_slug)
         actions = Action.tagged.with_any(tag_filter)
     tags = Action.tags.cloud()
+    register_form = RegistrationForm()
     return render_to_response("actions/action_show.html", locals(), 
         context_instance=RequestContext(request))
 

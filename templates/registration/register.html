@@ -1,7 +1,7 @@
 {% extends "rah/base.html" %}
 {% block content %}
 <div class="grid_2 alpha">
-	<form action="{% url login %}" method="post" id="login_form" autocomplete="off">
+	<form action="{% url login %}{% if next %}?next={{ next|escape }}{% endif %}" method="post" id="login_form" autocomplete="off">
 		<h1>Sign In</h1>
 		{% with login_form as form %}
 	    	{% include "rah/_overset_form.html" %}
@@ -17,7 +17,7 @@
 		{% with register_form as form %}
 	    	{% include "rah/_overset_form.html" %}
 		{% endwith %}
-		<p><input type="submit" value="Register"/></p>
+		<p><input type="submit" value="Register" id="register_submit"/></p>
 	    <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
 	    {% csrf_token %}
 	</form>

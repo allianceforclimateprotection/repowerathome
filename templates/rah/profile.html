@@ -76,23 +76,32 @@
         {% endfor %}
     {% endif %}
 </div>
-<div class="grid_2 omega">
-    {% if in_progress %}
-        <div class="actions_block" id="actions_in_progress">
-            <h2>In Progress Actions</h2>
-            {% for action in in_progress %}
-                {% include 'actions/_action_nugget.html' %}
-            {% endfor %}
-        </div>
-    {% endif %}
-    {% if recommended %}
-        <div class="actions_block" id="actions_recommended">
-            <h2>Recommended Actions</h2>
-            {% for action in recommended %}
-                {% include 'actions/_action_nugget.html' %}
-            {% endfor %}
-        </div>
-    {% endif %}
+<div class="grid_3 omega">
+	<a href="{% url action_detail 'eliminate-standby-vampire-power' %}">
+		<img src="/static/images/rich_actions/vampire/large.png" width="740" height="402"/>
+	</a>
+	<div class="spacer"></div>
+	<div class="grid_2 alpha">
+	    {% if in_progress %}
+	        <div class="actions_block" id="actions_in_progress">
+	            <h2>In Progress Actions</h2>
+	            {% for action in in_progress %}
+	                {% include 'actions/_action_nugget.html' %}
+	            {% endfor %}
+	        </div>
+	    {% endif %}
+	    {% if recommended %}
+	        <div class="actions_block" id="actions_recommended">
+	            <h2>Recommended Actions</h2>
+	            {% for action in recommended %}
+	                {% include 'actions/_action_nugget.html' %}
+	            {% endfor %}
+	        </div>
+	    {% endif %}
+	</div>
+	<div class="grid_1 omega">
+		third
+	</div>
 </div>
 <div id="chart_dialog">
     <script type="text/javascript" charset="utf-8">

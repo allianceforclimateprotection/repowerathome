@@ -367,8 +367,8 @@ a.button:hover {
 #minor_col_find {width:178px; height:72px; background: url(../images/theme/sprite_minor_col.png) 0px -216px;}
 .minor_col_ord { width:178px; height:9px;  background: url(../images/theme/sprite_minor_col.png) 0px -290px;}
 
-/* tongue */
-#tongue { 
+/* tongues */
+#tongue, #tongue_signup { 
     color: #FFF;
     font-size:11px;
     background: #6EC3D1 url(../images/theme/sprite_minor_col.png) repeat-x 0px -416px; 
@@ -376,6 +376,7 @@ a.button:hover {
     padding: 28px 12px 20px 12px;
     -moz-border-radius-bottomleft: 8px; -webkit-border-bottom-left-radius: 8px; border-bottom-left-radius: 8px; -moz-border-radius-bottomright: 8px; -webkit-border-bottom-right-radius: 8px; border-bottom-right-radius: 8px;
 }
+/* logged in tongue */
 #tongue_username {font-size: 20px; font-weight:bold; margin-top:4px; }
 #tongue_location span{ margin-bottom:-5px;}
 #tongue_location {font-size:15px; white-space:nowrap;}
@@ -384,6 +385,21 @@ a.button:hover {
 #tongue_points { font-size: 72px; font-weight:bold; margin:30px 0px;}
 #tongue_points span { font-size: 22px; font-weight:bold;}
 #tongue_activity {border-top:1px solid #92d2dd;}
+/* Signup Tongue */
+#tongue_signup {
+    background: #e5f1fa;
+    margin-top:0px;
+    margin-bottom:20px;
+}
+#tongue_signup #registration_form {margin:0px;}
+#tongue_signup #registration_form input { width:192px; padding:3px 10px; font-size:11px;}
+#tongue_signup #registration_form .inside{font-size:11px; top:17px; color:#C1C1C1;}
+#tongue_signup #registration_form .overset{padding: 15px 0 0 0; }
+#tongue_signup #registration_form label{color:#FFF;}
+#tongue_signup #registration_form #register_submit{ margin-top:12px; font-size:14px; width:100%;}
+#tongue_signup #registration_form h1{ color:#172950; }
+
+
 
 /* spite icons */
 .icon_gt {background: url(../images/theme/sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
@@ -450,7 +466,7 @@ a.button:hover {
 /* @end */
 
 /* action_nugget */
-.action_nugget { margin-top: 5px; padding:15px; position: relative; background-color: #E4F0FA; -moz-border-radius: 18px; -webkit-border-radius: 18px; border-radius: 18px;}
+.action_nugget { margin: 0px 0 10px 0; padding:15px; position: relative; background-color: #E4F0FA; -moz-border-radius: 18px; -webkit-border-radius: 18px; border-radius: 18px;}
 .action_nugget_teaser p { color: #74a01f;}
 .action_nugget a{ color: #2f6c35; }
 .action_nugget_title {margin-bottom:10px;}
@@ -459,9 +475,17 @@ a.button:hover {
 .action_nugget_tags {margin-top:35px; margin-bottom:15px;}
 .action_nugget .completion { font-weight: bold; }
 
+/* action page */
+.h_aqua { 
+    font-family: Arial, sans-serif;
+    color: #5bbcca;
+    font-size:18px;
+    margin:24px 0px;
+}
+
 /* Minor Nav */
 #minor_nav {list-style-type: none;}
-#minor_nav li { border-bottom: 1px solid #5fbdcc; padding:6px;}
+#minor_nav li { border-bottom: 1px solid #5fbdcc; padding:7px; font-size:16px;}
 #minor_nav li a {color:#9c9c9c;}
 #minor_nav li a:hover {color:#5fbdcc;}
 .minor_nav_last {border-bottom: none !important;}
