@@ -520,7 +520,7 @@ a.button:hover {
     margin-bottom: 72px;
 }
 
-.comment_wrapper .comment, #id_comment {
+.comment_wrapper .comment, .comment textarea {
     float: left;
     width: 488px;
     height: 100px;
