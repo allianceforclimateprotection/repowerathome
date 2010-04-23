@@ -63,6 +63,7 @@
         </table>
     </div>
 
+	{% if not group.is_geo_group %}
     <div id="group_discussion_list" class="group_section">
     	<h2>Discussions</h2>
 		{% if is_poster %}
@@ -77,7 +78,8 @@
 			<a href="{% url group_disc_list group.slug %}">See all discussions</a>	
 		{% endif %}
     </div>
-
+	{% endif %}
+	
     <div id="group_activity" class="group_section">
         {% if group_records %}
             <h2>Group Activity
