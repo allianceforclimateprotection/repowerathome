@@ -36,7 +36,9 @@
             Actions
         {% endif %}
     </div>
-	<img src="/static/images/theme/benefits.jpg"/>
+	{% if not user.is_authenticated %}
+		<img src="/static/images/theme/benefits.jpg" alt="benefits"/>
+	{% endif %}
 	<div class="clear"></div>
 	<div class="grid_2 alpha">
 		<h2 class="h_aqua">Featured Actions</h2>
