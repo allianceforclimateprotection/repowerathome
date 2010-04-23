@@ -83,7 +83,10 @@ def register(request):
                 redirect_to = LOGIN_REDIRECT_URL
             return HttpResponseRedirect(redirect_to)
     else:
-        form = RegistrationForm()
+        if "email" in request.GET:
+            form = RegistrationForm(initial={"email": request.GET["email"]})
+        else:
+            form = RegistrationForm()
     return render_to_response("registration/register.html", {
         'register_form': form,
         'login_form': AuthenticationForm()
