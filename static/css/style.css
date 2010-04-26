@@ -329,13 +329,13 @@ a.button:hover {
     position:absolute;
     font-size:0px;
     top:64px;
-    left:42px;
+    left:62px;
 }
 #nav_logged_out{
     position:absolute;
     font-size:0px;
     top:64px;
-    left:115px;
+    left:135px;
 }
 #nav_login{width:88px; background: url(../images/theme/nav_sprite.png) -169px 92px;}
 #nav_login:hover{background-position: -169px 46px;}
@@ -345,17 +345,18 @@ a.button:hover {
 #nav_actions:hover{background-position: -376px 46px;}
 #nav_community{width:185px; background: url(../images/theme/nav_sprite.png) -517px 92px;}
 #nav_community:hover{background-position: -517px 46px;}
+#nav_teams{width:126px; background: url(../images/theme/nav_sprite.png) -1083px 92px;}
+#nav_teams:hover{background-position: -1083px 46px;}
 #nav_blog{width:114px; background: url(../images/theme/nav_sprite.png) -702px 92px;}
 #nav_blog:hover{background-position: -702px 46px;}
 #nav_signup{width:98px; background: url(../images/theme/nav_sprite.png) -816px 92px;}
 #nav_signup:hover{background-position: -816px 46px;}
 #nav_welcome{width:169px; background: url(../images/theme/nav_sprite.png) 0px 92px;}
-#nav_welcome:hover{background-position: 0px 46px;}
+/*#nav_welcome:hover{background-position: 0px 46px;}*/
 #nav_dashboard{width:169px; background: url(../images/theme/nav_sprite.png) -914px 92px;}
 #nav_dashboard:hover{background-position: -914px 46px;}
-#nav_feedback{width:117px; background: url(../images/theme/nav_sprite.png) -1083px 92px;}
-#nav_feedback:hover{background-position: -1083px 46px;}
-
+#nav_feedback{width:117px; background: url(../images/theme/nav_sprite.png) -1209px 92px;}
+#nav_feedback:hover{background-position: -1209px 46px;}
 #nav_logged_out a, #nav_logged_in a{color:#a8ce61; display:block; height:46px; float:left;}
 #nav_logged_out a:hover, #nav_logged_in a:hover{color:#90b54b;}
 
