@@ -184,6 +184,7 @@ a.button:hover {
 .form_row {
     padding: 20px 0 25px 0;
     width: 320px;
+    position: relative;
 }
 
 .form_row input, .form_row textarea {
