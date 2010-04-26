@@ -152,10 +152,6 @@ def profile(request, user_id):
     twitter_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
     })
-    tooltip_template = loader.get_template("rah/_chart_tooltip.html")
-    chart_points = Record.objects.get_chart_data(user)
-    point_data = [(chart_point.get_date_as_milli_from_epoch(), chart_point.points) for chart_point in chart_points]
-    tooltips = [tooltip_template.render(Context({"records": chart_point.records, "request": request})) for chart_point in chart_points]
     return render_to_response('rah/profile.html', {
         'total_points': user.get_profile().total_points,
         'committed': committed,
@@ -164,7 +160,6 @@ def profile(request, user_id):
         'house_party_form': HousePartyForm(request.user),
         'invite_form': InviteForm(),
         'twitter_status_form': twitter_form,
-        'chart_data': json.dumps({"point_data": point_data, "tooltips": tooltips}),
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
         'commitment_list': user.get_commit_list(),

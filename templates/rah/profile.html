@@ -67,18 +67,5 @@
 		
 	</div>
 </div>
-<div id="chart_dialog">
-    <script type="text/javascript" charset="utf-8">
-        /* <![CDATA[ */
-        var chart_data = {{chart_data|safe}};
-        /* ]]> */
-    </script>
-	<div id="chart"></div>
-</div>
 {% endblock %}
-{% block extrajs %}
-    <!--[if IE]><script type="text/javascript" charset="utf-8" src="{{MEDIA_URL}}js/excanvas.min.js"></script><![endif]-->
-    <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}js/jquery.flot.min.js"></script>
-{% endblock %}
-
 {% block js %}page_profile{% endblock %}

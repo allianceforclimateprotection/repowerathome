@@ -19,9 +19,9 @@
 	{# 	Prizes you've won #}
 	{# </div> #}
 	<div id="tongue_activity">
-		Activity
+		<a class="chart_link" href="{% url records_chart profile.user.id %}">Activity</a>
 		<div>
-			<a href="#chart" id="chart_dialog_link" title="View progress chart">
+			<a href="{% url records_chart profile.user.id %}" id="chart_dialog_link" class="chart_link" title="View progress chart">
 				<img src="/static/images/theme/tongue_graph.gif" alt="graph"/>
 			</a>
 		</div>

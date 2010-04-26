@@ -58,6 +58,7 @@ var rah = {
             rah.mod_messages.init();
             rah.mod_ajax_setup.init();
             rah.mod_validate_setup.init();
+            rah.mod_chart_dialog.init();
         }
     },
     
@@ -134,55 +135,6 @@ var rah = {
         init: function(){
             rah.mod_action_nugget.init();
             
-            // Setup the chart
-            if (!chart_data['point_data'].length) {
-                $("#chart").html('<img src="' + media_url + 'images/theme/chart_demo.png" alt="sample chart"/>');
-            } else {
-                // Add an additional datapoint at the beginning to represent 0 points
-                yesterday = chart_data['point_data'][0][0] - (60*60*24*1000*1);
-                chart_data['point_data'].unshift([yesterday, 0]);
-                
-                var plot = $.plot($("#chart"), [ { data: chart_data['point_data'] }], {
-                    series: {
-                        lines: { show: true },
-                        points: { show: true, radius: 10 },
-                        shadowSize: 5
-                    },
-                    grid: { hoverable: true, clickable: true, backgroundColor: { colors: ["#DDD", "#FFF"] } },
-                    legend: {show: false},
-                    xaxis: {mode: "time",autoscaleMargin: 0.1,  minTickSize: [1, "day"]},
-                    yaxis: {min: 0, tickDecimals: 0, autoscaleMargin: 0.6}
-                });
-                $("#chart").bind("plothover", function (event, pos, item) {
-                    if (item) {
-                        showTooltip(item.pageX, item.pageY, item.dataIndex);
-                    }
-                    else {
-                        $(".chart_tooltip").remove();
-                    }
-                });
-                function showTooltip(x, y, index) {
-                    // The first datapoint is an artificial point representing zero points, so it doesn't need a tooltip
-                    if (index == 0){
-                        return;
-                    }
-                    $('<div class="chart_tooltip">' + chart_data["tooltips"][index-1] + '</div>').css( {
-                        position: 'absolute',
-                        display: 'none',
-                        top: y - 18,
-                        left: x + 5
-                    }).appendTo("body").fadeIn(300);
-                }
-            }
-            $('#chart_dialog').dialog({
-                title: 'Chart', modal: true, resizable: true, draggable: true, autoOpen: false, width: 630,
-                buttons: { "Close": function() { $('#chart_dialog').dialog('close'); }}
-            });
-            $("#chart_dialog_link").click(function(){
-                $('#chart_dialog').dialog('open');
-                return false;
-            });
-            
             // Setup house party form, link, and dialog
             rah.mod_house_party_form.init();
             
@@ -206,6 +158,21 @@ var rah = {
             $('#house_party_dialog').dialog({
                 title: 'House Party', modal: true, resizable: false, draggable: false, autoOpen: false, 
                 buttons: { "Give me a call": function() { $('#house_party_form').submit(); }}
+            });
+        }
+    },
+    
+    mod_chart_dialog: {
+        init: function() {
+            $(".chart_link").click(function(){
+                $.getScript($(this).attr("href"), function(){
+                    $('#chart_dialog').dialog({
+                        title: 'Chart', modal: true, resizable: true, draggable: true, autoOpen: false, width: 630,
+                        buttons: { "Close": function() { $('#chart_dialog').dialog('close'); }}
+                    });
+                    $('#chart_dialog').dialog('open');
+                });
+                return false;
             });
         }
     },
