@@ -33,8 +33,9 @@ def index(request):
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
         return profile(request, request.user.id)
-        
-    return render_to_response("rah/home_logged_out.html", context_instance=RequestContext(request))
+    
+    context = {'house_party_form': HousePartyForm(),}
+    return render_to_response("rah/home_logged_out.html", context, context_instance=RequestContext(request))
 
 def privacy_policy(request):
     return render_to_response("rah/privacy_policy.html", {}, context_instance=RequestContext(request))

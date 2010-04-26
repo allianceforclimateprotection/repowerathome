@@ -1,0 +1,9 @@
+<div id='house_party_dialog'>
+    <form action="{% url rah.views.house_party %}" method="post" id="house_party_form">
+        <p>We'd love to talk to you about hosting a house party.</p>
+        <div>
+        {{ house_party_form.as_p }}
+        </div>
+        {% csrf_token %}
+    </form>
+</div>

@@ -382,7 +382,7 @@ a.button:hover {
 .overset .homepage_input {
     margin: 5px 0;
     height: 27px;
-    width: 172px;
+    width: 200px;
     border: 1px #A6CFD9 solid;
     padding: 2px;
     font-size: 14px;
@@ -397,7 +397,7 @@ a.button:hover {
     color: #C1C1C1;
     position: absolute;
     top: -13px;
-    left: 33px;
+    left: 21px;
 }
 .overset .homepage_label[class~="inside"] {
     font-family: "superclarendon-1", "superclarendon-2", serif;
@@ -406,7 +406,8 @@ a.button:hover {
     font-size: 14px;
     position: absolute;
     top: 10px;
-    left: 48px;
+    left: -50%;
+    width: 200%;
 }
 
 /* tongues */

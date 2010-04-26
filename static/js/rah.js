@@ -109,6 +109,24 @@ var rah = {
         }
     },
     
+    page_home_logged_out: {
+        init: function() {
+            // $("#signup_form").validate({
+            //     rules: {
+            //         email: { required: true, email: true, remote: { url: "/validate/", type: "post" } }
+            //     },
+            //     messages: {
+            //         email: { remote: "That email is already registered" }
+            //     }
+            // });
+            rah.mod_house_party_form.init();
+            $("#houseparty_form #id_phone").change(function(){
+                $("#house_party_dialog #id_phone_number").val($(this).val());
+            });
+            id_phone_number
+        }
+    },
+    
     /**
     * Profile page
     **/
@@ -166,12 +184,7 @@ var rah = {
             });
             
             // Setup house party form, link, and dialog
-            $("#house_party_form").validate({rules: {phone_number: { required: true }}});
-            $('#house_party_link').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
-            $('#house_party_dialog').dialog({
-                title: 'House Party', modal: true, resizable: false, draggable: false, autoOpen: false, 
-                buttons: { "Give me a call": function() { $('#house_party_form').submit(); }}
-            });
+            rah.mod_house_party_form.init();
             
             rah.mod_invite_friend.init();
             
@@ -182,6 +195,17 @@ var rah = {
             $('#twitter_post_dialog').dialog({
                 title: 'Tell your tweeps about us', modal: true, autoOpen: false,
                 buttons: (form.size() > 0 ? { "Update status": function() { form.submit(); } } : { })
+            });
+        }
+    },
+    
+    mod_house_party_form: {
+        init: function() {
+            $("#house_party_form").validate({rules: {phone_number: { required: true }}});
+            $('#house_party_link').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
+            $('#house_party_dialog').dialog({
+                title: 'House Party', modal: true, resizable: false, draggable: false, autoOpen: false, 
+                buttons: { "Give me a call": function() { $('#house_party_form').submit(); }}
             });
         }
     },
