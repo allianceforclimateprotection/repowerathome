@@ -130,38 +130,43 @@ class Group(models.Model):
             return self.image if self.image else "images/theme/geo_group.jpg"
         return self.image if self.image else "images/theme/default_group.png"
         
-    def completed_actions_by_user(self):
+    def completed_actions_by_user(self, limit=None):
         """
         what actions have been completed by users in this group and how many users have completed each action
         """
         fields = ", ".join(["%s.%s" % (Action._meta.db_table, f.column) for f in Action._meta.fields])
-        return Action.objects.raw("""
-        SELECT DISTINCT %s, COUNT(DISTINCT actions_useractionprogress.user_id) AS completes_in_group
-        FROM actions_action
-        INNER JOIN actions_useractionprogress ON (actions_action.id = actions_useractionprogress.action_id)
-        INNER JOIN groups_groupusers ON (actions_useractionprogress.user_id = groups_groupusers.user_id)
-        WHERE groups_groupusers.group_id = %s
-        AND actions_useractionprogress.is_completed = 1
-        GROUP BY %s
-        ORDER BY completes_in_group DESC
-        """ % (fields, self.id, fields))
+        query = """
+            SELECT DISTINCT %(fields)s, COUNT(DISTINCT actions_useractionprogress.user_id) AS completes_in_group
+            FROM actions_action
+            INNER JOIN actions_useractionprogress ON (actions_action.id = actions_useractionprogress.action_id)
+            INNER JOIN groups_groupusers ON (actions_useractionprogress.user_id = groups_groupusers.user_id)
+            WHERE groups_groupusers.group_id = %(group_id)s
+            AND actions_useractionprogress.is_completed = 1
+            GROUP BY %(fields)s
+            ORDER BY completes_in_group DESC
+        """
+        if limit:
+            query += "LIMIT %(limit)s"
+        return Action.objects.raw(query % {"fields": fields, "group_id": self.id, "limit": limit})
 
-    def members_ordered_by_points(self):
-        return User.objects.raw("""
-        SELECT auth_user.id, auth_user.username, auth_user.first_name, auth_user.last_name, auth_user.email, auth_user.password, 
-            auth_user.is_staff, auth_user.is_active, auth_user.is_superuser, auth_user.last_login, auth_user.date_joined, rah_profile.total_points,
-            SUM(actions_useractionprogress.is_completed) AS actions_completed, 
-            COUNT(actions_useractionprogress.date_committed) AS actions_committed,
-            (SELECT MAX(created) FROM records_record WHERE user_id = auth_user.id) AS last_active
-        FROM auth_user 
-        INNER JOIN groups_groupusers ON (auth_user.id = groups_groupusers.user_id)
-        LEFT OUTER JOIN actions_useractionprogress ON (auth_user.id = actions_useractionprogress.user_id)
-        LEFT OUTER JOIN rah_profile ON (auth_user.id = rah_profile.user_id)
-        WHERE groups_groupusers.group_id = %s
-        GROUP BY auth_user.id, auth_user.username, auth_user.first_name, auth_user.last_name, auth_user.email, auth_user.password,
-            auth_user.is_staff, auth_user.is_active, auth_user.is_superuser, auth_user.last_login, auth_user.date_joined, rah_profile.total_points
-        ORDER BY rah_profile.total_points DESC
-        """ % self.id)
+    def members_ordered_by_points(self, limit=None):
+        fields = ", ".join(["%s.%s" % (User._meta.db_table, f.column) for f in User._meta.fields])
+        query = """
+            SELECT %(fields)s, rah_profile.total_points,
+                SUM(actions_useractionprogress.is_completed) AS actions_completed, 
+                COUNT(actions_useractionprogress.date_committed) AS actions_committed,
+                (SELECT MAX(created) FROM records_record WHERE user_id = auth_user.id) AS last_active
+            FROM auth_user 
+            INNER JOIN groups_groupusers ON (auth_user.id = groups_groupusers.user_id)
+            LEFT OUTER JOIN actions_useractionprogress ON (auth_user.id = actions_useractionprogress.user_id)
+            LEFT OUTER JOIN rah_profile ON (auth_user.id = rah_profile.user_id)
+            WHERE groups_groupusers.group_id = %(group_id)s
+            GROUP BY %(fields)s, rah_profile.total_points
+            ORDER BY rah_profile.total_points DESC
+        """
+        if limit:
+            query += "LIMIT %(limit)s"
+        return User.objects.raw(query % {"fields": fields, "group_id": self.id, "limit": limit})
 
     def group_records(self, limit=None):
         records = Record.objects.filter(user__group=self)
