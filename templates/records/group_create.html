@@ -2,5 +2,7 @@
 {% block activity_item %}
     {% safe_user_link record.user %} created a new group, 
     <a href="{{ content_object.get_absolute_url }}">{{ content_object.name }}</a>, 
+{% endblock %}
+{% block activity_date %}
     on {{ record.created|date:"M j, Y" }}{% if record.points %} (+{{ record.points }} points){% endif %}
 {% endblock %}

@@ -33,8 +33,9 @@ def index(request):
     # If the user is logged in, show them the logged in homepage and bail
     if request.user.is_authenticated():
         return profile(request, request.user.id)
-        
-    return render_to_response("rah/home_logged_out.html", context_instance=RequestContext(request))
+    
+    context = {'house_party_form': HousePartyForm(request.user),}
+    return render_to_response("rah/home_logged_out.html", context, context_instance=RequestContext(request))
 
 def privacy_policy(request):
     return render_to_response("rah/privacy_policy.html", {}, context_instance=RequestContext(request))
@@ -160,7 +161,7 @@ def profile(request, user_id):
         'committed': committed,
         'completed': completed,
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
-        'house_party_form': HousePartyForm(),
+        'house_party_form': HousePartyForm(request.user),
         'invite_form': InviteForm(),
         'twitter_status_form': twitter_form,
         'chart_data': json.dumps({"point_data": point_data, "tooltips": tooltips}),
@@ -263,9 +264,10 @@ def validate_field(request):
     
 def house_party(request):
     if request.method == 'POST':
-        form = HousePartyForm(request.POST)
+        form = HousePartyForm(user=request.user, data=request.POST)
         if form.is_valid() and form.send(request.user):
-            Record.objects.create_record(request.user, 'mag_request_party_host_info')
+            if request.user.is_authenticated():
+                Record.objects.create_record(request.user, 'mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
     return redirect('rah.views.index')
 

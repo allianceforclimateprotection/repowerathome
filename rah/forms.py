@@ -181,14 +181,27 @@ class AccountForm(forms.ModelForm):
              raise ValidationError('This email address has already been registered in our system.')
 
 class HousePartyForm(forms.Form):
+    name = forms.CharField()
     phone_number = forms.CharField()
-    call_time = forms.ChoiceField(choices=(('anytime', 'Anytime'), ('morning', 'Morning'), ('afternoon', 'Afternoon'), ('evening', 'Evening')))
+    call_time = forms.ChoiceField(choices=(
+        ('anytime', 'Anytime'), 
+        ('morning', 'Morning'), 
+        ('afternoon', 'Afternoon'), 
+        ('evening', 'Evening')
+    ))
+    
+    def __init__(self, user, *args, **kwargs):
+        form = super(HousePartyForm, self).__init__(*args, **kwargs)
+        if user.is_authenticated():
+            self.fields["name"].widget = forms.HiddenInput()
+            self.fields["name"].initial = user.get_full_name()
+        return form
     
     def send(self, user):
         template = loader.get_template('rah/house_party_email.html')
         context = {
-            'name': user.get_full_name(),
-            'email': user.email,
+            'name': self.cleaned_data["name"],
+            'email': user.email if user.is_authenticated() else None,
             'call_time': self.cleaned_data['call_time'],
             'phone_number': self.cleaned_data['phone_number'],
         }

@@ -184,6 +184,7 @@ a.button:hover {
 .form_row {
     padding: 20px 0 25px 0;
     width: 320px;
+    position: relative;
 }
 
 .form_row input, .form_row textarea {
@@ -377,12 +378,12 @@ a.button:hover {
 #minor_col_sign {height:70px; background: url(../images/theme/sprite_minor_col.png) 0px -6px;}
 #minor_col_host {height:80px; background: url(../images/theme/sprite_minor_col.png) 0px -106px;}
 #minor_col_find {height:72px; background: url(../images/theme/sprite_minor_col.png) 0px -216px;}
-.minor_col_ord {height:9px;  background: url(../images/theme/sprite_minor_col.png) 0px -290px;}
+.minor_col_ord {width: 42px; height:9px;  background: url(../images/theme/sprite_minor_col.png) -60px -290px;}
 
 .overset .homepage_input {
     margin: 5px 0;
     height: 27px;
-    width: 172px;
+    width: 200px;
     border: 1px #A6CFD9 solid;
     padding: 2px;
     font-size: 14px;
@@ -397,7 +398,7 @@ a.button:hover {
     color: #C1C1C1;
     position: absolute;
     top: -13px;
-    left: 33px;
+    left: 21px;
 }
 .overset .homepage_label[class~="inside"] {
     font-family: "superclarendon-1", "superclarendon-2", serif;
@@ -406,7 +407,8 @@ a.button:hover {
     font-size: 14px;
     position: absolute;
     top: 10px;
-    left: 48px;
+    left: -50%;
+    width: 200%;
 }
 
 /* tongues */
@@ -721,7 +723,18 @@ a.tag:hover {
 /* @end */
 
 /* Activity Stream */
-.activity_item { margin-bottom:10px;}
+.activity_item { 
+    margin-bottom: 25px;
+    font-size: 13px;
+    color: #9C9C9C;
+}
+.activity_item a {
+    color: #9C9C9C;
+    text-decoration: underline;
+}
+.activity_item .activity_date { 
+    color: #C5C5C5;
+}
 
 
 /* @groups rateable */

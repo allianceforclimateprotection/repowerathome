@@ -28,12 +28,12 @@
 	</div>
 </div>
 <div class="grid_1 omega">
-	<h2>Get started</h2>
-	<p>Gain full access to Repower at Home's features. It's free!</p>
+    {# <h2>Get started</h2> #}
+    {# <p>Gain full access to Repower at Home's features. It's free!</p> #}
     {# <p><a href="{% url register %}" title="">Create your account</a></p> #}
 	<div class="homepage_form_box">
     	<div id="minor_col_sign" class="minor_col_img"></div>
-    	<form action="{% url register %}" method="get">
+    	<form id="signup_form" action="{% url register %}" method="get">
     	    <div class="overset">
     	        <label class="homepage_label" for="id_email">Enter your email</label>
     	        <input id="id_email" name="email" class="homepage_input" type="text"></input>
@@ -46,11 +46,22 @@
 	</div>
 	<div class="homepage_form_box">
 	    <div id="minor_col_host" class="minor_col_img"></div>
+	    <form id="houseparty_form" action="{% url register %}" method="get">
+    	    <div class="overset">
+    	        <label class="homepage_label" for="id_phone">Enter your phone #</label>
+    	        <input id="id_phone" name="phone" class="homepage_input" type="text"></input>
+    	    </div>
+    	    <div>
+    	        <input id="house_party_link" type="submit" value="Get Started"></input>
+    	    </div>
+    	</form>
 	    <div class="minor_col_ord minor_col_img"></div>
 	</div>
-	<div class="homepage_form_box">
-	   <div id="minor_col_find" class="minor_col_img"></div>
-	   <div class="minor_col_ord minor_col_img"></div>
-	</div>
+    {% include "rah/_house_party_dialog.html" %}
+    {# <div class="homepage_form_box"> #}
+    {#    <div id="minor_col_find" class="minor_col_img"></div> #}
+    {#    <div class="minor_col_ord minor_col_img"></div> #}
+    {# </div> #}
 </div>
 {% endblock %}
+{% block js %}page_home_logged_out{% endblock %}
