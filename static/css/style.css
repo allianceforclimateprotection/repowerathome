@@ -378,7 +378,7 @@ a.button:hover {
 #minor_col_sign {height:70px; background: url(../images/theme/sprite_minor_col.png) 0px -6px;}
 #minor_col_host {height:80px; background: url(../images/theme/sprite_minor_col.png) 0px -106px;}
 #minor_col_find {height:72px; background: url(../images/theme/sprite_minor_col.png) 0px -216px;}
-.minor_col_ord {height:9px;  background: url(../images/theme/sprite_minor_col.png) 0px -290px;}
+.minor_col_ord {width: 42px; height:9px;  background: url(../images/theme/sprite_minor_col.png) -60px -290px;}
 
 .overset .homepage_input {
     margin: 5px 0;
