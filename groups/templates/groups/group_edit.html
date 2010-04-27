@@ -1,11 +1,28 @@
 {% extends "rah/base.html" %}
-{% block content %}
-<div class="grid_3 alpha">
+
+{% block left_sidebar %}
+    {% if requesters %}
+        <h2>Membership Requests</h2>
+        <ul>
+            {% for requester in requesters %}
+                <li class="membership_request">
+                    {% safe_user_link requester %} would like to join
+                    <div class="membership_tools">
+                        <a href="{% url group_approve group.id requester.id %}">Approve</a> or 
+                        <a href="{% url group_deny group.id requester.id %}">Deny</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block right_content %}
     <div id="group_edit_tabs">
         <ul>
             <li><a href="#group_tab">Group</a></li>
             <li><a href="#members_tab">Members</a></li>
-			<li><a href="#discussions_tab">Discussions</a></li>
+            <li><a href="#discussions_tab">Discussions</a></li>
         </ul>
         <div id="group_tab">
             <form id="group_form" action="" method="post" enctype="multipart/form-data">
@@ -30,30 +47,14 @@
                 {% csrf_token %}
             </form>
         </div>
-		<div id="discussions_tab">
-			<form action="" method="post">
-				{{discussions_form.as_p}}
-				<p><input type="submit" name="discussion_settings" value="Save Discussion Settings"></input></p>
-				{% csrf_token %}
-			</form>
-		</div>
+        <div id="discussions_tab">
+            <form action="" method="post">
+                {{discussions_form.as_p}}
+                <p><input type="submit" name="discussion_settings" value="Save Discussion Settings"></input></p>
+                {% csrf_token %}
+            </form>
+        </div>
     </div>
-</div>
-<div class="grid_1 omega">
-    {% if requesters %}
-        <h2>Membership Requests</h2>
-        <ul>
-            {% for requester in requesters %}
-                <li class="membership_request">
-                    {% safe_user_link requester %} would like to join
-                    <div class="membership_tools">
-                        <a href="{% url group_approve group.id requester.id %}">Approve</a> or 
-                        <a href="{% url group_deny group.id requester.id %}">Deny</a>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-</div>
 {% endblock %}
+
 {% block js %}page_group_edit{% endblock %}

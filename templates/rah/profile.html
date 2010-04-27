@@ -1,8 +1,11 @@
 {% extends "rah/base.html" %}
 {% load records %}
-{% block content %}
-<div class="grid_1 alpha">
-	{% include "rah/_tongue.html" %}
+
+{% block tongue %}
+    {% include "rah/_tongue.html" %}
+{% endblock %}
+
+{% block left_sidebar %}
     {% if commitment_list %}
         <h2>Commitments</h2>
         <p>
@@ -29,7 +32,7 @@
         <h2>Completed Actions</h2>
         <p>
         {% for action in completed %}
-            <a href="{% url action_detail action.slug %}">{{action.name}}</a> ({{action.total_points}} points)<br/>
+            <a href="{% url action_detail action.slug %}">{{action.name}}</a> (+{{action.points}} points)<br/>
         {% endfor %}
         </p>
     {% endif %}
@@ -39,8 +42,8 @@
             {% render_record rec %}
         {% endfor %}
     {% endif %}
-</div>
-<div class="grid_3 omega">
+{% endblock %}
+{% block right_content %}
 	<a href="{% url action_detail 'eliminate-standby-vampire-power' %}">
 		<img src="/static/images/rich_actions/vampire/large.png" width="740" height="402"/>
 	</a>
@@ -63,9 +66,5 @@
 	        </div>
 	    {% endif %}
 	</div>
-	<div class="grid_1 omega">
-		
-	</div>
-</div>
 {% endblock %}
 {% block js %}page_profile{% endblock %}

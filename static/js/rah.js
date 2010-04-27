@@ -165,13 +165,7 @@ var rah = {
     mod_chart_dialog: {
         init: function() {
             $(".chart_link").click(function(){
-                $.getScript($(this).attr("href"), function(){
-                    $('#chart_dialog').dialog({
-                        title: 'Chart', modal: true, resizable: true, draggable: true, autoOpen: false, width: 630,
-                        buttons: { "Close": function() { $('#chart_dialog').dialog('close'); }}
-                    });
-                    $('#chart_dialog').dialog('open');
-                });
+                $.getScript($(this).attr("href"));
                 return false;
             });
         }
@@ -261,6 +255,12 @@ var rah = {
                         form.submit();
                     }
                 }
+            });
+            $(".commit_cancel").click(function(){
+                if(confirm("Are you sure you want to cancel your commitment?")) {
+                    $(".action_cancel_form:first").submit();
+                }
+               return false; 
             });
             if(undefined !== window.rich_action_name){
                 try{
