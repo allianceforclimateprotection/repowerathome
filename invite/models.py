@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import permalink
 import random
@@ -17,9 +18,8 @@ Invitation.objects.invite(u, "jonlesser@gmail.com", "some_type", [content_object
 
 class InvitationManager(models.Manager):
     def invite(self, user, email, invite_type, content_id=None):
-        invite = Invitation.objects.create(user=user, email=email, invite_type=invite_type, content_id=content_id, token=self.make_token())
-        invite.save()
-        return invite
+        return Invitation.objects.create(user=user, email=email, invite_type=invite_type, 
+            content_id=content_id, token=self.make_token())
     
     def rsvp(self, invitee, invitation):
         rsvp, created = Rsvp.objects.get_or_create(invitee=invitee, invitation=invitation)
@@ -46,7 +46,7 @@ class Invitation(models.Model):
         return ('invite.views.invite_welcome', [self.token])
     
     def get_permalink(self):
-        return "http://%s%s" % (Site.objects.get_current(), self.get_absolute_url())
+        return "http://%s%s?next=%s" % (Site.objects.get_current(), reverse("login"), self.get_absolute_url())
 
 class Rsvp(models.Model):
     invitee = models.ForeignKey(User)
