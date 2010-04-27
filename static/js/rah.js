@@ -256,6 +256,12 @@ var rah = {
                     }
                 }
             });
+            $(".commit_cancel").click(function(){
+                if(confirm("Are you sure you want to cancel your commitment?")) {
+                    $(".action_cancel_form:first").submit();
+                }
+               return false; 
+            });
             if(undefined !== window.rich_action_name){
                 try{
                     rah["rich_actions"][rich_action_name].init();
