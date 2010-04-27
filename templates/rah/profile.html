@@ -32,7 +32,7 @@
         <h2>Completed Actions</h2>
         <p>
         {% for action in completed %}
-            <a href="{% url action_detail action.slug %}">{{action.name}}</a> ({{action.total_points}} points)<br/>
+            <a href="{% url action_detail action.slug %}">{{action.name}}</a> (+{{action.points}} points)<br/>
         {% endfor %}
         </p>
     {% endif %}
