@@ -18,7 +18,6 @@ Invitation.objects.invite(u, "jonlesser@gmail.com", "some_type", [content_object
 class InvitationManager(models.Manager):
     def invite(self, user, email, invite_type, content_id=None):
         invite = Invitation.objects.create(user=user, email=email, invite_type=invite_type, content_id=content_id, token=self.make_token())
-        invite.save()
         return invite
     
     def rsvp(self, invitee, invitation):
