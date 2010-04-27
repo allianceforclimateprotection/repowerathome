@@ -18,7 +18,7 @@ if (!chart_data['point_data'].length) {
             shadowSize: 5
         },
         grid: { hoverable: true, clickable: true, backgroundColor: { colors: ["#DDD", "#FFF"] } },
-        legend: {show: false},
+        legend: {show: true},
         xaxis: {mode: "time",autoscaleMargin: 0.1,  minTickSize: [1, "day"]},
         yaxis: {min: 0, tickDecimals: 0, autoscaleMargin: 0.6}
     });
@@ -43,4 +43,9 @@ if (!chart_data['point_data'].length) {
         }).appendTo("body").fadeIn(300);
     }
 }
+$('#chart_dialog').dialog({
+    title: 'Activity Chart', modal: true, resizable: true, draggable: true, autoOpen: false, width: 630,
+    buttons: { "Close": function() { $('#chart_dialog').dialog('close'); }}
+});
+$('#chart_dialog').dialog('open');
 /* ]]> */
