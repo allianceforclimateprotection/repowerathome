@@ -1,5 +1,5 @@
 <div class="action_nugget">
-	<a href="{% url action_detail action.slug %}"><img src="/static/images/theme/action_nugget_ill.jpg"></a>
+	<a href="{% url action_detail action.slug %}"><img src="/static/images/theme/action_nugget_ill.jpg" width="460" height="114"></a>
 	<span class="action_nugget_points">{{ action.points }} Points</span>
     <h3 class="action_nugget_title"><a href="{% url action_detail action.slug %}">{{ action.name }}</a></h3>
     <div class="action_nugget_teaser">{{ action.teaser|safe|linebreaks }}</div>
