@@ -1,5 +1,5 @@
 {% extends "rah/base.html" %}
-{% block content %}
+{% block right_content %}
 	<h2>Discussions</h2>
 	{% with discs.object_list as discs %}
 		{% include "groups/_group_disc_list.html" %}
@@ -17,4 +17,3 @@
 		{% endif %}
 	{% endif %}
 {% endblock %}
-{% block js %}{% endblock %}

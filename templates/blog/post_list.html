@@ -12,45 +12,45 @@
     <h2>Post archive</h2>
 {% endblock %}
 
-{% block content %}
-<div class="grid_3 alpha">
-    <div id="breadcrumbs">
-        <a href="{% url rah.views.index %}">Home</a> &rsaquo;
-        Blog
-    </div>
-    <div class="post_list">
-        {% for post in object_list %}
-            <div>
-                {% include 'blog/_post_header.html' %}
-                <p class="tease">{{ post.tease|safe }} (<a href="{{ post.get_absolute_url }}" title="View this post">read more</a>)</p>
-                {% get_comment_count for post as comment_count %}
-                <p>
-                    {{ comment_count }} comment{{ comment_count|pluralize }}
-                </p>
-            </div>
-        {% endfor %}
-    </div>
+{% block right_content %}
+    <div class="grid_3 alpha">
+        <div id="breadcrumbs">
+            <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+            Blog
+        </div>
+        <div class="post_list">
+            {% for post in object_list %}
+                <div>
+                    {% include 'blog/_post_header.html' %}
+                    <p class="tease">{{ post.tease|safe }} (<a href="{{ post.get_absolute_url }}" title="View this post">read more</a>)</p>
+                    {% get_comment_count for post as comment_count %}
+                    <p>
+                        {{ comment_count }} comment{{ comment_count|pluralize }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
     
-    <h6>
-        follow us
-        <a class="atom_link" href="{% url blog_feed %}">
-            <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
-        </a>
-    </h6>
-</div>
-<div class="grid_1 omega">
-    {% get_blog_categories as category_list %}
-    {% if category_list %}
-        <h2>Categories</h2>
-        <ul>
-        {% for category in category_list %}
-            <li>
-                <a href="{% url blog_category_detail category %}">{{ category.title }}</a>&nbsp;
-                {% get_comment_count for category as comment_count %}
-                <span>({{ category.post_set.count }})</span>
-            </li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-</div>
+        <h6>
+            follow us
+            <a class="atom_link" href="{% url blog_feed %}">
+                <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
+            </a>
+        </h6>
+    </div>
+    <div class="grid_1 omega">
+        {% get_blog_categories as category_list %}
+        {% if category_list %}
+            <h2>Categories</h2>
+            <ul>
+            {% for category in category_list %}
+                <li>
+                    <a href="{% url blog_category_detail category %}">{{ category.title }}</a>&nbsp;
+                    {% get_comment_count for category as comment_count %}
+                    <span>({{ category.post_set.count }})</span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 {% endblock %}

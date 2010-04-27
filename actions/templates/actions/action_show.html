@@ -1,33 +1,37 @@
 {% extends "rah/base.html" %}
-{% block content %}
-<div class="grid_1 alpha">
-	{% if not profile %}
-		<div id="tongue_signup">
-			<form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
-				<h1>Sign Up!</h1>
-				{% with register_form as form %}
-			    	{% include "rah/_overset_form.html" %}
-				{% endwith %}
-				<p><input type="submit" value="Sign me up" id="register_submit"/></p>
-			    {% csrf_token %}
-			</form>
-	    </div>
-	{% else %}
-		{% include "rah/_tongue.html" %}
-	{% endif %}
-	<ul id="minor_nav">
-		{% for tag in tags %}
+
+{% block tongue %}
+    {% if not request.user.is_authenticated %}
+        <div id="tongue_signup">
+            <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
+                <h1>Sign Up!</h1>
+                {% with register_form as form %}
+                    {% include "rah/_overset_form.html" %}
+                {% endwith %}
+                <p><input type="submit" value="Sign me up" id="register_submit"/></p>
+                {% csrf_token %}
+            </form>
+        </div>
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% block left_sidebar %}
+    <ul id="minor_nav">
+        {% for tag in tags %}
             <li {% if forloop.last %} class="minor_nav_last"{% endif %}>
-				<span class="icon_gt"></span>
-				<a href='{% url action_tag tag %}'>
-					{{ tag.name|deslug }} ({{ tag.count }})
-				</a>
-			</li>
+                <span class="icon_gt"></span>
+                <a href='{% url action_tag tag %}'>
+                    {{ tag.name|deslug }} ({{ tag.count }})
+                </a>
+            </li>
         {% endfor %}
-	</ul>
-</div>
-<div class="grid_3 omega">
-	<div id="breadcrumbs">
+    </ul>
+{% endblock %}
+
+{% block right_content %}
+    <div id="breadcrumbs">
         <a href="{% url index %}">Home</a> &rsaquo;
         {% if tag_filter %}
             <a href="{% url action_show %}">Actions</a> &rsaquo;
@@ -36,22 +40,21 @@
             Actions
         {% endif %}
     </div>
-	{% if not user.is_authenticated %}
-		<img src="/static/images/theme/benefits.jpg" alt="benefits"/>
-	{% endif %}
-	<div class="clear"></div>
-	<div class="grid_2 alpha">
-		<h2 class="h_aqua">Featured Actions</h2>
-	    <div id="action_show">
-	        {% for action in actions %}
-	            {% include 'actions/_action_nugget.html' %}
-	        {% endfor %}
-	    </div>
-	</div>
-	<div class="grid_1 omega">
-		
-	</div>
-</div>
-
+    {% if not user.is_authenticated %}
+        <img src="/static/images/theme/benefits.jpg" alt="benefits"/>
+    {% endif %}
+    <div class="clear"></div>
+    <div class="grid_2 alpha">
+        <h2 class="h_aqua">Featured Actions</h2>
+        <div id="action_show">
+            {% for action in actions %}
+                {% include 'actions/_action_nugget.html' %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="grid_1 omega">
+        
+    </div>
 {% endblock %}
+
 {% block js %}page_action_show{% endblock %}

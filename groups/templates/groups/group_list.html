@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 {% load search_widget %}
 
-{% block content %}
-    <div class="grid_3 alpha">
-    {% if new_groups %}
-        <h3>New Groups</h3>
-        <ol>
-            {% for group in new_groups %}
-                <li>
-                    <div class="group_section">
-                        {% include "groups/_group_header.html" %}
-                        {% if group.is_joinable and not group.is_member and not group.membership_pending %}
-                            <a class="button" href="{% url group_join group.id %}">Join Group</a>
-                        {% endif %}
-                    </div>
-                </li>
-            {% endfor %}
-        </ol>
-    {% endif %}
+{% block right_content %}
+    <div class="grid_2 alpha">
+        {% if new_groups %}
+            <h3>New Groups</h3>
+            <ol>
+                {% for group in new_groups %}
+                    <li>
+                        <div class="group_section">
+                            {% include "groups/_group_header.html" %}
+                            {% if group.is_joinable and not group.is_member and not group.membership_pending %}
+                                <a class="button" href="{% url group_join group.id %}">Join Group</a>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% endif %}
     </div>
     <div class="grid_1 omega">
         <h2>About Groups</h2>
