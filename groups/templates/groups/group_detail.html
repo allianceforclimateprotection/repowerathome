@@ -31,7 +31,8 @@
     {% endif %}
     {% if is_member %}
         <h2>Magnify your Impact</h2>
-        <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend to this group</a>
+        {% activity_by_slug mag_invite_friend as invite_friend_act %}
+        <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend to this group  (+{{ invite_friend_act.points }} points)</a>
         <div id='invite_friend_dialog'>
             {% include "_invite_form.html" %}
         </div>
