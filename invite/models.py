@@ -20,7 +20,7 @@ class InvitationManager(models.Manager):
     def invite(self, user, email, invite_type, content_id=None):
         return Invitation.objects.create(user=user, email=email, invite_type=invite_type, 
             content_id=content_id, token=self.make_token())
-    
+            
     def rsvp(self, invitee, invitation):
         rsvp, created = Rsvp.objects.get_or_create(invitee=invitee, invitation=invitation)
         return rsvp if created else None
