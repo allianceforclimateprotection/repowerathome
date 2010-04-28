@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -83,6 +86,12 @@ class Action(models.Model):
                                         FROM actions_actionformdata afd
                                         WHERE afd.user_id = %s
                                         AND actions_actionform.id = afd.action_form_id"""})
+                                        
+    def illustration_file_ext(self):
+        return "png"
+                                        
+    def has_illustration(self):
+        return os.path.exists(os.path.join(settings.MEDIA_ROOT, "images/actions/%s.%s" % (self.slug, self.illustration_file_ext())))
     
     def __unicode__(self):
         return u"%s" % self.name

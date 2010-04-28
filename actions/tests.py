@@ -14,7 +14,7 @@ class ActionTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="test", password="test", email="test@test.com")
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.cfw = Action.objects.get(slug="use-ceiling-fan-winter")
         
     def test_actions_by_status(self):
@@ -100,43 +100,43 @@ class ActionTest(TestCase):
         
         self.iwh.complete_for_user(self.user)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_completed, 1)
         self.failUnlessEqual(self.csp.users_completed, 0)
         
         self.csp.complete_for_user(user_2)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_completed, 1)
         self.failUnlessEqual(self.csp.users_completed, 1)
         
         self.iwh.complete_for_user(user_2)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_completed, 2)
         self.failUnlessEqual(self.csp.users_completed, 1)
         
         self.csp.complete_for_user(self.user)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_completed, 2)
         self.failUnlessEqual(self.csp.users_completed, 2)
         
         self.csp.complete_for_user(user_2)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_completed, 2)
         self.failUnlessEqual(self.csp.users_completed, 2)
         
         self.csp.undo_for_user(user_2)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_completed, 2)
         self.failUnlessEqual(self.csp.users_completed, 1)
         
         self.csp.undo_for_user(self.user)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_completed, 2)
         self.failUnlessEqual(self.csp.users_completed, 0)
         
@@ -148,43 +148,43 @@ class ActionTest(TestCase):
 
         self.iwh.commit_for_user(self.user, today)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_committed, 1)
         self.failUnlessEqual(self.csp.users_committed, 0)
 
         self.csp.commit_for_user(user_2, today)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_committed, 1)
         self.failUnlessEqual(self.csp.users_committed, 1)
 
         self.iwh.commit_for_user(user_2, today)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_committed, 2)
         self.failUnlessEqual(self.csp.users_committed, 1)
 
         self.csp.commit_for_user(self.user, today)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_committed, 2)
         self.failUnlessEqual(self.csp.users_committed, 2)
 
         self.csp.commit_for_user(user_2, today)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_committed, 2)
         self.failUnlessEqual(self.csp.users_committed, 2)
         
         self.csp.cancel_for_user(user_2)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_committed, 2)
         self.failUnlessEqual(self.csp.users_committed, 1)
         
         self.csp.cancel_for_user(self.user)
         self.iwh = Action.objects.get(slug="insulate-water-heater")
-        self.csp = Action.objects.get(slug="cut-standby-power")
+        self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.failUnlessEqual(self.iwh.users_committed, 2)
         self.failUnlessEqual(self.csp.users_committed, 0)
         

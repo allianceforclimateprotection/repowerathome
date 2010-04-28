@@ -462,6 +462,30 @@ a.button:hover {
 #registration_form { margin-left:60px;}
 
 /* Action Detail page */
+#action_details {
+    margin-top: -6px;
+    padding: 6px;
+    background-color: #E4F0FA;
+}
+#action_details, #action_details p {
+    color: #45C3D3;
+}
+#action_title {
+    margin-bottom: 10px;
+}
+#action_content {
+    margin-top: 10px;
+    font-family: helvetica;
+    font-size: 18px;
+}
+#action_content object {
+    padding: 22px;
+    background-color: #D1DDE8;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    border-radius: 9px;
+}
+
 .action_detail_task_container {
     position:relative;
 }

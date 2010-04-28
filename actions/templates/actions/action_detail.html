@@ -50,14 +50,19 @@
         <a href="{% url action_show %}">Actions</a> &rsaquo;
         {{action.name}}
     </div>
-    <h1>{{action.name}}</h1>
-    <span class='tag_list'>
-        {% for tag in action.tags %}
-            <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
-        {% endfor %}
-    </span>
-    <div class="action_content">
-        {% render_template_snippet action.content %}
+    {% if action.has_illustration %}
+        <img src="{{ MEDIA_URL }}images/actions/{{ action.slug }}.{{ action.illustration_file_ext }}" />
+    {% endif %}
+    <div id="action_details">
+        <h1 id="action_title">{{action.name}}</h1>
+        <span class='tag_list'>
+            {% for tag in action.tags %}
+                <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
+            {% endfor %}
+        </span>
+        <div id="action_content">
+            {% render_template_snippet action.content %}
+        </div>
     </div>
     <div id="comments">
         <div id="comments_divider"></div>
