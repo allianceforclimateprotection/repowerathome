@@ -54,11 +54,9 @@ body {
 }
 
 /** Elements **/
-a {
-    color: #0C386E;
-    text-decoration: none;
-}
-a:hover { color: #00AAD8 }
+a { color: #00AAD8; text-decoration: none; }
+a:hover { text-decoration:underline; }
+a:active { color: #6EC3D1; text-decoration:underline; }
 h1, h2, h3, h4, h5, h6 {
     font-family:"superclarendon-1", "superclarendon-2", serif;
     font-weight:700;
@@ -632,32 +630,21 @@ a.button:hover {
     width: 170px; 
 }
 .group_section { margin-bottom: 20px; }
-
 .group_parent { font-size: 0.7em; }
-
 .group_image, .group_details { float: left; }
-
+.group_action { float: right; font-size: 0.8em; display: inline; margin-left: 3px; }
+.membership_request { list-style: disc inside; }
+.membership_tools {  font-weight: bold; margin-left: 30px; }
+#group_info div { float: left; }
+#group_info li { list-style: decimal inside; }
+#top_members { margin-left: 70px; }
 .group_details { padding-left: 10px; }
 
-.group_description { font-size: 0.8em; }
-
-.group_action { float: right; font-size: 0.8em; display: inline; margin-left: 3px; }
-
-.membership_type { font-size: 0.7em; }
-
-.membership_status { font-size: 0.9em; }
-
-.membership_request { list-style: disc inside; }
-
-.membership_tools { font-size: 0.8em; font-weight: bold; margin-left: 30px; }
-
-#group_info div { float: left; }
-
-#top_members { margin-left: 70px; }
-
-#group_info li { font-size: 0.9em; list-style: decimal inside; }
-
-#group_activity li { font-size: 0.8em; list-style: disc outside; margin-left: 20px; }
+.group_list {margin:0px; padding:0px; list-style-type: none; height:100%; overflow:auto;}
+.group_list li{ float:left; width:240px; margin-right:5px;}
+.group_list_thumb { float:left; margin-right:8px;}
+.group_list_name {float:left; font-size:18px; font-weight:bold;}
+.group_list_name div {font-size:14px; color:#aaa; font-weight:normal; margin-top:-3px;}
 
 th.header {  
     cursor: pointer;
