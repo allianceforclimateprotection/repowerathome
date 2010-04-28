@@ -1,6 +1,6 @@
 <div id="tongue">
     <img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
-    <div id="tongue_username">{{ profile.user }}</div>
+    <div id="tongue_username">{{ profile.user.get_full_name }}</div>
     {% if profile.location %}
         <div id="tongue_location">
             <span class="icon_from"></span> {{ profile.location }}
