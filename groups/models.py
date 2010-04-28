@@ -11,8 +11,8 @@ from invite.models import Rsvp
 from notification import models as notification
    
 class GroupManager(models.Manager):
-    def new_groups_with_memberships(self, user, limit=None):
-        groups = self.all().order_by("-created")
+    def groups_with_memberships(self, user, limit=None):
+        groups = self.filter(is_geo_group=False).order_by("-created")
         groups = groups.extra(
                     select_params = (user.id,), 
                     select = { 'is_member': 'SELECT groups_groupusers.created \
@@ -114,6 +114,7 @@ class Group(models.Model):
     objects = GroupManager()
     disc_moderation = models.IntegerField(choices=DISC_MODERATION, default=0, null=True, verbose_name="Moderate discussions?")
     disc_post_perm = models.IntegerField(choices=DISC_POST_PERM, default=0, null=True,  verbose_name="Who can post discussions?")
+    member_count = models.IntegerField(default=0)
     
     def is_joinable(self):
         return not self.is_geo_group
@@ -318,6 +319,12 @@ def update_discussion_reply_count(sender, instance, **kwargs):
         parent.reply_count = reply_count
         parent.save()
 
+def update_group_member_count(sender, instance, **kwargs):
+    group = Group.objects.get(pk=instance.group.id)
+    group.member_count = GroupUsers.objects.filter(group=group).count()
+    group.save()
+
 models.signals.post_save.connect(associate_with_geo_groups, sender=Profile)
 models.signals.post_save.connect(add_invited_user_to_group, sender=Rsvp)
 models.signals.post_save.connect(update_discussion_reply_count, sender=Discussion)
+models.signals.post_save.connect(update_group_member_count, sender=GroupUsers)

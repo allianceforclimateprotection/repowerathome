@@ -221,6 +221,13 @@ class GroupTest(TestCase):
         self.sabres = Group.objects.get(name="sabres")
         self.ny = Group.objects.get(name="New York")
     
+    def test_member_count_signal(self):
+        group = Group.objects.get(pk=self.sabres.id)
+        self.failUnlessEqual(group.member_count, 0)
+        GroupUsers.objects.create(group=self.sabres, user=self.user)
+        group = Group.objects.get(pk=self.sabres.id)
+        self.failUnlessEqual(group.member_count, 1)
+    
     def test_create_geo_group(self):
         profile = self.user.get_profile()
         profile.location = Location.objects.get(zipcode="02804")
