@@ -43,10 +43,10 @@ class Invitation(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        return ('invite.views.invite_welcome', [self.token])
+        return ('invite.views.rsvp', [self.token])
     
     def get_permalink(self):
-        return "http://%s%s?next=%s" % (Site.objects.get_current(), reverse("login"), self.get_absolute_url())
+        return "http://%s%s" % (Site.objects.get_current(), self.get_absolute_url())
 
 class Rsvp(models.Model):
     invitee = models.ForeignKey(User)
