@@ -155,7 +155,7 @@ class GroupDiscViews(TestCase):
         # try to remove as an anon user
         self.client.logout()
         response = self.client.post(self.urls['d1_remove'], {'is_removed': True}, follow=True)
-        self.assertRedirects(response, "/login/?next=%2Fgroups%2Fyankees%2Fdiscussions%2F1%2Fremove")
+        self.assertRedirects(response, "/login/?next=%2Fteams%2Fyankees%2Fdiscussions%2F1%2Fremove")
         disc = Discussion.objects.get(pk=1)
         self.failUnlessEqual(disc.is_removed, False)
         
@@ -221,12 +221,20 @@ class GroupTest(TestCase):
         self.sabres = Group.objects.get(name="sabres")
         self.ny = Group.objects.get(name="New York")
     
-    def test_member_count_signal(self):
+    def test_member_count_signals(self):
+        # Make sure there is no one in the group
         group = Group.objects.get(pk=self.sabres.id)
         self.failUnlessEqual(group.member_count, 0)
-        GroupUsers.objects.create(group=self.sabres, user=self.user)
+        
+        # Add a user and check the member_count is updated
+        gu = GroupUsers.objects.create(group=self.sabres, user=self.user)
         group = Group.objects.get(pk=self.sabres.id)
         self.failUnlessEqual(group.member_count, 1)
+        
+        # Delete the group user, member_count should decrement 
+        gu.delete()
+        group = Group.objects.get(pk=self.sabres.id)
+        self.failUnlessEqual(group.member_count, 0)
     
     def test_create_geo_group(self):
         profile = self.user.get_profile()
@@ -828,7 +836,7 @@ class GroupListViewTest(TestCase):
             Group.objects.create(name="%s" % i, slug="slug-%s" % i)
         response = self.client.get(self.url)
         self.failUnlessEqual(response.template[0].name, "groups/group_list.html")
-        self.failUnlessEqual(len(response.context["new_groups"]), 5)
+        self.failUnlessEqual(len(response.context["groups"]), 10)
 
 class GroupEditViewTest(TestCase):
     def setUp(self):
