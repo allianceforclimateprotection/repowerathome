@@ -3,7 +3,7 @@
 {% block tongue %}
     {% if not request.user.is_authenticated %}
         <div id="tongue_signup">
-            <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
+            <form action="{% url register %}?next={{ request.path }}" method="post" id="registration_form" autocomplete="off">
                 <h1>Sign Up!</h1>
                 {% with register_form as form %}
                     {% include "rah/_overset_form.html" %}

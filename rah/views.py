@@ -62,6 +62,9 @@ def password_reset_complete(request):
 
 @csrf_protect
 def register(request):
+    
+    redirect_to = request.REQUEST.get(REDIRECT_FIELD_NAME, '')
+    
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -78,10 +81,17 @@ def register(request):
             messages.success(request, 'Thanks for registering.')
             messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
             
-            redirect_to = request.GET.get(REDIRECT_FIELD_NAME, '')
             # Light security check -- make sure redirect_to isn't garbage.
-            if not redirect_to or '//' in redirect_to or ' ' in redirect_to:
-                redirect_to = LOGIN_REDIRECT_URL
+            if not redirect_to or ' ' in redirect_to:
+                redirect_to = settings.LOGIN_REDIRECT_URL
+            
+            # Heavier security check -- redirects to http://example.com should 
+            # not be allowed, but things like /view/?param=http://example.com 
+            # should be allowed. This regex checks if there is a '//' *before* a
+            # question mark.
+            elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
+                redirect_to = settings.LOGIN_REDIRECT_URL
+                    
             return HttpResponseRedirect(redirect_to)
     else:
         if "email" in request.GET:
@@ -90,6 +100,7 @@ def register(request):
             form = RegistrationForm()
     return render_to_response("registration/register.html", {
         'register_form': form,
+        REDIRECT_FIELD_NAME: redirect_to,
         'login_form': AuthenticationForm()
     }, context_instance=RequestContext(request))
 
