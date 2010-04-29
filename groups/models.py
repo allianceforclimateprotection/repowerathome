@@ -12,7 +12,7 @@ from notification import models as notification
    
 class GroupManager(models.Manager):
     def groups_with_memberships(self, user, limit=None):
-        groups = self.filter(is_geo_group=False).order_by("-created")
+        groups = self.filter(is_geo_group=False).order_by("name")
         groups = groups.extra(
                     select_params = (user.id,), 
                     select = { 'is_member': 'SELECT groups_groupusers.created \

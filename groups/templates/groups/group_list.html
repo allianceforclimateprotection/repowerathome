@@ -2,7 +2,7 @@
 
 {% block right_content %}
     <div class="grid_2 alpha">
-		{% if user.is_authenticated %}
+		{% if user.is_authenticated and my_groups %}
 			<h1>Your Teams</h1>
 			{% with my_groups as groups%}
 				{% include "groups/_group_nugget_list.html" %}
