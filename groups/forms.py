@@ -12,7 +12,8 @@ class GroupForm(forms.ModelForm):
     
     name = forms.CharField(label="Group name", help_text="Enter a name for your new group")
     slug = forms.SlugField(label="Group address", help_text="This will be your group's web address")
-    description = forms.CharField(label="Group description", help_text="What is the group all about?", widget=forms.Textarea)
+    description = forms.CharField(label="Group description", help_text="What is the group all about?",
+        widget=forms.Textarea(attrs={"rows": 5}))
     image = forms.FileField(label="Upload a group image", help_text="You can upload png, jpg or gif files upto 512K", required=False)
 
     states = ["ak", "al", "ar", "az", "ca", "co", "ct", "dc", "de", "fl", "ga", "hi", "ia", "id", "il", 

@@ -421,14 +421,16 @@ var rah = {
     **/
     mod_messages: {
         init: function(html) {
-            if(html) { $('#message_box').append(html); }
+            if(html) { 
+                $('#message_box').hide().append(html).slideDown();
+            }
             $(".messages:not(.sticky)").each(function() {
                 var elem = $(this).parents("ul");
                 setTimeout(function() {
                     elem.slideUp(400, function(){ elem.remove(); });
                 }, 5000);
             });
-            $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").remove(); });
+            $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").slideUp(); });
         }
     },
     
