@@ -299,9 +299,15 @@ var rah = {
                 $(".vampire_slayer").click(function(){
                     var form = $(this).parents("form");
                     /* save the worksheet data */
-                    $.post(form.attr("action"), form.serialize(), function(data){
-                        $("#vampire_savings_total").text(data["total_savings"]);
-                    }, "json");
+                    $.ajax({
+                        url: form.attr("action"),
+                        data: form.serialize(),
+                        success: function(data) {
+                            $("#vampire_savings_total").text(data["total_savings"]);
+                        },
+                        error: function() {},
+                        dataType: "json"
+                    });
                     
                     /* set the slay method in the plan sheet */
                     var input_selected = $(this);
