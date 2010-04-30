@@ -9,7 +9,7 @@
 			<b>From: </b> {{ profile.location }}<br/>
 		{% endif %}
 		{% if profile.total_points %}
-			{{ profile.total_points }}points<br/>
+			<b>Points: </b>{{ profile.total_points }}<br/>
 		{% endif %}
 		{% if profile.building_type %}
 	        <b>Home:</b> {{ profile.get_building_type_display }}<br/>

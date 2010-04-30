@@ -175,7 +175,7 @@ def profile(request, user_id):
     if request.user <> user and user.get_profile().is_profile_private:
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
         
-    recommended, committed, completed = Action.objects.actions_by_status(request.user)[1:4]
+    recommended, committed, completed = Action.objects.actions_by_status(user)[1:4]
     return render_to_response('rah/profile.html', {
         'profile_user': user,
         'total_points': user.get_profile().total_points,
