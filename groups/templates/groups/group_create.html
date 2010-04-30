@@ -1,6 +1,7 @@
 {% extends "rah/base.html" %}
 {% block right_content %}
     <form id="group_form" action="" method="post" enctype="multipart/form-data">
+        <h1>Create a Team</h1>
         {% include "groups/_group_form.html" %}
         <p><input type="submit" value="Create Group" /></p>
         {% csrf_token %}
