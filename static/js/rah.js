@@ -26,6 +26,21 @@ var rah = {
             $(".buttonset").buttonset();
             rah.mod_overset.init();
             
+            // style some submit buttons as links
+            $(".as_link[type='submit']").each(function(){
+                var button = $(this);
+                var form = button.parents("form");
+                button.hide();
+                var link = $("<a></a>");
+                link.text(button.val());
+                link.attr("href", "#");
+                link.click(function(){ 
+                    form.submit();
+                    return false;
+                });
+                button.replaceWith(link);
+            });
+            
             // Hide the nav text content
             $(".nav a").text("");
             
