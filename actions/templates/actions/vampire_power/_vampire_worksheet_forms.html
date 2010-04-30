@@ -1,15 +1,19 @@
 <div id="vampire_worksheet">
     <ul class="vampire_worksheet_wizard_nav">
         <li><a id="t0" href="#get_started"></a></li>
+        <li><a id="t1" href="#directions">Guide</a></li>
         {% for field in vampire_worksheet_form %}
-            <li><a id="t{{ forloop.counter }}" href="#{{ field.name }}">{{ forloop.counter }}</a></li>
+            <li><a id="t{{ forloop.counter|add:"1" }}" href="#{{ field.name }}">{{ forloop.counter }}</a></li>
         {% endfor %}
-        <li><a id="t7" href="#plan">Plan</a></li>
+        <li><a id="t8" href="#plan">Plan</a></li>
     </ul>
     <div id="vampire_worksheet_wizard">
         <ul class="items">
             <li class="worksheet">
                 {% include "actions/vampire_power/_get_started.html" %}
+            </li>
+            <li class="worksheet">
+                {% include "actions/vampire_power/_directions.html" %}
             </li>
             {% for field in vampire_worksheet_form %}
                 <li class="worksheet">
