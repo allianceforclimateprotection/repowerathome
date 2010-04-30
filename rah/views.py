@@ -177,13 +177,13 @@ def profile(request, user_id):
         
     recommended, committed, completed = Action.objects.actions_by_status(request.user)[1:4]
     return render_to_response('rah/profile.html', {
+        'profile_user': user,
         'total_points': user.get_profile().total_points,
-        'committed': committed,
         'completed': completed,
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
         'commitment_list': user.get_commit_list(),
-        'my_groups': Group.objects.filter(users=user, is_geo_group=False),
+        'teams': Group.objects.filter(users=user, is_geo_group=False),
         'records': Record.objects.user_records(user, 10),
     }, context_instance=RequestContext(request))
 

@@ -1,60 +1,59 @@
 {% extends "rah/base.html" %}
 {% load records %}
 {% block left_sidebar %}
-    {% if commitment_list %}
-        <h2>Commitments</h2>
-        <p>
-        {% for row in commitment_list %}
-            <a href="{% url action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed|date}}<br/>
-        {% endfor %}
-        </p>
-    {% endif %}
-    {% if not is_others_profile %}
-        {% include 'rah/_magnify.html' %}
-    {% endif %}
-    {% if my_groups or my_geo_groups %}
-        <h2>Teams</h2>
-        <p>
-        {% for group in my_groups %}
-            <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br />
-        {% endfor %}
-        {% for group in my_geo_groups %}
-            <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br />
-        {% endfor %}
-        </p>
-    {% endif %}
-    {% if completed %}
-        <h2>Completed Actions</h2>
-        <p>
-        {% for action in completed %}
-            <a href="{% url action_detail action.slug %}">{{action.name}}</a> (+{{action.points}} points)<br/>
-        {% endfor %}
-        </p>
-    {% endif %}
-    {% if records %}
-        <h2>Recent Activity</h2>
-        {% for rec in records %}
-            {% render_record rec %}
-        {% endfor %}
-    {% endif %}
 {% endblock %}
 {% block right_content %}
 	<div class="grid_2 alpha">
-	    {% if in_progress %}
-	        <div class="actions_block" id="actions_in_progress">
-	            <h2>In Progress Actions</h2>
-	            {% for action in in_progress %}
-	                {% include 'actions/_action_nugget.html' %}
-	            {% endfor %}
-	        </div>
+		<h1>{{profile_user.get_full_name}}</h1>
+		{% if profile.location %}
+			<b>From: </b> {{ profile.location }}<br/>
+		{% endif %}
+		{% if profile.total_points %}
+			{{ profile.total_points }}points<br/>
+		{% endif %}
+		{% if profile.building_type %}
+	        <b>Home:</b> {{ profile.get_building_type_display }}<br/>
 	    {% endif %}
-	    {% if recommended %}
-	        <div class="actions_block" id="actions_recommended">
-	            <h2>Recommended Actions</h2>
-	            {% for action in recommended %}
-	                {% include 'actions/_action_nugget.html' %}
-	            {% endfor %}
-	        </div>
+	    {% if profile.about %}
+	        <b>About: </b>{{ profile.about }}<br/>
+	    {% endif %}
+		{% if commitment_list %}
+	        <h2>Commitments</h2>
+	        <p>
+	        {% for row in commitment_list %}
+	            <a href="{% url action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed|date}}<br/>
+	        {% endfor %}
+	        </p>
+	    {% endif %}
+	    {% if teams %}
+	        <h2>Teams</h2>
+	        <p>
+	        {% for group in teams %}
+	            <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br />
+	        {% endfor %}
+	        </p>
+	    {% endif %}
+	    {% if committed %}
+			<h2>Committed Actions</h2>
+			<p>
+			{% for action in recommended %}
+	            <a href="{% url action_detail action.slug %}">{{action.name}}</a> (+{{action.points}} points)<br/>
+	        {% endfor %}
+			</p>
+	    {% endif %}
+	    {% if completed %}
+	        <h2>Completed Actions</h2>
+	        <p>
+	        {% for action in completed %}
+	            <a href="{% url action_detail action.slug %}">{{action.name}}</a> (+{{action.points}} points)<br/>
+	        {% endfor %}
+	        </p>
+	    {% endif %}
+	    {% if records %}
+	        <h2>Recent Activity</h2>
+	        {% for rec in records %}
+	            {% render_record rec %}
+	        {% endfor %}
 	    {% endif %}
 	</div>
 {% endblock %}
