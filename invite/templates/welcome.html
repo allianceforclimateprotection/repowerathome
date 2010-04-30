@@ -4,6 +4,6 @@
 <p>
     You need to <a href="{% url login %}?next={{ request.path }}">Login</a> or 
     <a href="{% url register %}?next={{ request.path }}">Sign Up</a> 
-    to accept this invitation from {{invite.user.get_full_name}}.
+    to accept this invitation from {% safe_user_link invite.user %}.
 </p>
 {% endblock %}

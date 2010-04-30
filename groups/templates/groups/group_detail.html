@@ -75,7 +75,7 @@
                 <ol>
                 {% for user in top_members %}
                     {% if forloop.counter0 < 3 %}
-                        <li><a href="{% url profile user.id %}">{{ user.get_full_name }}</a> ({{ user.get_profile.total_points }})</li>
+                        <li>{% safe_user_link user %} ({{ user.get_profile.total_points }})</li>
                     {% endif %}
                 {% endfor %}
                 </ol>

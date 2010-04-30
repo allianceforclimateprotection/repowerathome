@@ -2,11 +2,7 @@
 <div class='profile_heading'>
     <img class='gravatar' src="{{ post.author.get_profile.get_gravatar_url }}" alt="user gravatar" />
     <div class="profile_attributes">
-        {% if post.author != user and post.author.get_profile.is_profile_private %}
-            <p>{{ post.author.get_full_name }}</p>
-        {% else %}
-            <p><a href="{% url profile post.author.id %}">{{ post.author.get_full_name }}</a></p>
-        {% endif %}    
+		<p>{% safe_user_link post.author %}</p>
         <p class="date">Posted: {{ post.publish|date:"F j, Y" }}</p>
     </div>
     <br class="spacer" />

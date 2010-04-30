@@ -597,6 +597,7 @@ ul.buttonset li {
     background-color: #FFF;
     color: #74A01F;
     font-size: 24px;
+    font-weight: normal;
     border: 2px #74A01F solid;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;

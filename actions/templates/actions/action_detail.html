@@ -50,8 +50,8 @@
         <a href="{% url action_show %}">Actions</a> &rsaquo;
         {{action.name}}
     </div>
-    {% if action.has_illustration %}
-        <img src="{{ MEDIA_URL }}images/actions/{{ action.slug }}.{{ action.illustration_file_ext }}" />
+    {% if action.detail_illustration %}
+        <img src="{{ action.detail_illustration }}" alt="{{action.name}} illustration" width="740" height="315" />
     {% endif %}
     <div id="action_details">
         <h1 id="action_title">{{action.name}}</h1>

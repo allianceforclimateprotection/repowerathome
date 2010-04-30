@@ -1,7 +1,7 @@
 <div class="group_disc_reply {% if not disc.is_public %}unapproved{% endif %}">
 	{% if disc.is_public or is_manager or disc.user.id == user.id %}
 		{{disc.body|linebreaks}}
-		<i>--Posted by {{disc.user.get_full_name}} on {{disc.created}}</i>
+		<i>--Posted by {% safe_user_link disc.user %} on {{disc.created}}</i>
 		{% if not disc.is_public and is_manager %}
 			<form action="{% url group_disc_approve group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
 				{{approve_form.as_p}}
