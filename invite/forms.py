@@ -38,7 +38,7 @@ class InviteForm(forms.Form):
         template = loader.get_template('emails/%s.html' % invite_type)
         context = { 'from_user': from_user, 'note': self.cleaned_data['note'], 
             "invite": invite, "domain": Site.objects.get_current().domain, }
-        msg = EmailMessage('Invitation from %s to Repower@Home' % from_user.get_full_name(),
+        msg = EmailMessage('Invitation from %s to Repower at Home' % from_user.get_full_name(),
                 template.render(Context(context)), None, [to_email])
         msg.content_subtype = "html"
         try:

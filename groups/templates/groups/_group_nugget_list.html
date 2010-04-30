@@ -1,0 +1,16 @@
+{% load thumbnail %}
+<ul class="group_list">
+    {% for group in groups %}
+        <li>
+			<a href="{{ group.get_absolute_url }}" class="group_list_thumb">
+				<img src="{% thumbnail group.safe_image 45x38 %}" alt="group image" height="38" width="45" />
+			</a>
+			<div class="group_list_name">
+				<a href="{{ group.get_absolute_url }}">{{ group.name }}</a>
+				<div>
+					{{ group.member_count }} members
+				</div>
+			</div>
+        </li>
+    {% endfor %}
+</ul>

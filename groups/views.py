@@ -130,7 +130,9 @@ def group_list(request):
     """
     display a listing of the groups
     """
-    new_groups = Group.objects.new_groups_with_memberships(request.user, 5)
+    groups = Group.objects.groups_with_memberships(request.user)
+    if request.user.is_authenticated():
+        my_groups = Group.objects.filter(users=request.user, is_geo_group=False)
     return render_to_response("groups/group_list.html", locals(), context_instance=RequestContext(request))
 
 @login_required
