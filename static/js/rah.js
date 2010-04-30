@@ -193,7 +193,7 @@ var rah = {
                 messages: {
                     email: { remote: "That email is already registered" },
                     zipcode: { remote: "We couldn't locate this zipcode" }
-                },
+                }
             });
             var global_group_notifications = $("#id_global_group_notifications");
             global_group_notifications.change(function() {
@@ -231,7 +231,7 @@ var rah = {
             });
             $(".undo_trigger").click(function(){
                 $(".action_undo_form").submit();
-            })
+            });
             $("#commit_widget").dialog({
                 title: "Make a Commitment", modal: true, resizable: false, 
                     draggable: false, autoOpen: false, 
@@ -532,7 +532,7 @@ var rah = {
                     type: form.attr("method"),
                     data: form.serialize(),
                     success: function(data) {
-                        data = jQuery.trim(data)
+                        data = jQuery.trim(data);
                         if(data.length > 0) {
                             $(".search_results").removeClass("hidden");
                             $(".search_results", form).html(data);
