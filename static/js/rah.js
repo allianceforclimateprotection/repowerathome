@@ -252,7 +252,7 @@ var rah = {
                 buttons: { 
                     "Commit": function() {
                         $("#commit_widget").dialog("close");
-                        var form = $(".action_commit_form:first");
+                        var form = $(".action_commit_form");
                         form.submit();
                     }
                 }
