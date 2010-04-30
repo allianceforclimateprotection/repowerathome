@@ -1,6 +1,10 @@
 <div id="tongue">
-    <img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
-    <div id="tongue_username">{{ profile.user.get_full_name }}</div>
+	<a href="{% url profile profile.user.id %}" title="View your profile">
+		<img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
+	</a>
+    <div id="tongue_username">
+		<a href="{% url profile profile.user.id %}" title="View your profile">{{ profile.user.get_full_name }}</a>
+	</div>
     {% if profile.location %}
         <div id="tongue_location">
             <span class="icon_from"></span> {{ profile.location }}
@@ -26,12 +30,5 @@
             </a>
         </div>
     </div>
-    {# {% if profile.building_type %} #}
-    {#     <b>Home:</b> {{ profile.get_building_type_display }}<br/> #}
-    {# {% endif %} #}
-    {# {% if profile.about %} #}
-    {#     <b>About: </b>{{ profile.about }}<br/> #}
-    {# {% endif %} #}
-    
     <div class="spacer"></div>
 </div>

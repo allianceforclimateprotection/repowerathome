@@ -237,7 +237,7 @@ class GroupNotificationsForm(forms.Form):
         from groups.models import Group
         super(GroupNotificationsForm, self).__init__(*args, **kwargs)
         self.user = user
-        self.groups = Group.objects.filter(users=user)
+        self.groups = Group.objects.filter(users=user, is_geo_group=False)
         self.fields["individual_group_notifications"].queryset = self.groups
         self.not_blacklisted = [g.pk for g in Group.objects.groups_not_blacklisted_by_user(user)]
         self.fields["individual_group_notifications"].initial = self.not_blacklisted

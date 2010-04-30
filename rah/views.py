@@ -24,18 +24,35 @@ from rah.forms import RegistrationForm, AuthenticationForm, HousePartyForm, Acco
 from settings import GA_TRACK_PAGEVIEW, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
+from groups.models import Group
 
 @csrf_protect
 def index(request):
     """
     Home Page
     """
-    # If the user is logged in, show them the logged in homepage and bail
-    if request.user.is_authenticated():
-        return profile(request, request.user.id)
+    # If the user is not logged in, show them the logged out homepage and bail
+    if not request.user.is_authenticated():
+        context = {'house_party_form': HousePartyForm(request.user)}
+        return render_to_response("rah/home_logged_out.html", context, context_instance=RequestContext(request))
     
-    context = {'house_party_form': HousePartyForm(request.user),}
-    return render_to_response("rah/home_logged_out.html", context, context_instance=RequestContext(request))
+    recommended, committed, completed = Action.objects.actions_by_status(request.user)[1:4]
+    twitter_form = TwitterStatusForm(initial={
+        "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
+    })
+    return render_to_response('rah/home_logged_in.html', {
+        'total_points': request.user.get_profile().total_points,
+        'committed': committed,
+        'completed': completed,
+        'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
+        'house_party_form': HousePartyForm(request.user),
+        'invite_form': InviteForm(),
+        'twitter_status_form': twitter_form,
+        'profile': request.user.get_profile(),
+        'commitment_list': request.user.get_commit_list(),
+        'my_groups': Group.objects.filter(users=request.user, is_geo_group=False),
+        'records': Record.objects.user_records(request.user, 10),
+    }, context_instance=RequestContext(request))
 
 def privacy_policy(request):
     return render_to_response("rah/privacy_policy.html", {}, context_instance=RequestContext(request))
@@ -153,28 +170,20 @@ def login(request, template_name='registration/login.html',
     }, context_instance=RequestContext(request))
 
 def profile(request, user_id):
-    """docstring for profile"""
-    from groups.models import Group
     user = request.user if request.user.id is user_id else get_object_or_404(User, id=user_id)
+    profile = user.get_profile()
     if request.user <> user and user.get_profile().is_profile_private:
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
         
     recommended, committed, completed = Action.objects.actions_by_status(user)[1:4]
-    twitter_form = TwitterStatusForm(initial={
-        "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
-    })
     return render_to_response('rah/profile.html', {
+        'profile_user': user,
         'total_points': user.get_profile().total_points,
-        'committed': committed,
         'completed': completed,
-        'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
-        'house_party_form': HousePartyForm(request.user),
-        'invite_form': InviteForm(),
-        'twitter_status_form': twitter_form,
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
         'commitment_list': user.get_commit_list(),
-        'my_groups': Group.objects.filter(users=user),
+        'teams': Group.objects.filter(users=user, is_geo_group=False),
         'records': Record.objects.user_records(user, 10),
     }, context_instance=RequestContext(request))
 

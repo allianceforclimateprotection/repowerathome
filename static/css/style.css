@@ -432,6 +432,7 @@ ul.buttonset li {
 }
 /* logged in tongue */
 #tongue_username {font-size: 20px; font-weight:bold; margin-top:4px; }
+#tongue_username a {text-decoration:none !important;}
 #tongue_location span{ margin-bottom:-5px;}
 #tongue_location {font-size:15px; white-space:nowrap;}
 #tongue_links {margin:10px 0px;}
