@@ -26,6 +26,21 @@ var rah = {
             $(".buttonset").buttonset();
             rah.mod_overset.init();
             
+            // style some submit buttons as links
+            $(".as_link[type='submit']").each(function(){
+                var button = $(this);
+                var form = button.parents("form");
+                button.hide();
+                var link = $("<a></a>");
+                link.text(button.val());
+                link.attr("href", "#");
+                link.click(function(){ 
+                    form.submit();
+                    return false;
+                });
+                button.replaceWith(link);
+            });
+            
             // Hide the nav text content
             $(".nav a").text("");
             
@@ -193,7 +208,7 @@ var rah = {
                 messages: {
                     email: { remote: "That email is already registered" },
                     zipcode: { remote: "We couldn't locate this zipcode" }
-                },
+                }
             });
             var global_group_notifications = $("#id_global_group_notifications");
             global_group_notifications.change(function() {
@@ -231,7 +246,7 @@ var rah = {
             });
             $(".undo_trigger").click(function(){
                 $(".action_undo_form").submit();
-            })
+            });
             $("#commit_widget").dialog({
                 title: "Make a Commitment", modal: true, resizable: false, 
                     draggable: false, autoOpen: false, 
@@ -252,7 +267,7 @@ var rah = {
                 buttons: { 
                     "Commit": function() {
                         $("#commit_widget").dialog("close");
-                        var form = $(".action_commit_form:first");
+                        var form = $(".action_commit_form");
                         form.submit();
                     }
                 }
@@ -421,14 +436,16 @@ var rah = {
     **/
     mod_messages: {
         init: function(html) {
-            if(html) { $('#message_box').append(html); }
+            if(html) { 
+                $('#message_box').hide().append(html).slideDown();
+            }
             $(".messages:not(.sticky)").each(function() {
                 var elem = $(this).parents("ul");
                 setTimeout(function() {
                     elem.slideUp(400, function(){ elem.remove(); });
                 }, 5000);
             });
-            $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").remove(); });
+            $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").slideUp(); });
         }
     },
     
@@ -532,7 +549,7 @@ var rah = {
                     type: form.attr("method"),
                     data: form.serialize(),
                     success: function(data) {
-                        data = jQuery.trim(data)
+                        data = jQuery.trim(data);
                         if(data.length > 0) {
                             $(".search_results").removeClass("hidden");
                             $(".search_results", form).html(data);

@@ -219,9 +219,12 @@ ul.buttonset li {
 .form_row[class~="error"] {
     background: transparent;
 }
-.form_row input.error, .form_row[class~="error"] input {
+.form_row input.error, 
+.form_row[class~="error"] input,
+.form_row textarea.error,
+.form_row[class~="error"] textarea {
     color: #DE6060;
-    background: url(../images/theme/input_text_error_background.png) repeat-x;
+    background: #FEDEDE url(../images/theme/input_text_error_background.png) repeat-x;
 }
 .form_row label {
     font-family: helvetica;
@@ -245,8 +248,7 @@ ul.buttonset li {
 }
 .overset label.error {
     color: #DE6060;
-    position: absolute;
-    top: 60px;
+    position: static;
     background-color: transparent;
 }
 .overset_form_message[class~="error"] {
@@ -260,13 +262,12 @@ ul.buttonset li {
 /* @end */
 
 /* Messages */
-#message_box { text-align: center; margin-left: auto; margin-right: auto; width:1000px;}
+#message_box { text-align: center; margin-left: auto; margin-right: auto; width:1000px; position: fixed; top:0; left: 50%; margin-left: -500px; }
 #message_box ul { list-style-type: none; }
 #message_box .dismiss { float: right; margin-right: 6px; font-size: 0.8em; }
 
 #message_box .info, #message_box .success, #message_box .warning, #message_box .error, #message_box .validation {
     border: 2px solid;
-    margin: 10px 0px;
     padding:10px;
 }
 .info    { color: #00529B; background-color: #BDE5F8; }

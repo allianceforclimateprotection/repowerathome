@@ -73,9 +73,6 @@
         </div>
         <div id="content_container">
             <div id="content_bg">
-                <div id="message_box">
-                    {% include '_messages.html' %}
-                </div>
                 <div id="content">
                     <div class="container_4">
                         {% block content %}
@@ -134,5 +131,8 @@
                 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
             })();
         </script>
+        <div id="message_box">
+            {% include '_messages.html' %}
+        </div>
     </body>
 </html>

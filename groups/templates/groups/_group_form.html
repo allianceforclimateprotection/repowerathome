@@ -3,32 +3,32 @@
 {% endfor %}
 {% for field in form %}
     {% if field.name == "name" or field.name == "description" %}
-        <p class="form_row overset">
+        <p class="form_row overset {% if field.errors %}error{% endif %}">
             {{ field.label_tag }}
             {{ field }}
             {% for error in field.errors %}
-                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</span>
+                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
             {% endfor %}
         </p>
     {% endif %}
     {% if field.name == "slug" %}
         <div id="group_slug_wrapper">
             <label id="group_slug_domain">http://repowerathome.com/</label>
-            <p id="group_slug_address" class="form_row overset">
+            <p id="group_slug_address" class="form_row overset {% if field.errors %}error{% endif %}">
                 {{ form.slug.label_tag }}
                 {{ form.slug }}
                 {% for error in form.slug.errors %}
-                    <label class="error" for="{{ form.slug.auto_id }}">{{ error|escape }}</span>
+                    <label class="error" for="{{ form.slug.auto_id }}">{{ error|escape }}</label>
                 {% endfor %}
             </p>
         </div>
     {% endif %}
     {% if field.name == "image" or field.name == "membership_type" %}
-        <div class="form_row">
+        <div class="form_row {% if field.errors %}error{% endif %}">
             {{ field.label_tag }}
             {{ field }}
             {% for error in field.errors %}
-                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</span>
+                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
             {% endfor %}
         </div>
     {% endif %}

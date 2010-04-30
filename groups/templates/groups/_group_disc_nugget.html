@@ -12,7 +12,7 @@
 		{% if is_manager %}
 			<form action="{% url group_disc_remove group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
 				{{remove_form.as_p}}
-				<p><input type="submit" value="Remove"/></p>
+				<p><input class="as_link" type="submit" value="Remove"/></p>
 				{% csrf_token %}
 			</form>
 		{% endif %}
