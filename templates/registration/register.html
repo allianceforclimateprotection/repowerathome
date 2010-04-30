@@ -3,9 +3,9 @@
     <div class="grid_2 alpha">
     	<form action="{% url login %}" method="post" id="login_form" autocomplete="off">
     		<h1>Sign In</h1>
-    		{% with login_form as form %}
-    	    	{% include "rah/_overset_form.html" %}
-    		{% endwith %}
+            {% with login_form as form %}
+                         {% include "rah/_overset_form.html" %}
+            {% endwith %}
     	    <p>
     	        <input type="submit" value="Login" /> | <a href="{% url password_reset %}">Recover password</a>
     	    </p>

@@ -244,10 +244,15 @@ ul.buttonset li {
     left: 11px;
 }
 .overset label.error {
-    color: #DE6060;;
+    color: #DE6060;
     position: absolute;
     top: 60px;
     background-color: transparent;
+}
+.overset_form_message[class~="error"] {
+    color: #DE6060;
+    background-color: transparent;
+    width: 320px;
 }
 .hidden {
     display: none;
