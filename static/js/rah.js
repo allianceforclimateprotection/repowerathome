@@ -23,6 +23,7 @@ var rah = {
             
             // setup buttons
             $("button, input:submit, a.button").button();
+            $(".buttonset").buttonset();
             rah.mod_overset.init();
             
             // Hide the nav text content
@@ -284,9 +285,10 @@ var rah = {
                     naviItem: "a"
                 });
                 var nav = $("ul.vampire_worksheet_wizard_nav");
-                $("#get_started").click(function(){
+                $(".frame_shifter").click(function(){
+                    var worksheet = $(this).parents(".worksheet");
                     nav.slideDown("fast", function(){
-                        scroller.nextPage();
+                        rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 0, scroller);
                     });
                     return false;
                 });
@@ -305,22 +307,11 @@ var rah = {
                     var input_selected = $(this);
                     var plan_value = $("." + input_selected.attr("name") + " .slay_method");
                     plan_value.text(input_selected.parent().text());
+                    $("." + input_selected.attr("name") + " .slay_link").show();
                     
                     /* skip to the next incomplete worksheet */
-                    $("." + input_selected.attr("name") + " .slay_link").show();
                     var worksheet = input_selected.parents(".worksheet");
-                    var offset = 1;
-                    worksheet.nextAll().each(function(){
-                        if($(this).find(".vampire_slayer:checked").length == 0) {
-                            return false;
-                        }
-                        /* increment the offset, as we want to skip ahead and find
-                        a worksheet that hasn't been filled out */
-                        offset++; 
-                    });
-                    setTimeout(function() {
-                        scroller.move(offset);
-                    }, 500);
+                    rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 500, scroller);
                 });
                 
                 $(".slay_link a").click(function(){
@@ -329,6 +320,25 @@ var rah = {
                     return false;
                 });
                 
+                $(".slayer_tooltip").qtip({
+                   content: 'This is an active list element',
+                   show: 'mouseover',
+                   hide: 'mouseout'
+                });
+            },
+            skip_to_next_sheet: function(worksheet, delay, scroller){
+                var offset = 1;
+                worksheet.nextAll().each(function(){
+                    if($(this).find(".vampire_slayer:checked").length == 0) {
+                        return false;
+                    }
+                    /* increment the offset, as we want to skip ahead and find
+                    a worksheet that hasn't been filled out */
+                    offset++; 
+                });
+                setTimeout(function() {
+                    scroller.move(offset);
+                }, delay);
             }
         }
     },

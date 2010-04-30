@@ -180,6 +180,12 @@ form input[type="checkbox"] {
 a.button:hover {
     color: white;
 }
+ul.buttonset li {
+    width: 150px;
+    height: 50px !important;
+    font-size: 12px;
+    float: left;
+}
 
 .form_row {
     padding: 20px 0 25px 0;
@@ -781,9 +787,14 @@ a.tag:hover {
 #vampire_worksheet {
     width: 650px;
     height: 550px;
-    border: 3px solid black;
     margin: 10px 25px;
+    padding: 10px;
     position: relative;
+    border: 3px solid #92C139;
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+    border-radius: 5px;
+    background-color: #FFF;
 }
 ul.vampire_worksheet_wizard_nav {
     display: none;
@@ -819,12 +830,6 @@ ul.vampire_worksheet_wizard_nav li .active {
     width: 650px;
     float: left; 
 }
-#vampire_worksheet_wizard .slayer_recommended {
-    font-size: 0.7em;
-    font-weight: bold;
-    color: #92C139;
-}
-
 #vampire_worksheet_wizard .vampire_device_image {
     float: left;
 }
@@ -836,6 +841,20 @@ ul.vampire_worksheet_wizard_nav li .active {
 #vampire_worksheet_wizard .vampire_savings {
     font-size: 1.2em;
     font-weight: bold;
+}
+#vampire_worksheet_wizard .buttonset .ui-button-text {
+    height: 32px;
+    display: table-cell;
+    vertical-align: middle;
+}
+#vampire_worksheet_wizard .slayer_tooltip {
+    font-weight: bold;
+    text-align: center;
+}
+#vampire_worksheet_wizard .slayer_recommended {
+    font-weight: bold;
+    color: #92C139;
+    text-align: center;
 }
 /* @end */
 

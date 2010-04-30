@@ -2,28 +2,26 @@
 
 <h2>{{ field.label }}</h2>
 <img class="vampire_device_image" src="{{ MEDIA_URL }}images/rich_actions/vampire/{{ field.name }}.png" alt="{{ field.label }}" />
-<div class="vampire_savings_container">
-    Save up to $<span class="vampire_savings">{{ field.field.savings }}</span><br />
-    annually by slaying <br />
-    this vampire
-</div>
+{# <div class="vampire_savings_container"> #}
+{#     Save up to $<span class="vampire_savings">{{ field.field.savings }}</span><br /> #}
+{#     annually by slaying <br /> #}
+{#     this vampire #}
+{# </div> #}
 <br class="spacer" />
 <form method="post" action="{% url save_action_from action.slug 'VampirePowerWorksheetForm' %}">
     <p>
         Below are options for slaying this vampire, <br />
         select one that works for you.
     </p>
-    <ul>
+    <ul class="buttonset">
         {% for id, label in field.field.choices %}
             <li>
-                <label for="id_{{ field.name }}{{ forloop.counter0 }}">
-                    <input value="{{ id }}" type="radio" class="vampire_slayer" 
-                        name="{{ field.name }}" id="id_{{ field.name }}{{ forloop.counter0 }}"
-                        {% if id == field.data %}checked="checked"{% endif %} />
-                        {{ label }}
-                </label>
+                <input value="{{ id }}" type="radio" class="vampire_slayer" 
+                    name="{{ field.name }}" id="id_{{ field.name }}{{ forloop.counter0 }}"
+                    {% if id == field.data %}checked="checked"{% endif %} />
+                <label for="id_{{ field.name }}{{ forloop.counter0 }}">{{ label }}</label>
                 {% if id == field.field.recommended %}
-                    <span class="slayer_recommended">Recommended</span>
+                    <div class="slayer_recommended">Recommended</div>
                 {% endif %}
             </li>
         {% endfor %}
