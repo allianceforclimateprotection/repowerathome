@@ -10,7 +10,7 @@
             <span class="icon_from"></span> {{ profile.location }}
         </div>
     {% endif %}
-    <br class="spacer" />
+    <br class="clear" />
     {% if profile.user == request.user %}
         <div id="tongue_links">
             <a href="{% url rah.views.profile_edit request.user.id %}">Edit your profile</a> &ndash; <a href="{% url logout %}">Logout</a>
@@ -30,5 +30,5 @@
             </a>
         </div>
     </div>
-    <div class="spacer"></div>
+    <div class="clear"></div>
 </div>

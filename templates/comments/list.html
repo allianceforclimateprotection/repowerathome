@@ -15,10 +15,10 @@
             </div>
             <div class="author">
                 <img class="gravatar" src="{{ comment.user.get_profile.get_gravatar_url }}" alt="user gravatar" />
-                <br class="spacer" />
+                <br class="clear" />
                 <div class="user_name">{% safe_user_link comment.user %}</div>
             </div>
-            <br class="spacer" />
+            <br class="clear" />
             {# <div> #}
             {#     {% get_rating_count for comment as users_voted %} #}
             {#     {% get_rating_sum for comment as users_helped %} #}

@@ -22,7 +22,7 @@
     <h2>Who's doing this?</h2>
     <span class='total_users'>{{ action.users_completed }}</span> pe{{ action.users_completed|pluralize:"rson has,ople have" }} completed this action.<br/>
     {% if action.users_completed %}
-        <ul class="whos_working">
+        <ul>
             {% for user in users_completed %}
                 <li>{% safe_user_link user %}</li>
             {% endfor %}
@@ -33,7 +33,7 @@
     {% endif %}
     <span class='total_users'>{{ action.users_committed }}</span> pe{{ action.users_committed|pluralize:"rson has,ople have" }} committed to this action.<br/>
     {% if action.users_committed %}
-        <ul class="whos_working">
+        <ul>
             {% for user in users_committed %}
                 <li>{% safe_user_link user %}</li>
             {% endfor %}
