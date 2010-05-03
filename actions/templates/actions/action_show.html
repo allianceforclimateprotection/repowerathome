@@ -22,7 +22,7 @@
         {% for tag in tags %}
             <li {% if forloop.last %} class="minor_nav_last"{% endif %}>
                 <span class="icon_gt"></span>
-                <a href='{% url action_tag tag %}'>
+                <a href='{% url action_tag tag %}#action_show'>
                     {{ tag.name|deslug }} ({{ tag.count }})
                 </a>
             </li>
@@ -45,7 +45,6 @@
     {% endif %}
     <div class="clear"></div>
     <div class="grid_2 alpha">
-        <h2 class="h_aqua">Featured Actions</h2>
         <div id="action_show">
             {% for action in actions %}
                 {% include 'actions/_action_nugget.html' %}
