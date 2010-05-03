@@ -26,7 +26,7 @@ legend{color:#000;}
 Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements 
 --------------------------------------------------------------------------------------------------------------------- */
 body {
-    font: 14px/20px Arial, Helvetica, sans-serif;
+    font: 14px/18px Arial, Helvetica, sans-serif;
     color: #333; 
     background-color: #B3D7F2; }
 a { color: #00AAD8; text-decoration: none; }
@@ -36,12 +36,12 @@ h1, h2, h3, h4, h5, h6 {
     font-family:"superclarendon-1", "superclarendon-2", serif;
     font-weight:700;
     font-style: normal; }
-h1 { font-size: 24px; }
-h2 { font-size: 20px; }
-h3 { font-size: 18px; }
-h4 { font-size: 17px; }
-h5 { font-size: 16px; }
-h6 { font-size: 15px; }
+h1 { font-size: 24px; margin:6px 0;}
+h2 { font-size: 20px; margin:8px 0;}
+h3 { font-size: 18px; margin:9px 0;}
+h4 { font-size: 16px; }
+h5 { font-size: 14px; }
+h6 { font-size: 12px; }
 cite {display:none;}
 table {
     width: 100%;
@@ -52,15 +52,14 @@ tr { margin: 1px; border-top: 1px solid #ddd; }
 td { padding: 3px; border-right: 1px solid #ddd;}
 tr.alt td, tr.even td { background: #f7f7f7; }
 th { padding: 3px; font-weight: normal; color: #444; background: #eee; border-right: 1px solid #ddd;}
-p { color: #333; margin-bottom: 15px; }
+p { color: #333; margin-bottom: 18px; }
 strong, b { font-weight:bold; }
 em, i { font-style: italic; }
 ol { list-style: decimal; }
 ul{
-    list-style: square;
     margin-left: 10px;
     padding-left: 10px;
-    padding-bottom: 15px; }
+    padding-bottom: 18px;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms 
@@ -78,13 +77,13 @@ ul.buttonset li {
     font-size: 12px;
     float: left; }
 .form_row {
-    padding: 20px 0 25px 0;
+    padding: 18px 0;
     width: 320px;
     position: relative; }
 .form_row input, .form_row textarea {
     width: 100%;
     border: 1px #A1D3E4 solid;
-    padding: 11px;
+    padding: 10px;
     font-size: 16px;
     color: #84CBD6;
     background: #fff url(../images/theme/input_text_background.png) repeat-x;
@@ -92,8 +91,8 @@ ul.buttonset li {
     -moz-border-radius: 2px; }
 .form_row li label { position: relative; }
 .form_row li input { width: inherit; }
-.form_row input { height: 16px; }
-.form_row input[type="file"] { height: 25px; }
+.form_row input { height: 18px; }
+.form_row input[type="file"] { height: 24px; }
 .form_row input[type="checkbox"] { width: 15px; }
 .form_row[class~="error"] { background: transparent; }
 .form_row input.error, 
@@ -137,7 +136,7 @@ Messages Messages Messages Messages Messages Messages Messages Messages Messages
 --------------------------------------------------------------------------------------------------------------------- */
 #message_box { text-align: center; margin-left: auto; margin-right: auto; width:1000px; position: fixed; top:0; left: 50%; margin-left: -500px; }
 #message_box ul { list-style-type: none; }
-#message_box .dismiss { float: right; margin-right: 6px; font-size: 0.8em; }
+#message_box .dismiss { float: right; margin-right: 6px; font-size: 12px; }
 #message_box .info, 
 #message_box .success, 
 #message_box .warning, 
@@ -155,7 +154,7 @@ Messages Messages Messages Messages Messages Messages Messages Messages Messages
     margin-right: auto;
     text-align: center;
     display: none;
-    padding: 10px; }
+    padding: 9px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Content Content Content Content Content Content Content Content Content Content Content Content Content Content Content 
@@ -296,6 +295,7 @@ Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Ton
     font-size:11px;
     background: #6EC3D1 url(../images/theme/sprite_minor_col.png) repeat-x 0px -416px; 
     margin-top:-3px;
+    margin-bottom:20px;
     padding: 28px 12px 20px 12px;
     -moz-border-radius-bottomleft: 8px; -webkit-border-bottom-left-radius: 8px; border-bottom-left-radius: 8px; -moz-border-radius-bottomright: 8px; -webkit-border-bottom-right-radius: 8px; border-bottom-right-radius: 8px; }
 /* logged in tongue */
@@ -353,8 +353,7 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
 #action_details, #action_details p { color: #45C3D3;}
 #action_title { margin-bottom: 10px; }
 #action_content {
-    margin-top: 10px;
-    font-size: 18px; }
+    margin-top: 10px; }
 #action_content object {
     padding: 22px;
     background-color: #D1DDE8;
@@ -441,9 +440,7 @@ Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Gro
     left: 0; }
 #group_slug_address { margin-left: 150px; width: 170px; }
 .group_section { margin-bottom: 20px; }
-.group_parent { font-size: 0.7em; }
 .group_image, .group_details { float: left; }
-.group_action { float: right; font-size: 0.8em; display: inline; margin-left: 3px; }
 .membership_request { list-style: disc inside; }
 .membership_tools {  font-weight: bold; margin-left: 30px; }
 #group_info div { float: left; }
@@ -451,10 +448,10 @@ Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Gro
 #top_members { margin-left: 70px; }
 .group_details { padding-left: 10px; }
 .group_list {margin:0px; padding:0px; list-style-type: none; height:100%; overflow:auto;}
-.group_list li{ float:left; width:240px; margin-right:5px;}
+.group_list li{ float:left; width:240px; margin:9px 5px 9px 0;}
 .group_list_thumb { float:left; margin-right:8px;}
-.group_list_name {float:left; font-size:18px; font-weight:bold;}
-.group_list_name div {font-size:14px; color:#aaa; font-weight:normal; margin-top:-3px;}
+.group_list_name {float:left;}
+.group_list_name div {color:#aaa;}
 th.header {  
     cursor: pointer;
     background-repeat: no-repeat; 
@@ -507,9 +504,10 @@ a.tag:hover { border:1px solid #c0c0c0; color: #c0c0c0; }
 /* ---------------------------------------------------------------------------------------------------------------------
 Records Records Records Records Records Records Records Records Records Records Records Records Records Records Records 
 --------------------------------------------------------------------------------------------------------------------- */
-.activity_item { margin-bottom: 25px; font-size: 13px; color: #9C9C9C; }
-.activity_item a { color: #9C9C9C; text-decoration: underline; }
+.activity_item { margin-bottom: 18px; }
+.activity_item a { color: #333; text-decoration: underline; }
 .activity_item .activity_date { color: #C5C5C5;}
+
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable 

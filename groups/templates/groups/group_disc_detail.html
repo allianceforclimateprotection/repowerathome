@@ -4,6 +4,7 @@
         <a href="{% url index %}">Home</a> &rsaquo;
         <a href="{% url group_list %}">Teams</a> &rsaquo;
         <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
+        <a href="{% url group_disc_list group.slug %}">Discussions</a> &rsaquo;
         {{ disc.subject }}
     </div>
     <h2>{{disc.subject}}</h2>

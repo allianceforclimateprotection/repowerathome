@@ -1,25 +1,20 @@
 {% load thumbnail %}
 
-<img class="group_image" src="{% thumbnail group.safe_image 50x50 crop='smart' %}" alt="group image" height="50" width="50" />
+<img class="group_image" src="{% thumbnail group.safe_image 45x38 crop='smart' %}" alt="group image" height="38" width="45" />
 <div class="group_details">
-    {% if is_manager %}
-        <span class="group_action">| <a href="{% url group_edit group.slug %}">Edit Team</a></span>
-    {% endif %}
-    {% if group.is_joinable and is_member %}
-        <a class="group_action" href="{% url group_leave group.id %}">Leave Team</a>
-    {% endif %}
-    <h1><a href="{{ group.get_absolute_url }}">{{ group.name }}</a></h1>
-    {% for parent in group.parents %}
-        <span class="group_parent">
-            <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
-            {% if not forloop.last %}&gt;{% endif %}
-        </span>
-    {% endfor %}
+    <h1>
+        <a href="{{ group.get_absolute_url }}">{{ group.name }}</a>
+    </h1>
     {% if group.description %}
         <p class="group_description">{{ group.description }}</p>
     {% endif %}
-    <div class="membership_type">
-        Team Membership: {% if group.is_public %}Open{% else %}Closed{% endif %}
-    </div>
+    <p>
+        {% if is_manager %}
+            <a class="button" href="{% url group_edit group.slug %}">Edit Team</a>
+        {% endif %}
+        {% if group.is_joinable and is_member %}
+            <a class="button" href="{% url group_leave group.id %}">Leave Team</a>
+        {% endif %}
+    </p>
 </div>
 <br class="clear" />

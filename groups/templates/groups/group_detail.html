@@ -32,7 +32,10 @@
     {% if is_member %}
         <h2>Magnify your Impact</h2>
         {% activity_by_slug mag_invite_friend as invite_friend_act %}
-        <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend to this team (+{{ invite_friend_act.points }} points)</a>
+        <p>
+            <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend to this team</a>
+            (+{{ invite_friend_act.points }} points)
+        </p>
         <div id='invite_friend_dialog'>
             {% include "_invite_form.html" %}
         </div>
@@ -69,7 +72,7 @@
                 <h2>Popular Actions</h2>
                 <ol>
                 {% for action in popular_actions %}
-                    <li><a href="{% url action_detail action.slug %}">{{ action }}</a> ({{ action.completes_in_group }})</li>
+                    <li><a href="{% url action_detail action.slug %}">{{ action }}</a> ({{ action.completes_in_group }} member)</li>
                 {% endfor %}
                 </ol>
             {% endif %}
@@ -80,7 +83,7 @@
                 <ol>
                 {% for user in top_members %}
                     {% if forloop.counter0 < 3 %}
-                        <li>{% safe_user_link user %} ({{ user.get_profile.total_points }})</li>
+                        <li>{% safe_user_link user %} ({{ user.get_profile.total_points }} points)</li>
                     {% endif %}
                 {% endfor %}
                 </ol>
@@ -118,16 +121,17 @@
 	{% if not group.is_geo_group %}
         <div id="group_discussion_list" class="group_section">
         	<h2>Discussions</h2>
-    		{% if is_poster %}
-    			<a href="{% url group_disc_create group.slug %}">Start new discussion</a>
+        	{% if discs %}
+    			<a href="{% url group_disc_list group.slug %}">See all discussions</a>	
     		{% endif %}
     		{% if not is_poster and not discs %}
     			No discussions yet.
-    		{% endif %}
-		
-    		{% if discs %}	
+    		{% endif %}	
+    		{% if discs %}
     			{% include "groups/_group_disc_list.html" %}
-    			<a href="{% url group_disc_list group.slug %}">See all discussions</a>	
+    		{% endif %}
+    		{% if is_poster %}
+    			<a class="button" href="{% url group_disc_create group.slug %}">Start new discussion</a>
     		{% endif %}
         </div>
 	{% endif %}
