@@ -1,7 +1,13 @@
 {% extends "rah/base.html" %}
 
 {% block right_content %}
-	{% include "groups/_group_disc_create_form.html" %}
+    <div id="breadcrumbs">
+        <a href="{% url index %}">Home</a> &rsaquo;
+        <a href="{% url group_list %}">Teams</a> &rsaquo;
+        <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
+        Create Discussion
+    </div>
+    {% include "groups/_group_disc_create_form.html" %}
 {% endblock %}
 
 {% block js %}{% endblock %}

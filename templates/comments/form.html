@@ -25,4 +25,6 @@
         {% csrf_token %}
         </div>
     </form>
+{% else %}
+    <a href="{% url login %}">Log in</a> or <a href="{% url register %}">sign up</a> to post comments.
 {% endif %}

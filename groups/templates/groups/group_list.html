@@ -1,28 +1,32 @@
 {% extends "base.html" %}
 
 {% block right_content %}
+    <div id="breadcrumbs">
+        <a href="{% url index %}">Home</a> &rsaquo;
+        Teams
+    </div>
     <div class="grid_2 alpha">
-		{% if user.is_authenticated and my_groups %}
-			<h1>Your Teams</h1>
-			{% with my_groups as groups%}
-				{% include "groups/_group_nugget_list.html" %}
-			{% endwith %}
-		{% endif %}
-		<h1>Start a Team</h1>
+        {% if user.is_authenticated and my_groups %}
+            <h1>Your Teams</h1>
+            {% with my_groups as groups%}
+                {% include "groups/_group_nugget_list.html" %}
+            {% endwith %}
+        {% endif %}
+        <h1>Start a Team</h1>
         <p>
-			Are you ready to become a leading voice for energy efficiency in your community? Starting a team is a great way to help
-			your neighborhood, church, school, or local group become more energy savvy. As a team leader, you can use your team to
-			organize meetings, encourage action, and track progress towards your team's goals.
-		</p>
+            Are you ready to become a leading voice for energy efficiency in your community? Starting a team is a great way to help
+            your neighborhood, church, school, or local group become more energy savvy. As a team leader, you can use your team to
+            organize meetings, encourage action, and track progress towards your team's goals.
+        </p>
         <a class="button" href="{% url group_create %}">Start a Team</a>
         {% if groups %}
             <h1>Join a Team</h1>
-			<p>
-				People across the country are working together to make their homes and their communities better than ever before. As
-				part of a team, you can brainstorm ideas for improving your community, share local tips about energy efficiency, and
-				meet people who are interested in building a cleaner tomorrow.
-			</p>
-			{% include "groups/_group_nugget_list.html" %}
+            <p>
+                People across the country are working together to make their homes and their communities better than ever before. As
+                part of a team, you can brainstorm ideas for improving your community, share local tips about energy efficiency, and
+                meet people who are interested in building a cleaner tomorrow.
+            </p>
+            {% include "groups/_group_nugget_list.html" %}
         {% endif %}
     </div>
     <div class="grid_1 omega">

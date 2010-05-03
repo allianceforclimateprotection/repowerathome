@@ -3,13 +3,13 @@
 
 {% block extralinks %}
     {% if group.slug %}
-        <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower at Home Group Activity" />
+        <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower at Home Team Activity" />
     {% endif %}
 {% endblock %}
 
 {% block left_sidebar %}
     {% if group.is_joinable and not is_member and not membership_pending %}
-        <a class="button" href="{% url group_join group.id %}">Join Group</a>
+        <a class="button" href="{% url group_join group.id %}">Join Team</a>
     {% endif %}
     {% if membership_pending %}
         <span class="membership_status">Your membership status is currently <b>pending</b>.</span>
@@ -32,14 +32,14 @@
     {% if is_member %}
         <h2>Magnify your Impact</h2>
         {% activity_by_slug mag_invite_friend as invite_friend_act %}
-        <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend to this group  (+{{ invite_friend_act.points }} points)</a>
+        <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend to this team (+{{ invite_friend_act.points }} points)</a>
         <div id='invite_friend_dialog'>
             {% include "_invite_form.html" %}
         </div>
     {% endif %}
     <div id="group_activity" class="group_section">
         {% if group_records %}
-            <h2>Group Activity
+            <h2>Team Activity
                 {% if group.slug %}
                     <a class="atom_link" href="{% url group_activity_feed group.slug %}">
                         <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
@@ -54,6 +54,11 @@
 {% endblock %}
 
 {% block right_content %}
+    <div id="breadcrumbs">
+        <a href="{% url index %}">Home</a> &rsaquo;
+        <a href="{% url group_list %}">Teams</a> &rsaquo;
+        {{group.name}}
+    </div>
     <div id="group_header" class="group_section">
         {% include "groups/_group_header.html" %}
     </div>
