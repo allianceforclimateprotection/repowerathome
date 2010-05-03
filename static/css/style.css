@@ -443,7 +443,7 @@ Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Gro
 .group_image, .group_details { float: left; }
 .membership_request { list-style: disc inside; }
 .membership_tools {  font-weight: bold; margin-left: 30px; }
-#group_info div { float: left; }
+#group_info div { float: left; width: 40%;}
 #group_info li { list-style: decimal inside; }
 #top_members { margin-left: 70px; }
 .group_details { padding-left: 10px; }
