@@ -25,7 +25,7 @@ def action_show(request, tag_slug=None):
         actions = Action.tagged.with_any(tag_filter)
     else:
         actions = Action.objects.all()
-    actions = sorted(actions, key=lambda a: a.has_illustration() or a.pk)
+    actions = sorted(actions, key=lambda a: not a.has_illustration())
     tags = Action.tags.cloud()
     register_form = RegistrationForm()
     profile = request.user.get_profile() if request.user.is_authenticated() else None
