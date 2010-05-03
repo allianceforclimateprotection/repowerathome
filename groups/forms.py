@@ -10,11 +10,11 @@ from models import Group, GroupUsers, Discussion
 class GroupForm(forms.ModelForm):
     IMAGE_FORMATS = {"PNG": "png", "JPEG": "jpeg", "GIF": "gif"}
     
-    name = forms.CharField(label="Group name", help_text="Enter a name for your new group")
-    slug = forms.SlugField(label="Group address", help_text="This will be your group's web address")
-    description = forms.CharField(label="Group description", help_text="What is the group all about?",
+    name = forms.CharField(label="Team name", help_text="Enter a name for your new team")
+    slug = forms.SlugField(label="Team address", help_text="This will be your team's web address")
+    description = forms.CharField(label="Team description", help_text="What is the team all about?",
         widget=forms.Textarea(attrs={"rows": 5}))
-    image = forms.FileField(label="Upload a group image", help_text="You can upload png, jpg or gif files upto 512K", required=False)
+    image = forms.FileField(label="Upload a team image", help_text="You can upload png, jpg or gif files upto 512K", required=False)
 
     states = ["ak", "al", "ar", "az", "ca", "co", "ct", "dc", "de", "fl", "ga", "hi", "ia", "id", "il", 
         "in", "ks", "ky", "la", "ma", "md", "me", "mi", "mn", "mo", "ms", "mt", "nc", "nd", "ne", 
@@ -34,7 +34,7 @@ class GroupForm(forms.ModelForm):
         data = self.cleaned_data["image"]
         if data:
             if data.size > 4194304:
-                raise forms.ValidationError("Group images can not be larger than 512K")
+                raise forms.ValidationError("Team images can not be larger than 512K")
             self.image_format = pil_open(data.file).format
             if not self.image_format in GroupForm.IMAGE_FORMATS:
                 raise forms.ValidationError("Images can not be of type %s" % data.content_type)
@@ -43,12 +43,12 @@ class GroupForm(forms.ModelForm):
     def clean_slug(self):
         data = self.cleaned_data["slug"]
         if data in GroupForm.states or any([data.startswith("%s-" % state) for state in GroupForm.states]):
-            raise forms.ValidationError("Group addresses can not begin with a state name.")
+            raise forms.ValidationError("Team addresses can not begin with a state name.")
         try:
             if data in GroupForm.group_name_blacklist or resolve(reverse("group_detail", args=[data]))[0].__name__ != "group_detail":
-                raise forms.ValidationError("This Group address is not allowed.")
+                raise forms.ValidationError("This Team address is not allowed.")
         except:
-            raise forms.ValidationError("This Group address is not allowed.")
+            raise forms.ValidationError("This Team address is not allowed.")
         return data
         
     def save(self):
@@ -65,11 +65,11 @@ class MembershipForm(forms.Form):
         ('', '--Set Membership Role--'),
         ('M', 'Manager',),
         ('N', 'Regular Member',),
-        ('D', 'Remove from Group',),
+        ('D', 'Remove from Team',),
     )
     role = forms.ChoiceField(label="", choices=MEMBERSHIP_ROLES, error_messages={"required": "You must select a membership action."})
     memberships = forms.ModelMultipleChoiceField(queryset=GroupUsers.objects.all(), widget=forms.CheckboxSelectMultiple,
-        error_messages={"required": "You must select at least one member from the group."})
+        error_messages={"required": "You must select at least one member from the team."})
     
     def __init__(self, group, *args, **kwargs):
         super(MembershipForm, self).__init__(*args, **kwargs)
@@ -81,7 +81,7 @@ class MembershipForm(forms.Form):
         role = data["role"] if "role" in data else ""
         memberships = data["memberships"] if "memberships" in data else []
         if (role == "N" or role == "D") and self.group.number_of_managers() == len(memberships):
-            self._errors["memberships"] = forms.util.ErrorList(["You must leave at least one manager in the group."])
+            self._errors["memberships"] = forms.util.ErrorList(["You must leave at least one manager in the team."])
             del self.cleaned_data["memberships"]
         return self.cleaned_data
         

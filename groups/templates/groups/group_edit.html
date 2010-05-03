@@ -26,7 +26,7 @@
     </div>
     <div id="group_edit_tabs">
         <ul>
-            <li><a href="#group_tab">Group</a></li>
+            <li><a href="#group_tab">Team</a></li>
             <li><a href="#members_tab">Members</a></li>
             <li><a href="#discussions_tab">Discussions</a></li>
         </ul>
@@ -39,9 +39,9 @@
                 {% csrf_token %}
             </form>
             <form id="delete_group_form" action="" method="post">
-                <h3>Delete Group</h3>
-                <p>Deleting a group will immediately remove it from our system.<br/>Groups cannot be undeleted.</p>
-                <p><input type="submit" name="delete_group" value="Delete Group"></input></p>
+                <h3>Delete Team</h3>
+                <p>Deleting a team will immediately remove it from our system.<br/>Teams cannot be undeleted.</p>
+                <p><input type="submit" name="delete_group" value="Delete Team"></input></p>
                 {% csrf_token %}
             </form>
         </div>

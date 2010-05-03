@@ -18,8 +18,8 @@
         <a href="{% url group_disc_create group.slug %}">Start new discussion</a>
     {% else %}
         {% if group.is_joinable %}
-            You must be a member of this group to post discussions. 
-            <a class="button" href="{% url group_join group.id %}">Join Group</a>
+            You must be a member of this team to post discussions. 
+            <a class="button" href="{% url group_join group.id %}">Join Team</a>
         {% endif %}
     {% endif %}
 {% endblock %}

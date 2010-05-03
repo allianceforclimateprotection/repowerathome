@@ -1,6 +1,6 @@
 {% extends "records/base.html" %}
 {% block activity_item %}
-    {% safe_user_link record.user %} created a new group, 
+    {% safe_user_link record.user %} created a new team, 
     <a href="{{ content_object.get_absolute_url }}">{{ content_object.name }}</a>, 
 {% endblock %}
 {% block activity_date %}
