@@ -1,5 +1,19 @@
 <form action="{% url group_disc_create group.slug %}" method="post" accept-charset="utf-8">
-	{{disc_form.as_p}}
+	{% for field in disc_form %}
+	    {% if field.is_hidden %}
+            {{ field }}
+        {% else %}
+            {% if field.name == "subject" or field.name == "body" %}
+                <p class="form_row overset {% if field.errors %}error{% endif %}">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+                    {% endfor %}
+                </p>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
 	<p><input type="submit" value="Submit"/></p>
 	{% csrf_token %}
 </form>

@@ -108,7 +108,7 @@ class DiscussionSettingsForm(forms.ModelForm):
 
 class DiscussionCreateForm(forms.Form):
     subject = forms.CharField()
-    body = forms.CharField(widget=forms.Textarea)
+    body = forms.CharField(widget=forms.Textarea, label="Comment")
     parent_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
     parent_id_sig = forms.CharField(widget=forms.HiddenInput, required=False)
     

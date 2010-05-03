@@ -56,11 +56,10 @@ def post_status(request):
     form = StatusForm(request.POST)
     if form.is_valid():
         profile = request.user.get_profile()
-        if form.save(profile):
+        resp = form.save(profile)
+        if resp == "success":
             Record.objects.create_record(request.user, 'mag_tweet')
             messages.success(request, "Your tweet has been posted.")
         else:
-            profile.twitter_access_token = None
-            profile.save()
-            messages.error(request, "There was a problem posting your tweet, please relink your account.")
+            messages.error(request, "There was a problem posting your tweet. Twitter says, '%s'" % resp)
     return redirect("index")

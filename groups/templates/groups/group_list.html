@@ -12,13 +12,14 @@
                 {% include "groups/_group_nugget_list.html" %}
             {% endwith %}
         {% endif %}
+        <br/>
         <h1>Start a Team</h1>
         <p>
-            Are you ready to become a leading voice for energy efficiency in your community? Starting a team is a great way to help
+            Are you ready to lead the charge for a cleaner tomorrow? Starting a team is a great way to help
             your neighborhood, church, school, or local group become more energy savvy. As a team leader, you can use your team to
             organize meetings, encourage action, and track progress towards your team's goals.
         </p>
-        <a class="button" href="{% url group_create %}">Start a Team</a>
+        <p><a class="button" href="{% url group_create %}">Start a Team</a></p>
         {% if groups %}
             <h1>Join a Team</h1>
             <p>

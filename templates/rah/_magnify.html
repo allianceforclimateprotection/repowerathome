@@ -5,9 +5,9 @@
     {% activity_by_slug mag_invite_friend as invite_friend_act %}
     <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend</a> (+{{ invite_friend_act.points }} points)<br/>
     {% activity_by_slug mag_tweet as tweet_act %}
-    <a href='{% url twitter_oauth_post_status %}' class='twitter_status'>Share on twitter</a> (+ {{ tweet_act.points }} points)<br/>
+    <a href='{% url twitter_oauth_post_status %}' id='twitter_status_link'>Share on twitter</a> (+ {{ tweet_act.points }} points)<br/>
     {% activity_by_slug group_create as group_create_act %}
-    <a href='{% url group_create %}'>Create a group</a> (+ {{ group_create_act.points }} points)
+    <a href='{% url group_create %}'>Create a team</a> (+ {{ group_create_act.points }} points)
 </p>
 {% include "rah/_house_party_dialog.html" %}
 <div id='invite_friend_dialog'>

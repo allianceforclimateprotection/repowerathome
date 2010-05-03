@@ -13,6 +13,8 @@ class StatusForm(forms.Form):
         token = oauth.OAuthToken.from_string(access_token)
         if token:
             response = json.loads(update_status(token, status))
-            if not response.has_key("error"):
-                return True
-        return False
+            if response.has_key("error"):
+                return response['error']
+            else:
+                return "success"
+        return "Uknown Error"

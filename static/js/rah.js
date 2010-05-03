@@ -157,12 +157,11 @@ var rah = {
             rah.mod_invite_friend.init();
             
             // Setup twitter update form, link, and dialog
-            $("#twitter_post_dialog").validate({ rules: {status: { required: true }}});
-            $('.twitter_status').click(function(){ $('#twitter_post_dialog').dialog('open'); return false; });
-            var form = $('#twitter_status_form');
+            $("#twitter_status_form").validate({ rules: {status: { required: true }}});
+            $('#twitter_status_link').click(function(){ $('#twitter_post_dialog').dialog('open'); return false; });
             $('#twitter_post_dialog').dialog({
                 title: 'Tell your tweeps about us', modal: true, autoOpen: false,
-                buttons: (form.size() > 0 ? { "Update status": function() { form.submit(); } } : { })
+                buttons: ($('#twitter_status_form').size() > 0 ? { "Update status": function() { $('#twitter_status_form').submit(); } } : { })
             });
         }
     },

@@ -87,12 +87,15 @@ class Action(models.Model):
                                         WHERE afd.user_id = %s
                                         AND actions_actionform.id = afd.action_form_id"""})
                                         
-    def detail_illustration(self):
+    def get_detail_illustration(self):
+        return "%simages/actions/%s/action_detail.jpg" % (settings.MEDIA_URL, self.slug)
+
+    def get_nugget_illustration(self):
+        return "%simages/actions/%s/action_nugget.jpg" % (settings.MEDIA_URL, self.slug)
+    
+    def has_illustration(self):
         path = "images/actions/%s/action_detail.jpg" % self.slug
-        if os.path.exists(os.path.join(settings.MEDIA_ROOT, path)):
-            return "%s/%s" % (settings.MEDIA_URL, path)
-        
-        return None
+        return os.path.exists(os.path.join(settings.MEDIA_ROOT, path))
     
     def __unicode__(self):
         return u"%s" % self.name
