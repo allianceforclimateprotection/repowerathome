@@ -557,7 +557,8 @@ ul.vampire_worksheet_wizard_nav li .active { border: 1px solid grey; }
     clear: both;
     position: absolute;
     list-style-type: none;
-    margin-left: -20px; } 
+    margin-left: -20px; }
+#vampire_directions li { list-style: disc; }
 #vampire_worksheet_wizard .worksheet { padding: 20px 30px; width: 650px; float: left; }
 #vampire_worksheet_wizard .vampire_device_image { float: left; }
 #vampire_worksheet_wizard .vampire_savings_container { float: left; }
