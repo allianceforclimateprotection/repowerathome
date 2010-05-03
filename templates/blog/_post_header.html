@@ -1,9 +1,0 @@
-<h2 class="title"><a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a></h2>
-<div class='profile_heading'>
-    <img class='gravatar' src="{{ post.author.get_profile.get_gravatar_url }}" alt="user gravatar" />
-    <div>
-		<p>{% safe_user_link post.author %}</p>
-        <p class="date">Posted: {{ post.publish|date:"F j, Y" }}</p>
-    </div>
-    <br class="clear" />
-</div>

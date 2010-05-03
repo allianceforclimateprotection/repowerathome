@@ -1,9 +1,7 @@
-{% extends "blog/base_blog.html" %}
+{% extends "base.html" %}
 {% load comments %}
 
 {% block title %}{{ object.title }}{% endblock %}
-{% block body_class %}{{ block.super }} post_detail{% endblock %}
-{% block body_id %}post_{{ object.id }}{% endblock %}
 
 {% block content_title %}
     <h2>{{ object.title }}</h2>
@@ -26,7 +24,12 @@
     <div class="post">
         {% with object as post %}
             <div>
-                {% include 'blog/_post_header.html' %}
+                <h2 class="title">
+					<a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a>
+				</h2>
+				<p>
+					<em>Posted by {% safe_user_link post.author %} on {{ post.publish|date:"F j, Y" }}</em>
+				</p>
                 <div class="post_body">{{ post.body|safe }}</div>
             </div>
         {% endwith %}
@@ -35,7 +38,12 @@
     <div id="comments">
         <div id="comments_divider"></div>
         {% render_comment_list for object %}
-        {% render_comment_form for object %}
+		{% if user.is_authenticated %}
+			{% render_comment_form for object %}
+		{% else %}
+			<a href="{% url login %}">Log in</a> or <a href="{% url register %}">sign up</a> to post comments.
+		{% endif %}
+        
     </div>
 {% endblock %}
 {% block js %}page_post_detail{% endblock %}
