@@ -360,6 +360,7 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
     -moz-border-radius: 9px;
     -webkit-border-radius: 9px;
     border-radius: 9px; }
+#action_content li { list-style: disc; }
 .action_detail_task_container { position:relative; }
 .action_detail_task_checkbox {
     width:30px;
@@ -581,6 +582,7 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .atom_link { margin-left: 5px; }
 #breadcrumbs {font-size:12px; margin-bottom:20px;}
 .blog_byline {}
+.post_body li { list-style: disc; }
 
 /* spite icons */
 .icon_gt {background: url(../images/theme/sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
