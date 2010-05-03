@@ -20,10 +20,12 @@ import action_forms
 
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
-    actions = Action.objects.all()
     if tag_slug:
         tag_filter = get_object_or_404(Tag, name=tag_slug)
         actions = Action.tagged.with_any(tag_filter)
+    else:
+        actions = Action.objects.all()
+    actions = sorted(actions, key=lambda a: a.has_illustration() or a.pk)
     tags = Action.tags.cloud()
     register_form = RegistrationForm()
     profile = request.user.get_profile() if request.user.is_authenticated() else None
