@@ -54,6 +54,11 @@
 {% endblock %}
 
 {% block right_content %}
+    <div id="breadcrumbs">
+        <a href="{% url index %}">Home</a> &rsaquo;
+        <a href="{% url group_list %}">Teams</a> &rsaquo;
+        {{group.name}}
+    </div>
     <div id="group_header" class="group_section">
         {% include "groups/_group_header.html" %}
     </div>

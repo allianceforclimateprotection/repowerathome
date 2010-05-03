@@ -1,16 +1,22 @@
 {% extends "rah/base.html" %}
 {% block right_content %}
+    <div id="breadcrumbs">
+        <a href="{% url index %}">Home</a> &rsaquo;
+        <a href="{% url group_list %}">Teams</a> &rsaquo;
+        <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
+        {{ disc.subject }}
+    </div>
     <h2>{{disc.subject}}</h2>
     {% include "groups/_group_disc_nugget.html" %}
     {% for disc in discs %}
-    	{% include "groups/_group_disc_nugget.html" %}
+        {% include "groups/_group_disc_nugget.html" %}
     {% endfor %}
     {% if is_poster %}
-    	{% include "groups/_group_disc_create_form.html" %}
+        {% include "groups/_group_disc_create_form.html" %}
     {% else %}
-    	{% if group.is_joinable %}
-    		You must be a member of this group to post discussions. 
-    		<a class="button" href="{% url group_join group.id %}">Join Group</a>
-    	{% endif %}
+        {% if group.is_joinable %}
+            You must be a member of this group to post discussions. 
+            <a class="button" href="{% url group_join group.id %}">Join Group</a>
+        {% endif %}
     {% endif %}
 {% endblock %}
