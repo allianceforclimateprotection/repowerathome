@@ -273,7 +273,7 @@ var rah = {
             });
             $(".commit_cancel").click(function(){
                 if(confirm("Are you sure you want to cancel your commitment?")) {
-                    $(".action_cancel_form:first").submit();
+                    $(".action_cancel_form").submit();
                 }
                return false; 
             });
