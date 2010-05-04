@@ -230,7 +230,7 @@ def feedback(request):
         form = FeedbackForm(request.POST)
         if form.is_valid():
             feedback = form.save()
-            form.send(request.user)
+            form.send(request)
             
             # Add the logged in user to the record
             if request.user.is_authenticated():

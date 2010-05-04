@@ -130,9 +130,9 @@ class FeedbackForm(forms.ModelForm):
     beta_group = forms.BooleanField(help_text="""Check here if you would like to be a part 
                                                 of our alpha group and receive information 
                                                 on new features before they launch.""", label="", required=False, widget=forms.HiddenInput)
-    def send(self, user):
+    def send(self, request):
         template = loader.get_template('rah/feedback_email.html')
-        context  = { 'feedback': self.cleaned_data, 'user': user, }
+        context  = { 'feedback': self.cleaned_data, 'request': request, }
         msg = EmailMessage('Feedback Form', template.render(Context(context)), None, ["feedback@repowerathome.com"])
         msg.content_subtype = "html"
         msg.send()
