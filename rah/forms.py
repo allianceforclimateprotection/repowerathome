@@ -207,7 +207,7 @@ class HousePartyForm(forms.Form):
         }
         try:
             send_mail('House Party Contact', template.render(Context(context)), None, 
-                ["feedback@repowerathome.com"], fail_silently=False)
+                ["field@repowerathome.com"], fail_silently=False)
         except SMTPException, e:
             return False
         return True
