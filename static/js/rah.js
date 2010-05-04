@@ -295,10 +295,10 @@ var rah = {
                     api: true
                 });
                 $("#vampire_worksheet").navigator({
-                    navi: ".vampire_worksheet_wizard_nav",
-                    naviItem: "a"
+                    navi: "#vampire_worksheet_wizard_nav",
+                    naviItem: "li"
                 });
-                var nav = $("ul.vampire_worksheet_wizard_nav");
+                var nav = $("#vampire_worksheet_wizard_nav");
                 $(".frame_shifter").click(function(){
                     var worksheet = $(this).parents(".worksheet");
                     nav.slideDown("fast", function(){
