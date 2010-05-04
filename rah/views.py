@@ -4,7 +4,6 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth import login as auth_login
 from django.contrib.comments.views import comments
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader, Context
@@ -144,7 +143,7 @@ def login(request, template_name='registration/login.html',
                     redirect_to = settings.LOGIN_REDIRECT_URL
             
             # Okay, security checks complete. Log the user in.
-            auth_login(request, form.get_user())
+            auth.login(request, form.get_user())
 
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()

@@ -4,6 +4,7 @@ from django.contrib import admin
 from actions import admin as actions_admin
 from basic.blog import admin as blog_admin
 from rah import admin as rah_admin
+from rah.feeds import UserActivityFeed
 from django.contrib.comments import admin as comments_admin
 from geo import admin as geo_admin
 from groups import admin as groups_admin
@@ -42,6 +43,7 @@ urlpatterns = patterns('rah.views',
     (r'^search/$', 'search'),
     url(r'^terms/$', 'terms_of_use', name='terms_of_use'),
     url(r'^privacy/$', 'privacy_policy', name='privacy_policy'),
+    url(r'user/(?P<user_id>\d+)/feed/$', UserActivityFeed(), name='user_activity_feed'),
 )
 
 urlpatterns += patterns('',
