@@ -301,9 +301,8 @@ var rah = {
                 var nav = $("#vampire_worksheet_wizard_nav");
                 $(".frame_shifter").click(function(){
                     var worksheet = $(this).parents(".worksheet");
-                    nav.slideDown("fast", function(){
-                        rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 0, scroller);
-                    });
+                    rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 0, scroller);
+                    nav.slideDown("fast");
                     return false;
                 });
                 if(!(typeof(vampire_worksheet_started) == "undefined") && vampire_worksheet_started) {
@@ -339,11 +338,35 @@ var rah = {
                     nav.find("a[href='" + page + "']").click();
                     return false;
                 });
-                
-                $(".slayer_tooltip").qtip({
-                   content: 'This is an active list element',
-                   show: 'mouseover',
-                   hide: 'mouseout'
+                $(".slayer_help").button("destroy");
+                $(".tooltip").each(function(){
+                    var link = $(this);
+                    var location = link.attr("href");
+                    link.qtip({
+                        content: {
+                            url: location
+                        },
+                        position: {
+                            corner: {
+                                target: 'topRight',
+                                tooltip: 'bottomLeft'
+                            }
+                        },
+                        style: {
+                            name: 'green',
+                            tip: 'bottomLeft',
+                            background: '#E3EC9F',
+                            color: '#00AAD8',
+                            border: {
+                                width: 3,
+                                radius: 2,
+                                color: '#92C139'
+                            }
+                        },
+                        show: 'mouseover',
+                        hide: 'mouseout'
+                    });
+                    link.click(function(){ return false; });
                 });
             },
             skip_to_next_sheet: function(worksheet, delay, scroller){

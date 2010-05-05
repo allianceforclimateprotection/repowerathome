@@ -16,8 +16,6 @@ from models import Action, UserActionProgress, ActionForm, ActionFormData
 from forms import ActionCommitForm
 from rah.forms import RegistrationForm
 
-import action_forms
-
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
     if tag_slug:
@@ -90,7 +88,9 @@ def action_cancel(request, action_slug):
 
 @login_required
 @csrf_protect
-def save_action_from(request, action_slug, form_name):
+def save_action_form(request, action_slug, form_name):
+    import action_forms
+    
     action = get_object_or_404(Action, slug=action_slug)
     action_form = get_object_or_404(ActionForm, action=action, form_name=form_name)
     if request.method == "GET":
@@ -113,6 +113,10 @@ def save_action_from(request, action_slug, form_name):
         return HttpResponse(json.dumps(ajax_data_func() if ajax_data_func else None))
     return redirect("action_detail", action_slug=action.slug)
     
+def action_help(request, action_slug, template_name):
+    return render_to_response("actions/%s/%s.html" % (action_slug, tempalte_name), 
+        context_instance=RequestContext(request))
+    
 def _default_action_vars(action, user):
     users_completed = User.objects.filter(useractionprogress__action=action, 
         useractionprogress__is_completed=1).order_by("-useractionprogress__updated")[:5]
@@ -134,6 +138,8 @@ def _default_action_vars(action, user):
     return default_vars
     
 def _build_action_form_vars(action, user):
+    import action_forms
+    
     forms = {}
     for form in action.action_forms_with_data(user):
         data = json.loads(form.data) if form.data else None

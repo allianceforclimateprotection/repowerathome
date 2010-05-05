@@ -24,11 +24,12 @@ class ActionTest(TestCase):
         self.cfw.commit_for_user(self.user, datetime.date.today())
         
         actions, recommended, committed, completed = Action.objects.actions_by_status(self.user)
-        self.failUnlessEqual(list(actions), list(Action.objects.all()))
+        sorted_actions = sorted(Action.objects.all(), key=lambda a: not a.has_illustration())
+        self.failUnlessEqual(list(actions), sorted_actions)
         self.failUnlessEqual(recommended, 
-            [a for a in Action.objects.all() if a not in [self.iwh, self.csp, self.cfw]])
+            [a for a in sorted_actions if a not in [self.iwh, self.csp, self.cfw]])
         self.failUnlessEqual(committed, [self.cfw])
-        self.failUnlessEqual(completed, [self.iwh, self.csp])
+        self.failUnlessEqual(completed, [self.csp, self.iwh])
         
     def test_complete_for_user(self):
         self.failUnlessRaises(UserActionProgress.DoesNotExist, UserActionProgress.objects.get,
