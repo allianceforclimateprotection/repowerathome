@@ -563,7 +563,7 @@ Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
 #vampire_worksheet_wizard .vampire_savings_container { float: left; }
 #vampire_worksheet_wizard .vampire_savings { font-size: 1.2em; font-weight: bold; }
 #vampire_worksheet_wizard .buttonset li { list-style: none; }
-#vampire_worksheet_wizard .buttonset .ui-button-text { height: 32px; display: table-cell; vertical-align: middle; }
+#vampire_worksheet_wizard .buttonset .ui-button-text { height: 43px; display: table-cell; vertical-align: middle; }
 #vampire_worksheet_wizard .slayer_help_wrapper { font-weight: bold; text-align: center; }
 #vampire_worksheet_wizard .slayer_recommended { font-weight: bold; color: #92C139; text-align: center; }
 
