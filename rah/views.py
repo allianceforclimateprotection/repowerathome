@@ -24,6 +24,7 @@ from settings import GA_TRACK_PAGEVIEW, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
+from decorators import save_queued_POST
 
 @csrf_protect
 def index(request):
@@ -87,6 +88,7 @@ def register(request):
             new_user = form.save()
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
+            save_queued_POST(request)
 
             # Add the location to profile if the user registered with one
             if "location" in form.cleaned_data:
@@ -144,6 +146,7 @@ def login(request, template_name='registration/login.html',
             
             # Okay, security checks complete. Log the user in.
             auth.login(request, form.get_user())
+            save_queued_POST(request)
 
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()

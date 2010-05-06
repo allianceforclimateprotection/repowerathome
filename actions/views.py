@@ -11,10 +11,12 @@ from django.views.decorators.csrf import csrf_protect
 
 from tagging.models import Tag
 from records.models import Record
+from rah.forms import RegistrationForm
+from rah.decorators import login_required_save_POST
 
 from models import Action, UserActionProgress, ActionForm, ActionFormData
 from forms import ActionCommitForm
-from rah.forms import RegistrationForm
+
 
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
@@ -40,7 +42,7 @@ def action_detail(request, action_slug):
     default_vars.update(locals())
     return render_to_response("actions/action_detail.html", default_vars, RequestContext(request))
         
-@login_required
+@login_required_save_POST
 @csrf_protect
 def action_complete(request, action_slug):
     """invoked when a user marks an action as completed"""
@@ -61,7 +63,7 @@ def action_undo(request, action_slug):
         messages.success(request, "No worries. We've updated the record. Let us know when you're finished with this action.")
     return redirect("action_detail", action_slug=action.slug)
     
-@login_required
+@login_required_save_POST
 @csrf_protect
 def action_commit(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
@@ -86,7 +88,7 @@ def action_cancel(request, action_slug):
         return redirect("action_detail", action_slug=action.slug)
     return render_to_response("actions/action_cancel.html", locals(), RequestContext(request))
 
-@login_required
+@login_required_save_POST
 @csrf_protect
 def save_action_form(request, action_slug, form_name):
     import action_forms
@@ -112,10 +114,6 @@ def save_action_form(request, action_slug, form_name):
         ajax_data_func = getattr(form, "ajax_data", None)
         return HttpResponse(json.dumps(ajax_data_func() if ajax_data_func else None))
     return redirect("action_detail", action_slug=action.slug)
-    
-def action_help(request, action_slug, template_name):
-    return render_to_response("actions/%s/%s.html" % (action_slug, tempalte_name), 
-        context_instance=RequestContext(request))
     
 def _default_action_vars(action, user):
     users_completed = User.objects.filter(useractionprogress__action=action, 
