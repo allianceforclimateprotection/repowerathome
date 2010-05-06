@@ -314,6 +314,7 @@ var rah = {
                     /* save the worksheet data */
                     $.ajax({
                         url: form.attr("action"),
+                        type: form.attr("method"),
                         data: form.serialize(),
                         success: function(data) {
                             $("#vampire_savings_total").text(data["total_savings"]);
