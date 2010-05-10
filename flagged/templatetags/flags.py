@@ -6,8 +6,6 @@ from django.template.loader import render_to_string
 from flagged.models import Flag
 from flagged.forms import FlagForm
 
-from django.contrib.auth.models import User
-
 register = template.Library()
 
 class FlagFormNode(template.Node):
