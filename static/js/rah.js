@@ -140,7 +140,6 @@ var rah = {
             $("#houseparty_form #id_phone").change(function(){
                 $("#house_party_dialog #id_phone_number").val($(this).val());
             });
-            id_phone_number
         }
     },
     
@@ -553,12 +552,12 @@ var rah = {
     mod_invite_friend: {
         init: function(){
             // Setup invite friend form, link, and dialog
-            $('#invite_friend_form_submit').hide();
-            $("#invite_friend_form").validate({rules: {to_email: { required: true, email: true }}});
-            $('#invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
+            $('.invite_form_submit').remove();
+            $("#invite_form").validate({rules: {email: { required: true, email: true }}});
+            $('.invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
             $('#invite_friend_dialog').dialog({
                 title: 'Invite a friend', modal: true, autoOpen: false, 
-                buttons: { "Send Invitation": function() { $('#invite_friend_form_submit').click();}}
+                buttons: { "Send Invitation": function() { $("#invite_form").submit(); }}
             });
         }
     },
@@ -585,7 +584,6 @@ var rah = {
             });
             $(".search_more").live("click", function() {
                 var link = $(this);
-                var form = link.parents("form");
                 $.get(link.attr("href"), function(data) {
                     link.replaceWith(data);
                 });
@@ -651,8 +649,10 @@ var rah = {
     mod_validate_setup: {
         init: function() {
             $.validator.setDefaults({
-                submitHandler: function(form) { form.submit(); }
+                submitHandler: function(form) { 
+                    form.submit(); 
+                }
             });
         }
     }
-}
+};

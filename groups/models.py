@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.template.defaultfilters import slugify
 
@@ -308,9 +309,8 @@ def associate_with_geo_groups(sender, instance, **kwargs):
 
 def add_invited_user_to_group(sender, instance, **kwargs):
     invitation = instance.invitation
-    if invitation.invite_type == "group":
-        group = Group.objects.get(pk=invitation.content_id)
-        GroupUsers.objects.get_or_create(user=instance.invitee, group=group)
+    if invitation.content_type == ContentType.objects.get(app_label="groups", model="group"):
+        GroupUsers.objects.get_or_create(user=instance.invitee, group=invitation.content_object)
 
 def update_discussion_reply_count(sender, instance, **kwargs):
     if instance.parent_id:

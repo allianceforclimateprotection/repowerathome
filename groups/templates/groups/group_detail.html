@@ -1,5 +1,6 @@
 {% extends "rah/base.html" %}
 {% load records %}
+{% load invites %}
 
 {% block extralinks %}
     {% if group.slug %}
@@ -33,11 +34,11 @@
         <h2>Magnify your Impact</h2>
         {% activity_by_slug mag_invite_friend as invite_friend_act %}
         <p>
-            <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend to this team</a>
+            <a href='{% url invite-invite %}' class='invite_friend_link'>Invite a friend to this team</a>
             (+{{ invite_friend_act.points }} points)
         </p>
         <div id='invite_friend_dialog'>
-            {% include "_invite_form.html" %}
+            {% get_invite_form for group %}
         </div>
     {% endif %}
     <div id="group_activity" class="group_section">

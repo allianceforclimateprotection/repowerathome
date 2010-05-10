@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 
 from records.models import Record
+from invite.models import Invitation
 from invite.forms import InviteForm
 from utils import hash_val
 
@@ -284,7 +285,6 @@ def _group_detail(request, group):
     requesters = group.requesters_to_grant_or_deny(request.user)
     has_other_managers = group.has_other_managers(request.user)
     discs = Discussion.objects.filter(parent=None, group=group).order_by("-created")[:5]
-    invite_form = InviteForm(initial={'invite_type':'group', 'content_id':group.id})
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))
     
 def _forbidden(request, message="You do not have permissions."):

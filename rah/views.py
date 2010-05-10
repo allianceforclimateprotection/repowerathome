@@ -15,7 +15,6 @@ from django.contrib import messages
 from django.contrib.sites.models import Site
 
 from tagging.models import Tag
-from invite.forms import InviteForm
 from actions.models import Action
 from rah.models import User, Profile
 from records.models import Record
@@ -46,7 +45,6 @@ def index(request):
         'completed': completed,
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'house_party_form': HousePartyForm(request.user),
-        'invite_form': InviteForm(),
         'twitter_status_form': twitter_form,
         'profile': request.user.get_profile(),
         'commitment_list': request.user.get_commit_list(),

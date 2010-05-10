@@ -1,9 +1,0 @@
-<form action="{% url invite_form_handler %}" method="post" id="invite_friend_form">
-    <p>Share the magic with your friends.</p>
-    <div>
-        {{ invite_form.as_p }}
-        <input type="hidden" name="next" value="{{request.path}}"/>
-        <input type="submit" name="submit" value="Send Invite" id="invite_friend_form_submit"/>
-    </div>
-    {% csrf_token %}
-</form>

@@ -1,9 +1,11 @@
+{% load invites %}
+
 <h2>Magnify Your Impact</h2>
 <p>
     {% activity_by_slug mag_request_party_host_info as house_party_act %}
     <a href='{% url house_party %}' id='house_party_link'>Host a house party</a> (+{{ house_party_act.points }} points)<br/>
     {% activity_by_slug mag_invite_friend as invite_friend_act %}
-    <a href='{% url invite_form_handler %}' id='invite_friend_link'>Invite a friend</a> (+{{ invite_friend_act.points }} points)<br/>
+    <a href='{% url invite-invite %}' class='invite_friend_link'>Invite a friend</a> (+{{ invite_friend_act.points }} points)<br/>
     {% activity_by_slug mag_tweet as tweet_act %}
     <a href='{% url twitter_oauth_post_status %}' id='twitter_status_link'>Share on twitter</a> (+ {{ tweet_act.points }} points)<br/>
     {% activity_by_slug group_create as group_create_act %}
@@ -11,7 +13,7 @@
 </p>
 {% include "rah/_house_party_dialog.html" %}
 <div id='invite_friend_dialog'>
-    {% include "_invite_form.html" %}
+    {% get_invite_form %}
 </div>
 <div id='twitter_post_dialog'>
     {% if user.get_profile.twitter_access_token %}
