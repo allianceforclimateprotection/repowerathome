@@ -1,7 +1,10 @@
 from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail, EmailMessage
 from django.db import models
+from django.template import loader
 from django.template.defaultfilters import slugify
 
 from geo.models import Location
@@ -323,9 +326,28 @@ def update_group_member_count(sender, instance, **kwargs):
     group = Group.objects.get(pk=instance.group.id)
     group.member_count = GroupUsers.objects.filter(group=group).count()
     group.save()
+    
+def alert_users_of_discussion(sender, instance, **kwargs):
+    if instance.is_public and not instance.is_removed and not instance.reply_count:
+        template = "groups/group_disc_email.html"
+        context = {"discussion": instance, "domain": Site.objects.get_current().domain,}
+        users = instance.group.users_not_blacklisted()
+        for user in users:
+            if user.pk == instance.user.pk: #don't send an email to the user that started the discussion
+                continue
+            context["user"] = user
+            msg = EmailMessage("Repower at Home %s Discussion - %s" % (instance.group, instance.subject),
+                loader.render_to_string(template, context), None, [user.email])
+            msg.content_subtype = "html"
+            try:
+                msg.send()
+            except SMTPException, e:
+                return False
+    return True
 
 models.signals.post_save.connect(associate_with_geo_groups, sender=Profile)
 models.signals.post_save.connect(add_invited_user_to_group, sender=Rsvp)
 models.signals.post_save.connect(update_discussion_reply_count, sender=Discussion)
 models.signals.post_save.connect(update_group_member_count, sender=GroupUsers)
 models.signals.post_delete.connect(update_group_member_count, sender=GroupUsers)
+models.signals.post_save.connect(alert_users_of_discussion, sender=Discussion)
