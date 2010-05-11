@@ -1,10 +1,11 @@
 from django import forms
+from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 
 VAMPIRE_OPTIONS = (
-    ('p', 'Turn off power strip',),
+    ('p', 'Turn off power strip', reverse("power_strip_help"),),
     ('u', 'Unplug the device',),
-    ('s', 'Use a smart power strip',),
+    ('s', 'Use a smart power strip', reverse("smart_power_strip_help"),),
     ('k', 'Skip',),
 )
 
@@ -17,7 +18,7 @@ class VampireSlayerWidget(forms.RadioSelect):
             attrs = html_class
         return super(VampireSlayerWidget, self).__init__(attrs=attrs, *args, **kwargs)
 
-class VampireField(forms.ChoiceField):
+class VampireField(forms.ChoiceField):    
     def __init__(self, recommended=None, choices=None, savings=0, widget=None, *args, **kwargs):
         if not choices:
             choices=VAMPIRE_OPTIONS
@@ -41,5 +42,6 @@ class VampirePowerWorksheetForm(forms.Form):
     def total_savings(self):
         total_savings = 0
         for bound_field in self:
-            total_savings += bound_field.field.savings if bound_field.data in ['p', 'u', 's'] else 0
+            if bound_field.data in ['p', 'u', 's']:
+                total_savings += bound_field.field.savings
         return total_savings

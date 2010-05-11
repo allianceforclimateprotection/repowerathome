@@ -8,18 +8,23 @@
 {#     this vampire #}
 {# </div> #}
 <br class="clear" />
-<form method="post" action="{% url save_action_from action.slug 'VampirePowerWorksheetForm' %}">
+<form method="post" action="{% url save_action_form action.slug 'VampirePowerWorksheetForm' %}">
     <p>
         Below are options for slaying this vampire, <br />
         select one that works for you.
     </p>
     <ul class="buttonset">
-        {% for id, label in field.field.choices %}
+        {% for id, label, help in field.field.choices %}
             <li>
                 <input value="{{ id }}" type="radio" class="vampire_slayer" 
                     name="{{ field.name }}" id="id_{{ field.name }}{{ forloop.counter0 }}"
                     {% if id == field.data %}checked="checked"{% endif %} />
                 <label for="id_{{ field.name }}{{ forloop.counter0 }}">{{ label }}</label>
+                {% if help %}
+                    <div class="slayer_help_wrapper">
+                        <a class="slayer_help tooltip" href="{{ help }}">Learn More</a>
+                    </div>
+                {% endif %}
                 {% if id == field.field.recommended %}
                     <div class="slayer_recommended">Recommended</div>
                 {% endif %}

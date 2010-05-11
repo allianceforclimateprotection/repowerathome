@@ -1,0 +1,12 @@
+<p>
+    Hi {{ user.get_full_name }},<br />
+    {{ discussion.user.get_full_name }} has posted a new discussion, {{ discussion.subject }}, on your
+    {{ discussion.group }}'s team page. 
+</p>
+<p>
+    <a href="http://{{ domain }}{{ discussion.get_absolute_url }}">Click here to check it out</a> 
+</p>
+<p>
+    Thanks,<br />
+    The Repower at Home team
+</p>

@@ -1,6 +1,6 @@
 <p>
     Hi,<br />
-    {{ from_user.get_full_name}} wants you to join a group on Repower at Home.
+    {{ from_user.get_full_name}} wants you to join {{ invite.content_object }}.
 </p>
 <p>
     <a href="{{ invite.get_permalink }}">Click here to accept the invitation</a>
@@ -12,9 +12,9 @@
     </p>
 {% endif %}
 <p>
-    Repower at Home groups help members save energy, see what their friends are doing, <br />
-    organize their communities, and save the world through the magic of energy efficiency. <br />
-    Link up today – it’s free!
+    {{ invite.content_object }} is a Repower at Home group. Repower at Home groups help members<br />
+    save energy, see what their friends are doing, organize their communities, and save the <br />
+    world through the magic of energy efficiency. Link up today – it’s free!
 </p>
 <p>
     <a href="https://{{ domain }}{% url register %}">Join now</a>

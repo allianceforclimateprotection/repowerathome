@@ -21,15 +21,15 @@
             {% for post in object_list %}
                 <div>
                     <h2 class="title">
-						<a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a>
-					</h2>
-					<p>
-						<em>Posted by {% safe_user_link post.author %} on {{ post.publish|date:"F j, Y" }}</em>
-					</p>
-                    
-					{{ post.body|safe }}
-                    
-					{% get_comment_count for post as comment_count %}
+                        <a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a>
+                    </h2>
+                    <p>
+                        <em>Posted by {% safe_user_link post.author %} on {{ post.publish|date:"F j, Y" }}</em>
+                    </p>
+                    <div class="post_body">
+                        {{ post.body|safe }}
+                    </div>
+                    {% get_comment_count for post as comment_count %}
                     <p>
                         {{ comment_count }} comment{{ comment_count|pluralize }}
                     </p>

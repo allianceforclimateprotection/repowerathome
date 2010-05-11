@@ -1,39 +1,37 @@
-from invite.models import Invitation, Rsvp
-from invite.forms import InviteForm
+import json
+
 from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+
 from utils import hash_val
-import json
+
+from models import Invitation, Rsvp
+from forms import InviteForm
 
 @csrf_protect
 @login_required
-def invite_form_handler(request):
+@require_POST
+def invite(request, next=None):
     """Handles invite form submission"""
-    if request.method == 'POST':
-        invite_form = InviteForm(request.POST)
-        if invite_form.is_valid():
-            success_msg = 'Invitation sent to %s' % invite_form.cleaned_data['to_email']
-            failure_msg = 'Whoops, something went wrong. That invitation was probably not sent. Try again?'
-            if invite_form.save(request.user):
-                messages.success(request, success_msg)
-            else:
-                messages.error(request, failure_msg)
-            
-            # If this isn't an ajax request, look for a return to
-            redirect_to = request.POST.get('next', '')
-            if redirect_to and '//' not in redirect_to:
-                return HttpResponseRedirect(redirect_to)
+    invite_form = InviteForm(instance=Invitation(user=request.user), data=request.POST)
+    if invite_form.is_valid():
+        if invite_form.save():
+            messages.success(request, 'Invitation sent to %s' % invite_form.cleaned_data['email'])
+        else:
+            messages.error(request, 'Whoops, something went wrong. That invitation was probably not sent. Try again?')
     else:
-        invite_form = InviteForm()
-    return render_to_response("invite_form.html", {
-        "invite_form": invite_form
-    }, context_instance=RequestContext(request))
-
+        messages.error(request, 'Form values where invalid, please try fill out the form again.')
+    
+    next = request.POST.get("next", next)
+    if next:
+        return redirect(next)
+    return redirect("index")
     
 def invite_welcome(request, token):
     if request.user.is_authenticated():
@@ -49,12 +47,11 @@ def invite_welcome(request, token):
         "invite": invite
     }, context_instance=RequestContext(request))
 
-
 @login_required
 def rsvp(request, token):
-    invite = Invitation.objects.select_related().get(token=token)
-    rsvp = Invitation.objects.rsvp(request.user, invite)
-    if rsvp:
+    invite = get_object_or_404(Invitation, token=token)
+    rsvp, created = Rsvp.objects.get_or_create(invitee=request.user, invitation=invite)
+    if created:
         messages.success(request, "Invitation from %s accepted" % invite.user.get_full_name())
     else:
         messages.info(request, "You already accepted this invitation from %s" % invite.user.get_full_name(), extra_tags="sticky")

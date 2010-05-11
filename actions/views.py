@@ -11,12 +11,12 @@ from django.views.decorators.csrf import csrf_protect
 
 from tagging.models import Tag
 from records.models import Record
+from rah.forms import RegistrationForm
+from rah.decorators import login_required_save_POST
 
 from models import Action, UserActionProgress, ActionForm, ActionFormData
 from forms import ActionCommitForm
-from rah.forms import RegistrationForm
 
-import action_forms
 
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
@@ -25,7 +25,7 @@ def action_show(request, tag_slug=None):
         actions = Action.tagged.with_any(tag_filter)
     else:
         actions = Action.objects.all()
-    actions = sorted(actions, key=lambda a: a.has_illustration() or a.pk)
+    actions = sorted(actions, key=lambda a: not a.has_illustration())
     tags = Action.tags.cloud()
     register_form = RegistrationForm()
     profile = request.user.get_profile() if request.user.is_authenticated() else None
@@ -42,7 +42,7 @@ def action_detail(request, action_slug):
     default_vars.update(locals())
     return render_to_response("actions/action_detail.html", default_vars, RequestContext(request))
         
-@login_required
+@login_required_save_POST
 @csrf_protect
 def action_complete(request, action_slug):
     """invoked when a user marks an action as completed"""
@@ -63,7 +63,7 @@ def action_undo(request, action_slug):
         messages.success(request, "No worries. We've updated the record. Let us know when you're finished with this action.")
     return redirect("action_detail", action_slug=action.slug)
     
-@login_required
+@login_required_save_POST
 @csrf_protect
 def action_commit(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
@@ -88,9 +88,11 @@ def action_cancel(request, action_slug):
         return redirect("action_detail", action_slug=action.slug)
     return render_to_response("actions/action_cancel.html", locals(), RequestContext(request))
 
-@login_required
+@login_required_save_POST
 @csrf_protect
-def save_action_from(request, action_slug, form_name):
+def save_action_form(request, action_slug, form_name):
+    import action_forms
+    
     action = get_object_or_404(Action, slug=action_slug)
     action_form = get_object_or_404(ActionForm, action=action, form_name=form_name)
     if request.method == "GET":
@@ -134,6 +136,8 @@ def _default_action_vars(action, user):
     return default_vars
     
 def _build_action_form_vars(action, user):
+    import action_forms
+    
     forms = {}
     for form in action.action_forms_with_data(user):
         data = json.loads(form.data) if form.data else None

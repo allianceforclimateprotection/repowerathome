@@ -16,6 +16,7 @@ class ActionManager(models.Manager):
                     select = { 'committed': 'SELECT uap.date_committed FROM actions_useractionprogress uap \
                                              WHERE uap.user_id = %s AND uap.action_id = actions_action.id'
                     })
+        actions = sorted(actions, key=lambda a: not a.has_illustration())
         recommended = [a for a in actions if a.completed != 1 and a.committed == None]
         committed = [a for a in actions if a.completed != 1 and a.committed != None]
         completed = [a for a in actions if a.completed == 1]

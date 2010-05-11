@@ -140,7 +140,6 @@ var rah = {
             $("#houseparty_form #id_phone").change(function(){
                 $("#house_party_dialog #id_phone_number").val($(this).val());
             });
-            id_phone_number
         }
     },
     
@@ -295,15 +294,14 @@ var rah = {
                     api: true
                 });
                 $("#vampire_worksheet").navigator({
-                    navi: ".vampire_worksheet_wizard_nav",
-                    naviItem: "a"
+                    navi: "#vampire_worksheet_wizard_nav",
+                    naviItem: "li"
                 });
-                var nav = $("ul.vampire_worksheet_wizard_nav");
+                var nav = $("#vampire_worksheet_wizard_nav");
                 $(".frame_shifter").click(function(){
                     var worksheet = $(this).parents(".worksheet");
-                    nav.slideDown("fast", function(){
-                        rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 0, scroller);
-                    });
+                    rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 0, scroller);
+                    nav.slideDown("fast");
                     return false;
                 });
                 if(!(typeof(vampire_worksheet_started) == "undefined") && vampire_worksheet_started) {
@@ -315,6 +313,7 @@ var rah = {
                     /* save the worksheet data */
                     $.ajax({
                         url: form.attr("action"),
+                        type: form.attr("method"),
                         data: form.serialize(),
                         success: function(data) {
                             $("#vampire_savings_total").text(data["total_savings"]);
@@ -339,11 +338,35 @@ var rah = {
                     nav.find("a[href='" + page + "']").click();
                     return false;
                 });
-                
-                $(".slayer_tooltip").qtip({
-                   content: 'This is an active list element',
-                   show: 'mouseover',
-                   hide: 'mouseout'
+                $(".slayer_help").button("destroy");
+                $(".tooltip").each(function(){
+                    var link = $(this);
+                    var location = link.attr("href");
+                    link.qtip({
+                        content: {
+                            url: location
+                        },
+                        position: {
+                            corner: {
+                                target: 'topRight',
+                                tooltip: 'bottomLeft'
+                            }
+                        },
+                        style: {
+                            name: 'green',
+                            tip: 'bottomLeft',
+                            background: '#E3EC9F',
+                            color: '#00AAD8',
+                            border: {
+                                width: 3,
+                                radius: 2,
+                                color: '#92C139'
+                            }
+                        },
+                        show: 'mouseover',
+                        hide: 'mouseout'
+                    });
+                    link.click(function(){ return false; });
                 });
             },
             skip_to_next_sheet: function(worksheet, delay, scroller){
@@ -529,12 +552,12 @@ var rah = {
     mod_invite_friend: {
         init: function(){
             // Setup invite friend form, link, and dialog
-            $('#invite_friend_form_submit').hide();
-            $("#invite_friend_form").validate({rules: {to_email: { required: true, email: true }}});
-            $('#invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
+            $('.invite_form_submit').remove();
+            $("#invite_form").validate({rules: {email: { required: true, email: true }}});
+            $('.invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
             $('#invite_friend_dialog').dialog({
                 title: 'Invite a friend', modal: true, autoOpen: false, 
-                buttons: { "Send Invitation": function() { $('#invite_friend_form_submit').click();}}
+                buttons: { "Send Invitation": function() { $("#invite_form").submit(); }}
             });
         }
     },
@@ -561,7 +584,6 @@ var rah = {
             });
             $(".search_more").live("click", function() {
                 var link = $(this);
-                var form = link.parents("form");
                 $.get(link.attr("href"), function(data) {
                     link.replaceWith(data);
                 });
@@ -627,8 +649,10 @@ var rah = {
     mod_validate_setup: {
         init: function() {
             $.validator.setDefaults({
-                submitHandler: function(form) { form.submit(); }
+                submitHandler: function(form) { 
+                    form.submit(); 
+                }
             });
         }
     }
-}
+};

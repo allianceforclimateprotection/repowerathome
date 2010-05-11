@@ -4,7 +4,6 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth import login as auth_login
 from django.contrib.comments.views import comments
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader, Context
@@ -16,7 +15,6 @@ from django.contrib import messages
 from django.contrib.sites.models import Site
 
 from tagging.models import Tag
-from invite.forms import InviteForm
 from actions.models import Action
 from rah.models import User, Profile
 from records.models import Record
@@ -25,6 +23,7 @@ from settings import GA_TRACK_PAGEVIEW, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
+from decorators import save_queued_POST
 
 @csrf_protect
 def index(request):
@@ -46,7 +45,6 @@ def index(request):
         'completed': completed,
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'house_party_form': HousePartyForm(request.user),
-        'invite_form': InviteForm(),
         'twitter_status_form': twitter_form,
         'profile': request.user.get_profile(),
         'commitment_list': request.user.get_commit_list(),
@@ -88,6 +86,7 @@ def register(request):
             new_user = form.save()
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
+            save_queued_POST(request)
 
             # Add the location to profile if the user registered with one
             if "location" in form.cleaned_data:
@@ -144,7 +143,8 @@ def login(request, template_name='registration/login.html',
                     redirect_to = settings.LOGIN_REDIRECT_URL
             
             # Okay, security checks complete. Log the user in.
-            auth_login(request, form.get_user())
+            auth.login(request, form.get_user())
+            save_queued_POST(request)
 
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
@@ -230,7 +230,7 @@ def feedback(request):
         form = FeedbackForm(request.POST)
         if form.is_valid():
             feedback = form.save()
-            form.send(request.user)
+            form.send(request)
             
             # Add the logged in user to the record
             if request.user.is_authenticated():
