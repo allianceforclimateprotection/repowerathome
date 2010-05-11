@@ -56,7 +56,7 @@ class Action(models.Model):
             
     def commit_for_user(self, user, date):
         uap, c = UserActionProgress.objects.get_or_create(user=user, action=self)
-        was_committed = uap.date_committed != None
+        was_committed = uap.date_committed <> None
         uap.date_committed = date
         uap.save()
         if not was_committed:
@@ -65,7 +65,7 @@ class Action(models.Model):
     def cancel_for_user(self, user):
         try:
             uap = UserActionProgress.objects.get(user=user, action=self)
-            was_committed = uap.date_committed != None
+            was_committed = uap.date_committed <> None
             uap.date_committed = None
             uap.save()
             if was_committed:

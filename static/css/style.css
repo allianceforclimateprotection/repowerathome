@@ -28,7 +28,7 @@ Elements Elements Elements Elements Elements Elements Elements Elements Elements
 body {
     font: 14px/18px Arial, Helvetica, sans-serif;
     color: #333; 
-    background-color: #B3D7F2; }
+    background-color: #b0d8f2; }
 a { color: #00AAD8; text-decoration: none; }
 a:hover { text-decoration:underline; }
 a:active { color: #6EC3D1; text-decoration:underline; }
@@ -161,7 +161,7 @@ Content Content Content Content Content Content Content Content Content Content 
 --------------------------------------------------------------------------------------------------------------------- */
 #content_container{width:100%; position:relative;}
 #content{position:relative;}
-#content_container {background: url(../images/theme/content_container.png) repeat-x top center;}
+/*#content_container {background: url(../images/theme/content_container.png) repeat-x top center;}*/
 #content_bg {background: transparent url(../images/theme/content_bg.jpg) no-repeat top center;}
 #content {
     min-height:600px;
