@@ -2,26 +2,15 @@ import random
 import hashlib
 from datetime import datetime
 
-from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import permalink
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.contrib.sites.models import Site
 
-from records.models import Record
-
-"""
-u = User.objects.get(pk=1)
-g = Group.objects.get(pk=1)
-Invitation.objects.invite(u, "jonlesser@gmail.com", "some_type", [content_object])
-
-"""
-class InvitationManager(models.Manager):            
-    def make_token(self):
-        token = hashlib.sha1("%s %s" % (random.random(), datetime.now())).hexdigest()
-        return token[:15]
+def make_token():
+    token = hashlib.sha1("%s %s" % (random.random(), datetime.now())).hexdigest()
+    return token[:15]
 
 class Invitation(models.Model):
     user = models.ForeignKey(User)
@@ -32,7 +21,6 @@ class Invitation(models.Model):
         null=True, blank=True)
     object_pk = models.PositiveIntegerField("object ID", null=True, blank=True)
     content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
-    objects = InvitationManager()
     
     class Meta:
         unique_together = (('token',))
@@ -50,5 +38,6 @@ class Rsvp(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     
 def record_user_invitation_accepted(sender, instance, **kwargs):
+    from records.models import Record
     Record.objects.create_record(instance.invitation.user, 'mag_invite_friend')
 models.signals.post_save.connect(record_user_invitation_accepted, sender=Rsvp)

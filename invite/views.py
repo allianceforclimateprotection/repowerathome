@@ -1,15 +1,9 @@
-import json
-
 from django.contrib import messages
-from django.contrib.sites.models import Site
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-
-from utils import hash_val
 
 from models import Invitation, Rsvp
 from forms import InviteForm
@@ -32,27 +26,35 @@ def invite(request, next=None):
     if next:
         return redirect(next)
     return redirect("index")
-    
-def invite_welcome(request, token):
-    if request.user.is_authenticated():
-        return redirect("rsvp", token=token)
-
-    try:
-        invite = Invitation.objects.select_related().get(token=token)
-    except Invitation.DoesNotExist:
-        messages.error(request, "Invitation not found.", extra_tags="sticky")
-        return redirect("index")
-        
-    return render_to_response("welcome.html", {
-        "invite": invite
-    }, context_instance=RequestContext(request))
 
 @login_required
-def rsvp(request, token):
+def rsvp(request, token, next=None):
     invite = get_object_or_404(Invitation, token=token)
-    rsvp, created = Rsvp.objects.get_or_create(invitee=request.user, invitation=invite)
-    if created:
-        messages.success(request, "Invitation from %s accepted" % invite.user.get_full_name())
+    if invite.user.pk != request.user.pk:
+        rsvp, created = Rsvp.objects.get_or_create(invitee=request.user, invitation=invite)
+        if created:
+            messages.success(request, "Invitation from %s accepted" % invite.user.get_full_name())
+        else:
+            messages.info(request, "You already accepted this invitation from %s" % invite.user.get_full_name(), 
+                extra_tags="sticky")
     else:
-        messages.info(request, "You already accepted this invitation from %s" % invite.user.get_full_name(), extra_tags="sticky")
+        messages.info(request, "You can accept an invitation from yourself", extra_tags="sticky")
+        
+    next = request.GET.get("next", next)
+    if next:
+        return redirect(next)
     return redirect("index")
+    
+# def invite_welcome(request, token):
+#     if request.user.is_authenticated():
+#         return redirect("rsvp", token=token)
+# 
+#     try:
+#         invite = Invitation.objects.select_related().get(token=token)
+#     except Invitation.DoesNotExist:
+#         messages.error(request, "Invitation not found.", extra_tags="sticky")
+#         return redirect("index")
+# 
+#     return render_to_response("welcome.html", {
+#         "invite": invite
+#     }, context_instance=RequestContext(request))

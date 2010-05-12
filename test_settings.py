@@ -20,6 +20,7 @@ INSTALLED_APPS = (
     'records',
     'geo',
     'invite',
+    'invite.tests',
     'basic.blog',
     'basic.inlines',
     'tagging',
