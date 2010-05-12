@@ -583,7 +583,10 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .atom_link { margin-left: 5px; }
 #breadcrumbs {font-size:12px; margin-bottom:20px;}
 .blog_byline {}
-.post_body li { list-style: disc; }
+.post_body li,
+#terms_of_use li,
+#privacy_policy
+{ list-style: disc; }
 
 /* spite icons */
 .icon_gt {background: url(../images/theme/sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
