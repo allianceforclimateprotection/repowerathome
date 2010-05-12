@@ -1,17 +1,17 @@
-from django import forms
 from smtplib import SMTPException
 
+from django import forms
 from django.contrib.sites.models import Site
-from django.core.mail import send_mail, EmailMessage
-from django.template import Context, loader
-from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMessage
+from django.template import loader
 
 from utils import hash_val
 from models import Invitation
         
 class InviteForm(forms.ModelForm):
     note = forms.CharField(widget=forms.Textarea, label="Personal note (optional)", required=False)
-    signature = forms.CharField(widget=forms.HiddenInput)
+    signature = forms.CharField(widget=forms.HiddenInput, required=True)
     
     class Meta:
         model = Invitation
@@ -27,17 +27,18 @@ class InviteForm(forms.ModelForm):
         self.fields["signature"].initial = hash_val((self.instance.content_type, self.instance.object_pk,))
         
     def clean(self):
-        content_type = self.cleaned_data["content_type"]
-        object_pk = self.cleaned_data["object_pk"]
-        if content_type or object_pk:
-            try:
-                target = content_type.get_object_for_this_type(pk=object_pk)
-            except ObjectDoesNotExist:
-                raise forms.ValidationError("No object found matching %s" % object_pk)
-            except ValueError:
-                raise forms.ValidationError("Invalid parameters %s, %s" % (content_type_pk, object_pk))
-            if hash_val((content_type, object_pk,)) != self.cleaned_data["signature"]:
-                raise forms.ValidationError("Signature has been currupted")
+        if "content_type" in self.cleaned_data and "object_pk" in self.cleaned_data and "signature" in self.cleaned_data:
+            content_type = self.cleaned_data["content_type"]
+            object_pk = self.cleaned_data["object_pk"]
+            if content_type or object_pk:
+                try:
+                    target = content_type.get_object_for_this_type(pk=object_pk)
+                except ObjectDoesNotExist:
+                    raise forms.ValidationError("No object found matching %s" % object_pk)
+                except ValueError:
+                    raise forms.ValidationError("Invalid parameters %s, %s" % (content_type_pk, object_pk))
+                if hash_val((content_type, object_pk,)) != self.cleaned_data["signature"]:
+                    raise forms.ValidationError("Signature has been currupted")
         return self.cleaned_data
     
     def save(self):

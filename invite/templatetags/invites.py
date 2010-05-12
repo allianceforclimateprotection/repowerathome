@@ -1,7 +1,7 @@
 from django import template
 from django.template.loader import render_to_string
 
-from invite.models import Invitation
+from invite.models import Invitation, make_token
 from invite.forms import InviteForm
 
 register = template.Library()
@@ -14,12 +14,12 @@ class InviteFormNode(template.Node):
         return self.object_expr.resolve(context) if self.object_expr else None
         
     def render(self, context):
+        user = context["request"].user
         content_object = self.get_target(context)
         if content_object:
-            invite = Invitation(user=context["request"].user, content_object=content_object, 
-                token=Invitation.objects.make_token())
+            invite = Invitation(user=user, content_object=content_object, token=make_token())
         else:
-            invite = Invitation(user=context["request"].user, token=Invitation.objects.make_token())
+            invite = Invitation(user=user, token=make_token())
         form = InviteForm(instance=invite)
         context.push() #move the context stack forward so our variable names don't conflict
         value = render_to_string("invite/invite_form.html", {"form":form}, context)
