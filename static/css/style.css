@@ -108,6 +108,10 @@ ul.buttonset li {
     position: absolute;
     top: 0;
     left: 0; }
+.form_row label.error {
+    color: #DE6060;
+    position: static;
+    background-color: transparent; }
 .overset { position: relative;}
 .overset label.inside {
     font-family: "superclarendon-1", "superclarendon-2", serif;
@@ -117,10 +121,7 @@ ul.buttonset li {
     position: absolute;
     top: 31px;
     left: 11px;}
-.overset label.error {
-    color: #DE6060;
-    position: static;
-    background-color: transparent;}
+
 .overset_form_message[class~="error"] {
     color: #DE6060;
     background-color: transparent;
@@ -348,7 +349,7 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
     margin:24px 0px; }
 #action_details {
     margin-top: -6px;
-    padding: 6px;
+    padding: 10px 30px;
     background-color: #E4F0FA; }
 #action_details, #action_details p { color: #45C3D3;}
 #action_title { margin-bottom: 10px; }
@@ -448,7 +449,8 @@ Comments Comments Comments Comments Comments Comments Comments Comments Comments
 #id_comment {
     float: none;
     font-family: arial;
-    margin-bottom: 22px; }
+    background: #FFF }
+#id_comment[class~="error"] { background: #FEDEDE; }
 #add_comment_submit { width: 455px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
@@ -552,14 +554,21 @@ Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
 #vampire_worksheet {
     width: 650px;
     height: 550px;
-    margin: 10px 25px;
+    margin: 10px 0;
     padding: 10px;
     position: relative;
-    border: 3px solid #92C139;
-    -moz-border-radius: 5px; 
-    -webkit-border-radius: 5px; 
-    border-radius: 5px;
-    background-color: #FFF; }
+/*    border: 3px solid #92C139;*/
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background-color: #FFF;
+    -moz-box-shadow: -3px 3px 4px #666;
+    -webkit-box-shadow: -3px 3px 4px #666;
+    box-shadow: -3px 3px 4px #666;
+    /* For IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666')";
+    /* For IE 5.5 - 7 */
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666'); }
 #vampire_worksheet_wizard_nav {
     display: none;
     float: right;
@@ -567,8 +576,20 @@ Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
     right: 0;
     margin-right: 15px;
     z-index: 1; }
-#vampire_worksheet_wizard_nav li { float: left; list-style: none; padding: 3px; }
-#vampire_worksheet_wizard_nav li.active { border: 1px solid grey; padding: 2px; }
+#vampire_worksheet_wizard_nav li { 
+    float: left;
+    list-style: none;
+    padding: 5px;
+    margin: 3px;
+    -moz-border-radius: 8px; 
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    background-color: #E4F0FA;
+    cursor: pointer; }
+#vampire_worksheet_wizard_nav li a { 
+    text-decoration: none; }
+#vampire_worksheet_wizard_nav li.active, #vampire_worksheet_wizard_nav li:hover { 
+    background-color: #E3EC9F; }
 #vampire_worksheet_wizard {
     width: 650px;
     height: 550px;
@@ -581,7 +602,11 @@ Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
     position: absolute;
     margin-left: -20px; }
 #vampire_directions li { list-style: disc; }
-#vampire_worksheet_wizard .worksheet { padding: 20px 30px; width: 630px; float: left; list-style: none; }
+#vampire_worksheet_wizard .worksheet { 
+    margin: 30px; 
+    width: 630px; 
+    float: left;
+    list-style: none; }
 #vampire_worksheet_wizard .vampire_device_image { float: left; }
 #vampire_worksheet_wizard .vampire_savings_container { float: left; }
 #vampire_worksheet_wizard .vampire_savings { font-size: 1.2em; font-weight: bold; }
@@ -589,7 +614,18 @@ Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
 #vampire_worksheet_wizard .buttonset .ui-button-text { height: 43px; display: table-cell; vertical-align: middle; }
 #vampire_worksheet_wizard .slayer_help_wrapper { font-weight: bold; text-align: center; }
 #vampire_worksheet_wizard .slayer_recommended { font-weight: bold; color: #92C139; text-align: center; }
-
+#vampire_plan {
+    background-color: #E4F0FA;
+}
+#vampire_plan th {
+    color: #00AAD8;
+    font-weight: bold;
+    background-color: #B0D8F2;
+}
+#vampire_plan .col-1 { width: 200px; }
+#vampire_plan tr { border: 1px solid #FFF; }
+#vampire_plan th, #vampire_plan td { border: 0; padding: 8px 5px; }
+#vampire_plan a { text-decoration: underline; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 

@@ -4,18 +4,18 @@
 {#     $<span id="vampire_savings_total">{{ vampire_worksheet_form.total_savings }}</span> annually #}
 {# </p> #}
 
-<table>
+<table id="vampire_plan">
     <thead>
         <tr>
-            <th>Device (vampire)</th>
-            <th>Slay Method</th>
+            <th class="top-left col-1">Device</th>
+            <th class="top-right">Slay Method</th>
         </tr>
     </thead>
     <tbody>
         {% for field in vampire_worksheet_form %}
             <tr class="{{ field.name }}">
-                <td>{{ field.label }}</td>
-                <td>
+                <td class="col-1 {% if forloop.last %}bottom-left{% endif %}">{{ field.label }}</td>
+                <td {% if forloop.last %}class="bottom-right"{% endif %}>
                     {% if field.data %}
                         <span class="slay_method">
                             {% for value, label in field.field.choices %}

@@ -325,7 +325,7 @@ var rah = {
                     /* set the slay method in the plan sheet */
                     var input_selected = $(this);
                     var plan_value = $("." + input_selected.attr("name") + " .slay_method");
-                    plan_value.text(input_selected.parent().text());
+                    plan_value.text(input_selected.parent().find("label").text());
                     $("." + input_selected.attr("name") + " .slay_link").show();
                     
                     /* skip to the next incomplete worksheet */

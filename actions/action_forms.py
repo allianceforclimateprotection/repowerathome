@@ -32,7 +32,7 @@ class VampirePowerWorksheetForm(forms.Form):
     television = VampireField(savings=150, required=False, recommended='s')
     dvd_player = VampireField(savings=9, required=False, recommended='s', label="DVD Player")
     cable_box = VampireField(savings=13, required=False, recommended='s', label="Cable Box")
-    game_system = VampireField(savings=30, required=False, recommended='s', label="Video Game System")
+    game_system = VampireField(savings=30, required=False, recommended='s', label="Game System")
     cell_phone = VampireField(savings=4, required=False, recommended='u', label="Cell Phone")
     monitor = VampireField(savings=3, required=False, recommended='s')
     

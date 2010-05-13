@@ -13,7 +13,7 @@
             {% else %}
                 {% if field.name == "comment" or field.name == "honeypot" %}
                     {% if field.errors %}{{ field.errors }}{% endif %}
-                    <p class="{% if field.name == 'comment' %}comment {% endif %}{% if field.errors %}error {% endif %}" 
+                    <p class="form_row {% if field.name == 'comment' %}comment {% endif %}{% if field.errors %}error {% endif %}" 
                         {% ifequal field.name "honeypot" %} style="display:none;" {% endifequal %}>
                         {{ field }}
                     </p>
