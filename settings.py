@@ -124,6 +124,8 @@ GZIP_CONTENT_TYPES = (
     'application/x-javascript'
 )
 
+COMMENTS_ALLOW_PROFANITIES = True
+
 try:
     from local_settings import *
 except ImportError:

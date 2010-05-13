@@ -394,22 +394,45 @@ Comments Comments Comments Comments Comments Comments Comments Comments Comments
     font-size: 36px;
     color: #5BBCCA;
     margin-bottom: 50px; }
-.comment_wrapper { margin-bottom: 72px; }
+.comment_wrapper { margin-bottom: 72px; position: relative; }
 .comment_wrapper .comment, .comment textarea {
     float: left;
     width: 450px;
-    height: 100px;
-    padding: 25px 50px;
+    min-height: 100px;
+    padding: 25px;
     background-color: #FFF;
     color: #74A01F;
-    font-size: 24px;
+    font-size: 16px;
+    line-height: 21px;
     font-weight: normal;
-    border: 2px #74A01F solid;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    overflow-y: auto;
-    position: relative; }
-.comment_wrapper .author { margin-left: 18px; float: left;}
+    border: 0;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    position: relative;
+    overflow-x: auto;
+    -moz-box-shadow: -3px 3px 4px #666;
+    -webkit-box-shadow: -3px 3px 4px #666;
+    box-shadow: -3px 3px 4px #666;
+    /* For IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666')";
+    /* For IE 5.5 - 7 */
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666'); }
+.comment textarea {
+    height: 100px; }
+.point {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 20px;
+    right: 215px;
+    display: block;
+    border-top: 25px solid #FFF; 
+    border-right: 25px solid #B0D8F2; /* IE fix */
+    border-right: 25px solid rgba(0,0,0,0); 
+    overflow: hidden; /* IE fix */
+}
+.comment_wrapper .author { margin-left: 30px; float: left;}
 .comment_wrapper .gravatar { margin-bottom: 12px;}
 .comment_wrapper .user_name * {
     font-family: helvetica;
@@ -521,7 +544,7 @@ Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged 
 --------------------------------------------------------------------------------------------------------------------- */
 .flagged_flag_form, .flagged_flag_form * { display: inline; }
 .flagged_flag_form { margin-left: 10px; }
-.flag_submit_link { font-size: 12px; }
+.flag_submit_link { font-size: 10px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
