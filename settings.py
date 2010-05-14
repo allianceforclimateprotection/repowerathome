@@ -126,6 +126,15 @@ GZIP_CONTENT_TYPES = (
 
 COMMENTS_ALLOW_PROFANITIES = True
 
+# Date defaults
+DATETIME_FORMAT = "F j, Y, P"
+DATE_FORMAT = "F j, Y"
+TIME_FORMAT = "P"
+SHORT_DATE_FORMAT = "m/d/Y"
+SHORT_DATETIME_FORMAT = "m/d/Y P"
+YEAR_MONTH_FORMAT = "F Y"
+MONTH_DAY_FORMAT = "F j"
+
 try:
     from local_settings import *
 except ImportError:

@@ -1,5 +1,7 @@
 <form class="rateable_rate_form" action="{% url rateable-rate %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <p><input type="hidden" name="next" value="{{ request.path }}" /></p>
+    <p>
+        <input type="hidden" name="next" value="{{ request.path }}" />
+    </p>
 </form>

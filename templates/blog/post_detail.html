@@ -28,7 +28,7 @@
 					<a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a>
 				</h2>
 				<p>
-					<em>Posted by {% safe_user_link post.author %} on {{ post.publish|date:"F j, Y" }}</em>
+					<em>Posted by {% safe_user_link post.author %} on {{ post.publish|date }}</em>
 				</p>
                 <div class="post_body">{{ post.body|safe }}</div>
             </div>

@@ -1,6 +1,8 @@
 <form class="flagged_flag_form" action="{% url flagged-flag %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="hidden" name="next" value="{{ request.path }}" />
-    <span><input type="submit" value="Report this" /></span>
+    <p>
+        <input type="hidden" name="next" value="{{ request.path }}" />
+        <button type="submit"><span class="icon_flag"></span></button>
+    </p>
 </form>

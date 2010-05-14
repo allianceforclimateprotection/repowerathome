@@ -1,8 +1,7 @@
 <div class="action_forms">
     {% if not progress.is_completed %}
         {% if not progress.date_committed %}
-            <form class="action_commit_form" name="action_commit_form" method="post"
-                action="{% url action_commit action.slug %}">
+            <form class="action_commit_form" method="post" action="{% url action_commit action.slug %}">
                 {% with action_commit_form as form %}
                     {% include "rah/_overset_form.html" %}
                 {% endwith %}
@@ -10,8 +9,7 @@
                 {% csrf_token %}
             </form>
         {% else %}
-            <form class="action_commit_form" name="action_commit_form" method="post"
-                action="{% url action_commit action.slug %}">
+            <form class="action_commit_form" method="post" action="{% url action_commit action.slug %}">
                 {% with action_commit_form as form %}
                     {% include "rah/_overset_form.html" %}
                 {% endwith %}
@@ -24,17 +22,15 @@
                     <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
                 </p>
             </form>
-            <form class="action_cancel_form" name="action_cancel_form" method="post"
+            <form class="action_cancel_form" method="post"
                 action="{% url action_cancel action.slug %}">{% csrf_token %}</form>
         {% endif %}
-        <form class="action_complete_form" name="action_complete_form" method="post"
-            action="{% url action_complete action.slug %}">
+        <form class="action_complete_form" method="post" action="{% url action_complete action.slug %}">
             <p><input type="submit" value="{{ complete_title }}" /></p>
             {% csrf_token %}
         </form>
     {% else %}
-        <form class="action_undo_form" name="action_undo_form" method="post"
-            action="{% url action_undo action.slug %}">
+        <form class="action_undo_form" method="post" action="{% url action_undo action.slug %}">
             <h4>You've done this action!</h4>
             <h5><a href="{% url action_show %}">Find more actions</a></h5>
             <p class="action_undo">

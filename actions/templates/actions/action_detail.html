@@ -10,15 +10,6 @@
             <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
         </p>
     {% endif %}
-    <h2>Action Tools</h2>
-    <p>
-        {% if request.user.is_authenticated %}
-            {% if not progress.date_committed and not progress.is_completed %}
-                <a href="#" class="commit_trigger">Make a Commitment</a><br/>
-            {% endif %}
-        {% endif %}
-        <a href="{% url feedback %}" class="feedback_link">Feedback</a>
-    </p>
     <h2>Who's doing this?</h2>
     <span class='total_users'>{{ action.users_completed }}</span> pe{{ action.users_completed|pluralize:"rson has,ople have" }} completed this action.<br/>
     {% if action.users_completed %}
@@ -65,7 +56,6 @@
         </div>
     </div>
     <div id="comments">
-        <div id="comments_divider"></div>
         {% with action as object %}
             {% render_comment_list for object %}
             {% render_comment_form for object %}
