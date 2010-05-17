@@ -6,7 +6,9 @@ $(document).ready(function() {
     if(undefined !== window.rah_name){
         try{
             rah[rah_name].init();
-        }catch(err){}
+        }catch(err){
+            console.error(err);
+        }
     }
 });
 
@@ -279,7 +281,9 @@ var rah = {
             if(undefined !== window.rich_action_name){
                 try{
                     rah["rich_actions"][rich_action_name].init();
-                }catch(err){}
+                }catch(err){
+                    console.error(err);
+                }
             }
         }
     },
