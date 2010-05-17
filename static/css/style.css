@@ -644,8 +644,12 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .blog_byline {}
 .post_body li,
 #terms_of_use li,
-#privacy_policy
-{ list-style: disc; }
+#privacy_policy { 
+    list-style: disc; }
+.qtip {
+    opacity:0.85;
+    filter:alpha(opacity=85)
+}
 
 /* spite icons */
 .icon_gt {background: url(../images/theme/sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
