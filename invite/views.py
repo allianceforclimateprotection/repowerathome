@@ -38,7 +38,7 @@ def rsvp(request, token, next=None):
             messages.info(request, "You already accepted this invitation from %s" % invite.user.get_full_name(), 
                 extra_tags="sticky")
     else:
-        messages.info(request, "You can accept an invitation from yourself", extra_tags="sticky")
+        messages.info(request, "You can not accept an invitation from yourself", extra_tags="sticky")
         
     next = request.GET.get("next", next)
     if next:
