@@ -5,7 +5,7 @@
     {% if object %}
         {% get_comment_form for object as form %}
     {% endif %}
-    <form class="comment_form" action="{% comment_form_target %}" method="post">
+    <form id="comment_form" action="{% comment_form_target %}" method="post">
         <div>
         {% for field in form %}
             {% if field.is_hidden %}
@@ -13,7 +13,7 @@
             {% else %}
                 {% if field.name == "comment" or field.name == "honeypot" %}
                     {% if field.errors %}{{ field.errors }}{% endif %}
-                    <p class="form_row {% if field.name == 'comment' %}comment {% endif %}{% if field.errors %}error {% endif %}" 
+                    <p class="form_row {% if field.errors %}error {% endif %}" 
                         {% ifequal field.name "honeypot" %} style="display:none;" {% endifequal %}>
                         {{ field }}
                     </p>
@@ -25,6 +25,7 @@
         {% csrf_token %}
         </div>
     </form>
+    
 {% else %}
     <a href="{% url login %}">Log in</a> or <a href="{% url register %}">sign up</a> to post comments.
 {% endif %}

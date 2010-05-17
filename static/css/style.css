@@ -344,14 +344,14 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
 .action_nugget .completion { font-weight: bold; }
 .h_aqua { 
     font-family: Arial, sans-serif;
-    color: #5bbcca;
+    color: #00AAD8;
     font-size:18px;
     margin:24px 0px; }
 #action_details {
     margin-top: -6px;
     padding: 10px 30px;
     background-color: #E4F0FA; }
-#action_details, #action_details p { color: #45C3D3;}
+#action_details, #action_details p { color: #00AAD8;}
 #action_title { margin-bottom: 10px; }
 #action_content {
     margin-top: 10px; }
@@ -386,21 +386,10 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
 /* ---------------------------------------------------------------------------------------------------------------------
 Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments
 --------------------------------------------------------------------------------------------------------------------- */
-#comments_divider {
-    height: 12px;
-    width: 100%;
-    margin-bottom: 25px;
-    background-color: #5BBCCA; }
-#comments_heading {
-    font-size: 36px;
-    color: #5BBCCA;
-    margin-bottom: 50px; }
-.comment_wrapper { margin-bottom: 72px; position: relative; }
-.comment_wrapper .comment, .comment textarea {
-    float: left;
-    width: 450px;
-    min-height: 100px;
-    padding: 25px;
+#comments_heading { font-size: 36px; color: #00AAD8; margin: -9px 0 36px 0; border-top:9px solid #00AAD8; padding-top:18px;}
+.comment_wrapper { position:relative; margin-bottom:36px;}
+.comment, #comment_form textarea {
+    padding: 18px;
     background-color: #FFF;
     color: #74A01F;
     font-size: 16px;
@@ -419,39 +408,28 @@ Comments Comments Comments Comments Comments Comments Comments Comments Comments
     -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666')";
     /* For IE 5.5 - 7 */
     filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666'); }
-.comment textarea {
-    height: 100px; }
 .point {
     width: 0;
     height: 0;
     position: absolute;
-    top: 20px;
-    right: 215px;
+    top: 15px;
+    right: -25px;
     display: block;
     border-top: 25px solid #FFF; 
     border-right: 25px solid #B0D8F2; /* IE fix */
     border-right: 25px solid rgba(0,0,0,0); 
-    overflow: hidden; /* IE fix */
-}
-.comment_wrapper .author { margin-left: 30px; float: left;}
-.comment_wrapper .gravatar { margin-bottom: 12px;}
-.comment_wrapper .user_name * {
-    font-family: helvetica;
-    font-weight: bold;
-    font-size: 18px;
-    color: #5BBCCA; }
-#comments_form_heading {
-    font-family: helvetica;
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 32px;
-    color: #5BBCCA; }
-#id_comment {
-    float: none;
-    font-family: arial;
-    background: #FFF }
+    overflow: hidden; /* IE fix */ }
+.comment_author { font-weight: bold; font-size: 18px; padding-left:25px;}
+.comment_author img {margin-bottom:9px;}
+/* stuff under comment */
+.comment_tools { position: relative; font-style: italic; text-align:right; margin: 6px 18px 0 0;}
+.comment_buttons * { display: inline; }
+.comment_date { position:absolute; top: 12px; left:18px; font-weight: bold; }
+/* form */
+#comments_form_heading { color: #00AAD8; margin-bottom:18px; }
+#id_comment { height: 100px; background: #FFF; font-family: arial; width:454px; }
 #id_comment[class~="error"] { background: #FEDEDE; }
-#add_comment_submit { width: 455px; }
+#add_comment_submit { width: 490px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups 
@@ -538,16 +516,16 @@ Records Records Records Records Records Records Records Records Records Records 
 /* ---------------------------------------------------------------------------------------------------------------------
 Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable Rateable 
 --------------------------------------------------------------------------------------------------------------------- */
-.rateable_rate_form_container { margin-bottom: 20px; }
+/*.rateable_rate_form_container { margin-bottom: 20px; }
 .rateable_rate_form * { padding-bottom: 0; }
-
+*/
 /* ---------------------------------------------------------------------------------------------------------------------
 Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged 
 --------------------------------------------------------------------------------------------------------------------- */
-.flagged_flag_form, .flagged_flag_form * { display: inline; }
+/*.flagged_flag_form, .flagged_flag_form * { display: inline; }
 .flagged_flag_form { margin-left: 10px; }
 .flag_submit_link { font-size: 10px; }
-
+*/
 /* ---------------------------------------------------------------------------------------------------------------------
 Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
 --------------------------------------------------------------------------------------------------------------------- */
@@ -647,13 +625,16 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 #privacy_policy { 
     list-style: disc; }
 .qtip {
-    opacity:0.85;
-    filter:alpha(opacity=85)
+    opacity:0.9;
+    filter:alpha(opacity=9)
 }
 
 /* spite icons */
 .icon_gt {background: url(../images/theme/sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
 .icon_from {background: url(../images/theme/sprite_minor_col.png) -20px -323px;  width:35px; height:17px; display:inline-block;}
+.icon_rate_1 {background: url(../images/theme/sprite_minor_col.png) -60px -303px;  width:14px; height:17px; display:inline-block;}
+.icon_rate_0 {background: url(../images/theme/sprite_minor_col.png) -80px -299px;  width:14px; height:19px; display:inline-block;}
+.icon_flag {background: url(../images/theme/sprite_minor_col.png) -100px -300px;  width:14px; height:19px; display:inline-block;}
 
 
 /* ---------------------------------------------------------------------------------------------------------------------

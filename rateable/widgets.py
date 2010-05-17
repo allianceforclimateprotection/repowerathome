@@ -15,7 +15,9 @@ class IsHelpfulWidget(Widget):
     def render_options(self):
         def render_option(option_value, option_label):
             option_value = force_unicode(option_value)
-            return u'<input type="submit" name="%s" value="%s" />' % (option_label, conditional_escape(force_unicode(option_label)))
+            output = u'<button type="submit" title="Mark this comment as %s" class="button_tooltip" name="%s" value="%s"><span class="icon_rate_%s"></span></button>' % \
+                     (option_label, option_label, conditional_escape(force_unicode(option_label)), option_value)
+            return output
         output = []
         for option_value, option_label in IsHelpfulWidget.CHOICES:
             output.append(render_option(option_value, option_label))

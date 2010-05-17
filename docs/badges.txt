@@ -1,9 +1,0 @@
-BADGES:
-- Founding Father (Start a Team)
-- Unbelievable (complete all actions)
-- Opinionated (mark 10 things as helpful or unhelpful)
-- Team Builder (Invite 10 people to a group)
-- Tweety (link twitter account)
-- ? (3 completes or 10 completes)
-- ? (profile complete)
-- ? (5 comments)

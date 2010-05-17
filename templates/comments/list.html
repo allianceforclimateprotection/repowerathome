@@ -6,33 +6,37 @@
 {% if comments %}
     <h2 id="comments_heading">What people are saying</h2>
     {% for comment in comments %}
-        <div class="comment_wrapper">
-            <div class="comment">
-                {{ comment.comment }}
-                {% if user.is_authenticated %}
-                    {% get_flag_form for comment %}
-                {% endif %}
+        <div class="container_3">
+            <div class="grid_2 alpha comment_wrapper">
+                <div class="comment">
+                    {{ comment.comment|linebreaksbr }}
+                </div>
+                <span class="point"></span>
+                <div class="comment_tools">
+                    <span class="comment_date">
+                        {{ comment.submit_date|date:"DATETIME_FORMAT" }}
+                    </span>
+                    <div class="comment_buttons">
+                        {% get_rating_count for comment as users_voted %}
+                        {% get_rating_sum for comment as users_helped %}
+                        {% if users_voted %}
+                            {{ users_helped }} of {{ users_voted }} liked this
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                            {% get_rating_form for comment %}
+                            {% get_flag_form for comment %}
+                        {% endif %}                    
+                    </div>
+                </div>
             </div>
-            <span class="point"></span>
-            <div class="author">
-                <img class="gravatar" src="{{ comment.user.get_profile.get_gravatar_url }}" alt="user gravatar" />
-                <br class="clear" />
-                <div class="user_name">{% safe_user_link comment.user %}</div>
+            <div class="grid_1 omega">
+                <div class="comment_author">
+                    <img class="gravatar" src="{{ comment.user.get_profile.get_gravatar_url }}" alt="user gravatar" />
+                    <br class="clear" />
+                    {% safe_user_link comment.user %}
+                </div>
             </div>
-            <br class="clear" />
-            {# <div> #}
-            {#     {% get_rating_count for comment as users_voted %} #}
-            {#     {% get_rating_sum for comment as users_helped %} #}
-            {#     {% if users_voted %} #}
-            {#         {{ users_helped }} out of {{ users_voted }} user{{ users_voted|pluralize }} found this helpful.<br /> #}
-            {#     {% endif %} #}
-            {#     {% if user.is_authenticated %} #}
-            {#         <div class="rateable_rate_form_container"> #}
-            {#             <span class="comment_helpful_question">Did you find this comment helpful?</span> #}
-            {#             {% get_rating_form for comment %} #}
-            {#         </div> #}
-            {#     {% endif %} #}
-            {# </div> #}
         </div>
+        <br class="clear" />
     {% endfor %}
 {% endif %}

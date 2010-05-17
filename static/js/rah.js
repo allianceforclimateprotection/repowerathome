@@ -440,7 +440,7 @@ var rah = {
     
     mod_comment_form: {
         init: function() {
-            $(".comment_form").validate({
+            $("#comment_form").validate({
                 rules: {
                     comment:    { required: true, maxlength: 3000 }
                 },
@@ -627,12 +627,8 @@ var rah = {
     mod_flag: {
         init: function() {
             $(".flagged_flag_form [name='next']").remove();
-            $(".flagged_flag_form :submit").each(function() {
-                var button = $(this);
-                button.replaceWith("<a class='flag_submit_link' href='#'>" + button.val() + "</a>");
-            });
-            $(".flag_submit_link").click(function() {
-                var form = $(this).parents("form");
+            $(".flagged_flag_form").submit(function() {
+                var form = $(this);
                 $.ajax({
                     url: form.attr("action"),
                     type: form.attr("method"),
