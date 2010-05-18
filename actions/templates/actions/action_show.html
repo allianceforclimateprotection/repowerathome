@@ -44,16 +44,18 @@
         <img src="{{ MEDIA_URL }}images/theme/benefits.jpg" alt="benefits"/>
     {% endif %}
     <div class="clear"></div>
-    <div class="grid_2 alpha">
-        <div id="action_show">
-            {% for action in actions %}
-                {% include 'actions/_action_nugget.html' %}
-            {% endfor %}
-        </div>
-    </div>
-    <div class="grid_1 omega">
-        
-    </div>
+    {% for action in actions %}
+        {% include 'actions/_action_nugget.html' %}
+    {% endfor %}
+    {# <div class="grid_1 alpha"> #}
+    {#  #}
+    {# </div> #}
+    {# <div class="grid_1"> #}
+    {#      #}
+    {# </div> #}
+    {# <div class="grid_1 omega"> #}
+    {#      #}
+    {# </div> #}
 {% endblock %}
 
 {% block js %}page_action_show{% endblock %}

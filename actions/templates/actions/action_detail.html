@@ -2,37 +2,7 @@
 {% load comments %}
 
 {% block left_sidebar %}
-    {% if progress.date_committed and not progress.is_completed %}
-        <h2>Commitment</h2>
-        <p>
-            You committed to complete this action by {{ progress.date_committed }}. 
-            (<a href="#" class="commit_trigger">change date</a> or 
-            <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
-        </p>
-    {% endif %}
-    <h2>Who's doing this?</h2>
-    <span class='total_users'>{{ action.users_completed }}</span> pe{{ action.users_completed|pluralize:"rson has,ople have" }} completed this action.<br/>
-    {% if action.users_completed %}
-        <ul>
-            {% for user in users_completed %}
-                <li>{% safe_user_link user %}</li>
-            {% endfor %}
-            {% if noshow_users_completed > 0 %}
-                {{ noshow_users_completed }} additional user{{ noshow_users_completed|pluralize }}
-            {% endif %}
-        </ul>
-    {% endif %}
-    <span class='total_users'>{{ action.users_committed }}</span> pe{{ action.users_committed|pluralize:"rson has,ople have" }} committed to this action.<br/>
-    {% if action.users_committed %}
-        <ul>
-            {% for user in users_committed %}
-                <li>{% safe_user_link user %}</li>
-            {% endfor %}
-            {% if noshow_users_committed > 0 %}
-                {{ noshow_users_committed }} additional user{{ noshow_users_committed|pluralize }}
-            {% endif %}
-        </ul>
-    {% endif %}
+
 {% endblock %}
 
 {% block right_content %}
@@ -44,17 +14,55 @@
     {% if action.has_illustration %}
         <img src="{{ action.get_detail_illustration }}" alt="{{action.name}} illustration" width="740" height="315" />
     {% endif %}
-    <div id="action_details">
-        <h1 id="action_title">{{action.name}}</h1>
-        <span class='tag_list'>
-            {% for tag in action.tags %}
-                <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
-            {% endfor %}
-        </span>
-        <div id="action_content">
-            {% render_template_snippet action.content %}
+    <div class="container_3">
+        <div class="grid_2 alpha">
+            <div id="action_details">
+                <h1 id="action_title">{{action.name}}</h1>
+                <span class='tag_list'>
+                    {% for tag in action.tags %}
+                        <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
+                    {% endfor %}
+                </span>
+                <div id="action_content">
+                    {% render_template_snippet action.content %}
+                </div>
+            </div>
+        </div>
+        <div class="grid_1 omega minor-col">
+            {% if progress.date_committed and not progress.is_completed %}
+                <h2>Commitment</h2>
+                <p>
+                    You committed to complete this action by {{ progress.date_committed }}. 
+                    (<a href="#" class="commit_trigger">change date</a> or 
+                    <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
+                </p>
+            {% endif %}
+            <h2>Who's doing this?</h2>
+            <span class='total_users'>{{ action.users_completed }}</span> pe{{ action.users_completed|pluralize:"rson has,ople have" }} completed this action.<br/>
+            {% if action.users_completed %}
+                <ul>
+                    {% for user in users_completed %}
+                        <li>{% safe_user_link user %}</li>
+                    {% endfor %}
+                    {% if noshow_users_completed > 0 %}
+                        {{ noshow_users_completed }} additional user{{ noshow_users_completed|pluralize }}
+                    {% endif %}
+                </ul>
+            {% endif %}
+            <span class='total_users'>{{ action.users_committed }}</span> pe{{ action.users_committed|pluralize:"rson has,ople have" }} committed to this action.<br/>
+            {% if action.users_committed %}
+                <ul>
+                    {% for user in users_committed %}
+                        <li>{% safe_user_link user %}</li>
+                    {% endfor %}
+                    {% if noshow_users_committed > 0 %}
+                        {{ noshow_users_committed }} additional user{{ noshow_users_committed|pluralize }}
+                    {% endif %}
+                </ul>
+            {% endif %}
         </div>
     </div>
+    <br class="clear"/>
     <div id="comments">
         {% with action as object %}
             {% render_comment_list for object %}

@@ -334,24 +334,28 @@ Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Ch
 /* ---------------------------------------------------------------------------------------------------------------------
 Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
 --------------------------------------------------------------------------------------------------------------------- */
-.action_nugget { margin: 0px 0 10px 0; padding:15px; position: relative; background-color: #E4F0FA; -moz-border-radius: 18px; -webkit-border-radius: 18px; border-radius: 18px;}
-.action_nugget_teaser p { color: #74a01f;}
-.action_nugget a{ color: #2f6c35; }
+.action_nugget { float:left; width:210px; margin: 0px 0px 10px 0; padding:15px; position: relative; background-color: #E4F0FA; -moz-border-radius: 18px; -webkit-border-radius: 18px; border-radius: 18px;}
+/*.action_nugget_teaser p { color: #74a01f;}*/
+/*.action_nugget a { color: #2f6c35; }*/
 .action_nugget_title {margin-bottom:10px;}
 .action_nugget_points { float:right; font-weight: bold;}
-.action_nugget_learn_more { font-style: italic; text-decoration:underline; }
 .action_nugget_tags {margin-top:35px; margin-bottom:15px;}
-.action_nugget .completion { font-weight: bold; }
+
 .h_aqua { 
     font-family: Arial, sans-serif;
     color: #00AAD8;
     font-size:18px;
     margin:24px 0px; }
 #action_details {
-    margin-top: -6px;
-    padding: 10px 30px;
-    background-color: #E4F0FA; }
-#action_details, #action_details p { color: #00AAD8;}
+    padding: 18px;
+    background-color: #FFF; }
+#action_details h1, 
+#action_details h2, 
+#action_details h3, 
+#action_details h4, 
+#action_details h5, 
+#action_details h6 
+{ color: #00AAD8;}
 #action_title { margin-bottom: 10px; }
 #action_content {
     margin-top: 10px; }
@@ -372,9 +376,9 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
 .action_detail_task { margin-left:40px; }
 .action_complete_form, .action_commit_form, .action_undo_form {
     float: left;
-    margin: 10px 5px;
+/*    margin: 10px 5px;*/
     text-align: center; }
-.action_committment, .action_undo { font-size: 0.8em; }
+.action_committment, .action_undo { font-size: 12px; }
 
 /* Minor Nav */
 #minor_nav {list-style-type: none;}
