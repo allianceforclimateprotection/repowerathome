@@ -1,5 +1,6 @@
 {% extends "rah/base.html" %}
 {% load records %}
+{% load dated_static %}
 {% block left_sidebar %}
     {% if commitment_list %}
         <h2>Commitments</h2>
@@ -40,7 +41,7 @@
 {% endblock %}
 {% block right_content %}
 	<a href="{% url action_detail 'eliminate-standby-vampire-power' %}">
-		<img src="{{ MEDIA_URL }}images/actions/eliminate-standby-vampire-power/featured.png" width="740" height="402"/>
+		<img src="{% dated_static 'images/actions/eliminate-standby-vampire-power/featured.png' %}" width="740" height="402"/>
 	</a>
 	<div class="clear"></div>
 	<div class="grid_2 alpha">

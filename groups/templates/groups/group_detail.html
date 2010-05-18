@@ -1,6 +1,7 @@
 {% extends "rah/base.html" %}
 {% load records %}
 {% load invites %}
+{% load dated_static %}
 
 {% block extralinks %}
     {% if group.slug %}
@@ -46,7 +47,7 @@
             <h2>Team Activity
                 {% if group.slug %}
                     <a class="atom_link" href="{% url group_activity_feed group.slug %}">
-                        <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
+                        <img src="{% dated_static 'images/theme/rss.png' %}" alt="atom feed" />
                     </a>
                 {% endif %}
             </h2>

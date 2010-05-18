@@ -1,3 +1,4 @@
+{% load dated_static %}
 <div id="tongue">
 	<a href="{% url profile profile.user.id %}" title="View your profile">
 		<img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
@@ -26,7 +27,7 @@
         <a class="chart_link" href="{% url records_chart profile.user.id %}">Activity</a>
         <div>
             <a href="{% url records_chart profile.user.id %}" id="chart_dialog_link" class="chart_link" title="View progress chart">
-                <img src="{{ MEDIA_URL }}images/theme/tongue_graph.gif" alt="graph"/>
+                <img src="{% dated_static 'images/theme/tongue_graph.gif' %}" alt="graph"/>
             </a>
         </div>
     </div>

@@ -4,8 +4,10 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 
-from records.models import Record
 import tagging
+
+from records.models import Record
+from dated_static.templatetags.dated_static import dated_static
 
 class ActionManager(models.Manager):
     def actions_by_status(self, user):
@@ -89,10 +91,10 @@ class Action(models.Model):
                                         AND actions_actionform.id = afd.action_form_id"""})
                                         
     def get_detail_illustration(self):
-        return "%simages/actions/%s/action_detail.jpg" % (settings.MEDIA_URL, self.slug)
+        return dated_static("images/actions/%s/action_detail.jpg" % self.slug)
 
     def get_nugget_illustration(self):
-        return "%simages/actions/%s/action_nugget.jpg" % (settings.MEDIA_URL, self.slug)
+        return dated_static("images/actions/%s/action_nugget.jpg" % self.slug)
     
     def has_illustration(self):
         path = "images/actions/%s/action_detail.jpg" % self.slug

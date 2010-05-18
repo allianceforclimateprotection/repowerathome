@@ -1,6 +1,6 @@
 {% extends "rah/base.html" %}
 {% load records %}
-
+{% load dated_static %}
 {% block extralinks %}
     <link rel="alternate" type="application/atom+xml"  href="{% url user_activity_feed profile.user.id %}" title="Repower at Home User Activity" />
 {% endblock %}
@@ -55,7 +55,7 @@
         {% if records %}
             <h2>Recent Activity
                 <a class="atom_link" href="{% url user_activity_feed profile.user.id %}">
-                    <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
+                    <img src="{% dated_static 'images/theme/rss.png' %}" alt="atom feed" />
                 </a>
             </h2>
             {% for rec in records %}

@@ -1,11 +1,12 @@
+{% load dated_static %}
 /* <![CDATA[ */
-$("body").append('<script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}js/jquery.flot.min.js"></script>');
-$("body").append('<!--[if IE]><script type="text/javascript" charset="utf-8" src="{{MEDIA_URL}}js/excanvas.min.js"></script><![endif]-->');
+$("body").append('<script type="text/javascript" charset="utf-8" src="{% dated_static 'js/jquery.flot.min.js' %}"></script>');
+$("body").append('<!--[if IE]><script type="text/javascript" charset="utf-8" src="{% dated_static 'js/excanvas.min.js' %}"></script><![endif]-->');
 $("#chart_dialog").remove();
 $("body").append("<div id='chart_dialog'><div id='chart'></div></div>");
 var chart_data = {{chart_data|safe}};
 if (!chart_data['point_data'].length) {
-    $("#chart").html('<img src="' + media_url + 'images/theme/chart_demo.png" alt="sample chart"/>');
+    $("#chart").html('<img src="{% dated_static 'images/theme/chart_demo.png' %}" alt="sample chart"/>');
 } else {
     // Add an additional datapoint at the beginning to represent 0 points
     yesterday = chart_data['point_data'][0][0] - (60*60*24*1000*1);

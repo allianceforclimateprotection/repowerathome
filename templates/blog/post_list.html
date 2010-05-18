@@ -1,5 +1,6 @@
 {% extends "blog/base_blog.html" %}
 {% load blog comments %}
+{% load dated_static %}
 
 {% block extralinks %}
 <link rel="alternate" type="application/atom+xml"  href="{% url blog_feed %}" title="Repower at Home Blog" />
@@ -40,7 +41,7 @@
         <h6>
             follow us
             <a class="atom_link" href="{% url blog_feed %}">
-                <img src="{{ MEDIA_URL }}images/theme/rss.png" alt="atom feed" />
+                <img src="{% dated_static 'images/theme/rss.png' %}" alt="atom feed" />
             </a>
         </h6>
     </div>

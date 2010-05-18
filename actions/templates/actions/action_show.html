@@ -1,5 +1,5 @@
 {% extends "rah/base.html" %}
-
+{% load dated_static %}
 {% block tongue %}
     {% if not request.user.is_authenticated %}
         <div id="tongue_signup">
@@ -41,7 +41,7 @@
         {% endif %}
     </div>
     {% if not user.is_authenticated %}
-        <img src="{{ MEDIA_URL }}images/theme/benefits.jpg" alt="benefits"/>
+        <img src="{% dated_static 'images/theme/benefits.jpg' %}" alt="benefits"/>
     {% endif %}
     <div class="clear"></div>
     {% for action in actions %}

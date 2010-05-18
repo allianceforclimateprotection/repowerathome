@@ -7,8 +7,6 @@ register = template.Library()
 
 @register.simple_tag
 def dated_static(static_file):
-    if settings.DEBUG:
-        return os.path.join(settings.MEDIA_URL, static_file)
     abs_path = os.path.join(settings.MEDIA_ROOT, static_file)
     paths = os.path.split(static_file)
     m_time = int(os.stat(abs_path).st_mtime)
