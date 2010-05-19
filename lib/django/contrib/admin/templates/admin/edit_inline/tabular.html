@@ -7,9 +7,9 @@
    {{ inline_admin_formset.formset.non_form_errors }}
    <table>
      <thead><tr>
-     {% for is_hidden, label in inline_admin_formset.fields %}
-       {% if not is_hidden %}
-         <th {% if forloop.first %}colspan="2"{% endif %}>{{ label|capfirst }}</th>
+     {% for field in inline_admin_formset.fields %}
+       {% if not field.widget.is_hidden %}
+         <th{% if forloop.first %} colspan="2"{% endif %}{% if field.required %} class="required"{% endif %}>{{ field.label|capfirst }}</th>
        {% endif %}
      {% endfor %}
      {% if inline_admin_formset.formset.can_delete %}<th>{% trans "Delete?" %}</th>{% endif %}
@@ -21,7 +21,7 @@
         <tr><td colspan="{{ inline_admin_form.field_count }}">{{ inline_admin_form.form.non_field_errors }}</td></tr>
         {% endif %}
         <tr class="{% cycle "row1" "row2" %} {% if inline_admin_form.original or inline_admin_form.show_url %}has_original{% endif %}{% if forloop.last %} empty-form{% endif %}"
-             id="{{ inline_admin_formset.formset.prefix }}{% if not forloop.last %}{{ forloop.counter }}{% else %}-empty{% endif %}">
+             id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
         <td class="original">
           {% if inline_admin_form.original or inline_admin_form.show_url %}<p>
           {% if inline_admin_form.original %} {{ inline_admin_form.original }}{% endif %}
@@ -121,5 +121,5 @@
             })
         });
     });
-})(jQuery.noConflict());
+})(django.jQuery);
 </script>

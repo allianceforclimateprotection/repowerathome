@@ -2,6 +2,7 @@
 Extra HTML Widget classes
 """
 
+import time
 import datetime
 import re
 
@@ -43,10 +44,21 @@ class SelectDateWidget(Widget):
         except AttributeError:
             year_val = month_val = day_val = None
             if isinstance(value, basestring):
-                match = RE_DATE.match(value)
-                if match:
-                    year_val, month_val, day_val = [int(v) for v in match.groups()]
-
+                if settings.USE_L10N:
+                    try:
+                        input_format = get_format('DATE_INPUT_FORMATS')[0]
+                        # Python 2.4 compatibility:
+                        #     v = datetime.datetime.strptime(value, input_format)
+                        # would be clearer, but datetime.strptime was added in 
+                        # Python 2.5
+                        v = datetime.datetime(*(time.strptime(value, input_format)[0:6]))
+                        year_val, month_val, day_val = v.year, v.month, v.day
+                    except ValueError:
+                        pass
+                else:
+                    match = RE_DATE.match(value)
+                    if match:
+                        year_val, month_val, day_val = [int(v) for v in match.groups()]
         choices = [(i, i) for i in self.years]
         year_html = self.create_select(name, self.year_field, value, year_val, choices)
         choices = MONTHS.items()
@@ -98,7 +110,7 @@ class SelectDateWidget(Widget):
             id_ = self.attrs['id']
         else:
             id_ = 'id_%s' % name
-        if not (self.required and value):
+        if not (self.required and val):
             choices.insert(0, self.none_value)
         local_attrs = self.build_attrs(id=field % id_)
         s = Select(choices=choices)

@@ -71,7 +71,13 @@ class RawQuery(object):
         # Always execute a new query for a new iterator.
         # This could be optimized with a cache at the expense of RAM.
         self._execute_query()
-        return iter(self.cursor)
+        if not connections[self.using].features.can_use_chunked_reads:
+            # If the database can't use chunked reads we need to make sure we
+            # evaluate the entire query up front.
+            result = list(self.cursor)
+        else:
+            result = self.cursor
+        return iter(result)
 
     def __repr__(self):
         return "<RawQuery: %r>" % (self.sql % self.params)
@@ -550,10 +556,10 @@ class Query(object):
             # models.
             workset = {}
             for model, values in seen.iteritems():
-                for field in model._meta.local_fields:
+                for field, m in model._meta.get_fields_with_model():
                     if field in values:
                         continue
-                    add_to_dict(workset, model, field)
+                    add_to_dict(workset, m or model, field)
             for model, values in must_include.iteritems():
                 # If we haven't included a model in workset, we don't add the
                 # corresponding must_include fields for that model, since an

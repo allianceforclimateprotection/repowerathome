@@ -222,7 +222,7 @@ class SingleRelatedObjectDescriptor(object):
             return getattr(instance, self.cache_name)
         except AttributeError:
             params = {'%s__pk' % self.related.field.name: instance._get_pk_val()}
-            db = router.db_for_read(instance.__class__, instance=instance)
+            db = router.db_for_read(self.related.model, instance=instance)
             rel_obj = self.related.model._base_manager.using(db).get(**params)
             setattr(instance, self.cache_name, rel_obj)
             return rel_obj
@@ -406,7 +406,7 @@ class ForeignRelatedObjectsDescriptor(object):
 
         class RelatedManager(superclass):
             def get_query_set(self):
-                db = router.db_for_read(rel_model, instance=instance)
+                db = self._db or router.db_for_read(rel_model, instance=instance)
                 return superclass.get_query_set(self).using(db).filter(**(self.core_filters))
 
             def add(self, *objs):
@@ -480,7 +480,7 @@ def create_many_related_manager(superclass, rel=False):
                 raise ValueError("%r instance needs to have a primary key value before a many-to-many relationship can be used." % instance.__class__.__name__)
 
         def get_query_set(self):
-            db = router.db_for_read(self.instance.__class__, instance=self.instance)
+            db = self._db or router.db_for_read(self.instance.__class__, instance=self.instance)
             return superclass.get_query_set(self).using(db)._next_is_sticky().filter(**(self.core_filters))
 
         # If the ManyToMany relation has an intermediary model,
@@ -824,13 +824,8 @@ class ForeignKey(RelatedField, Field):
     def validate(self, value, model_instance):
         if self.rel.parent_link:
             return
-        # Don't validate the field if a value wasn't supplied. This is
-        # generally the case when saving new inlines in the admin.
-        # See #12507.
-        if value is None:
-            return
         super(ForeignKey, self).validate(value, model_instance)
-        if not value:
+        if value is None:
             return
 
         qs = self.rel.to._default_manager.filter(**{self.rel.field_name:value})
@@ -969,7 +964,9 @@ def create_many_to_many_intermediary_model(field, klass):
         'managed': managed,
         'auto_created': klass,
         'app_label': klass._meta.app_label,
-        'unique_together': (from_, to)
+        'unique_together': (from_, to),
+        'verbose_name': '%(from)s-%(to)s relationship' % {'from': from_, 'to': to},
+        'verbose_name_plural': '%(from)s-%(to)s relationships' % {'from': from_, 'to': to},
     })
     # Construct and return the new class.
     return type(name, (models.Model,), {

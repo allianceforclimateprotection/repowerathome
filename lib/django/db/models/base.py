@@ -251,7 +251,7 @@ class Model(object):
     def __init__(self, *args, **kwargs):
         signals.pre_init.send(sender=self.__class__, args=args, kwargs=kwargs)
 
-        # Set up the storage for instane state
+        # Set up the storage for instance state
         self._state = ModelState()
 
         # There is a rather weird disparity here; if kwargs, it's set, then args
@@ -504,6 +504,13 @@ class Model(object):
                 else:
                     record_exists = False
             if not pk_set or not record_exists:
+                if meta.order_with_respect_to:
+                    # If this is a model with an order_with_respect_to
+                    # autopopulate the _order field
+                    field = meta.order_with_respect_to
+                    order_value = manager.using(using).filter(**{field.name: getattr(self, field.attname)}).count()
+                    setattr(self, '_order', order_value)
+
                 if not pk_set:
                     if force_update:
                         raise ValueError("Cannot force an update in save() with no primary key.")
@@ -513,9 +520,6 @@ class Model(object):
                     values = [(f, f.get_db_prep_save(raw and getattr(self, f.attname) or f.pre_save(self, True), connection=connection))
                         for f in meta.local_fields]
 
-                if meta.order_with_respect_to:
-                    field = meta.order_with_respect_to
-                    values.append((meta.get_field_by_name('_order')[0], manager.using(using).filter(**{field.name: getattr(self, field.attname)}).count()))
                 record_exists = False
 
                 update_pk = bool(meta.has_auto_field and not pk_set)
@@ -584,20 +588,22 @@ class Model(object):
 
         for related in self._meta.get_all_related_many_to_many_objects():
             if related.field.rel.through:
+                db = router.db_for_write(related.field.rel.through.__class__, instance=self)
                 opts = related.field.rel.through._meta
                 reverse_field_name = related.field.m2m_reverse_field_name()
                 nullable = opts.get_field(reverse_field_name).null
                 filters = {reverse_field_name: self}
-                for sub_obj in related.field.rel.through._base_manager.filter(**filters):
+                for sub_obj in related.field.rel.through._base_manager.using(db).filter(**filters):
                     sub_obj._collect_sub_objects(seen_objs, self, nullable)
 
         for f in self._meta.many_to_many:
             if f.rel.through:
+                db = router.db_for_write(f.rel.through.__class__, instance=self)
                 opts = f.rel.through._meta
                 field_name = f.m2m_field_name()
                 nullable = opts.get_field(field_name).null
                 filters = {field_name: self}
-                for sub_obj in f.rel.through._base_manager.filter(**filters):
+                for sub_obj in f.rel.through._base_manager.using(db).filter(**filters):
                     sub_obj._collect_sub_objects(seen_objs, self, nullable)
             else:
                 # m2m-ish but with no through table? GenericRelation: cascade delete
@@ -623,7 +629,6 @@ class Model(object):
 
     def delete(self, using=None):
         using = using or router.db_for_write(self.__class__, instance=self)
-        connection = connections[using]
         assert self._get_pk_val() is not None, "%s object can't be deleted because its %s attribute is set to None." % (self._meta.object_name, self._meta.pk.attname)
 
         # Find all the objects than need to be deleted.
