@@ -1,7 +1,24 @@
 <form class="rateable_rate_form" action="{% url rateable-rate %}" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% with form.score.field as field %}
+        <ul class="buttonset">
+            {% for id, label in field.widget.choices %}
+                <li>
+                    <input value="{{ id }}" type="radio" name="score" 
+                        id="id_score_{{ form.id }}_{{ forloop.counter0 }}"
+                        class="score_radio"
+                        {% if id == form.initial_score %}checked="checked"{% endif %} />
+                    <label for="id_score_{{ form.id }}_{{ forloop.counter0 }}">
+                        <span class="icon_rate_{{ id }}"></span>
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endwith %}
     <p>
-        <input type="hidden" name="next" value="{{ request.path }}" />
+        {{ form.content_type }}
+        {{ form.object_pk }}
     </p>
+    <p><input type="hidden" name="next" value="{{ request.path }}" /></p>
+    <p><input type="submit" value="Submit" /></p>
 </form>

@@ -21,18 +21,18 @@ class RatingManagerTest(TestCase):
         self.example_user = User.objects.get(username="example")
         
     def test_get_users_score(self):
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.first_post.pk, self.test_user), 1)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.first_post.pk, self.example_user), 0)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.second_post.pk, self.test_user), 1)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.second_post.pk, self.example_user), 1)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.third_post.pk, self.test_user), 1)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.third_post.pk, self.example_user), None)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.first_post, self.test_user), 1)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.first_post, self.example_user), 0)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.second_post, self.test_user), 1)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.second_post, self.example_user), 1)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.third_post, self.test_user), 1)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.third_post, self.example_user), None)
         
     def test_create_or_update(self):
         Rating.objects.create_or_update(self.post_content_type, self.third_post.pk, self.test_user, 2)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.third_post.pk, self.test_user), 2)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.third_post, self.test_user), 2)
         Rating.objects.create_or_update(self.post_content_type, self.third_post.pk, self.example_user, 3)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.third_post.pk, self.example_user), 3)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.third_post, self.example_user), 3)
         
 class RateViewTest(TestCase):
     def setUp(self):
@@ -69,58 +69,58 @@ class RateViewTest(TestCase):
     def test_success_with_next(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, 
-            "Helpful": "", "next": "/login/"}, follow=True)
+            "score": "1", "next": "/login/"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "registration/register.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.post.pk, self.user), 1)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post, self.user), 1)
         
     def test_successful_helpful(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "Helpful": ""})
+        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "score": "1"})
         self.failUnlessEqual(response.template.name, "rateable/rated.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(response.context["rating"].score, 1)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.post.pk, self.user), 1)        
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post, self.user), 1)        
         
     def test_successful_not_helpful(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "Not Helpful": ""})
+        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "score": "0"})
         self.failUnlessEqual(response.template.name, "rateable/rated.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(response.context["rating"].score, 0)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.post.pk, self.user), 0)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post, self.user), 0)
         
     def test_successful_helpful_ajax(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "Helpful": ""},
+        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "score": "1"},
             HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.failUnlessEqual(response.template.name, "rateable/ajax/rated.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(response.context["rating"].score, 1)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.post.pk, self.user), 1)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post, self.user), 1)
         
     def test_already_rated_changed(self):
         self.client.login(username="test@test.com", password="test")
         Rating.objects.create(content_type=self.post_content_type, object_pk=self.post.pk, user=self.user, score=2)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.post.pk, self.user), 2)
-        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "Helpful": ""})
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post, self.user), 2)
+        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "score": "1"})
         self.failUnlessEqual(response.template.name, "rateable/rated.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(response.context["rating"].score, 1)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.post.pk, self.user), 1)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post, self.user), 1)
         
     def test_already_rated_not_changed(self):
         self.client.login(username="test@test.com", password="test")
         Rating.objects.create(content_type=self.post_content_type, object_pk=self.post.pk, user=self.user, score=0)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.post.pk, self.user), 0)
-        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "Not Helpful": ""})
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post, self.user), 0)
+        response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "score": "0"})
         self.failUnlessEqual(response.template.name, "rateable/rated.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(response.context["rating"].score, 0)
-        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post_content_type, self.post.pk, self.user), 0)
+        self.failUnlessEqual(Rating.objects.get_users_current_score(self.post, self.user), 0)

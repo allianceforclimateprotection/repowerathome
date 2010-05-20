@@ -1,5 +1,6 @@
 from itertools import chain
 
+from django import forms
 from django.core.urlresolvers import reverse
 from django.forms import Widget, util
 from django.utils.encoding import force_unicode
@@ -15,17 +16,16 @@ class IsHelpfulWidget(Widget):
     def render_options(self):
         def render_option(option_value, option_label):
             option_value = force_unicode(option_value)
-            output = u'<button type="submit" title="Mark this comment as %s" class="button_tooltip" name="%s" value="%s"><span class="icon_rate_%s"></span></button>' % \
-                     (option_label, option_label, conditional_escape(force_unicode(option_label)), option_value)
+            output = u'<button type="submit" title="Mark this comment as %s" class="button_tooltip" name="score" value="%s"><span class="icon_rate_%s"></span></button>' % \
+                     (option_label, option_value, option_value)
             return output
         output = []
         for option_value, option_label in IsHelpfulWidget.CHOICES:
             output.append(render_option(option_value, option_label))
         return u'\n'.join(output)
+        
+class ThumbsRadio(forms.RadioSelect):
+    CHOICES = ((1, "Up"), (0, "Down"))
     
-    @classmethod   
-    def determine_score(cls, POST):
-        for option_value, option_label in IsHelpfulWidget.CHOICES:
-            if POST.has_key(option_label):
-                return option_value
-        return None
+    def __init__(self, *args, **kwargs):
+        return super(ThumbsRadio, self).__init__(*args, choices=ThumbsRadio.CHOICES, **kwargs)

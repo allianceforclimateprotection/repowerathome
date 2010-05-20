@@ -13,7 +13,7 @@
     </p>
     <ul class="buttonset">
         {% for id, label, help in field.field.choices %}
-            <li>
+            <li class="device_button">
                 <input value="{{ id }}" type="radio" class="vampire_slayer" 
                     name="{{ field.name }}" id="id_{{ field.name }}{{ forloop.counter0 }}"
                     {% if id == field.data %}checked="checked"{% endif %} />

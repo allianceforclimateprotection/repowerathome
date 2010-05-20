@@ -27,12 +27,12 @@ class RatingNode(template.Node):
         self.query_eval = query_eval
         
     def get_target(self, context):
-        obj = self.object_expr.resolve(context)
-        return ContentType.objects.get_for_model(obj), obj.pk
+        return self.object_expr.resolve(context)
         
     def get_query(self, context):
-        content_type, object_pk = self.get_target(context)
-        return Rating.objects.filter(content_type=content_type, object_pk=object_pk)
+        content_object= self.get_target(context)
+        content_type = ContentType.objects.get_for_model(content_object)
+        return Rating.objects.filter(content_type=content_type, object_pk=content_object.pk)
         
     def render(self, context):
         query = self.get_query(context)
@@ -49,10 +49,11 @@ class RatingFormNode(RatingNode):
         return parser.compile_filter(tokens[2])
         
     def render(self, context):
-        content_type, object_pk = self.get_target(context)
-        rating = Rating(content_type=content_type, object_pk=object_pk, 
-            score=Rating.objects.get_users_current_score(content_type, object_pk, context.get("request").user))
-        form = RatingForm(instance=rating, auto_id=False)
+        content_object = self.get_target(context)
+        user = context.get("request").user
+        score = Rating.objects.get_users_current_score(content_object=content_object, user=user)
+        rating = Rating(content_object=content_object, user=user, score=score)
+        form = RatingForm(instance=rating)
         context.push() #move the context stack forward so our variable names don't conflict
         value = render_to_string("rateable/form.html", {"form":form}, context)
         context.pop()

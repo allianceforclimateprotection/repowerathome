@@ -71,11 +71,6 @@ input, select, textarea {
 form ul { list-style-type: none; }
 form input[type="checkbox"] { width: 15px; }
 a.button:hover { color: white; }
-ul.buttonset li {
-    width: 150px;
-    height: 50px !important;
-    font-size: 12px;
-    float: left; }
 .form_row {
     padding: 18px 0;
     width: 320px;
@@ -591,7 +586,12 @@ Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
 #vampire_worksheet_wizard .vampire_device_image { float: left; }
 #vampire_worksheet_wizard .vampire_savings_container { float: left; }
 #vampire_worksheet_wizard .vampire_savings { font-size: 1.2em; font-weight: bold; }
-#vampire_worksheet_wizard .buttonset li { list-style: none; }
+#vampire_worksheet_wizard .device_button {
+    list-style: none;
+    width: 150px;
+    height: 50px !important;
+    font-size: 12px;
+    float: left; }
 #vampire_worksheet_wizard .buttonset .ui-button-text { height: 43px; display: table-cell; vertical-align: middle; }
 #vampire_worksheet_wizard .slayer_help_wrapper { font-weight: bold; text-align: center; }
 #vampire_worksheet_wizard .slayer_recommended { font-weight: bold; color: #92C139; text-align: center; }
@@ -635,10 +635,9 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 /* spite icons */
 .icon_gt {background: url(../images/theme/0000000001_sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
 .icon_from {background: url(../images/theme/0000000001_sprite_minor_col.png) -20px -323px;  width:35px; height:17px; display:inline-block;}
-.icon_rate_1 {background: url(../images/theme/0000000001_sprite_minor_col.png) -60px -303px;  width:14px; height:17px; display:inline-block;}
+.icon_rate_1 {background: url(../images/theme/0000000001_sprite_minor_col.png) -60px -303px;  width:14px; height:19px; display:inline-block;}
 .icon_rate_0 {background: url(../images/theme/0000000001_sprite_minor_col.png) -80px -299px;  width:14px; height:19px; display:inline-block;}
 .icon_flag {background: url(../images/theme/0000000001_sprite_minor_col.png) -100px -300px;  width:14px; height:19px; display:inline-block;}
-
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue 

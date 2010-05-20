@@ -452,7 +452,7 @@ var rah = {
                     comment: { maxlength: "comment must be less than 3000 characters" }
                 }
             });
-            rah.mod_is_helpful_widget.init();
+            rah.mod_thumbs_radio_widget.init();
             rah.mod_flag.init();
         }
     },
@@ -608,19 +608,18 @@ var rah = {
         }
     },
     
-    mod_is_helpful_widget: {
+    mod_thumbs_radio_widget: {
         init: function() {
+            $(".rateable_rate_form [type='submit']").remove();
             $(".rateable_rate_form [name='next']").remove();
-            $(".rateable_rate_form :submit").click(function() {
-               var submit = $(this);
-               var form = submit.parents("form");
-               form.append("<input type='hidden' name='" + submit.val() + "' />");
+            $(".rateable_rate_form .score_radio").click(function() {
+               var form = $(this).parents("form");
                $.ajax({
                    url: form.attr("action"),
                    type: form.attr("method"),
                    data: form.serialize(),
                    success: function(data) {
-                       form.parent("div").html(data);
+                       rah.mod_messages.init(data);
                    }
                });
                return false;

@@ -12,12 +12,11 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.models import User
 
 from models import Rating
-from widgets import IsHelpfulWidget
 
 @login_required
 @require_POST
 @csrf_protect
-def rate(request, rating_widget=IsHelpfulWidget, next=None, using=None, success_message=None, error_message=None):
+def rate(request, next=None, using=None, success_message=None, error_message=None):
     content_type_pk = request.POST.get("content_type", "-1")
     object_pk = request.POST.get("object_pk", "-1")
     try:
@@ -29,9 +28,10 @@ def rate(request, rating_widget=IsHelpfulWidget, next=None, using=None, success_
         raise Http404("No object found matching %s" % object_pk)
     except ValueError:
         raise Http404("Invalid parameters %s, %s" % (content_type_pk, object_pk))
-    score = rating_widget.determine_score(request.POST) #if the score is defined in the post data override that provided
+    score = request.POST.get("score", None)
     if score == None:
         raise Http404("Missing score value")
+    score = int(score)
     rating, created = Rating.objects.create_or_update(content_type=content_type, object_pk=object_pk, 
         user=request.user, score=score)
     

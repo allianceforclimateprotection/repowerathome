@@ -6,9 +6,10 @@ from django.utils.translation import ugettext_lazy as _
 
 class RatingManager(models.Manager):
     
-    def get_users_current_score(self, content_type, object_pk, user):
+    def get_users_current_score(self, content_object, user):
         if user.is_authenticated():
-            current_rating = self.filter(content_type=content_type, object_pk=object_pk, user=user)
+            content_type = ContentType.objects.get_for_model(content_object)
+            current_rating = self.filter(content_type=content_type, object_pk=content_object.pk, user=user)
             if current_rating:
                 return current_rating[0].score
         return None
