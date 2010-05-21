@@ -2,7 +2,7 @@
 #
 # Run all tests before we commit
 # if ! ./manage.py test --settings=test_settings --failfast rah groups records rateable flagged search_widget actions invite tagging; then
-if ! ./manage.py test --settings=test_settings rah invite groups records rateable flagged search_widget actions tagging; then
+if ! ./manage.py test --settings=test_settings rah invite groups records rateable flagged search_widget actions tagging events; then
     echo "-----"
     echo "Some of your tests failed, you must fix these first before you can commit."
     echo "Alternatively you can run 'git commit --no-verify' to force it in."
