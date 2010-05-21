@@ -9,10 +9,12 @@ class Event(models.Model):
         ("FT", "Field Training",),
     )
 
-    event_type = models.CharField(max_length=2, choices=EVENT_TYPES)
+    event_type = models.CharField(blank=False, max_length=2, choices=EVENT_TYPES, default="")
     where = models.CharField(max_length=100)
     location = models.ForeignKey('geo.Location')
-    when = models.DateTimeField()
+    when = models.DateField()
+    start = models.TimeField(blank=True)
+    end = models.TimeField(blank=True)
     details = models.TextField(help_text="For example, where should people park,\
         what's the nearest subway, do people need to be buzzed in, etc.")
     is_private = models.BooleanField()

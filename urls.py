@@ -64,6 +64,7 @@ urlpatterns += patterns('',
     url(r'^notifications/', include('notification.urls')),
     url(r'^actions/', include('actions.urls')),
     url(r'^records/', include('records.urls')),
+    url(r'^events/', include('events.urls')),
 )
 
 if settings.DEBUG:

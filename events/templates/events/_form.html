@@ -1,0 +1,5 @@
+<form name="event_create" action="" method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <input type="submit" value="Create Event" />
+</form>
