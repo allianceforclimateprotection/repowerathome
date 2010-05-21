@@ -1,5 +1,5 @@
 {% extends "rah/base.html" %}
-{% load records %}
+{% load record %}
 {% load dated_static %}
 {% block extralinks %}
     <link rel="alternate" type="application/atom+xml"  href="{% url user_activity_feed profile.user.id %}" title="Repower at Home User Activity" />
