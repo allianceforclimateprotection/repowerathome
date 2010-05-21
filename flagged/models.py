@@ -11,23 +11,35 @@ from django.utils.translation import ugettext_lazy as _
 
 class FlagManager(models.Manager):
     
-    def has_user_flagged_object(self, content_type, object_pk, user):
-        return user.is_authenticated() and \
-            self.filter(content_type=content_type, object_pk=object_pk, user=user).exists()
+    def has_user_flagged_object(self, content_object, user):
+        if not user.is_authenticated():
+            return False    
+        content_type = ContentType.objects.get_for_model(content_object)
+        return self.filter(content_type=content_type, object_pk=content_object.pk, user=user).exists()
             
-    def flag_content(self, content_type, object_pk, user):
+    def get_flagged_object_for_user(self, content_object, user):
         if user.is_authenticated():
+            content_type = ContentType.objects.get_for_model(content_object)
             try:
-                self.get(content_type=content_type, object_pk=object_pk, user=user)
+                return self.get(content_type=content_type, object_pk=content_object.pk, user=user)
+            except Flag.DoesNotExist: pass
+        return Flag(content_object=content_object)
+            
+    def flag_content(self, content_object, user):
+        if user.is_authenticated():
+            content_type = ContentType.objects.get_for_model(content_object)
+            try:
+                self.get(content_type=content_type, object_pk=content_object.pk, user=user)
             except Flag.DoesNotExist:
-                self.create(content_type=content_type, object_pk=object_pk, user=user)
+                self.create(content_type=content_type, object_pk=content_object.pk, user=user)
                 return True
         return False
         
-    def unflag_content(self, content_type, object_pk, user):
+    def unflag_content(self, content_object, user):
         if user.is_authenticated():
+            content_type = ContentType.objects.get_for_model(content_object)
             try:
-                self.get(content_type=content_type, object_pk=object_pk, user=user).delete()
+                self.get(content_type=content_type, object_pk=content_object.pk, user=user).delete()
                 return True
             except Flag.DoesNotExist:
                 pass

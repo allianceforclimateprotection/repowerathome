@@ -21,13 +21,13 @@ class FlagFormNode(template.Node):
         self.object_expr = object_expr
         
     def get_target(self, context):
-        obj = self.object_expr.resolve(context)
-        return ContentType.objects.get_for_model(obj), obj.pk
+        return self.object_expr.resolve(context)
         
     def render(self, context):
-        content_type, object_pk = self.get_target(context)
-        flag = Flag(content_type=content_type, object_pk=object_pk)
-        form = FlagForm(instance=flag, auto_id=False)
+        content_object = self.get_target(context)
+        user = context.get("request").user
+        flag = Flag.objects.get_flagged_object_for_user(content_object=content_object, user=user)
+        form = FlagForm(instance=flag)
         context.push() #move the context stack forward so our variable names don't conflict
         value = render_to_string("flagged/flag_form.html", {"form":form}, context)
         context.pop()

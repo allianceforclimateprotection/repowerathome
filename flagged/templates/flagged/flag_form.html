@@ -1,8 +1,16 @@
 <form class="flagged_flag_form" action="{% url flagged-flag %}" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
     <p>
+        <input id="id_flagged_{{ form.id }}" class="flag_box button" type="checkbox" name="flagged"
+            {% if form.flagged.field.initial %}checked="checked" disabled="disabled"{% endif %}/>
+        <label class="flag_label" for="id_flagged_{{ form.id }}">
+            <span class="icon_flag"></span>
+        </label>
+    </p>
+    <p>
+        {{ form.content_type }}
+        {{ form.object_pk }}
         <input type="hidden" name="next" value="{{ request.path }}" />
-        <button title="Report this as an inappropriate comment" class="button_tooltip" type="submit"><span class="icon_flag"></span></button>
+        {# <button title="Report this as an inappropriate comment" class="button_tooltip" type="submit"><span class="icon_flag"></span></button> #}
     </p>
 </form>

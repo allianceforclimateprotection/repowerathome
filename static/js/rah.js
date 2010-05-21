@@ -24,7 +24,7 @@ var rah = {
             try{Typekit.load();}catch(e){}
             
             // setup buttons
-            $("button, input:submit, a.button").button();
+            $("button, input:submit, a.button, input.button").button();
             $(".buttonset").buttonset();
             rah.mod_overset.init();
             
@@ -612,7 +612,7 @@ var rah = {
         init: function() {
             $(".rateable_rate_form [type='submit']").remove();
             $(".rateable_rate_form [name='next']").remove();
-            $(".rateable_rate_form .score_radio").click(function() {
+            $(".rateable_rate_form .score_radio").change(function() {
                var form = $(this).parents("form");
                $.ajax({
                    url: form.attr("action"),
@@ -630,14 +630,16 @@ var rah = {
     mod_flag: {
         init: function() {
             $(".flagged_flag_form [name='next']").remove();
-            $(".flagged_flag_form").submit(function() {
-                var form = $(this);
+            $(".flagged_flag_form .flag_box").click(function() {
+                var box = $(this);
+                var form = box.parents("form");
                 $.ajax({
                     url: form.attr("action"),
                     type: form.attr("method"),
                     data: form.serialize(),
                     success: function(data) {
-                        form.html(data);
+                        rah.mod_messages.init(data);
+                        box.button("disable");
                     }
                 });
                 return false;

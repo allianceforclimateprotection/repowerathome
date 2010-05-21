@@ -28,7 +28,7 @@ def flag(request, next=None, using=None):
         raise Http404("No object found matching %s" % object_pk)
     except ValueError:
         raise Http404("Invalid parameters %s, %s" % (content_type_pk, object_pk))
-    success = Flag.objects.flag_content(content_type=content_type, object_pk=object_pk, user=request.user)
+    success = Flag.objects.flag_content(content_object=target, user=request.user)
     
     if success:
         messages.success(request, "You have added a flag. A moderator will review your submission shortly.")
@@ -66,7 +66,7 @@ def unflag(request, next=None, using=None):
         raise Http404("No type found matching %s" % content_type_pk)
     except ObjectDoesNotExist:
         raise Http404("No object found matching %s" % object_pk)
-    success = Flag.objects.unflag_content(content_type=content_type, object_pk=object_pk, user=request.user)
+    success = Flag.objects.unflag_content(content_object=target, user=request.user)
 
     if success:
         messages.success(request, "Your flag has been removed.")

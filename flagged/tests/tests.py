@@ -22,30 +22,30 @@ class FlagManagerTest(TestCase):
         self.example_user = User.objects.get(username="example")
         
     def test_has_user_flagged_object(self):
-        self.failUnless(Flag.objects.has_user_flagged_object(self.post_content_type, self.first_post.pk, self.test_user))
-        self.failUnless(Flag.objects.has_user_flagged_object(self.post_content_type, self.first_post.pk, self.example_user))
-        self.failUnless(Flag.objects.has_user_flagged_object(self.post_content_type, self.second_post.pk, self.test_user))
-        self.failUnless(not Flag.objects.has_user_flagged_object(self.post_content_type, self.second_post.pk, self.example_user))
-        self.failUnless(Flag.objects.has_user_flagged_object(self.post_content_type, self.third_post.pk, self.test_user))
-        self.failUnless(not Flag.objects.has_user_flagged_object(self.post_content_type, self.third_post.pk, self.example_user))
+        self.failUnless(Flag.objects.has_user_flagged_object(self.first_post, self.test_user))
+        self.failUnless(Flag.objects.has_user_flagged_object(self.first_post, self.example_user))
+        self.failUnless(Flag.objects.has_user_flagged_object(self.second_post, self.test_user))
+        self.failUnless(not Flag.objects.has_user_flagged_object(self.second_post, self.example_user))
+        self.failUnless(Flag.objects.has_user_flagged_object(self.third_post, self.test_user))
+        self.failUnless(not Flag.objects.has_user_flagged_object(self.third_post, self.example_user))
         
     def test_flag_content(self):
-        self.failUnless(not Flag.objects.has_user_flagged_object(self.post_content_type, self.second_post.pk, self.example_user))
-        Flag.objects.flag_content(self.post_content_type, self.second_post.pk, self.example_user)
-        self.failUnless(Flag.objects.has_user_flagged_object(self.post_content_type, self.second_post.pk, self.example_user))
+        self.failUnless(not Flag.objects.has_user_flagged_object(self.second_post, self.example_user))
+        Flag.objects.flag_content(self.second_post, self.example_user)
+        self.failUnless(Flag.objects.has_user_flagged_object(self.second_post, self.example_user))
         
-        self.failUnless(Flag.objects.has_user_flagged_object(self.post_content_type, self.first_post.pk, self.test_user))
-        Flag.objects.flag_content(self.post_content_type, self.first_post.pk, self.test_user)
-        self.failUnless(Flag.objects.has_user_flagged_object(self.post_content_type, self.first_post.pk, self.test_user))
+        self.failUnless(Flag.objects.has_user_flagged_object(self.first_post, self.test_user))
+        Flag.objects.flag_content(self.first_post, self.test_user)
+        self.failUnless(Flag.objects.has_user_flagged_object(self.first_post, self.test_user))
         
     def test_unflag_content(self):
-        self.failUnless(not Flag.objects.has_user_flagged_object(self.post_content_type, self.second_post.pk, self.example_user))
-        Flag.objects.unflag_content(self.post_content_type, self.second_post.pk, self.example_user)
-        self.failUnless(not Flag.objects.has_user_flagged_object(self.post_content_type, self.second_post.pk, self.example_user))
+        self.failUnless(not Flag.objects.has_user_flagged_object(self.second_post, self.example_user))
+        Flag.objects.unflag_content(self.second_post, self.example_user)
+        self.failUnless(not Flag.objects.has_user_flagged_object(self.second_post, self.example_user))
         
-        self.failUnless(Flag.objects.has_user_flagged_object(self.post_content_type, self.first_post.pk, self.test_user))
-        Flag.objects.unflag_content(self.post_content_type, self.first_post.pk, self.test_user)
-        self.failUnless(not Flag.objects.has_user_flagged_object(self.post_content_type, self.first_post.pk, self.test_user))        
+        self.failUnless(Flag.objects.has_user_flagged_object(self.first_post, self.test_user))
+        Flag.objects.unflag_content(self.first_post, self.test_user)
+        self.failUnless(not Flag.objects.has_user_flagged_object(self.first_post, self.test_user))        
         
 class FlagViewTest(TestCase):
     def setUp(self):
@@ -107,7 +107,7 @@ class FlagViewTest(TestCase):
         
     def test_already_created(self):
         self.client.login(username="test@test.com", password="test")
-        Flag.objects.flag_content(self.post_content_type, self.post.pk, self.user)
+        Flag.objects.flag_content(self.post, self.user)
         mail.outbox.pop()
         response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk}, follow=True)
         self.failUnlessEqual(mail.outbox, [])

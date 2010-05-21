@@ -524,6 +524,7 @@ Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged 
 .flagged_flag_form { margin-left: 10px; }
 .flag_submit_link { font-size: 10px; }
 */
+.flag_label[class~="ui-state-disabled"] { opacity: 1; filter:alpha(opacity=100); }
 /* ---------------------------------------------------------------------------------------------------------------------
 Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
 --------------------------------------------------------------------------------------------------------------------- */
@@ -635,9 +636,9 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 /* spite icons */
 .icon_gt {background: url(../images/theme/0000000001_sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
 .icon_from {background: url(../images/theme/0000000001_sprite_minor_col.png) -20px -323px;  width:35px; height:17px; display:inline-block;}
-.icon_rate_1 {background: url(../images/theme/0000000001_sprite_minor_col.png) -60px -303px;  width:14px; height:19px; display:inline-block;}
-.icon_rate_0 {background: url(../images/theme/0000000001_sprite_minor_col.png) -80px -299px;  width:14px; height:19px; display:inline-block;}
-.icon_flag {background: url(../images/theme/0000000001_sprite_minor_col.png) -100px -300px;  width:14px; height:19px; display:inline-block;}
+.icon_rate_1 {background: url(../images/theme/0000000001_sprite_minor_col.png) -60px -302px;  width:13px; height:17px; display:inline-block;}
+.icon_rate_0 {background: url(../images/theme/0000000001_sprite_minor_col.png) -81px -302px;  width:13px; height:17px; display:inline-block;}
+.icon_flag {background: url(../images/theme/0000000001_sprite_minor_col.png) -101px -302px;  width:14px; height:17px; display:inline-block;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue 
