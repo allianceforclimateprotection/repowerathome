@@ -21,7 +21,7 @@ def rate(request, next=None, using=None, success_message=None, error_message=Non
     object_pk = request.POST.get("object_pk", "-1")
     try:
         content_type = ContentType.objects.get(pk=content_type_pk)
-        target = content_type.get_object_for_this_type(pk=object_pk)
+        content_object = content_type.get_object_for_this_type(pk=object_pk)
     except AttributeError:
         raise Http404("No type found matching %s" % content_type_pk)
     except ObjectDoesNotExist:
@@ -50,10 +50,10 @@ def rate(request, next=None, using=None, success_message=None, error_message=Non
     ]
     if request.is_ajax():
         template_list = [ 
-        "rateable/%s/%s/ajax/rated.html" % (content_type.model_class()._meta.app_label, content_type.model_class()._meta.module_name),
-        "rateable/%s/ajax/rated.html" % content_type.model_class()._meta.app_label,
-        "rateable/ajax/rated.html",
+        "rateable/%s/%s/ajax/rated.json" % (content_type.model_class()._meta.app_label, content_type.model_class()._meta.module_name),
+        "rateable/%s/ajax/rated.json" % content_type.model_class()._meta.app_label,
+        "rateable/ajax/rated.json",
         ] + template_list
-    response = loader.render_to_string(template_list, {"rating": rating}, context_instance=RequestContext(request))
+    response = loader.render_to_string(template_list, {"rating": rating, "content_object": content_object}, context_instance=RequestContext(request))
     for message in request._messages: pass #if messages weren't used in the response, clear them out
     return HttpResponse(response)   

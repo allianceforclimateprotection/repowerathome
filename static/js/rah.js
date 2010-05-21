@@ -618,8 +618,12 @@ var rah = {
                    url: form.attr("action"),
                    type: form.attr("method"),
                    data: form.serialize(),
+                   dataType: "json",
                    success: function(data) {
-                       rah.mod_messages.init(data);
+                       var container = form.parent("div");
+                       // rah.mod_messages.init(data["messages"]);
+                       $(".users_voted_stats", container).html(data["users_voted_stats"]).effect(
+                           "highlight", {"backgroundColor": "#B0D8F2"}, 1500);
                    }
                });
                return false;

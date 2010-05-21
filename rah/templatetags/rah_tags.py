@@ -47,6 +47,11 @@ def safe_user_link(parser, token):
 @template.defaultfilters.stringfilter
 def deslug(value):
     return value.title().replace('_', ' ').replace('-', ' ')
+    
+@register.filter
+@template.defaultfilters.stringfilter
+def jsonify(value):
+    return value.replace("\n", " ").replace('"', '\\"')
 
 class ActivityNode(template.Node):
     def __init__(self, activity, var_name):

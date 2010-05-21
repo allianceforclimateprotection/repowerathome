@@ -97,7 +97,7 @@ class RateViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, "score": "1"},
             HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        self.failUnlessEqual(response.template.name, "rateable/ajax/rated.html")
+        self.failUnlessEqual(response.template.name, "rateable/ajax/rated.json")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(response.context["rating"].score, 1)

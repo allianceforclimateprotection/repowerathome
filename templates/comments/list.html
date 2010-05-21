@@ -19,9 +19,12 @@
                     <div class="comment_buttons">
                         {% get_rating_count for comment as users_voted %}
                         {% get_rating_sum for comment as users_helped %}
-                        {% if users_voted %}
-                            {{ users_helped }} of {{ users_voted }} liked this
-                        {% endif %}
+                        <span class="users_voted_stats">
+                            {% if users_voted %}
+                                <span class="users_helped">{{ users_helped }}</span> of
+                                <span class="users_voted">{{ users_voted }}</span> liked this
+                            {% endif %}
+                        </span>
                         {% if user.is_authenticated %}
                             {% get_rating_form for comment %}
                             {% get_flag_form for comment %}
