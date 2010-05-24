@@ -17,10 +17,14 @@ class Event(models.Model):
     end = models.TimeField(blank=True)
     details = models.TextField(help_text="For example, where should people park,\
         what's the nearest subway, do people need to be buzzed in, etc.")
-    is_private = models.BooleanField()
+    is_private = models.BooleanField(default=False)
     
     def __unicode__(self):
         return u"%s in %s, %s" % (self.get_event_type_display(), self.location.name, self.location.st)
+        
+    @models.permalink
+    def get_absolute_url(self):
+        return ("event-show", [str(self.id)])
     
 class Guest(models.Model):
     RSVP_STATUSES = (
