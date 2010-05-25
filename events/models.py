@@ -6,6 +6,8 @@ class EventType(models.Model):
     name = models.CharField(max_length=50, unique=True)
     teaser = models.CharField(max_length=150)
     description = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.name
@@ -21,6 +23,8 @@ class Event(models.Model):
     details = models.TextField(help_text="For example, where should people park,\
         what's the nearest subway, do people need to be buzzed in, etc.")
     is_private = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
     def __unicode__(self):
         return u"%s in %s" % (self.event_type, self.location)
@@ -49,6 +53,8 @@ class Guest(models.Model):
     added = models.DateField(null=True, blank=True)
     rsvp_status = models.CharField(blank=True, max_length=1, choices=RSVP_STATUSES)
     user = models.ForeignKey("auth.User", null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
     def status(self):
         if self.rsvp_status:
