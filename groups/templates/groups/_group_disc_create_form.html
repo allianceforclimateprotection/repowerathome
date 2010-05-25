@@ -1,4 +1,4 @@
-<form action="{% url group_disc_create group.slug %}" method="post" accept-charset="utf-8">
+<form action="{% url group_disc_create group.slug %}" method="post" accept-charset="utf-8" id="comment_form">
 	{% for field in disc_form %}
 	    {% if field.is_hidden %}
             {{ field }}

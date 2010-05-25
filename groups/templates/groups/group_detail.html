@@ -48,21 +48,23 @@
     <div class="box_two_top"></div>
     <div class="box_two_middle">
         {% if not group.is_geo_group %}
-        <div id="group_discussion_list" class="group_section">
         	<h2>Discussions</h2>
-        	{% if discs %}
-    			<a href="{% url group_disc_list group.slug %}">See all discussions</a>	
-    		{% endif %}
-    		{% if not is_poster and not discs %}
-    			<em>No discussions yet.</em>
-    		{% endif %}	
+        	<div class="group_disc_box_links">
+        		{% if is_poster %}
+        			<a href="{% url group_disc_create group.slug %}">New discussion</a> 
+        		{% endif %}
+        		{% if is_poster and discs %}
+                    |
+        		{% endif %}
+            	{% if discs %}
+        			<a href="{% url group_disc_list group.slug %}">Archive</a>	
+        		{% endif %}
+        	</div>    		
     		{% if discs %}
     			{% include "groups/_group_disc_list.html" %}
+    		{% else %}
+    		    <em>No discussions yet.</em>
     		{% endif %}
-    		{% if is_poster %}
-    			<a href="{% url group_disc_create group.slug %}">Start new discussion</a>
-    		{% endif %}
-        </div>
     	{% endif %}
     </div>
     <div class="box_two_bottom"></div>
@@ -131,8 +133,8 @@
         <h3>Magnify your Impact</h3>
         {% activity_by_slug mag_invite_friend as invite_friend_act %}
         <p>
-            <a href='{% url invite-invite %}' class='invite_friend_link'>Invite a friend to this team</a>
-            (+{{ invite_friend_act.points }} points)
+            <a href='{% url invite-invite %}' class='invite_friend_link'>Invite a friend to this team</a><br/>
+            <span class="smaller">{{ invite_friend_act.points }} points</span>
         </p>
         <div id='invite_friend_dialog'>
             {% get_invite_form for group %}

@@ -1,20 +1,39 @@
-<div class="group_disc_reply {% if not disc.is_public %}unapproved{% endif %}">
+<div class="{% if not disc.is_public %}unapproved{% endif %}">
 	{% if disc.is_public or is_manager or disc.user.id == user.id %}
-		{{disc.body|linebreaks}}
-		<em>Posted by {% safe_user_link disc.user %} on {{disc.created}}</em>
-		{% if not disc.is_public and is_manager %}
-			<form action="{% url group_disc_approve group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
-				{{approve_form.as_p}}
-				<p><input type="submit" value="Approve"/></p>
-				{% csrf_token %}
-			</form>
-		{% endif %}
-		{% if is_manager %}
-			<form action="{% url group_disc_remove group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
-				{{remove_form.as_p}}
-				<p><input class="as_link" type="submit" value="Remove"/></p>
-				{% csrf_token %}
-			</form>
-		{% endif %}
+        <div class="grid_6 alpha comment_wrapper">
+            <div class="box_two_top"></div>
+            <div class="box_two_middle comment">
+                {{disc.body|linebreaks}}
+            </div>
+            <div class="box_two_bottom"></div>
+            <span class="point"></span>
+            <div class="comment_tools">
+                <span class="comment_date">
+                    {{ disc.created|date:"DATETIME_FORMAT" }}
+                </span>
+                {% if not disc.is_public and is_manager %}
+        			<form action="{% url group_disc_approve group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
+        				{{approve_form.as_p}}
+        				<p><input type="submit" value="Approve"/></p>
+        				{% csrf_token %}
+        			</form>
+        		{% endif %}
+        		{% if is_manager %}
+        			<form action="{% url group_disc_remove group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
+        				{{remove_form.as_p}}
+        				<p><input class="as_link" type="submit" value="Remove"/></p>
+        				{% csrf_token %}
+        			</form>
+        		{% endif %}
+            </div>
+        </div>
+        <div class="grid_3 omega">
+            <div class="comment_author">
+                <img class="gravatar" src="{{ disc.user.get_profile.get_gravatar_url }}" alt="user gravatar" />
+                <br class="clear" />
+                {% safe_user_link disc.user %}
+            </div>
+        </div>
+        <br class="clear" />
 	{% endif %}
 </div>

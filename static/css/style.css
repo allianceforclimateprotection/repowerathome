@@ -50,7 +50,7 @@ h1, h1 a {
     font-style: normal; 
     color: #ed6623;}
 h2, h3, h4, h5, h6 { font-weight:bold; color: #172950;}
-h1 { font-size: 36px; line-height:45px; }
+h1 { font-size: 30px; line-height:45px; }
 h2 { font-size: 20px; line-height:27px; }
 h3 { font-size: 18px; line-height:27px; }
 h4 { font-size: 16px; line-height:21px; }
@@ -213,33 +213,18 @@ Header Header Header Header Header Header Header Header Header Header Header Hea
 /* ---------------------------------------------------------------------------------------------------------------------
 Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners  
 --------------------------------------------------------------------------------------------------------------------- */
-/*.box_one_top {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -2000px -10px; width:250px; height:18px;}
-.box_one_middle {background: transparent url(../images/theme/0000000001_corners.png) repeat-y -1750px 0px; width:204px;}
-.box_one_bottom {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -1500px 0px; width:250px; height:28px;}
-
-.box_two_top {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -1000px -10px; width:500px; height:18px;}
-.box_two_middle {background: transparent url(../images/theme/0000000001_corners.png) repeat-y -500px 0px; width:454px;}
-.box_two_bottom {background: transparent url(../images/theme/0000000001_corners.png) no-repeat 0px 0px; width:500px; height:28px;}
-
-.box_three_top {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -3750px -10px; width:750px; height:18px;}
-.box_three_middle {background: transparent url(../images/theme/0000000001_corners.png) repeat-y -3000px 0px; width:704px;}
-.box_three_bottom {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -2250px 0px; width:750px; height:28px;}*/
-
 .box_one_top {background: transparent url(../images/theme/0000000001_corners.png) no-repeat 0px -10px; width:235px; height:18px;}
 .box_one_middle {background: transparent url(../images/theme/0000000001_corners.png) repeat-y -235px 0px; width:189px;}
 .box_one_bottom {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -470px 0px; width:235px; height:28px;}
-
 .box_two_top {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -705px -10px; width:478px; height:18px;}
 .box_two_middle {background: transparent url(../images/theme/0000000001_corners.png) repeat-y -1183px 0px; width:432px;}
 .box_two_bottom {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -1661px 0px; width:478px; height:28px;}
-
 .box_three_top {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -2139px -10px; width:721px; height:18px;}
 .box_three_middle {background: transparent url(../images/theme/0000000001_corners.png) repeat-y -2860px 0px; width:675px;}
 .box_three_bottom {background: transparent url(../images/theme/0000000001_corners.png) no-repeat -3581px 0px; width:721px; height:28px;}
-
 .box_one_top, .box_two_top, .box_three_top,
 .box_one_middle, .box_two_middle, .box_three_middle,
-.box_one_bottom, .box_two_bottom, .box_three_bottom {margin-left:-5px;}
+.box_one_bottom, .box_two_bottom, .box_three_bottom {margin-left:-5px; position:relative;}
 .box_one_top, .box_two_top, .box_three_top {margin-top:10px;}
 
 .box_one_middle, .box_two_middle, .box_three_middle {height:100%; padding:0px 23px 0px 23px;}
@@ -475,6 +460,8 @@ th.header {
     margin-left: -1px; }
 th.headerSortUp, th.headerSortDown { background-color: #3399FF;}
 .search_title { margin-top: 30px; }
+.group_disc_reply_count {float:right;}
+.group_disc_box_links {position:absolute; top:0px; right:23px;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Search Widget Search Widget Search Widget Search Widget Search Widget Search Widget Search Widget Search Widget Search
