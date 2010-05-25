@@ -275,7 +275,7 @@ def group_disc_list(request, group_slug):
     return render_to_response("groups/group_disc_list.html", locals(), context_instance=RequestContext(request))
 
 def _group_detail(request, group):
-    popular_actions = group.completed_actions_by_user(3)
+    popular_actions = group.completed_actions_by_user(5)
     top_members = group.members_ordered_by_points()
     group_records = group.group_records(10)
     is_member = group.is_member(request.user)

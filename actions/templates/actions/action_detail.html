@@ -6,18 +6,25 @@
 {% endblock %}
 
 {% block right_content %}
-    <div id="breadcrumbs">
-        <a href="{% url index %}">Home</a> &rsaquo;
-        <a href="{% url action_show %}">Actions</a> &rsaquo;
-        {{action.name}}
+    <div class="box_three_top"></div>
+    <div class="box_three_middle">
+        <div id="breadcrumbs">
+            <a href="{% url index %}">Home</a> &rsaquo;
+            <a href="{% url action_show %}">Actions</a> &rsaquo;
+            {{action.name}}
+        </div>
+        {% if action.has_illustration %}
+            <img src="{{ action.get_detail_illustration }}" alt="{{action.name}} illustration" width="675" class="" style="background-color:#b0d8f4;"/>
+        {% else %}
+            <h1 id="action_title">{{action.name}}</h1>
+        {% endif %}
     </div>
-    {% if action.has_illustration %}
-        <img src="{{ action.get_detail_illustration }}" alt="{{action.name}} illustration" width="740" height="315" />
-    {% endif %}
-    <div class="container_3">
-        <div class="grid_2 alpha">
-            <div id="action_details">
-                <h1 id="action_title">{{action.name}}</h1>
+    <div class="box_three_bottom"></div>
+    <div class="container_9">
+        <div class="grid_6 alpha">
+            <div class="box_two_top"></div>
+            <div id="action_details" class="box_two_middle">
+                {# <h1 id="action_title">{{action.name}}</h1> #}
                 <span class='tag_list'>
                     {% for tag in action.tags %}
                         <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
@@ -27,8 +34,11 @@
                     {% render_template_snippet action.content %}
                 </div>
             </div>
+            <div class="box_two_bottom"></div>
         </div>
-        <div class="grid_1 omega minor-col">
+        <div class="grid_3 omega">
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
             {% if progress.date_committed and not progress.is_completed %}
                 <h2>Commitment</h2>
                 <p>
@@ -60,8 +70,12 @@
                     {% endif %}
                 </ul>
             {% endif %}
+            </div>
+            <div class="box_one_bottom"></div>
         </div>
     </div>
+    <br class="clear"/>
+    <br class="clear"/>
     <br class="clear"/>
     <div id="comments">
         {% with action as object %}

@@ -22,7 +22,7 @@
         <div id="loading" class="warning">Loading...</div>
         <div id="header_container">
             <div id="header_bg">
-                <div id="header" class="container_4">
+                <div id="header" class="container_12">
 	                <a href="/" title="Repower America" id="header_logo">
 						<img src="{% dated_static 'images/theme/logo.png' %}" alt="Repower at Home logo" width="259" height="38"/>
 					</a>
@@ -63,9 +63,9 @@
         <div id="content_container">
             <div id="content_bg">
                 <div id="content">
-                    <div class="container_4">
+                    <div class="container_12">
                         {% block content %}
-                            <div class="grid_1 alpha">
+                            <div class="grid_3 alpha">
                                 {% block tongue %}
                                     {% if request.user.is_authenticated %}
                                         {% with request.user.get_profile as profile %}
@@ -75,7 +75,7 @@
                                 {% endblock tongue %}
                                 {% block left_sidebar %}{% endblock left_sidebar %}
                             </div>
-                            <div class="grid_3 omega">
+                            <div class="grid_9 omega">
                                 {% block right_content %}{% endblock right_content %}
                             </div>
                         {% endblock content %}

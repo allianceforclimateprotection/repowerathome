@@ -1,18 +1,14 @@
 {% extends "base.html" %}
 
 {% block right_content %}
-    <div id="breadcrumbs">
-        <a href="{% url index %}">Home</a> &rsaquo;
-        Teams
-    </div>
-    <div class="grid_2 alpha">
-        {% if user.is_authenticated and my_groups %}
-            <h1>Your Teams</h1>
-            {% with my_groups as groups%}
-                {% include "groups/_group_nugget_list.html" %}
-            {% endwith %}
-        {% endif %}
-        <br/>
+<div class="grid_6 alpha">
+    <div class="box_two_top"></div>
+    <div class="box_two_middle">
+        <p id="breadcrumbs">
+            <a href="{% url index %}">Home</a> &rsaquo;
+            Teams
+        </p>
+        
         <h1>Start a Team</h1>
         <p>
             Are you ready to lead the charge for a cleaner tomorrow? Starting a team is a great way to help
@@ -30,9 +26,20 @@
             {% include "groups/_group_nugget_list.html" %}
         {% endif %}
     </div>
-    <div class="grid_1 omega">
-
+    <div class="box_two_bottom"></div>
+</div>
+<div class="grid_3 omega">
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+    {% if user.is_authenticated and my_groups %}
+        <h3>Your Teams</h3>
+        {% with my_groups as groups%}
+            {% include "groups/_group_nugget_list.html" %}
+        {% endwith %}
+    {% endif %}
     </div>
+    <div class="box_one_bottom"></div>
+</div>
 {% endblock %}
 
 {# {% load search_widget %} #}

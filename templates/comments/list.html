@@ -6,38 +6,38 @@
 {% if comments %}
     <h2 id="comments_heading">What people are saying</h2>
     {% for comment in comments %}
-        <div class="container_3">
-            <div class="grid_2 alpha comment_wrapper">
-                <div class="comment">
-                    {{ comment.comment|linebreaksbr }}
-                </div>
-                <span class="point"></span>
-                <div class="comment_tools">
-                    <span class="comment_date">
-                        {{ comment.submit_date|date:"DATETIME_FORMAT" }}
+        <div class="grid_6 alpha comment_wrapper">
+            <div class="box_two_top"></div>
+            <div class="box_two_middle comment">
+                {{ comment.comment|linebreaksbr }}
+            </div>
+            <div class="box_two_bottom"></div>
+            <span class="point"></span>
+            <div class="comment_tools">
+                <span class="comment_date">
+                    {{ comment.submit_date|date:"DATETIME_FORMAT" }}
+                </span>
+                <div class="comment_buttons">
+                    {% get_rating_count for comment as users_voted %}
+                    {% get_rating_sum for comment as users_helped %}
+                    <span class="users_voted_stats">
+                        {% if users_voted %}
+                            <span class="users_helped">{{ users_helped }}</span> of
+                            <span class="users_voted">{{ users_voted }}</span> liked this
+                        {% endif %}
                     </span>
-                    <div class="comment_buttons">
-                        {% get_rating_count for comment as users_voted %}
-                        {% get_rating_sum for comment as users_helped %}
-                        <span class="users_voted_stats">
-                            {% if users_voted %}
-                                <span class="users_helped">{{ users_helped }}</span> of
-                                <span class="users_voted">{{ users_voted }}</span> liked this
-                            {% endif %}
-                        </span>
-                        {% if user.is_authenticated %}
-                            {% get_rating_form for comment %}
-                            {% get_flag_form for comment %}
-                        {% endif %}                    
-                    </div>
+                    {% if user.is_authenticated %}
+                        {% get_rating_form for comment %}
+                        {% get_flag_form for comment %}
+                    {% endif %}                    
                 </div>
             </div>
-            <div class="grid_1 omega">
-                <div class="comment_author">
-                    <img class="gravatar" src="{{ comment.user.get_profile.get_gravatar_url }}" alt="user gravatar" />
-                    <br class="clear" />
-                    {% safe_user_link comment.user %}
-                </div>
+        </div>
+        <div class="grid_3 omega">
+            <div class="comment_author">
+                <img class="gravatar" src="{{ comment.user.get_profile.get_gravatar_url }}" alt="user gravatar" />
+                <br class="clear" />
+                {% safe_user_link comment.user %}
             </div>
         </div>
         <br class="clear" />
