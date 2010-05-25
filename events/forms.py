@@ -72,7 +72,7 @@ class EventForm(forms.ModelForm):
                 raise forms.ValidationError("Invalid place %s, %s" % (city, state))
             self.cleaned_data["location"] = locations[0]
         
-        if not self.cleaned_data["location"]:
+        if not "location" in self.cleaned_data and not "zipcode" in self.errors:
             raise forms.ValidationError("You must specify city and state or a zipcode")
         return self.cleaned_data
         
