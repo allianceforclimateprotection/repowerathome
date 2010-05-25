@@ -22,7 +22,7 @@ def create(request):
         messages.success(request, "%s has been created." % event)
         return redirect(event)
     return render_to_response("events/create.html", locals(), context_instance=RequestContext(request))
-        
+
 def show(request, event_id, token=None):
     event = get_object_or_404(Event, id=event_id)
     if not event.has_manager_privileges(request.user) and event.is_private:
@@ -34,7 +34,9 @@ def show(request, event_id, token=None):
             return forbidden(request, "You need an invitation to view this event")
     rsvp_form = RsvpForm()
     return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
-    
+
+@login_required
+@csrf_protect
 def edit(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     form = EventForm(instance=event, data=(request.POST or None))
@@ -43,7 +45,7 @@ def edit(request, event_id):
         messages.success(request, "%s has been changed." % event)
         return redirect(event)
     return render_to_response("events/edit.html", locals(), context_instance=RequestContext(request))
-    
+
 def guests(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     return redirect(event)
