@@ -9,9 +9,10 @@ class Event(models.Model):
         ("FT", "Field Training",),
     )
 
+    creator = models.ForeignKey("auth.User")
     event_type = models.CharField(blank=False, max_length=2, choices=EVENT_TYPES, default="")
     where = models.CharField(max_length=100)
-    location = models.ForeignKey('geo.Location', null=True)
+    location = models.ForeignKey("geo.Location", null=True)
     when = models.DateField()
     start = models.TimeField(blank=True)
     end = models.TimeField(blank=True)

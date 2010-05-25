@@ -76,7 +76,8 @@ class EventForm(forms.ModelForm):
                 raise forms.ValidationError("You must specify city and state or a zipcode")
         return self.cleaned_data
         
-    def save(self, *args, **kwargs):
+    def save(self, user, *args, **kwargs):
+        self.instance.creator = user
         self.instance.location = self.cleaned_data["location"]
         return super(EventForm, self).save(*args, **kwargs)
         

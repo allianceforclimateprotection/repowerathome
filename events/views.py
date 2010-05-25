@@ -12,7 +12,7 @@ from forms import EventForm
 def create(request):
     form = EventForm(request.POST or None)
     if form.is_valid():
-        event = form.save()
+        event = form.save(user=request.user)
         messages.success(request, "%s has been created." % event)
         return redirect(event)
     return render_to_response("events/create.html", locals(), context_instance=RequestContext(request))
