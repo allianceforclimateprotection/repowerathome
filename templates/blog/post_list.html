@@ -6,24 +6,23 @@
 <link rel="alternate" type="application/atom+xml"  href="{% url blog_feed %}" title="Repower at Home Blog" />
 {% endblock %}
 
-{% block title %}Post archive{% endblock %}
+{% block title %}{% endblock %}
 
-{% block content_title %}
-    <h2>Post archive</h2>
-{% endblock %}
+{% block content_title %}{% endblock %}
 
 {% block right_content %}
-    <div class="grid_2 alpha">
+    <div class="grid_9 alpha">
         <div id="breadcrumbs">
             <a href="{% url rah.views.index %}">Home</a> &rsaquo;
             Blog
         </div>
         <div class="post_list">
             {% for post in object_list %}
-                <div>
-                    <h2 class="title">
+                <div class="box_three_top"></div>
+                <div class="box_three_middle">
+                    <h1 class="title">
                         <a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a>
-                    </h2>
+                    </h1>
                     <p>
                         <em>Posted by {% safe_user_link post.author %} on {{ post.publish|date }}</em>
                     </p>
@@ -32,9 +31,10 @@
                     </div>
                     {% get_comment_count for post as comment_count %}
                     <p>
-                        {{ comment_count }} comment{{ comment_count|pluralize }}
+                        <a href="{{ post.get_absolute_url }}#comments">{{ comment_count }} comment{{ comment_count|pluralize }}</a>
                     </p>
                 </div>
+                <div class="box_three_bottom"></div>
             {% endfor %}
         </div>
     
@@ -45,7 +45,7 @@
             </a>
         </h6>
     </div>
-    <div class="grid_1 omega">
+    <div class="grid_3 omega">
         {% get_blog_categories as category_list %}
         {% if category_list %}
             <h2>Categories</h2>

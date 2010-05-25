@@ -54,7 +54,7 @@
     			<a href="{% url group_disc_list group.slug %}">See all discussions</a>	
     		{% endif %}
     		{% if not is_poster and not discs %}
-    			No discussions yet.
+    			<em>No discussions yet.</em>
     		{% endif %}	
     		{% if discs %}
     			{% include "groups/_group_disc_list.html" %}

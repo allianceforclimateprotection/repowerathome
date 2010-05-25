@@ -44,7 +44,7 @@ body {
 a { color: #00AAD8; text-decoration: none; }
 a:hover { text-decoration:underline; }
 a:active { color: #6EC3D1; text-decoration:underline; }
-h1 {
+h1, h1 a {
     font-family:"superclarendon-1", "superclarendon-2", serif;
     font-weight:700;
     font-style: normal; 
@@ -415,7 +415,6 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
 /* ---------------------------------------------------------------------------------------------------------------------
 Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments
 --------------------------------------------------------------------------------------------------------------------- */
-#comments_heading { font-size: 36px; color: #00AAD8; margin: -9px 0 36px 0; border-top:9px solid #00AAD8; padding-top:18px;}
 .comment_wrapper { position:relative; margin-bottom:18px;}
 .comment, #comment_form textarea {
     color: #74A01F;
@@ -441,9 +440,8 @@ Comments Comments Comments Comments Comments Comments Comments Comments Comments
 /* stuff under comment */
 .comment_tools { position: relative; font-style: italic; text-align:right; margin: 0px 18px 0 0;}
 .comment_buttons * { display: inline; }
-.comment_date { position:absolute; top: 12px; left:18px; font-weight: bold; }
+.comment_date { position:absolute; top: 9px; left:18px; }
 /* form */
-#comments_form_heading { color: #00AAD8; margin-bottom:18px; }
 #id_comment { height: 100px; background: #FFF; font-family: Helvetica, Arial; width:454px; }
 #id_comment[class~="error"] { background: #FEDEDE; }
 #add_comment_submit { width: 490px; }
@@ -465,10 +463,9 @@ Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Gro
 .membership_tools {  font-weight: bold; margin-left: 30px; }
 .group_details { padding-left: 10px; }
 .group_list {margin:0px; padding:0px; list-style-type: none; height:100%; overflow:auto;}
-.group_list li{ float:left; width:240px; margin:9px 5px 9px 0;}
+.group_list li{ float:left; width:185px; margin:0px 5px 0px 0; height:63px;}
 .group_list_thumb { float:left; margin-right:8px;}
-.group_list_name {float:left;}
-.group_list_name div {color:#aaa;}
+.group_list_name {float:left; width:130px;}
 th.header {  
     cursor: pointer;
     background-repeat: no-repeat; 

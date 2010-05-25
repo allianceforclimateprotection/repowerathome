@@ -16,17 +16,19 @@
 {% endblock %}
 
 {% block right_content %}
-    <div id="breadcrumbs">
+<div class="box_three_top"></div>
+<div class="box_three_middle">
+    <p id="breadcrumbs">
         <a href="{% url rah.views.index %}">Home</a> &rsaquo;
         <a href="{% url blog_index %}">Blog</a> &rsaquo;
         {{ object.title }}
-    </div>
+    </p>
     <div class="post">
         {% with object as post %}
             <div>
-                <h2 class="title">
-					<a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a>
-				</h2>
+                <h1 class="title">
+					{{ post.title }}
+				</h1>
 				<p>
 					<em>Posted by {% safe_user_link post.author %} on {{ post.publish|date }}</em>
 				</p>
@@ -34,12 +36,14 @@
             </div>
         {% endwith %}
     </div>
-
-    <div id="comments">
-        <div id="comments_divider"></div>
-        {% render_comment_list for object %}
-        {% render_comment_form for object %}
-        
-    </div>
+</div>
+<div class="box_three_bottom"></div>
+<br/>
+<div id="comments">
+    <div id="comments_divider"></div>
+    {% render_comment_list for object %}
+    {% render_comment_form for object %}
+    
+</div>
 {% endblock %}
 {% block js %}page_post_detail{% endblock %}
