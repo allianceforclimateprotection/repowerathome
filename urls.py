@@ -9,7 +9,6 @@ from django.contrib.comments import admin as comments_admin
 from geo import admin as geo_admin
 from groups import admin as groups_admin
 from tagging import admin as tagging_admin
-from events import admin as events_admin
 
 from django.contrib.auth.models import Group, User
 admin.site.unregister(Group)
