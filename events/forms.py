@@ -1,8 +1,11 @@
+import datetime
+
 from django import forms
 
 from geo.models import Location
 
 from models import Event
+from widgets import SelectTimeWidget
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
@@ -11,10 +14,13 @@ STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI"
     
 def _times():
     times = []
-    for meridiem in ["am", "pm"]:
-        for hour in [12] + range(1,12):
-            for minute in [0,15,30,45]:
-                times.append("%0.2d:%0.2d%s" % (hour, minute, meridiem))
+    for hour_24 in range(0,24):
+        for minute in [0,15,30,45]:
+            hour_12 = hour_24 % 12
+            if hour_12 == 0: hour_12 = 12
+            meridiem = "am" if hour_24 / 12 == 0 else "pm"
+            times.append(("%0.2d:%0.2d:00" % (hour_24, minute), 
+                "%0.2d:%0.2d%s" % (hour_12, minute, meridiem)))
     return times
 TIMES = _times()
 
@@ -32,9 +38,16 @@ class EventForm(forms.ModelForm):
         widgets = {
             "event_type": forms.RadioSelect(choices=Event.EVENT_TYPES),
             "when": forms.TextInput(attrs={"class": "datepicker"}),
-            "start": forms.Select(choices=[(time, time) for time in TIMES]),
-            "end": forms.Select(choices=[(time, time) for time in TIMES]),
+            "start": forms.Select(choices=TIMES),
+            "end": forms.Select(choices=TIMES),
         }
+        
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        if self.instance.location:
+            self.fields["city"].initial = self.instance.location.name
+            self.fields["state"].initial = self.instance.location.st
+            self.fields["zipcode"].initial = self.instance.location.zipcode
         
     def clean_zipcode(self):
         data = self.cleaned_data["zipcode"]
@@ -43,6 +56,12 @@ class EventForm(forms.ModelForm):
                 self.cleaned_data["location"] = Location.objects.get(zipcode=data)
             except Location.DoesNotExist:
                 raise forms.ValidationError("Invalid zipcode %s" % data)
+        return data
+        
+    def clean_when(self):
+        data = self.cleaned_data["when"]
+        if (data - datetime.date.today()).days < 0:
+            raise forms.ValidationError("Event must occur in the future.")
         return data
         
     def clean(self):

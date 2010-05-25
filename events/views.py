@@ -20,3 +20,8 @@ def create(request):
 def show(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
+    
+def edit(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    form = EventForm(instance=event)
+    return render_to_response("events/edit.html", locals(), context_instance=RequestContext(request))

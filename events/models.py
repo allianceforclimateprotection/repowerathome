@@ -11,7 +11,7 @@ class Event(models.Model):
 
     event_type = models.CharField(blank=False, max_length=2, choices=EVENT_TYPES, default="")
     where = models.CharField(max_length=100)
-    location = models.ForeignKey('geo.Location')
+    location = models.ForeignKey('geo.Location', null=True)
     when = models.DateField()
     start = models.TimeField(blank=True)
     end = models.TimeField(blank=True)
@@ -20,7 +20,7 @@ class Event(models.Model):
     is_private = models.BooleanField(default=False)
     
     def __unicode__(self):
-        return u"%s in %s, %s" % (self.get_event_type_display(), self.location.name, self.location.st)
+        return u"%s in %s" % (self.get_event_type_display(), self.location)
         
     @models.permalink
     def get_absolute_url(self):
