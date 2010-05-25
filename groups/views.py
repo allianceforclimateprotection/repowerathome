@@ -15,7 +15,7 @@ from django.views.decorators.http import require_POST
 from records.models import Record
 from invite.models import Invitation
 from invite.forms import InviteForm
-from utils import hash_val
+from utils import hash_val, forbidden
 
 from models import Group, GroupUsers, MembershipRequests, Discussion
 from forms import GroupForm, MembershipForm, DiscussionSettingsForm, DiscussionCreateForm, DiscussionApproveForm, DiscussionRemoveForm
@@ -83,7 +83,7 @@ def group_membership_request(request, group_id, user_id, action):
     group = get_object_or_404(Group, id=group_id, is_geo_group=False)
     user = get_object_or_404(User, id=user_id)
     if not group.is_user_manager(request.user):
-        return _forbidden(request)
+        return forbidden(request)
     membership_request = MembershipRequests.objects.filter(group=group, user=user)
     if membership_request:
         if action == "approve":
@@ -141,7 +141,7 @@ def group_list(request):
 def group_edit(request, group_slug):
     group = get_object_or_404(Group, slug=group_slug, is_geo_group=False)
     if not group.is_user_manager(request.user):
-        return _forbidden(request)
+        return forbidden(request)
     if request.method == "POST":
         if "change_group" in request.POST:
             group_form = GroupForm(request.POST, request.FILES, instance=group)
@@ -193,7 +193,7 @@ def group_edit(request, group_slug):
 def group_disc_create(request, group_slug):
     group = Group.objects.get(slug=group_slug)
     if not group.is_poster(request.user):
-        return _forbidden(request)
+        return forbidden(request)
     if request.method == "POST":
         disc_form = DiscussionCreateForm(request.POST)
         if disc_form.is_valid():
@@ -286,7 +286,3 @@ def _group_detail(request, group):
     has_other_managers = group.has_other_managers(request.user)
     discs = Discussion.objects.filter(parent=None, group=group).order_by("-created")[:5]
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))
-    
-def _forbidden(request, message="You do not have permissions."):
-    from django.http import HttpResponseForbidden
-    return HttpResponseForbidden(loader.render_to_string('403.html', { 'message':message, }, RequestContext(request)))

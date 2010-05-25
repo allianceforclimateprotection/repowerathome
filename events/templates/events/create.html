@@ -1,5 +1,7 @@
-{% extends "events/_form.html" %}
+{% extends "events/base.html" %}
 
-{% block submit_button %}
-    <input type="submit" value="Create Event" />
+{% block right_content %}
+    {% with "Create Event" as button_text %}
+        {% include "events/_form.html" %}
+    {% endwith %}
 {% endblock %}

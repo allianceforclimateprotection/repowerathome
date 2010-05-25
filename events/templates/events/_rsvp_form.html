@@ -1,0 +1,5 @@
+<form id="rsvp_form" action="{% url event-rsvp %}" method="post">
+    <p>{{ rsvp_form.rsvp_status }}</p>
+    {% csrf_token %}
+    <input type="submit" value="Submit" />
+</form>

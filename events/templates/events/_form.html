@@ -1,11 +1,5 @@
-{% extends "events/base.html" %}
-
-{% block right_content %}
-    <form id="event_form" action="" method="post">
-        {{ form.as_p }}
-        {% csrf_token %}
-        {% block submit_button %}
-            <input type="submit" value="Submit" />
-        {% endblock %}
-    </form>
-{% endblock %}
+<form id="event_form" action="" method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <input type="submit" value="{{ button_text|default:'Submit' }}" />
+</form>

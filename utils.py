@@ -2,6 +2,9 @@ import os
 import re
 import sys
 
+from django.http import HttpResponseForbidden
+from django.template import Context, loader, RequestContext
+
 def local_join(x):
     return os.path.join(os.path.dirname(__file__), x)
 
@@ -20,3 +23,6 @@ def hash_val(value):
     
 def strip_quotes(val):
     return val[1:-1] if re.match("""^('.*')|(".*")$""", val) else val
+    
+def forbidden(request, message="You do not have permissions."):
+    return HttpResponseForbidden(loader.render_to_string('403.html', { 'message':message, }, RequestContext(request)))

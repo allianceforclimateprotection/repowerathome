@@ -2,15 +2,17 @@ from django.utils.dateformat import DateFormat
 
 from django.db import models
 
-class Event(models.Model):
-    EVENT_TYPES = (
-        ("EM", "Energy Meeting",),
-        ("CR", "Caulker Rally",),
-        ("FT", "Field Training",),
-    )
+class EventType(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    teaser = models.CharField(max_length=150)
+    description = models.TextField()
 
+    def __unicode__(self):
+        return self.name
+
+class Event(models.Model):
     creator = models.ForeignKey("auth.User")
-    event_type = models.CharField(blank=False, max_length=2, choices=EVENT_TYPES, default="")
+    event_type = models.ForeignKey(EventType, default="")
     where = models.CharField(max_length=100)
     location = models.ForeignKey("geo.Location", null=True)
     when = models.DateField()
@@ -21,11 +23,17 @@ class Event(models.Model):
     is_private = models.BooleanField(default=False)
     
     def __unicode__(self):
-        return u"%s in %s" % (self.get_event_type_display(), self.location)
+        return u"%s in %s" % (self.event_type, self.location)
         
     @models.permalink
     def get_absolute_url(self):
         return ("event-show", [str(self.id)])
+        
+    def place(self):
+        return "%s %s" % (self.where, self.location)
+        
+    def has_manager_privileges(self, user):
+        return user.pk == self.creator.pk
     
 class Guest(models.Model):
     RSVP_STATUSES = (
