@@ -29,6 +29,9 @@ var rah = {
             $(".datepicker").datepicker();
             rah.mod_overset.init();
             
+            // setup tabs
+            $(".tabs").tabs();
+            
             // style some submit buttons as links
             $(".as_link[type='submit']").each(function(){
                 var button = $(this);
@@ -193,7 +196,6 @@ var rah = {
     **/
     page_profile_edit: {
         init: function(){
-            $("#profile_edit_tabs").tabs();
             $("#profile_edit_tabs").bind("tabsselect", function(event, ui){
                 $("form", this).attr("action", $(ui.tab).attr("href"));
             });
@@ -599,7 +601,6 @@ var rah = {
     
     page_group_edit: {
         init: function() {
-            $("#group_edit_tabs").tabs();
             $("#group_edit_tabs").bind("tabsselect", function(event, ui){
                 $("form", this).attr("action", $(ui.tab).attr("href"));
             });
