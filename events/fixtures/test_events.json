@@ -1,5 +1,6 @@
 [
-    {"pk": 1, "model": "events.event", "fields": {"event_type": "EM", "when": "2010-08-14", "start": "06:00:00", "end": "08:00:00", "details": "You can park on the street.  My apartment is on the second floor.", "where": "123 Garden Street", "is_private": false, "location": 7698}}, 
+    {"pk": 1, "model": "events.eventtype", "fields": {"name": "Energy Meeting", "teaser": "learn about home efficency", "description": "save money and save the environment by making your home more efficient"}},
+    {"pk": 1, "model": "events.event", "fields": {"creator": 1, "event_type": 1, "when": "2050-08-14", "start": "06:00:00", "end": "08:00:00", "details": "You can park on the street.  My apartment is on the second floor.", "where": "123 Garden Street", "is_private": false, "location": 30602}}, 
     {"pk": 1, "model": "events.guest", "fields": {"added": null, "name": "Jane Doe", "rsvp_status": "A", "invited": "2010-05-21", "event": 1, "phone": "", "user": null, "email": "jd@email.com"}}, 
     {"pk": 2, "model": "events.guest", "fields": {"added": null, "name": "Alex Smith", "rsvp_status": "N", "invited": "2010-05-21", "event": 1, "phone": "", "user": null, "email": "am@email.com"}}, 
     {"pk": 3, "model": "events.guest", "fields": {"added": null, "name": "Jon Doe", "rsvp_status": "", "invited": "2010-05-18", "event": 1, "phone": "", "user": null, "email": "jondoe@email.com"}}, 

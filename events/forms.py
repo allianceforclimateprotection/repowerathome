@@ -4,7 +4,7 @@ from django import forms
 
 from geo.models import Location
 
-from models import Event
+from models import Event, Guest
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
@@ -25,7 +25,7 @@ TIMES = _times()
 
 class EventForm(forms.ModelForm):
     city = forms.CharField(required=False, max_length=50)
-    state = forms.ChoiceField(required=False, choices=[(state, state) for state in STATES])
+    state = forms.ChoiceField(required=False, choices=[("", "state")]+[(state, state) for state in STATES])
     zipcode = forms.CharField(required=False, max_length=5)
     is_private = forms.ChoiceField(choices=((True, "Yes"), (False, "No")), initial=False,
         widget=forms.RadioSelect)
@@ -35,10 +35,10 @@ class EventForm(forms.ModelForm):
         fields = ["event_type", "where", "city", "state", "zipcode", "when", "start", "end", 
             "details", "is_private"]
         widgets = {
-            "event_type": forms.RadioSelect(choices=Event.EVENT_TYPES),
+            "event_type": forms.RadioSelect,
             "when": forms.TextInput(attrs={"class": "datepicker"}),
-            "start": forms.Select(choices=TIMES),
-            "end": forms.Select(choices=TIMES),
+            "start": forms.Select(choices=[("", "start")]+TIMES),
+            "end": forms.Select(choices=[("", "end")]+TIMES),
         }
         
     def __init__(self, *args, **kwargs):
@@ -64,20 +64,23 @@ class EventForm(forms.ModelForm):
         return data
         
     def clean(self):
-        if not "location" in self.cleaned_data:
-            city = self.cleaned_data.get("city", None)
-            state = self.cleaned_data.get("state", None)
-            if city and state:
-                locations = Location.objects.filter(name__iexact=city, st=state)
-                if not locations:
-                    raise forms.ValidationError("Invalid place %s, %s" % (city, state))
-                self.cleaned_data["location"] = locations[0]
-            else:
-                raise forms.ValidationError("You must specify city and state or a zipcode")
+        city = self.cleaned_data.get("city", None)
+        state = self.cleaned_data.get("state", None)
+        if city and state:
+            locations = Location.objects.filter(name__iexact=city, st=state)
+            if not locations:
+                raise forms.ValidationError("Invalid place %s, %s" % (city, state))
+            self.cleaned_data["location"] = locations[0]
+        
+        if not "location" in self.cleaned_data and not "zipcode" in self.errors:
+            raise forms.ValidationError("You must specify city and state or a zipcode")
         return self.cleaned_data
         
-    def save(self, *args, **kwargs):
+    def save(self, user, *args, **kwargs):
+        self.instance.creator = user
         self.instance.location = self.cleaned_data["location"]
         return super(EventForm, self).save(*args, **kwargs)
         
+class RsvpForm(forms.Form):
+    rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
                 

@@ -1,5 +1,61 @@
 {% extends "events/base.html" %}
+{% load comments %}
 
 {% block right_content %}
-    <h2>{{ event.event_type }}</h2>
+    <div class="grid_6 alpha">
+        <div class="box_two_top"></div>
+        <div class="box_two_middle">
+            <h1>{{ event }}</h1>
+    
+            <div>
+                <h3>Description</h3>
+                <p>{{ event.event_type.description }}</p>
+            </div>
+        
+            <div>
+                <h3>Details</h3>
+                <p>{{ event.details }}</p>
+            </div>
+        
+            <div>
+                <h3>When</h3>
+                <p>{{ event.when|date }} from {{ event.start|time }} to {{ event.end|time }}</p>
+            </div>
+        
+            <div>
+                <h3>Where</h3>
+                <p>{{ event.where }}<br />{{ event.location }}</p>
+                <img src="http://maps.google.com/maps/api/staticmap?markers=color:blue|{{ event.place|urlencode }}&zoom=12&size=400x200&sensor=false"
+                    alt="{{ event.place }} map" />
+            </div>    
+        </div>
+        <div class="box_two_bottom"></div>
+     
+        <div id="comments">
+            <div id="comments_divider"></div>
+            {% with event as object %}
+                {% render_comment_list for object %}
+                {% render_comment_form for object %}
+            {% endwith %}
+        </div>
+    </div>
+     
+    <div class="grid_3 omega">
+        {% if request.user.pk == event.creator.pk %}
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                <p><a class="button" href="{% url event-edit event.id %}">Edit Event</a></p>
+                <p><a class="button" href="{% url event-guests event.id %}">Guest List</a></p>
+                <p><a class="button" href="{% url event-commitments event.id %}">Commitments</a></p>
+            </div>
+            <div class="box_one_bottom"></div>
+        {% else %}
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                <h3>RSVP</h3>
+                {% include "events/_rsvp_form.html" %}
+            </div>
+            <div class="box_one_bottom"></div>
+        {% endif %}
+    </div>
 {% endblock %}
