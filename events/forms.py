@@ -25,7 +25,7 @@ TIMES = _times()
 
 class EventForm(forms.ModelForm):
     city = forms.CharField(required=False, max_length=50)
-    state = forms.ChoiceField(required=False, choices=[(state, state) for state in STATES])
+    state = forms.ChoiceField(required=False, choices=[("", "state")]+[(state, state) for state in STATES])
     zipcode = forms.CharField(required=False, max_length=5)
     is_private = forms.ChoiceField(choices=((True, "Yes"), (False, "No")), initial=False,
         widget=forms.RadioSelect)
@@ -37,8 +37,8 @@ class EventForm(forms.ModelForm):
         widgets = {
             "event_type": forms.RadioSelect,
             "when": forms.TextInput(attrs={"class": "datepicker"}),
-            "start": forms.Select(choices=TIMES),
-            "end": forms.Select(choices=TIMES),
+            "start": forms.Select(choices=[("", "start")]+TIMES),
+            "end": forms.Select(choices=[("", "end")]+TIMES),
         }
         
     def __init__(self, *args, **kwargs):
