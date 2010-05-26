@@ -1,0 +1,30 @@
+{% extends "events/base.html" %}
+
+{% block right_content %}
+    <div class="grid_6 alpha">
+        <div class="box_two_top"></div>
+        <div class="box_two_middle">
+            <h1>{{ event }}</h1>
+        </div>
+        <div class="box_two_bottom"></div>
+    </div>
+ 
+    <div class="grid_3 omega">
+        {% if request.user == event.creator %}
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                <p><a class="button" href="{% url event-edit event.id %}">Edit Event</a></p>
+                <p><a class="button" href="{% url event-guests event.id %}">Guest List</a></p>
+                <p><a class="button" href="{% url event-commitments event.id %}">Commitments</a></p>
+            </div>
+            <div class="box_one_bottom"></div>
+        {% endif %}
+        
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+            <p><a class="button" href="{% url event-guests-add event.id %}">Add Guest</a></p>
+            <p><a class="button" href="{% url event-print event.id %}">Print Sign In Sheet</a></p>
+        </div>
+        <div class="box_one_bottom"></div>
+    </div>
+{% endblock %}

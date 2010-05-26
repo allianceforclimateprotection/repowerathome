@@ -37,7 +37,7 @@ class Event(models.Model):
         return "%s %s" % (self.where, self.location)
         
     def has_manager_privileges(self, user):
-        return user.pk == self.creator.pk
+        return user == self.creator
     
 class Guest(models.Model):
     RSVP_STATUSES = (
@@ -52,6 +52,7 @@ class Guest(models.Model):
     invited = models.DateField(null=True, blank=True)
     added = models.DateField(null=True, blank=True)
     rsvp_status = models.CharField(blank=True, max_length=1, choices=RSVP_STATUSES)
+    notify_on_rsvp = models.BooleanField(default=False)
     user = models.ForeignKey("auth.User", null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

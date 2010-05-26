@@ -1,0 +1,19 @@
+<p>
+    Hi,<br />
+    {{ from_user.get_full_name}} wants you to attend an {{ invite.content_object }}.
+</p>
+<p>
+    <a href="http://{{ domain }}{% url event-show-invite invite.content_object.id invite.token %}">
+        Click here to RSVP
+    </a>
+</p>
+{% if note %}
+    <p>
+       Here's what {{ from_user.first_name }} wants you to know: <br />
+       {{ note|safe }} 
+    </p>
+{% endif %}
+<p>
+    Later,<br />
+    The Repower at Home team
+</p>

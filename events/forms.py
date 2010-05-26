@@ -3,6 +3,8 @@ import datetime
 from django import forms
 
 from geo.models import Location
+from invite.forms import InviteForm
+from invite.fields import MultiEmailField
 
 from models import Event, Guest
 
@@ -83,4 +85,21 @@ class EventForm(forms.ModelForm):
         
 class RsvpForm(forms.Form):
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
+    
+class GuestInviteForm(InviteForm):
+    emails = MultiEmailField(label="Email addresses", required=True, widget=forms.Textarea)
+    rsvp_notification = forms.BooleanField(required=False, label="Email me when people RSVP")
+    copy_me = forms.BooleanField(required=False, label="Send me a copy of the invitation")
+    
+    def save(self, event, *args, **kwargs):
+        guest_invites = []
+        rsvp_notification = self.cleaned_data["rsvp_notification"]
+        if self.cleaned_data["copy_me"]:
+            self.cleaned_data["emails"].append(self.instance.user.email)
+        for email in self.cleaned_data["emails"]:
+            guest_invites.append(Guest.objects.create(event=event, email=email, 
+                invited=datetime.date.today(), notify_on_rsvp=rsvp_notification))
+        super(GuestInviteForm, self).save(*args, **kwargs)
+        return guest_invites
+
                 
