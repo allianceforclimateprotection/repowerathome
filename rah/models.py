@@ -1,6 +1,6 @@
 import json, hashlib, re
 from django.db import models
-from django.contrib.auth.models import User as AuthUser
+from django.contrib.auth.models import User
 
 from geo.models import Location
 from records.models import Record
@@ -17,18 +17,8 @@ class DefaultModel(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
-class User(AuthUser):
-    class Meta:
-        proxy = True
-    
-    def get_commit_list(self):
-        return UserActionProgress.objects.select_related().filter(user=self, is_completed=False, date_committed__isnull=False).order_by("date_committed")
-        
-    def __unicode__(self):
-        return u'%s' % (self.get_full_name())
-
 class Feedback(DefaultModel):
-    user = models.ForeignKey(AuthUser, null=True)
+    user = models.ForeignKey(User, null=True)
     url = models.CharField(max_length=255, default='')
     comment = models.TextField(default='')
     beta_group = models.BooleanField(default=0)
@@ -44,7 +34,7 @@ class Profile(models.Model):
         ('S', 'Single Family Home'),
     )
 
-    user = models.ForeignKey(AuthUser, unique=True)
+    user = models.ForeignKey(User, unique=True)
     location = models.ForeignKey(Location, null=True, blank=True)
     building_type = models.CharField(null=True, max_length=1, choices=BUILDING_CHOICES, blank=True)
     about = models.CharField(null=True, blank=True, max_length=255)
@@ -67,5 +57,5 @@ SIGNALS!
 def user_post_save(sender, instance, **kwargs):
     Profile.objects.get_or_create(user=instance)
     
-models.signals.post_save.connect(user_post_save, sender=AuthUser)
+models.signals.post_save.connect(user_post_save, sender=User)
 models.signals.post_save.connect(user_post_save, sender=User)
