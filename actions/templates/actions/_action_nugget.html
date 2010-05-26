@@ -1,16 +1,18 @@
 <div class="action_nugget">
-    {% if action.has_illustration %}
-        <a href="{% url action_detail action.slug %}">
-    	    <img src="{{ action.get_nugget_illustration }}" alt="{{action.name}} illustration" width="210"/>
-    	</a>
-    {% endif %}	
-	<span class="action_nugget_points">{{ action.points }} Points</span>
-    <h3 class="action_nugget_title"><a href="{% url action_detail action.slug %}">{{ action.name }}</a></h3>
-    <div class="action_nugget_teaser">{{ action.teaser|safe|linebreaks }}</div>
-    {# <a class="action_nugget_learn_more" href="{% url action_detail action.slug %}">&rsaquo; Learn more</a> #}
-    <div class="action_nugget_tags">
-        {% for tag in action.tags %}
-            <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
-        {% endfor %}
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        {# <div class="action_nugget_status"> #}
+        {#     Due in 323 days #}
+        {# </div> #}
+        <div class="action_nugget_points">{{ action.points }} Points</div>
+        {% if action.has_illustration %}
+            <a href="{% url action_detail action.slug %}">
+        	    <img src="{{ action.get_nugget_illustration }}" alt="{{action.name}} illustration" height="48" width="189"/>
+        	</a>
+        {% endif %}	
+	
+        <h3 class="action_nugget_title"><a class="blue" href="{% url action_detail action.slug %}">{{ action.name }}</a></h3>
+        <div class="action_nugget_teaser">{{ action.teaser|safe|linebreaks }}</div>
     </div>
+    <div class="box_one_bottom"></div>
 </div>

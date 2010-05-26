@@ -16,14 +16,13 @@
         </ul>
     {% endif %}
 {% endblock %}
-
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url group_list %}">Teams</a> &rsaquo;
+    <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
+    Edit Team
+{% endblock %}
 {% block right_content %}
-    <div id="breadcrumbs">
-        <a href="{% url index %}">Home</a> &rsaquo;
-        <a href="{% url group_list %}">Teams</a> &rsaquo;
-        <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
-        Edit Team
-    </div>
     <div id="group_edit_tabs">
         <ul>
             <li><a href="#group_tab">Team</a></li>

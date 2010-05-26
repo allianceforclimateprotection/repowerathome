@@ -9,16 +9,15 @@
         <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower at Home Team Activity" />
     {% endif %}
 {% endblock %}
-
+{% block breadcrumbs %}
+<a href="{% url index %}">Home</a> &rsaquo;
+<a href="{% url group_list %}">Teams</a> &rsaquo;
+{{group.name}}
+{% endblock %}
 {% block right_content %}
 <div class="grid_6 alpha">
     <div class="box_two_top"></div>
     <div class="box_two_middle">
-        <div id="breadcrumbs">
-            <a href="{% url index %}">Home</a> &rsaquo;
-            <a href="{% url group_list %}">Teams</a> &rsaquo;
-            {{group.name}}
-        </div>
         <h1>{{group.name}}</h1>
         <table class="tablesorter">
             <thead>

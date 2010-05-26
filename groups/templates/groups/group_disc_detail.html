@@ -1,24 +1,17 @@
 {% extends "rah/base.html" %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url group_list %}">Teams</a> &rsaquo;
+    <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
+    <a href="{% url group_disc_list group.slug %}">Discussions</a> &rsaquo;
+    {{ disc.subject }}
+{% endblock %}
 {% block right_content %}
     <div class="grid_9 alpha">
-        <div class="box_three_top"></div>
-        <div class="box_three_middle">
-            <p id="breadcrumbs">
-                <a href="{% url index %}">Home</a> &rsaquo;
-                <a href="{% url group_list %}">Teams</a> &rsaquo;
-                <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
-                <a href="{% url group_disc_list group.slug %}">Discussions</a> &rsaquo;
-                {{ disc.subject }}
-            </p>
-            <h1>{{disc.subject}}</h1>
-            <p>
-    			<em>Posted by {% safe_user_link disc.user %} on {{ disc.created|date:"DATETIME_FORMAT" }}</em>
-    		</p>
-            {{disc.body|linebreaks}}
-        </div>
-        <div class="box_three_bottom"></div>
+        {% with disc as first_comment %}
+            {% include "groups/_group_disc_nugget.html" %}
+        {% endwith %}
         {% for disc in discs %}
-            <h2>Responses</h2>
             {% include "groups/_group_disc_nugget.html" %}
         {% endfor %}
         {% if is_poster %}
@@ -26,8 +19,8 @@
             {% include "groups/_group_disc_create_form.html" %}
         {% else %}
             {% if group.is_joinable %}
-                You must be a member of this group to post discussions. 
-                <a class="button" href="{% url group_join group.id %}">Join Team</a>
+                {# You must be a member of this group to post discussions.  #}
+                {# <a class="button" href="{% url group_join group.id %}">Join Team</a> #}
             {% endif %}
         {% endif %}
     </div>

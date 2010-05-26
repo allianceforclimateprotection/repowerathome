@@ -3,6 +3,9 @@
         <div class="grid_6 alpha comment_wrapper">
             <div class="box_two_top"></div>
             <div class="box_two_middle comment">
+                {% if first_comment %}
+                    <h1>{{disc.subject}}</h1>
+                {% endif %}
                 {{disc.body|linebreaks}}
             </div>
             <div class="box_two_bottom"></div>
@@ -34,6 +37,8 @@
                 {% safe_user_link disc.user %}
             </div>
         </div>
-        <br class="clear" />
 	{% endif %}
 </div>
+<br class="clear" />
+<br class="clear" />
+<br class="clear" />

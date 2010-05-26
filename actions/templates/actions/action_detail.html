@@ -4,17 +4,16 @@
 {% block left_sidebar %}
 
 {% endblock %}
-
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url action_show %}">Actions</a> &rsaquo;
+    {{action.name}}
+{% endblock %}
 {% block right_content %}
     <div class="box_three_top"></div>
     <div class="box_three_middle">
-        <div id="breadcrumbs">
-            <a href="{% url index %}">Home</a> &rsaquo;
-            <a href="{% url action_show %}">Actions</a> &rsaquo;
-            {{action.name}}
-        </div>
         {% if action.has_illustration %}
-            <img src="{{ action.get_detail_illustration }}" alt="{{action.name}} illustration" width="675" class="" style="background-color:#b0d8f4;"/>
+            <img src="{{ action.get_detail_illustration }}" alt="{{action.name}} illustration" width="675" height="290"/>
         {% else %}
             <h1 id="action_title">{{action.name}}</h1>
         {% endif %}
@@ -24,12 +23,11 @@
         <div class="grid_6 alpha">
             <div class="box_two_top"></div>
             <div id="action_details" class="box_two_middle">
-                {# <h1 id="action_title">{{action.name}}</h1> #}
-                <span class='tag_list'>
-                    {% for tag in action.tags %}
-                        <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a>
-                    {% endfor %}
-                </span>
+                {# <span class='tag_list'> #}
+                {#     {% for tag in action.tags %} #}
+                {#         <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a> #}
+                {#     {% endfor %} #}
+                {# </span> #}
                 <div id="action_content">
                     {% render_template_snippet action.content %}
                 </div>

@@ -1,61 +1,37 @@
 {% extends "rah/base.html" %}
 {% load dated_static %}
-{% block tongue %}
-    {% if not request.user.is_authenticated %}
-        <div id="tongue_signup">
-            <form action="{% url register %}?next={{ request.path }}" method="post" id="registration_form" autocomplete="off">
-                <h1>Sign Up!</h1>
-                {% with register_form as form %}
-                    {% include "rah/_overset_form.html" %}
-                {% endwith %}
-                <p><input type="submit" value="Sign me up" id="register_submit"/></p>
-                {% csrf_token %}
-            </form>
-        </div>
-    {% else %}
-        {{ block.super }}
-    {% endif %}
-{% endblock %}
 
 {% block left_sidebar %}
-    <ul id="minor_nav">
-        {% for tag in tags %}
-            <li {% if forloop.last %} class="minor_nav_last"{% endif %}>
-                <span class="icon_gt"></span>
-                <a href='{% url action_tag tag %}#action_show'>
-                    {{ tag.name|deslug }} ({{ tag.count }})
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+    {#     {% for tag in tags %} #}
+    {#         <li {% if forloop.last %} class="minor_nav_last"{% endif %}> #}
+    {#             <span class="icon_gt"></span> #}
+    {#             <a href='{% url action_tag tag %}#action_show'> #}
+    {#                 {{ tag.name|deslug }} ({{ tag.count }}) #}
+    {#             </a> #}
+    {#         </li> #}
+    {#     {% endfor %} #}
 {% endblock %}
-
-{% block right_content %}
-    <div id="breadcrumbs">
-        <a href="{% url index %}">Home</a> &rsaquo;
-        {% if tag_filter %}
-            <a href="{% url action_show %}">Actions</a> &rsaquo;
-            {{ tag_filter.name|deslug }}
-        {% else %}
-            Actions
-        {% endif %}
-    </div>
-    {% if not user.is_authenticated %}
-        <img src="{% dated_static 'images/theme/benefits.jpg' %}" alt="benefits"/>
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    {% if tag_filter %}
+        <a href="{% url action_show %}">Actions</a> &rsaquo;
+        {{ tag_filter.name|deslug }}
+    {% else %}
+        Actions
     {% endif %}
-    <div class="clear"></div>
-    {% for action in actions %}
-        {% include 'actions/_action_nugget.html' %}
-    {% endfor %}
-    {# <div class="grid_1 alpha"> #}
-    {#  #}
-    {# </div> #}
-    {# <div class="grid_1"> #}
-    {#      #}
-    {# </div> #}
-    {# <div class="grid_1 omega"> #}
-    {#      #}
-    {# </div> #}
+{% endblock %}
+{% block right_content %}
+    <div class="box_three_top"></div>
+    <div class="box_three_middle">
+        <img src="{% dated_static 'images/theme/actions.jpg' %}" alt="benefits" width="675"/>
+    </div>
+    <div class="box_three_bottom"></div>
+    
+    <div class="action_nugget_wrapper_three">
+        {% for action in actions %}
+            {% include 'actions/_action_nugget.html' %}
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block js %}page_action_show{% endblock %}

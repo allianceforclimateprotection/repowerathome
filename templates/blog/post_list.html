@@ -9,55 +9,36 @@
 {% block title %}{% endblock %}
 
 {% block content_title %}{% endblock %}
-
+{% block breadcrumbs %}
+    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+    Blog
+{% endblock breadcrumbs %}
 {% block right_content %}
-    <div class="grid_9 alpha">
-        <div id="breadcrumbs">
-            <a href="{% url rah.views.index %}">Home</a> &rsaquo;
-            Blog
+<div class="post_list">
+    {% for post in object_list %}
+        <div class="box_three_top"></div>
+        <div class="box_three_middle">
+            <h1 class="title">
+                <a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a>
+            </h1>
+            <p>
+                <em>Posted by {% safe_user_link post.author %} on {{ post.publish|date }}</em>
+            </p>
+            <div class="post_body">
+                {{ post.body|safe }}
+            </div>
+            {% get_comment_count for post as comment_count %}
+            <p>
+                <a href="{{ post.get_absolute_url }}#comments">{{ comment_count }} comment{{ comment_count|pluralize }}</a>
+            </p>
         </div>
-        <div class="post_list">
-            {% for post in object_list %}
-                <div class="box_three_top"></div>
-                <div class="box_three_middle">
-                    <h1 class="title">
-                        <a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a>
-                    </h1>
-                    <p>
-                        <em>Posted by {% safe_user_link post.author %} on {{ post.publish|date }}</em>
-                    </p>
-                    <div class="post_body">
-                        {{ post.body|safe }}
-                    </div>
-                    {% get_comment_count for post as comment_count %}
-                    <p>
-                        <a href="{{ post.get_absolute_url }}#comments">{{ comment_count }} comment{{ comment_count|pluralize }}</a>
-                    </p>
-                </div>
-                <div class="box_three_bottom"></div>
-            {% endfor %}
-        </div>
-    
-        <h6>
-            follow us
-            <a class="atom_link" href="{% url blog_feed %}">
-                <img src="{% dated_static 'images/theme/rss.png' %}" alt="atom feed" />
-            </a>
-        </h6>
-    </div>
-    <div class="grid_3 omega">
-        {% get_blog_categories as category_list %}
-        {% if category_list %}
-            <h2>Categories</h2>
-            <ul>
-            {% for category in category_list %}
-                <li>
-                    <a href="{% url blog_category_detail category %}">{{ category.title }}</a>&nbsp;
-                    {% get_comment_count for category as comment_count %}
-                    <span>({{ category.post_set.count }})</span>
-                </li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
+        <div class="box_three_bottom"></div>
+    {% endfor %}
+</div>
+<p>
+    Subscribe to feed
+    <a href="{% url blog_feed %}">
+        <img src="{% dated_static 'images/theme/rss.png' %}" alt="atom feed" />
+    </a>
+</p>
 {% endblock %}

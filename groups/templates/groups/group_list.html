@@ -1,14 +1,12 @@
 {% extends "base.html" %}
-
+{% block breadcrumbs %}
+<a href="{% url index %}">Home</a> &rsaquo;
+Teams
+{% endblock %}
 {% block right_content %}
 <div class="grid_6 alpha">
     <div class="box_two_top"></div>
     <div class="box_two_middle">
-        <p id="breadcrumbs">
-            <a href="{% url index %}">Home</a> &rsaquo;
-            Teams
-        </p>
-        
         <h1>Start a Team</h1>
         <p>
             Are you ready to lead the charge for a cleaner tomorrow? Starting a team is a great way to help
@@ -28,18 +26,24 @@
     </div>
     <div class="box_two_bottom"></div>
 </div>
-<div class="grid_3 omega">
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
-    {% if user.is_authenticated and my_groups %}
-        <h3>Your Teams</h3>
-        {% with my_groups as groups%}
-            {% include "groups/_group_nugget_list.html" %}
-        {% endwith %}
+    {% if user.is_authenticated %}
+        <div class="grid_3 omega">
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+
+                <h3>Your Teams</h3>
+                {% if my_groups %}
+                    {% with my_groups as groups%}
+                        {% include "groups/_group_nugget_list.html" %}
+                    {% endwith %}
+                {% else %}
+                    <em>You're not a member of any teams yet!</em>
+                {% endif %}
+
+            </div>
+            <div class="box_one_bottom"></div>
+        </div>
     {% endif %}
-    </div>
-    <div class="box_one_bottom"></div>
-</div>
 {% endblock %}
 
 {# {% load search_widget %} #}

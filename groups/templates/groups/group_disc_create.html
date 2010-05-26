@@ -1,15 +1,14 @@
 {% extends "rah/base.html" %}
-
+{% block breadcrumbs %}
+<a href="{% url index %}">Home</a> &rsaquo;
+<a href="{% url group_list %}">Teams</a> &rsaquo;
+<a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
+Create Discussion
+{% endblock %}
 {% block right_content %}
 <div class="grid_6 alpha">
     <div class="box_two_top"></div>
     <div class="box_two_middle">
-        <p id="breadcrumbs">
-            <a href="{% url index %}">Home</a> &rsaquo;
-            <a href="{% url group_list %}">Teams</a> &rsaquo;
-            <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
-            Create Discussion
-        </p>
         <h1>New Discussion</h1>
         {% include "groups/_group_disc_create_form.html" %}
     </div>

@@ -14,15 +14,14 @@
         {% endif %}
     </p>
 {% endblock %}
-
+{% block breadcrumbs %}
+    <a href="{% url rah.views.index %}">Home</a> &rsaquo;
+    <a href="{% url blog_index %}">Blog</a> &rsaquo;
+    {{ object.title }}
+{% endblock breadcrumbs %}
 {% block right_content %}
 <div class="box_three_top"></div>
 <div class="box_three_middle">
-    <p id="breadcrumbs">
-        <a href="{% url rah.views.index %}">Home</a> &rsaquo;
-        <a href="{% url blog_index %}">Blog</a> &rsaquo;
-        {{ object.title }}
-    </p>
     <div class="post">
         {% with object as post %}
             <div>
@@ -38,12 +37,12 @@
     </div>
 </div>
 <div class="box_three_bottom"></div>
-<br/>
+<br class="clear"/>
 <div id="comments">
     <div id="comments_divider"></div>
     {% render_comment_list for object %}
-    {% render_comment_form for object %}
-    
+    <br class="clear"/>
+    {% render_comment_form for object %}    
 </div>
 {% endblock %}
 {% block js %}page_post_detail{% endblock %}

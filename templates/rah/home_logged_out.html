@@ -4,31 +4,31 @@
     Welcome
 {% endblock %}
 {% block content %}
-<div class="grid_3 alpha">
+<div class="grid_9 alpha">
 	<a href="{% url action_detail 'eliminate-standby-vampire-power' %}">
 		<img src="{% dated_static 'images/actions/eliminate-standby-vampire-power/featured.png' %}" width="740" height="402"/>
 	</a>
 	<div class="clear"></div>
-	<div class="grid_1 alpha">
+	<div class="grid_3 alpha">
 		<img src="{% dated_static 'images/index/home_make_a_plan.png' %}" width="240" height="147"/>
 		<p>
 			Use the actions page to find smart solutions to home energy waste
 		</p>
 	</div>
-	<div class="grid_1">
+	<div class="grid_3">
 		<img src="{% dated_static 'images/index/home_save_energy.png' %}" width="240" height="147"/>		
 		<p>
 			Complete actions to lower your monthly bills and create a cleaner world
 		</p>	
 	</div>
-	<div class="grid_1 omega">
+	<div class="grid_3 omega">
 		<img src="{% dated_static 'images/index/home_take_the_lead.png' %}" width="240" height="149"/>
 		<p>
 			Organize your friends, family, and neighbors on the community page
 		</p>
 	</div>
 </div>
-<div class="grid_1 omega">
+<div class="grid_3 omega">
 	<div class="homepage_form_box">
     	<div id="minor_col_sign" class="minor_col_img"></div>
     	<form id="signup_form" action="{% url register %}" method="get">
