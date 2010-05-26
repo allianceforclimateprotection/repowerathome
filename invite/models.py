@@ -23,7 +23,7 @@ class Invitation(models.Model):
     content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
     
     class Meta:
-        unique_together = (('token',))
+        unique_together = (("email", "token",))
     
     @models.permalink
     def get_absolute_url(self):

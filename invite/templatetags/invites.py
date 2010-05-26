@@ -6,7 +6,7 @@ from invite.forms import InviteForm
 
 register = template.Library()
 
-class InviteFormNode(template.Node):      
+class InviteFormNode(template.Node):
     def __init__(self, object_expr=None):
         self.object_expr = object_expr
         
@@ -16,10 +16,7 @@ class InviteFormNode(template.Node):
     def render(self, context):
         user = context["request"].user
         content_object = self.get_target(context)
-        if content_object:
-            invite = Invitation(user=user, content_object=content_object, token=make_token())
-        else:
-            invite = Invitation(user=user, token=make_token())
+        invite = Invitation(user=user, content_object=content_object) if content_object else Invitation(user=user)
         form = InviteForm(instance=invite)
         context.push() #move the context stack forward so our variable names don't conflict
         value = render_to_string("invite/invite_form.html", {"form":form}, context)
