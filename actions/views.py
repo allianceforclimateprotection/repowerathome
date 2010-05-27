@@ -11,7 +11,6 @@ from django.views.decorators.csrf import csrf_protect
 
 from tagging.models import Tag
 from records.models import Record
-from rah.forms import RegistrationForm
 from rah.decorators import login_required_save_POST
 
 from models import Action, UserActionProgress, ActionForm, ActionFormData
@@ -25,10 +24,14 @@ def action_show(request, tag_slug=None):
         actions = Action.tagged.with_any(tag_filter)
     else:
         actions = Action.objects.all()
+        
     actions = sorted(actions, key=lambda a: not a.has_illustration())
+
     tags = Action.tags.cloud()
-    register_form = RegistrationForm()
-    profile = request.user.get_profile() if request.user.is_authenticated() else None
+    
+    if request.user.is_authenticated():
+        actions, recommended, committed, completed = Action.objects.actions_by_status(request.user)
+    
     return render_to_response("actions/action_show.html", locals(), 
         context_instance=RequestContext(request))
 

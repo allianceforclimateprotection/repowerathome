@@ -1,5 +1,5 @@
 <h2>{{ field.label }}</h2>
-<img class="vampire_device_image" src="{{ MEDIA_URL }}images/actions/eliminate-standby-vampire-power/{{ field.name }}.png" alt="{{ field.label }}" />
+<img class="vampire_device_image" src="{{ MEDIA_URL }}images/actions/eliminate-standby-vampire-power/{{ field.name }}.jpg" alt="{{ field.label }}" width="432" height="126" />
 {# <div class="vampire_savings_container"> #}
 {#     Save up to $<span class="vampire_savings">{{ field.field.savings }}</span><br /> #}
 {#     annually by slaying <br /> #}
@@ -7,10 +7,9 @@
 {# </div> #}
 <br class="clear" />
 <form method="post" action="{% url save_action_form action.slug 'VampirePowerWorksheetForm' %}">
-    <p>
-        Below are options for slaying this vampire, <br />
-        select one that works for you.
-    </p>
+    <div>
+        <b>Select an option to slay this vampire:</b>
+    </div>
     <ul class="buttonset">
         {% for id, label, help in field.field.choices %}
             <li class="device_button">

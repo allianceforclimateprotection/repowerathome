@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 VAMPIRE_OPTIONS = (
     ('p', 'Turn off power strip', reverse("power_strip_help"),),
     ('u', 'Unplug the device',),
-    ('s', 'Use a smart power strip', reverse("smart_power_strip_help"),),
+    ('s', 'Smart power strip', reverse("smart_power_strip_help"),),
     ('k', 'Skip',),
 )
 

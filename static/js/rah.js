@@ -353,13 +353,13 @@ var rah = {
                         },
                         position: {
                             corner: {
-                                target: 'topRight',
-                                tooltip: 'bottomLeft'
+                                target: 'rightMiddle',
+                                tooltip: 'leftTop'
                             }
                         },
                         style: {
                             name: 'green',
-                            tip: 'bottomLeft',
+                            tip: 'leftTop',
                             background: '#E3EC9F',
                             color: '#00AAD8',
                             border: {

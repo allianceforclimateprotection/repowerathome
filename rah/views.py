@@ -46,7 +46,6 @@ def index(request):
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'house_party_form': HousePartyForm(request.user),
         'twitter_status_form': twitter_form,
-        'profile': request.user.get_profile(),
         'commitment_list': request.user.get_commit_list(),
         'my_groups': Group.objects.filter(users=request.user, is_geo_group=False),
         'records': Record.objects.user_records(request.user, 10),

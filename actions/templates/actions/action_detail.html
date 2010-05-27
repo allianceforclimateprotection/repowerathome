@@ -28,9 +28,7 @@
                 {#         <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a> #}
                 {#     {% endfor %} #}
                 {# </span> #}
-                <div id="action_content">
-                    {% render_template_snippet action.content %}
-                </div>
+                {% render_template_snippet action.content %}
             </div>
             <div class="box_two_bottom"></div>
         </div>
