@@ -10,8 +10,8 @@ from utils import forbidden
 
 from invite.models import Invitation, make_token
 
-from models import Event
-from forms import EventForm, RsvpForm, GuestInviteForm
+from models import Event, Guest
+from forms import EventForm, RsvpForm, GuestInviteForm, GuestAddForm
 
 @login_required
 @csrf_protect
@@ -52,19 +52,17 @@ def guests(request, event_id):
     return render_to_response("events/guests.html", locals(), context_instance=RequestContext(request))
 
 @login_required
-def guests_add(request, event_id):
+def guests_add(request, event_id, type):
     event = get_object_or_404(Event, id=event_id)
-    invite = Invitation(user=request.user, content_object=event, token=make_token())
-    guest_invite_form = GuestInviteForm(instance=invite)
-    return render_to_response("events/guests_add.html", locals(), context_instance=RequestContext(request))
-
-@login_required
-@require_POST
-def guests_invite(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    guest_invite_form = GuestInviteForm(instance=Invitation(user=request.user), data=request.POST)
+    guest = Guest(event=event)
+    guest_add_form = GuestAddForm(instance=guest, data=(request.POST if type == "add" else None))
+    if guest_add_form.is_valid():
+        guest_add_form.save()
+        return redirect("event-guests", event_id=event.id)
+    invite = Invitation(user=request.user, content_object=event)
+    guest_invite_form = GuestInviteForm(instance=invite, data=(request.POST if type == "invite" else None))
     if guest_invite_form.is_valid():
-        guest_invite_form.save(event=event)
+        guest_invite_form.save()
         return redirect("event-guests", event_id=event.id)
     return render_to_response("events/guests_add.html", locals(), context_instance=RequestContext(request))
 

@@ -81,7 +81,10 @@ class EventForm(forms.ModelForm):
     def save(self, user, *args, **kwargs):
         self.instance.creator = user
         self.instance.location = self.cleaned_data["location"]
-        return super(EventForm, self).save(*args, **kwargs)
+        event = super(EventForm, self).save(*args, **kwargs)
+        Guest.objects.create(event=event, name=user.get_full_name(), email=user.email, 
+            added=datetime.date.today(), user=user)
+        return event
         
 class RsvpForm(forms.Form):
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
@@ -91,11 +94,10 @@ class GuestInviteForm(InviteForm):
     rsvp_notification = forms.BooleanField(required=False, label="Email me when people RSVP")
     copy_me = forms.BooleanField(required=False, label="Send me a copy of the invitation")
     
-    def save(self, event, *args, **kwargs):
+    def save(self, *args, **kwargs):
         guest_invites = []
+        event = self.instance.content_object
         rsvp_notification = self.cleaned_data["rsvp_notification"]
-        Guest.objects.create(event=event, name=self.instance.user.get_full_name(), 
-            email=self.instance.user.email, added=datetime.date.today(), user=self.instance.user)
         for email in self.cleaned_data["emails"]:
             guest_invites.append(Guest.objects.create(event=event, email=email, 
                 invited=datetime.date.today(), notify_on_rsvp=rsvp_notification))
@@ -104,4 +106,21 @@ class GuestInviteForm(InviteForm):
         super(GuestInviteForm, self).save(*args, **kwargs)
         return guest_invites
 
+class GuestAddForm(forms.ModelForm):
+    name = forms.CharField()
+    is_attending = forms.ChoiceField(choices=(("A", "Yes"), ("N", "No")),
+        widget=forms.RadioSelect, label="Is this person planning on attending?", required=False)
+        
+    class Meta:
+        model = Guest
+        fields = ("name", "email", "phone", "is_attending",)
+        
+    def clean_is_attending(self):
+        data = self.cleaned_data["is_attending"]
+        self.instance.rsvp_status = data
+        return data
+        
+    def save(self, *args, **kwargs):
+        self.instance.added = datetime.date.today()
+        super(GuestAddForm, self).save(*args, **kwargs)
                 
