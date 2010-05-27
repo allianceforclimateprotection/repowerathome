@@ -44,6 +44,7 @@ urlpatterns = patterns('rah.views',
     (r'^search/$', 'search'),
     url(r'^terms/$', 'terms_of_use', name='terms_of_use'),
     url(r'^privacy/$', 'privacy_policy', name='privacy_policy'),
+    url(r'^about/$', 'about_us', name='about_us'),
     url(r'user/(?P<user_id>\d+)/feed/$', UserActivityFeed(), name='user_activity_feed'),
 )
 

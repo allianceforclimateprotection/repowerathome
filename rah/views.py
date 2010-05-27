@@ -56,6 +56,9 @@ def privacy_policy(request):
 
 def terms_of_use(request):
     return render_to_response("rah/terms_of_use.html", {}, context_instance=RequestContext(request))
+
+def about_us(request):
+    return render_to_response("rah/about_us.html", {}, context_instance=RequestContext(request))
  
 def logout(request):
     response = auth.logout(request)

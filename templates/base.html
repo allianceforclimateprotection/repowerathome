@@ -87,15 +87,14 @@
         </div>
         <div id="footer_container">
             <div id="footer">
-                <div id="footer_copy">
-                    <p>
-                        Copyright &copy; The Alliance for Climate Protection 2010. All Rights Reserved.<br/>
-                        <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> | 
-                        <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a> | 
-                        <a href="{% url terms_of_use %}">Terms of Use</a> | 
-                        <a href="{% url privacy_policy %}">Privacy Policy</a>
-                    </p>                
-                </div>
+                <p id="footer_copy" class="smaller">
+                    Copyright &copy; <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> 
+                    2010. All Rights Reserved. 
+                    <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a> | 
+                    <a href="{% url terms_of_use %}">Terms of Use</a> | 
+                    <a href="{% url privacy_policy %}">Privacy Policy</a> |
+                    <a href="{% url about_us %}">About Us</a>
+                </p>
             </div>
         </div>
         <div id="feedback_dialog"></div>

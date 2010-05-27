@@ -170,7 +170,7 @@ Content Content Content Content Content Content Content Content Content Content 
 #content{position:relative;}
 #content_bg {background: transparent url(../images/theme/0000000001_content_bg.jpg) no-repeat top center;}
 #content {
-    min-height:600px;
+    min-height:500px;
     padding-bottom:200px;
     background: transparent url(../images/theme/0000000001_content.png) no-repeat bottom center; }
 
@@ -223,7 +223,6 @@ Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners 
 .box_one_middle, .box_two_middle, .box_three_middle,
 .box_one_bottom, .box_two_bottom, .box_three_bottom {margin-left:-5px; position:relative;}
 .box_one_top, .box_two_top, .box_three_top {margin-top:10px;}
-
 .box_one_middle, .box_two_middle, .box_three_middle {height:100%; padding:0px 23px 0px 23px;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
@@ -271,8 +270,8 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 	height:286px;
     background: #92c139 url(../images/theme/0000000001_footer.png) no-repeat top center; }
 #footer{position:relative;}
-#footer_copy {margin-right:100px; font-size: 11px;}
-#footer_copy p{color:#FFF; text-align:center;}
+#footer_copy a {color:#333}
+#footer_copy {margin-right:100px; text-align:center; padding-top:250px;}
 
 
 /* ---------------------------------------------------------------------------------------------------------------------
@@ -564,7 +563,8 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .blog_byline {}
 .post_body li,
 #terms_of_use li,
-#privacy_policy { list-style: disc; }
+#privacy_policy li,
+#about_us li{ list-style: disc; }
 
 /* spite icons */
 .icon_gt {background: url(../images/theme/0000000001_sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}
