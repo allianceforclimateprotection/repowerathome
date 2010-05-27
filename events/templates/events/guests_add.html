@@ -21,7 +21,7 @@
                     <form action="{% url event-guests-add event.id %}" method="post">
                         {{ guest_add_form.as_p }}
                         {% csrf_token %}
-                        <input type="submit" value="Send" />
+                        <input type="submit" value="Add" />
                     </form>
                 </div>
             </div>

@@ -5,6 +5,36 @@
         <div class="box_two_top"></div>
         <div class="box_two_middle">
             <h1>{{ event }}</h1>
+            <h3>Guests Confirmed: {{ event.confirmed_guests }}</h3>
+            <h3>Outstanding Invitations: {{ event.outstanding_invitations }}</h3>
+            <form action="{% url event-guests event.id %}" method="post">
+                {{ form.errors }}
+                {{ form.action }}
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for guest in form.guests.field.choices.queryset %}
+                        <tr>
+                            <td><input type="checkbox" name="guests" value="{{ guest.id }}" /></td>
+                            <td>{{ guest.name }} {% if guest.is_host %}(host){% endif %}</td>
+                            <td>{{ guest.email }}</td>
+                            <td>{{ guest.phone }}</td>
+                            <td>{{ guest.status }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% csrf_token %}
+                <input type="submit" value="Submit" />
+            </form>
         </div>
         <div class="box_two_bottom"></div>
     </div>

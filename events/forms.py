@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from django import forms
 
@@ -83,7 +84,7 @@ class EventForm(forms.ModelForm):
         self.instance.location = self.cleaned_data["location"]
         event = super(EventForm, self).save(*args, **kwargs)
         Guest.objects.create(event=event, name=user.get_full_name(), email=user.email, 
-            added=datetime.date.today(), user=user)
+            added=datetime.date.today(), is_host=True, user=user)
         return event
         
 class RsvpForm(forms.Form):
@@ -123,4 +124,34 @@ class GuestAddForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         self.instance.added = datetime.date.today()
         super(GuestAddForm, self).save(*args, **kwargs)
+        
+class GuestListForm(forms.Form):
+    from actions import attending, not_attending, invitation_email, remove, make_host, unmake_host
+    ACTIONS = {
+        "1_SA": ("Mark as Attending", attending),
+        "2_SN": ("Mark as Not Attending", not_attending),
+        "3_EI": ("Send Invitation Email", invitation_email),
+        "3_MR": ("Remove from guest list", remove),
+        "4_MH": ("Make a guest a host", make_host),
+        "5_MU": ("Remove host privledges", unmake_host),
+    }
+    ACTION_CHOICES = [("", "- Select One -")] + sorted([(k, v[0]) for k,v in ACTIONS.iteritems()])
+    
+    action = forms.ChoiceField(choices=ACTION_CHOICES)
+    guests = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple)
+    
+    def __init__(self, event, *args, **kwargs):
+        super(GuestListForm, self).__init__(*args, **kwargs)
+        self.event = event
+        self.fields["guests"].queryset = event.guest_set.all()
+        
+    def clean(self):
+        if re.search("^\d+_E", self.cleaned_data.get("action", "")):
+            if any([not g.email for g in self.cleaned_data["guests"]]):
+                raise forms.ValidationError("All guests must have an email address")
+        return self.cleaned_data
+        
+    def save(self, *args, **kwargs):
+        action = GuestListForm.ACTIONS[self.cleaned_data["action"]][1]
+        return action(self.cleaned_data["guests"])
                 

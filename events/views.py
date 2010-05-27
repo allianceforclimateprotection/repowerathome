@@ -11,7 +11,7 @@ from utils import forbidden
 from invite.models import Invitation, make_token
 
 from models import Event, Guest
-from forms import EventForm, RsvpForm, GuestInviteForm, GuestAddForm
+from forms import EventForm, RsvpForm, GuestInviteForm, GuestAddForm, GuestListForm
 
 @login_required
 @csrf_protect
@@ -49,6 +49,10 @@ def edit(request, event_id):
 @login_required
 def guests(request, event_id):
     event = get_object_or_404(Event, id=event_id)
+    form = GuestListForm(event=event, data=(request.POST or None))
+    if form.is_valid():
+        response = form.save()
+        return response if response else redirect("event-guests", event_id=event.id)
     return render_to_response("events/guests.html", locals(), context_instance=RequestContext(request))
 
 @login_required
@@ -60,7 +64,8 @@ def guests_add(request, event_id, type):
         guest_add_form.save()
         return redirect("event-guests", event_id=event.id)
     invite = Invitation(user=request.user, content_object=event)
-    guest_invite_form = GuestInviteForm(instance=invite, data=(request.POST if type == "invite" else None))
+    guest_invite_form = GuestInviteForm(instance=invite, initial={"emails": request.GET.get("emails", "")},
+        data=(request.POST if type == "invite" else None))
     if guest_invite_form.is_valid():
         guest_invite_form.save()
         return redirect("event-guests", event_id=event.id)
