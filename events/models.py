@@ -1,3 +1,5 @@
+import datetime
+
 from django.utils.dateformat import DateFormat
 
 from django.db import models
@@ -78,3 +80,9 @@ class Guest(models.Model):
         
     def __unicode__(self):
         return self.name if self.name else self.email
+        
+def make_creator_a_guest(sender, instance, **kwargs):
+    creator = instance.creator
+    Guest.objects.create(event=instance, name=creator.get_full_name(), email=creator.email, 
+        added=datetime.date.today(), is_host=True, user=creator)
+models.signals.post_save.connect(make_creator_a_guest, sender=Event)

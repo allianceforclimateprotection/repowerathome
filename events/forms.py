@@ -82,10 +82,7 @@ class EventForm(forms.ModelForm):
     def save(self, user, *args, **kwargs):
         self.instance.creator = user
         self.instance.location = self.cleaned_data["location"]
-        event = super(EventForm, self).save(*args, **kwargs)
-        Guest.objects.create(event=event, name=user.get_full_name(), email=user.email, 
-            added=datetime.date.today(), is_host=True, user=user)
-        return event
+        return super(EventForm, self).save(*args, **kwargs)
         
 class RsvpForm(forms.Form):
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
