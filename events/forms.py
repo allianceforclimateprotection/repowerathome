@@ -94,11 +94,13 @@ class GuestInviteForm(InviteForm):
     def save(self, event, *args, **kwargs):
         guest_invites = []
         rsvp_notification = self.cleaned_data["rsvp_notification"]
-        if self.cleaned_data["copy_me"]:
-            self.cleaned_data["emails"].append(self.instance.user.email)
+        Guest.objects.create(event=event, name=self.instance.user.get_full_name(), 
+            email=self.instance.user.email, added=datetime.date.today(), user=self.instance.user)
         for email in self.cleaned_data["emails"]:
             guest_invites.append(Guest.objects.create(event=event, email=email, 
                 invited=datetime.date.today(), notify_on_rsvp=rsvp_notification))
+        if self.cleaned_data["copy_me"]:
+            self.cleaned_data["emails"].append(self.instance.user.email)
         super(GuestInviteForm, self).save(*args, **kwargs)
         return guest_invites
 
