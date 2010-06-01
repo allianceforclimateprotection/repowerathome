@@ -1,10 +1,10 @@
 from django.test import TestCase
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import User, AnonymousUser
 
 from records.models import Activity, Record
 from actions.models import Action, UserActionProgress
 
-from models import User, Profile
+from models import Profile
 
 def create_test_users_and_action_tasks(object):
     """
@@ -22,22 +22,6 @@ class ChartPoint(TestCase):
     def get_date_as_milli_from_epoch(self):
         pass
 
-class UserTest(TestCase):
-    def setUp(self):
-        create_test_users_and_action_tasks(self)
-
-    def test_get_commit_list(self):
-        from datetime import date
-        date_committed = date.today()
-        UserActionProgress.objects.create(user=self.u1, action=self.a, date_committed=date_committed)
-        
-        commit_list = self.u1.get_commit_list()
-        self.failUnlessEqual(len(commit_list), 1)
-        
-        commit_item = commit_list[0]
-        self.failUnlessEqual(commit_item.action, self.a)
-        self.failUnlessEqual(commit_item.date_committed, date_committed)
-        
 class ProfileTest(TestCase):
     def setUp(self):
         test_user_email    = "test@test.com"

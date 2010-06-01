@@ -11,9 +11,8 @@ from groups import admin as groups_admin
 from tagging import admin as tagging_admin
 from events import admin as event_admin
 
-from django.contrib.auth.models import Group, User
-admin.site.unregister(Group)
-admin.site.unregister(User)
+from django.contrib.auth.models import User
+admin.site.register(User)
 
 from basic.blog.models import Category, BlogRoll
 admin.site.unregister(Category)

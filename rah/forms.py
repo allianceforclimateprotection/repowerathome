@@ -5,6 +5,7 @@ from urlparse import urlparse
 from django import forms
 from django.contrib import auth
 from django.contrib.auth import forms as auth_forms
+from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.forms import ValidationError
 from django.core.mail import send_mail, EmailMessage
@@ -12,7 +13,7 @@ from django.core.urlresolvers import resolve, Resolver404
 from django.forms.widgets import CheckboxSelectMultiple
 from django.template import Context, loader
 
-from rah.models import User, Profile, Feedback
+from rah.models import Profile, Feedback
 from geo.models import Location
 
 class DefaultRahForm(forms.ModelForm):

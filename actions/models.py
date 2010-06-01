@@ -23,7 +23,7 @@ class ActionManager(models.Manager):
         committed = [a for a in actions if a.completed != 1 and a.committed != None]
         completed = [a for a in actions if a.completed == 1]
         return actions, recommended, committed, completed
-
+        
 class Action(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(unique=True)
@@ -108,6 +108,10 @@ class Action(models.Model):
         return ("action_detail", [str(self.slug)])
 tagging.register(Action)
 
+class UserActionProgressManager(models.Manager):
+    def commitments_for_user(self, user):
+         return self.select_related().filter(user=user, is_completed=False, date_committed__isnull=False).order_by("date_committed")
+
 class UserActionProgress(models.Model):
     user = models.ForeignKey(User)
     action = models.ForeignKey(Action)
@@ -115,6 +119,7 @@ class UserActionProgress(models.Model):
     date_committed = models.DateField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    objects = UserActionProgressManager()
     
     class Meta:
         unique_together = ("user", "action",)

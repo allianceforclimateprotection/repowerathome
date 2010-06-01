@@ -1,10 +1,28 @@
 [
+    {
+        "pk": 1, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "eric", 
+            "first_name": "Eric", 
+            "last_name": "Buckley", 
+            "is_active": 1, 
+            "is_superuser": 1, 
+            "is_staff": 1, 
+            "last_login": "2010-02-03 17:30:46", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$ffe69$dd116523d23c787b4ddd39bd37546e3812d1716e", 
+            "email": "eric.buckley@climateprotect.org", 
+            "date_joined": "2010-02-03 17:30:46"
+        }
+    },
     {"pk": 1, "model": "events.eventtype", "fields": {"name": "Energy Meeting", "teaser": "learn about home efficency", "description": "save money and save the environment by making your home more efficient"}},
     {"pk": 1, "model": "events.event", "fields": {"creator": 1, "event_type": 1, "when": "2050-08-14", "start": "06:00:00", "end": "08:00:00", "details": "You can park on the street.  My apartment is on the second floor.", "where": "123 Garden Street", "is_private": false, "location": 30602}}, 
-    {"pk": 1, "model": "events.guest", "fields": {"added": null, "name": "Jane Doe", "rsvp_status": "A", "invited": "2010-05-21", "event": 1, "phone": "", "user": null, "email": "jd@email.com"}}, 
-    {"pk": 2, "model": "events.guest", "fields": {"added": null, "name": "Alex Smith", "rsvp_status": "N", "invited": "2010-05-21", "event": 1, "phone": "", "user": null, "email": "am@email.com"}}, 
-    {"pk": 3, "model": "events.guest", "fields": {"added": null, "name": "Jon Doe", "rsvp_status": "", "invited": "2010-05-18", "event": 1, "phone": "", "user": null, "email": "jondoe@email.com"}}, 
-    {"pk": 4, "model": "events.guest", "fields": {"added": null, "name": "", "rsvp_status": "", "invited": "2010-03-12", "event": 1, "phone": "333-232-2332", "user": null, "email": "me@gmail.com"}}, 
-    {"pk": 5, "model": "events.guest", "fields": {"added": "2010-02-02", "name": "Jonathan", "rsvp_status": "", "invited": null, "event": 1, "phone": "", "user": null, "email": ""}},
-    {"pk": 6, "model": "events.guest", "fields": {"added": "2010-01-15", "name": "Mike Roberts", "rsvp_status": "M", "invited": null, "event": 1, "phone": "", "user": null, "email": "mr@email.com"}}
+    {"pk": 1, "model": "events.guest", "fields": {"created": "2010-02-02", "updated": "2010-02-02", "notify_on_rsvp": false, "is_host": false, "added": null, "name": "Jane Doe", "rsvp_status": "A", "invited": "2010-05-21", "event": 1, "phone": "", "user": null, "email": "jd@email.com"}}, 
+    {"pk": 2, "model": "events.guest", "fields": {"created": "2010-02-02", "updated": "2010-02-02", "notify_on_rsvp": false, "is_host": false, "added": null, "name": "Alex Smith", "rsvp_status": "N", "invited": "2010-05-21", "event": 1, "phone": "", "user": null, "email": "am@email.com"}}, 
+    {"pk": 3, "model": "events.guest", "fields": {"created": "2010-02-02", "updated": "2010-02-02", "notify_on_rsvp": false, "is_host": false, "added": null, "name": "Jon Doe", "rsvp_status": "", "invited": "2010-05-18", "event": 1, "phone": "", "user": null, "email": "jondoe@email.com"}}, 
+    {"pk": 4, "model": "events.guest", "fields": {"created": "2010-02-02", "updated": "2010-02-02", "notify_on_rsvp": false, "is_host": false, "added": null, "name": "", "rsvp_status": "", "invited": "2010-03-12", "event": 1, "phone": "333-232-2332", "user": null, "email": "me@gmail.com"}}, 
+    {"pk": 5, "model": "events.guest", "fields": {"created": "2010-02-02", "updated": "2010-02-02", "notify_on_rsvp": false, "is_host": false, "added": "2010-02-02", "name": "Jonathan", "rsvp_status": "", "invited": null, "event": 1, "phone": "", "user": null, "email": ""}},
+    {"pk": 6, "model": "events.guest", "fields": {"created": "2010-02-02", "updated": "2010-02-02", "notify_on_rsvp": false, "is_host": false, "added": "2010-01-15", "name": "Mike Roberts", "rsvp_status": "M", "invited": null, "event": 1, "phone": "", "user": null, "email": "mr@email.com"}}
 ]

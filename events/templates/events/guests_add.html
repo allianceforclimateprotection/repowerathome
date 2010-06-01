@@ -1,0 +1,31 @@
+{% extends "events/base.html" %}
+
+{% block right_content %}
+    <div class="grid_6 alpha">
+        <div class="box_three_top"></div>
+        <div class="box_three_middle">
+            <h1>Add Guest</h1>
+            <div id="guests_add" class="tabs">
+                <ul>
+                    <li><a href="#guests_add_with_invite">Send Invitations</a></li>
+                    <li><a href="#guests_add_without_invite">Add without Invite</a></li>
+                </ul>
+                <div id="guests_add_with_invite">
+                    <form action="{% url event-guests-invite event.id %}" method="post">
+                        {{ guest_invite_form.as_p }}
+                        {% csrf_token %}
+                        <input type="submit" value="Send" />
+                    </form>
+                </div>
+                <div id="guests_add_without_invite">
+                    <form action="{% url event-guests-add event.id %}" method="post">
+                        {{ guest_add_form.as_p }}
+                        {% csrf_token %}
+                        <input type="submit" value="Add" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="box_three_bottom"></div>
+    </div>
+{% endblock %}

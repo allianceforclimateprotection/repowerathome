@@ -15,10 +15,9 @@ def invite(request, next=None):
     """Handles invite form submission"""
     invite_form = InviteForm(instance=Invitation(user=request.user), data=request.POST)
     if invite_form.is_valid():
-        if invite_form.save():
-            messages.success(request, 'Invitation sent to %s' % invite_form.cleaned_data['email'])
-        else:
-            messages.error(request, 'Whoops, something went wrong. That invitation was probably not sent. Try again?')
+        invites = invite_form.save()
+        emails = ", ".join([invite.email for invite in invites])
+        messages.success(request, 'Invitation sent to %s' % emails)
     else:
         messages.error(request, 'Form values where invalid, please try fill out the form again.')
     

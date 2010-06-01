@@ -7,15 +7,17 @@ from django.core.mail import EmailMessage
 from django.template import loader
 
 from utils import hash_val
-from models import Invitation
-        
+from models import Invitation, make_token
+from fields import MultiEmailField
+
 class InviteForm(forms.ModelForm):
+    emails = MultiEmailField(label="Email addresses", required=True)
     note = forms.CharField(widget=forms.Textarea, label="Personal note (optional)", required=False)
     signature = forms.CharField(widget=forms.HiddenInput, required=True)
     
     class Meta:
         model = Invitation
-        fields = ("email", "note", "token", "content_type", "object_pk")
+        fields = ("emails", "note", "content_type", "object_pk")
         widgets = {
             "token": forms.HiddenInput,
             "content_type": forms.HiddenInput,
@@ -41,22 +43,25 @@ class InviteForm(forms.ModelForm):
                     raise forms.ValidationError("Signature has been currupted")
         return self.cleaned_data
     
-    def save(self):
-        invite = super(InviteForm, self).save()
-        ct = self.instance.content_type
-        template_list = ["invite/invite.html",]
-        if ct:
-            template_list = [
-                "invite/%s/%s/invite.html" % (ct.model_class()._meta.app_label, ct.model_class()._meta.module_name),
-                "invite/%s/invite.html" % ct.model_class()._meta.app_label,
-            ] + template_list
-        context = {"from_user": invite.user, "note": self.cleaned_data["note"], "invite": invite,
-            "domain": Site.objects.get_current().domain,}
-        msg = EmailMessage("Invitation from %s to Repower at Home" % invite.user.get_full_name(),
-            loader.render_to_string(template_list, context), None, [invite.email])
-        msg.content_subtype = "html"
-        try:
+    def save(self, *args, **kwargs):
+        invites = []
+        for email in self.cleaned_data["emails"]:
+            self.instance.pk = None
+            self.instance.email = email
+            self.instance.token = make_token()
+            invite = super(InviteForm, self).save(*args, **kwargs)
+            ct = self.instance.content_type
+            template_list = ["invite/invite.html",]
+            if ct:
+                template_list = [
+                    "invite/%s/%s/invite.html" % (ct.model_class()._meta.app_label, ct.model_class()._meta.module_name),
+                    "invite/%s/invite.html" % ct.model_class()._meta.app_label,
+                ] + template_list
+            context = {"from_user": invite.user, "note": self.cleaned_data["note"], "invite": invite,
+                "domain": Site.objects.get_current().domain,}
+            msg = EmailMessage("Invitation from %s to Repower at Home" % invite.user.get_full_name(),
+                loader.render_to_string(template_list, context), None, [invite.email])
+            msg.content_subtype = "html"
             msg.send()
-        except SMTPException, e:
-            return False    
-        return invite
+            invites.append(Invitation.objects.get(pk=invite.pk))
+        return invites

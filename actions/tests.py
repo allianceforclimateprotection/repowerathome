@@ -189,4 +189,30 @@ class ActionTest(TestCase):
         self.failUnlessEqual(self.iwh.users_committed, 2)
         self.failUnlessEqual(self.csp.users_committed, 0)
         
-        
+class UserActionProgressTest(TestCase):
+        fixtures = ["actions.json"]
+
+        def setUp(self):
+            self.user = User.objects.create_user(username="test", password="test", email="test@test.com")
+            self.other = User.objects.create_user(username="other", password="other", email="other@test.com")
+            self.iwh = Action.objects.get(slug="insulate-water-heater")
+            self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
+            self.cfw = Action.objects.get(slug="use-ceiling-fan-winter")
+            
+        def test_commitments_for_user(self):
+            from datetime import date
+            date_committed = date.today()
+            UserActionProgress.objects.create(user=self.user, action=self.iwh, date_committed=date_committed)
+            UserActionProgress.objects.create(user=self.other, action=self.csp, date_committed=date_committed)
+            UserActionProgress.objects.create(user=self.user, action=self.cfw, date_committed=date_committed)
+
+            commit_list = UserActionProgress.objects.commitments_for_user(self.user)
+            self.failUnlessEqual(len(commit_list), 2)
+
+            iwh_commitment, cfw_commitment = commit_list
+            self.failUnlessEqual(iwh_commitment.action, self.iwh)
+            self.failUnlessEqual(iwh_commitment.date_committed, date_committed)
+            self.failUnlessEqual(cfw_commitment.action, self.cfw)
+            self.failUnlessEqual(cfw_commitment.date_committed, date_committed)
+            
+            

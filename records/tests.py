@@ -1,11 +1,11 @@
 import datetime
 
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from records.models import ChartPoint, Record, Activity
 from actions.models import Action
-from rah.models import User
 
 def create_test_users_and_action_tasks(object):
     """

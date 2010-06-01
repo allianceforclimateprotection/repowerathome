@@ -9,6 +9,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.sites.models import Site
 
 def make_token():
+    # TODO: we should check to see if this is unique in the database as well
     token = hashlib.sha1("%s %s" % (random.random(), datetime.now())).hexdigest()
     return token[:15]
 
@@ -23,7 +24,7 @@ class Invitation(models.Model):
     content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
     
     class Meta:
-        unique_together = (('token',))
+        unique_together = (("email", "token",))
     
     @models.permalink
     def get_absolute_url(self):

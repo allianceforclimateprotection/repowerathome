@@ -62,7 +62,7 @@ class InviteViewTest(TestCase):
         
     def test_missing_signature(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"email": "invalid_email", "content_type": self.post_content_type.pk, 
+        response = self.client.post(self.url, {"emails": "invalid_email", "content_type": self.post_content_type.pk, 
             "object_pk": self.post.pk, "token": "81yuksdfkq2ro2i", 
             "next": "/login/"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "registration/login.html")
@@ -71,7 +71,7 @@ class InviteViewTest(TestCase):
         
     def test_invalid_signature(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"email": "invalid_email", "content_type": self.post_content_type.pk, 
+        response = self.client.post(self.url, {"emails": "invalid_email", "content_type": self.post_content_type.pk, 
             "object_pk": self.post.pk, "signature": "fake_signature", "token": "81yuksdfkq2ro2i", 
             "next": "/login/"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "registration/login.html")
@@ -80,7 +80,7 @@ class InviteViewTest(TestCase):
         
     def test_invalid_email(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"email": "invalid_email", "content_type": self.post_content_type.pk, 
+        response = self.client.post(self.url, {"emails": "invalid_email", "content_type": self.post_content_type.pk, 
             "object_pk": self.post.pk, "signature": hash_val((self.post_content_type, self.post.pk,)), 
             "token": "81yuksdfkq2ro2i", "next": "/login/"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "registration/login.html")
@@ -89,7 +89,7 @@ class InviteViewTest(TestCase):
         
     def test_valid_default_invite(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"email": "bob@email.com", "content_type": "", 
+        response = self.client.post(self.url, {"emails": "bob@email.com", "content_type": "", 
             "object_pk": "", "signature": hash_val((self.post_content_type, self.post.pk,)), 
             "token": "81yuksdfkq2ro2i", "next": "/login/"}, follow=True)
         email = mail.outbox.pop()
@@ -101,7 +101,7 @@ class InviteViewTest(TestCase):
         
     def test_valid_post_invite(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"email": "bob@email.com", "content_type": self.post_content_type.pk, 
+        response = self.client.post(self.url, {"emails": "bob@email.com", "content_type": self.post_content_type.pk, 
             "object_pk": self.post.pk, "signature": hash_val((self.post_content_type, self.post.pk,)), 
             "token": "81yuksdfkq2ro2i", "next": "/login/"}, follow=True)
         email = mail.outbox.pop()
@@ -110,6 +110,21 @@ class InviteViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "registration/login.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
+        
+    def test_vmultiple_emails(self):
+         self.client.login(username="test@test.com", password="test")
+         response = self.client.post(self.url, {"emails": "bob@email.com, george@email.com", "content_type": self.post_content_type.pk, 
+             "object_pk": self.post.pk, "signature": hash_val((self.post_content_type, self.post.pk,)), 
+             "token": "81yuksdfkq2ro2i", "next": "/login/"}, follow=True)
+         email = mail.outbox.pop()
+         self.failUnlessEqual(email.to, ["george@email.com"])
+         self.failUnlessEqual(email.subject, "Invitation from %s to Repower at Home" % self.user.get_full_name())
+         email = mail.outbox.pop()
+         self.failUnlessEqual(email.to, ["bob@email.com"])
+         self.failUnlessEqual(email.subject, "Invitation from %s to Repower at Home" % self.user.get_full_name())
+         self.failUnlessEqual(response.template[0].name, "registration/register.html")
+         message = iter(response.context["messages"]).next()
+         self.failUnless("success" in message.tags)
         
 class RsvpViewTest(TestCase):
     def setUp(self):

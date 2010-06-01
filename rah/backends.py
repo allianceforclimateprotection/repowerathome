@@ -1,4 +1,4 @@
-from rah.models import User
+from django.contrib.auth.models import User
 from django.core.validators import email_re
 
 class EmailBackend:

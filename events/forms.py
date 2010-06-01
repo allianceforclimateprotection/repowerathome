@@ -1,8 +1,11 @@
 import datetime
+import re
 
 from django import forms
 
 from geo.models import Location
+from invite.forms import InviteForm
+from invite.fields import MultiEmailField
 
 from models import Event, Guest
 
@@ -83,4 +86,69 @@ class EventForm(forms.ModelForm):
         
 class RsvpForm(forms.Form):
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
+    
+class GuestInviteForm(InviteForm):
+    emails = MultiEmailField(label="Email addresses", required=True, widget=forms.Textarea)
+    rsvp_notification = forms.BooleanField(required=False, label="Email me when people RSVP")
+    copy_me = forms.BooleanField(required=False, label="Send me a copy of the invitation")
+    
+    def save(self, *args, **kwargs):
+        guest_invites = []
+        event = self.instance.content_object
+        rsvp_notification = self.cleaned_data["rsvp_notification"]
+        for email in self.cleaned_data["emails"]:
+            guest_invites.append(Guest.objects.create(event=event, email=email, 
+                invited=datetime.date.today(), notify_on_rsvp=rsvp_notification))
+        if self.cleaned_data["copy_me"]:
+            self.cleaned_data["emails"].append(self.instance.user.email)
+        super(GuestInviteForm, self).save(*args, **kwargs)
+        return guest_invites
+
+class GuestAddForm(forms.ModelForm):
+    name = forms.CharField()
+    is_attending = forms.ChoiceField(choices=(("A", "Yes"), ("N", "No")),
+        widget=forms.RadioSelect, label="Is this person planning on attending?", required=False)
+        
+    class Meta:
+        model = Guest
+        fields = ("name", "email", "phone", "is_attending",)
+        
+    def clean_is_attending(self):
+        data = self.cleaned_data["is_attending"]
+        self.instance.rsvp_status = data
+        return data
+        
+    def save(self, *args, **kwargs):
+        self.instance.added = datetime.date.today()
+        super(GuestAddForm, self).save(*args, **kwargs)
+        
+class GuestListForm(forms.Form):
+    from actions import attending, not_attending, invitation_email, remove, make_host, unmake_host
+    ACTIONS = {
+        "1_SA": ("Mark as Attending", attending),
+        "2_SN": ("Mark as Not Attending", not_attending),
+        "3_EI": ("Send Invitation Email", invitation_email),
+        "3_MR": ("Remove from guest list", remove),
+        "4_MH": ("Make a guest a host", make_host),
+        "5_MU": ("Remove host privledges", unmake_host),
+    }
+    ACTION_CHOICES = [("", "- Select One -")] + sorted([(k, v[0]) for k,v in ACTIONS.iteritems()])
+    
+    action = forms.ChoiceField(choices=ACTION_CHOICES)
+    guests = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple)
+    
+    def __init__(self, event, *args, **kwargs):
+        super(GuestListForm, self).__init__(*args, **kwargs)
+        self.event = event
+        self.fields["guests"].queryset = event.guest_set.all()
+        
+    def clean(self):
+        if re.search("^\d+_E", self.cleaned_data.get("action", "")): # Check to see if the action is of type Email
+            if any([not g.email for g in self.cleaned_data["guests"]]): # Action of type Email can only be performed on guests with emails
+                raise forms.ValidationError("All guests must have an email address")
+        return self.cleaned_data
+        
+    def save(self, *args, **kwargs):
+        action = GuestListForm.ACTIONS[self.cleaned_data["action"]][1]
+        return action(self.cleaned_data["guests"])
                 

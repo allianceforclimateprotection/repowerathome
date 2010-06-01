@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.models import User
 from django.contrib.comments.views import comments
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader, Context
@@ -15,8 +16,8 @@ from django.contrib import messages
 from django.contrib.sites.models import Site
 
 from tagging.models import Tag
-from actions.models import Action
-from rah.models import User, Profile
+from actions.models import Action, UserActionProgress
+from rah.models import Profile
 from records.models import Record
 from rah.forms import RegistrationForm, AuthenticationForm, HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm
 from settings import GA_TRACK_PAGEVIEW, LOGIN_REDIRECT_URL
@@ -46,7 +47,7 @@ def index(request):
         'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
         'house_party_form': HousePartyForm(request.user),
         'twitter_status_form': twitter_form,
-        'commitment_list': request.user.get_commit_list(),
+        'commitment_list': UserActionProgress.objects.commitments_for_user(request.user),
         'my_groups': Group.objects.filter(users=request.user, is_geo_group=False),
         'records': Record.objects.user_records(request.user, 10),
     }, context_instance=RequestContext(request))
@@ -184,7 +185,7 @@ def profile(request, user_id):
         'completed': completed,
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
-        'commitment_list': user.get_commit_list(),
+        'commitment_list': UserActionProgress.objects.commitments_for_user(user),
         'teams': Group.objects.filter(users=user, is_geo_group=False),
         'records': Record.objects.user_records(user, 10),
     }, context_instance=RequestContext(request))

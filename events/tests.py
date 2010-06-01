@@ -13,20 +13,43 @@ class EventTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_events.json",]
     
     def setUp(self):
-        self.creator = User.objects.create_user(username="creator", email="creator@test.com", password="creator")
+        self.creator = User.objects.get(username="eric")
         self.event_type = EventType.objects.get(name="Energy Meeting")
         self.ashaway = Location.objects.get(zipcode="02804")
-        self.event = Event(creator=self.creator, event_type=self.event_type, where="1501 St. Paul St.",
-            location=self.ashaway, when=datetime.date.today()+datetime.timedelta(days=5), 
-            start=datetime.time(10, 0), end=datetime.time(11, 0), details="test event", is_private=False)
+        self.event = Event.objects.get(pk=1)
             
     def test_has_manager_privileges(self):
         self.failUnlessEqual(self.event.has_manager_privileges(self.creator), True)
         hacker = User.objects.create_user(username="hacker", email="hacker@email.com", password="hacker")
         self.failUnlessEqual(self.event.has_manager_privileges(hacker), False)
+        guest = Guest.objects.get(name="Jane Doe")
+        guest.user = hacker
+        guest.save()
+        self.failUnlessEqual(self.event.has_manager_privileges(hacker), False)
+        guest.is_host = True
+        guest.save()
+        self.failUnlessEqual(self.event.has_manager_privileges(hacker), True)
+        
+    def test_confirmed_guests(self):
+        self.failUnlessEqual(self.event.confirmed_guests(), 1)
+        alex = Guest.objects.get(name="Alex Smith")
+        alex.rsvp_status = "A"
+        alex.save()
+        self.failUnlessEqual(self.event.confirmed_guests(), 2)
+        jane = Guest.objects.get(name="Jane Doe")
+        jane.rsvp_status = "N"
+        jane.save()
+        self.failUnlessEqual(self.event.confirmed_guests(), 1)
+        
+    def test_outstanding_invitations(self):
+        self.failUnlessEqual(self.event.outstanding_invitations(), 2)
+        jon = Guest.objects.get(name="Jon Doe")
+        jon.rsvp_status = "M"
+        jon.save()
+        self.failUnlessEqual(self.event.outstanding_invitations(), 1)
         
     def test_place(self):
-        self.failUnlessEqual(self.event.place(), "1501 St. Paul St. Ashaway, RI")
+        self.failUnlessEqual(self.event.place(), "123 Garden Street Ashaway, RI")
 
 class GuestTest(TestCase):
     fixtures = ["test_events.json",]
