@@ -53,7 +53,7 @@ class InviteViewTest(TestCase):
         
     def test_login_required(self):
         response = self.client.get(self.url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
 
     def test_post_required(self):
         self.client.login(username="test@test.com", password="test")
@@ -65,7 +65,7 @@ class InviteViewTest(TestCase):
         response = self.client.post(self.url, {"email": "invalid_email", "content_type": self.post_content_type.pk, 
             "object_pk": self.post.pk, "token": "81yuksdfkq2ro2i", 
             "next": "/login/"}, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("error" in message.tags)
         
@@ -74,7 +74,7 @@ class InviteViewTest(TestCase):
         response = self.client.post(self.url, {"email": "invalid_email", "content_type": self.post_content_type.pk, 
             "object_pk": self.post.pk, "signature": "fake_signature", "token": "81yuksdfkq2ro2i", 
             "next": "/login/"}, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("error" in message.tags)
         
@@ -83,7 +83,7 @@ class InviteViewTest(TestCase):
         response = self.client.post(self.url, {"email": "invalid_email", "content_type": self.post_content_type.pk, 
             "object_pk": self.post.pk, "signature": hash_val((self.post_content_type, self.post.pk,)), 
             "token": "81yuksdfkq2ro2i", "next": "/login/"}, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("error" in message.tags)
         
@@ -95,7 +95,7 @@ class InviteViewTest(TestCase):
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, ["bob@email.com"])
         self.failUnlessEqual(email.subject, "Invitation from %s to Repower at Home" % self.user.get_full_name())
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         
@@ -107,7 +107,7 @@ class InviteViewTest(TestCase):
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, ["bob@email.com"])
         self.failUnlessEqual(email.subject, "Invitation from %s to Repower at Home" % self.user.get_full_name())
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         
@@ -122,7 +122,7 @@ class RsvpViewTest(TestCase):
         
     def test_login_required(self):
         response = self.client.get(reverse("invite-rsvp", args=[self.invite.token]), follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
         
     def test_invalid_token(self):
         self.client.login(username="new@test.com", password="new")

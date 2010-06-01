@@ -1,5 +1,11 @@
 {% extends "rah/base.html" %}
 {% block title %}Privacy Policy{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url about_us %}">About Us</a> &rsaquo;
+    Privacy Policy
+{% endblock %}
+
 {% block right_content %}
 <div class="box_three_top"></div>
 <div id="privacy_policy" class="box_three_middle">

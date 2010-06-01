@@ -1,5 +1,9 @@
 {% extends "rah/base.html" %}
 {% block title %}About Us{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    About Us
+{% endblock %}
 {% block right_content %}
 <div class="box_three_top"></div>
 <div id="about_us" class="box_three_middle">

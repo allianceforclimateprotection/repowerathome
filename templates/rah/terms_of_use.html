@@ -1,5 +1,10 @@
 {% extends "rah/base.html" %}
 {% block title %}Terms of Use{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url about_us %}">About Us</a> &rsaquo;
+    Terms of Use
+{% endblock %}
 {% block right_content %}
 <div class="box_three_top"></div>
 <div id="terms_of_use" class="box_three_middle">

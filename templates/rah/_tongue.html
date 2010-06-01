@@ -1,35 +1,65 @@
 {% load dated_static %}
 <div id="tongue">
-	<a href="{% url profile profile.user.id %}" title="View your profile">
-		<img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
-	</a>
-    <div id="tongue_username">
-		<a href="{% url profile profile.user.id %}" title="View your profile">{{ profile.user.get_full_name }}</a>
-	</div>
-    {% if profile.location %}
-        <div id="tongue_location">
-            <span class="icon_from"></span> {{ profile.location }}
+    {% if user.is_authenticated %}
+        {% with request.user.get_profile as profile %}
+    	<a href="{% url profile profile.user.id %}" title="View your profile">
+    		<img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
+    	</a>
+        <div id="tongue_username">
+    		<a href="{% url profile profile.user.id %}" title="View your profile">{{ profile.user.get_full_name }}</a>
+    	</div>
+        {% if profile.location %}
+            <div id="tongue_location">
+                <span class="icon_from"></span> {{ profile.location }}
+            </div>
+        {% endif %}
+        <br class="clear" />
+        {% if profile.user == request.user %}
+            <div id="tongue_links">
+                <a href="{% url rah.views.profile_edit request.user.id %}">Edit your profile</a> &ndash; <a href="{% url logout %}">Logout</a>
+            </div>
+        {% endif %}
+        <div id="tongue_points">
+            {{ profile.total_points }}<span> points</span>
         </div>
+        {# <div id="tongue_prizes"> #}
+        {#     Prizes you've won #}
+        {# </div> #}
+        <div id="tongue_activity">
+            <a class="chart_link" href="{% url records_chart profile.user.id %}">Activity</a>
+            <div>
+                <a href="{% url records_chart profile.user.id %}" id="chart_dialog_link" class="chart_link" title="View progress chart">
+                    <img src="{% dated_static 'images/theme/tongue_graph.gif' %}" alt="graph"/>
+                </a>
+            </div>
+        </div>
+        {% endwith %}
+    
+    {% else %}
+        <h3>Log in</h3>
+        <form action="{% url login %}" method="post" id="login_form" autocomplete="off">
+            <div class="form_row overset"> 
+                <label for="id_email">Email</label> 
+                <input type="text" name="email" id="id_email" /> 
+
+            </div> 
+
+            <div class="form_row overset"> 
+                <label for="id_password">Password</label> 
+                <input type="password" name="password" id="id_password" /> 
+
+            </div>
+    	    <p>
+    	        <input type="submit" value="Log In" id="tongue_login_form_submit"/> <a href="{% url password_reset %}">Recover password</a>
+    	    </p>
+    	    {% csrf_token %}
+    		<p><input type="hidden" name="next" value="{{ request.path|escape }}" /></p>
+    	</form>
+    	<h3>Need an account?</h3>
+    	<p>With an account you can track your progress and join teams!</p>
+    	<a href="{% url register %}" class="button">Sign Up</a>
     {% endif %}
-    <br class="clear" />
-    {% if profile.user == request.user %}
-        <div id="tongue_links">
-            <a href="{% url rah.views.profile_edit request.user.id %}">Edit your profile</a> &ndash; <a href="{% url logout %}">Logout</a>
-        </div>
-    {% endif %}
-    <div id="tongue_points">
-        {{ profile.total_points }}<span> points</span>
-    </div>
-    {# <div id="tongue_prizes"> #}
-    {#     Prizes you've won #}
-    {# </div> #}
-    <div id="tongue_activity">
-        <a class="chart_link" href="{% url records_chart profile.user.id %}">Activity</a>
-        <div>
-            <a href="{% url records_chart profile.user.id %}" id="chart_dialog_link" class="chart_link" title="View progress chart">
-                <img src="{% dated_static 'images/theme/tongue_graph.gif' %}" alt="graph"/>
-            </a>
-        </div>
-    </div>
+    
+    
     <div class="clear"></div>
 </div>

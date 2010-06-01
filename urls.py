@@ -31,7 +31,7 @@ import settings
 urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
     url(r'^register/$', 'register', name='register'),
-    url(r'^login/$', 'login', { 'template_name': 'registration/register.html' }, name='login'),
+    url(r'^login/$', 'login', name='login'),
     url(r'^logout/$', 'logout', name='logout'),
     url(r'^password_change_done/$', 'password_change_done', name='password_change_done'),
     url(r'^password_reset_done/$', 'password_reset_done', name='password_reset_done'),

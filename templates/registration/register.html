@@ -1,23 +1,13 @@
 {% extends "rah/base.html" %}
-{% block content %}
-    <div class="grid_6 alpha">
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-        	<form action="{% url login %}" method="post" id="login_form" autocomplete="off">
-        		<h1>Sign In</h1>
-                {% with login_form as form %}
-                             {% include "rah/_overset_form.html" %}
-                {% endwith %}
-        	    <p>
-        	        <input type="submit" value="Login" /> | <a href="{% url password_reset %}">Recover password</a>
-        	    </p>
-        	    {% csrf_token %}
-        		<p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
-        	</form>
-        </div>
-        <div class="box_two_bottom"></div>
-    </div>
-    <div class="grid_6 omega">
+{% block tongue %}{% endblock tongue %}
+{% block breadcrumbs %}
+ <div class="prefix_3">
+    <a href="{% url index %}">Home</a> &rsaquo;
+    Register
+</div>
+{% endblock %}
+{% block right_content %}
+    <div class="prefix_3">
         <div class="box_two_top"></div>
         <div class="box_two_middle">
         	<form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
@@ -29,6 +19,9 @@
         	    <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
         	    {% csrf_token %}
         	</form>
+        	<p>
+    	        Already have an account? <a href="{% url login %}">Log in</a>
+    	    </p>
         </div>
         <div class="box_two_bottom"></div>
     </div>

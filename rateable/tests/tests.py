@@ -44,7 +44,7 @@ class RateViewTest(TestCase):
 
     def test_login_required(self):
         response = self.client.get(self.url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
 
     def test_post_required(self):
         self.client.login(username="test@test.com", password="test")
@@ -70,7 +70,7 @@ class RateViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.url, {"content_type": self.post_content_type.pk, "object_pk": self.post.pk, 
             "score": "1", "next": "/login/"}, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(Rating.objects.get_users_current_score(self.post, self.user), 1)

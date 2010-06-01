@@ -106,7 +106,6 @@ var rah = {
     **/
     page_register: {
         init: function(){
-            // Validate the registration form
             $("#registration_form").validate({
                 rules: {
                     zipcode:        { required: false, remote: { url: "/validate/", type: "post" } },
@@ -120,6 +119,14 @@ var rah = {
                     zipcode: { remote: "We couldn't locate this zipcode" }
                 }
             });
+        }
+    },
+    
+    /**
+    * Log in page
+    **/
+    page_login: {
+        init: function(){
             $("#login_form").validate({
                 rules: {
                     email:      { required: true, email: true },
