@@ -122,7 +122,7 @@ class InviteViewTest(TestCase):
          email = mail.outbox.pop()
          self.failUnlessEqual(email.to, ["bob@email.com"])
          self.failUnlessEqual(email.subject, "Invitation from %s to Repower at Home" % self.user.get_full_name())
-         self.failUnlessEqual(response.template[0].name, "registration/register.html")
+         self.failUnlessEqual(response.template[0].name, "registration/login.html")
          message = iter(response.context["messages"]).next()
          self.failUnless("success" in message.tags)
         

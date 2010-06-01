@@ -223,43 +223,38 @@ Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners 
 .box_one_middle, .box_two_middle, .box_three_middle,
 .box_one_bottom, .box_two_bottom, .box_three_bottom {margin-left:-5px; position:relative;}
 .box_one_top, .box_two_top, .box_three_top {margin-top:10px;}
-.box_one_middle, .box_two_middle, .box_three_middle {height:100%; padding:0px 23px 0px 23px;}
+.box_one_middle, .box_two_middle, .box_three_middle {height:100%; padding:0px 23px 0px 23px; overflow:auto;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation 
 --------------------------------------------------------------------------------------------------------------------- */
-#nav_logged_in{
+#nav{
     position:absolute;
     font-size:0px;
     top:64px;
-    left:62px; }
-#nav_logged_out{
-    position:absolute;
-    font-size:0px;
-    top:64px;
-    left:135px; }
-#nav_login{width:88px; background: url(../images/theme/0000000001_nav_sprite.png) -169px 92px;}
-#nav_login:hover{background-position: -169px 46px;}
-#nav_home{width:119px; background: url(../images/theme/0000000001_nav_sprite.png) -257px 92px;}
-#nav_home:hover{background-position: -257px 46px;}
-#nav_actions{width:141px; background: url(../images/theme/0000000001_nav_sprite.png) -376px 92px;}
-#nav_actions:hover{background-position: -376px 46px;}
-#nav_community{width:185px; background: url(../images/theme/0000000001_nav_sprite.png) -517px 92px;}
-#nav_community:hover{background-position: -517px 46px;}
-#nav_teams{width:126px; background: url(../images/theme/0000000001_nav_sprite.png) -1083px 92px;}
-#nav_teams:hover{background-position: -1083px 46px;}
-#nav_blog{width:114px; background: url(../images/theme/0000000001_nav_sprite.png) -702px 92px;}
-#nav_blog:hover{background-position: -702px 46px;}
-#nav_signup{width:98px; background: url(../images/theme/0000000001_nav_sprite.png) -816px 92px;}
-#nav_signup:hover{background-position: -816px 46px;}
-#nav_welcome{width:169px; background: url(../images/theme/0000000001_nav_sprite.png) 0px 92px;}
-/*#nav_welcome:hover{background-position: 0px 46px;}*/
-#nav_dashboard{width:169px; background: url(../images/theme/0000000001_nav_sprite.png) -914px 92px;}
-#nav_dashboard:hover{background-position: -914px 46px;}
-#nav_feedback{width:117px; background: url(../images/theme/0000000001_nav_sprite.png) -1209px 92px;}
-#nav_feedback:hover{background-position: -1209px 46px;}
-#nav_logged_out a, #nav_logged_in a{color:#a8ce61; display:block; height:46px; float:left;}
-#nav_logged_out a:hover, #nav_logged_in a:hover{color:#90b54b;}
+    left:175px; }
+#nav a{color:#e3ec9f; display:block; height:46px; float:left;}
+#nav a:hover{color:#e3ec9f;}
+#nav_home{width:125px; background: url(../images/theme/0000000001_nav_sprite.png) -160px 92px;}
+#nav_home:hover{background-position: -160px 46px;}
+#nav_home.selected{background-position: -160px 0px;}
+#nav_actions{width:160px; background: url(../images/theme/0000000001_nav_sprite.png) 0px 92px;}
+#nav_actions:hover{background-position: 0px 46px;}
+#nav_actions.selected{background-position: 0px 0px;}
+#nav_teams{width:137px; background: url(../images/theme/0000000001_nav_sprite.png) -285px 92px;}
+#nav_teams:hover{background-position: -285px 46px;}
+#nav_teams.selected{background-position: -285px 0px;}
+#nav_blog{width:117px; background: url(../images/theme/0000000001_nav_sprite.png) -422px 92px;}
+#nav_blog:hover{background-position: -422px 46px;}
+#nav_blog.selected{background-position: -422px 0px;}
+#nav_dashboard{width:204px; background: url(../images/theme/0000000001_nav_sprite.png) -539px 92px;}
+#nav_dashboard:hover{background-position: -539px 46px;}
+#nav_dashboard.selected{background-position: -539px 0px;}
+#nav_feedback{width:127px; background: url(../images/theme/0000000001_nav_sprite.png) -743px 92px;}
+#nav_feedback:hover{background-position: -743px 46px;}
+#nav_feedback.selected{background-position: -743px 0px;}
+
+
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer 
