@@ -143,8 +143,8 @@ class GuestListForm(forms.Form):
         self.fields["guests"].queryset = event.guest_set.all()
         
     def clean(self):
-        if re.search("^\d+_E", self.cleaned_data.get("action", "")):
-            if any([not g.email for g in self.cleaned_data["guests"]]):
+        if re.search("^\d+_E", self.cleaned_data.get("action", "")): # Check to see if the action is of type Email
+            if any([not g.email for g in self.cleaned_data["guests"]]): # Action of type Email can only be performed on guests with emails
                 raise forms.ValidationError("All guests must have an email address")
         return self.cleaned_data
         
