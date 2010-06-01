@@ -47,6 +47,7 @@ def edit(request, event_id):
     return render_to_response("events/edit.html", locals(), context_instance=RequestContext(request))
 
 @login_required
+@csrf_protect
 def guests(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     form = GuestListForm(event=event, data=(request.POST or None))
@@ -56,6 +57,7 @@ def guests(request, event_id):
     return render_to_response("events/guests.html", locals(), context_instance=RequestContext(request))
 
 @login_required
+@csrf_protect
 def guests_add(request, event_id, type):
     event = get_object_or_404(Event, id=event_id)
     guest = Guest(event=event)

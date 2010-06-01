@@ -264,4 +264,63 @@ class EventEditViewTest(TestCase):
             self.failUnlessEqual(event.end, datetime.time(11, 0))
             self.failUnlessEqual(event.details, "test")
             self.failUnlessEqual(event.is_private, True)
+            
+class EventGuestsViewTest(TestCase):
+    fixtures = ["test_geo_02804.json", "test_events.json"]
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.event_type = EventType.objects.get(pk=1)
+        self.event = Event.objects.get(pk=1)
+        self.event_guests_url = reverse("event-guests", args=[self.event.id])
+
+    def test_login_required(self):
+        response = self.client.get(self.event_guests_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        
+    def test_get(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.event_guests_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/guests.html")
+        guests = response.context["event"].guest_set.all()
+        self.failUnlessEqual(len(guests), 6)
+        
+    def test_missing_required(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.event_guests_url, {"action": ""}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/guests.html")
+        errors = response.context["form"].errors
+        self.failUnlessEqual(len(errors), 2)
+        self.failUnless("action" in errors)
+        self.failUnless("guests" in errors)
+        
+    def test_missing_email(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.event_guests_url, {"action": "3_EI", 
+            "guests": ("5", "6",)}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/guests.html")
+        errors = response.context["form"].errors
+        self.failUnlessEqual(len(errors), 1)
+        self.failUnless("__all__" in errors)
+        
+    def test_valid_action(self):
+        self.client.login(username="test@test.com", password="test")
+        guest_5 = Guest.objects.get(pk=5)
+        guest_6 = Guest.objects.get(pk=6)
+        self.failUnlessEqual(guest_5.is_host, False)
+        self.failUnlessEqual(guest_6.is_host, False)
+        response = self.client.post(self.event_guests_url, {"action": "4_MH", 
+            "guests": ("5", "6",)}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/guests.html")
+        guest_5 = Guest.objects.get(pk=5)
+        guest_6 = Guest.objects.get(pk=6)
+        self.failUnlessEqual(guest_5.is_host, True)
+        self.failUnlessEqual(guest_6.is_host, True)
+        
+    def test_action_redirect(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.event_guests_url, {"action": "3_EI", 
+            "guests": ("6",)}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/guests_add.html")
         
