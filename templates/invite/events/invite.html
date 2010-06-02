@@ -3,7 +3,7 @@
     {{ from_user.get_full_name }} wants you to attend an {{ invite.content_object }}.
 </p>
 <p>
-    <a href="http://{{ domain }}{% url event-show-invite invite.content_object.id invite.token %}">
+    <a href="http://{{ domain }}{% url event-invite invite.content_object.id invite.token %}">
         Click here to RSVP
     </a>
 </p>
