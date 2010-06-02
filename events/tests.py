@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.test.client import Client
 
 from geo.models import Location
+from invite.models import Invitation, make_token
 
 from models import EventType, Event, Guest
 
@@ -52,12 +53,14 @@ class EventTest(TestCase):
         self.failUnlessEqual(self.event.place(), "123 Garden Street Ashaway, RI")
         
     def test_is_token_valid(self):
-        # TODO: create unit tests for event.is_token_valid()
-        pass
-        
-    def test_current_guest(self):
-        # TODO: create unit tests for event.current_guest()
-        pass
+        token = make_token()
+        invite = Invitation.objects.create(user=self.creator, email="test@email.com", 
+            token=token, content_object=self.event)
+        self.failUnless(self.event.is_token_valid(token))
+        new_event = Event.objects.create(creator=self.creator, event_type=self.event_type,
+            location=self.ashaway, when=datetime.date(2050, 9, 9), start=datetime.time(9,0),
+            end=datetime.time(10,0), details="test")
+        self.failUnless(not new_event.is_token_valid(token))
 
 class GuestTest(TestCase):
     fixtures = ["test_events.json",]
