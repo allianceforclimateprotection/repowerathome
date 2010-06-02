@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import render_to_response, redirect, get_object_or_404
@@ -11,7 +12,7 @@ from utils import forbidden
 from invite.models import Invitation, make_token
 
 from models import Event, Guest
-from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, RsvpForm, RsvpConfirmForm
+from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, RsvpForm, RsvpConfirmForm, RsvpAccountForm
 
 @login_required
 @csrf_protect
@@ -25,7 +26,7 @@ def create(request):
 
 def show(request, event_id, token=None):
     event = get_object_or_404(Event, id=event_id)
-    if not event.has_manager_privileges(request.user) and event.is_private:
+    if not event.is_guest(request.user) and event.is_private:
         if not token:
             return forbidden(request, "You need an invitation to view this event")
         if not event.is_token_valid():
@@ -93,14 +94,20 @@ def rsvp_confirm(request, event_id):
     form = RsvpConfirmForm(instance=guest, data=(request.POST or None))
     if form.is_valid():
         guest = form.save(request)
-        return redirect(event)
+        return redirect("event-rsvp-account", event_id=event.id)
     return render_to_response("events/rsvp_confirm.html", locals(), context_instance=RequestContext(request))
     
 @csrf_protect
 def rsvp_account(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     guest = event.current_guest(request)
-    return redirect(event)
+    form = RsvpAccountForm(instance=guest, data=(request.POST or None))
+    if form.is_valid():
+        guest = form.save(request)
+        user = auth.authenticate(username=guest.email, password=form.cleaned_data["password1"])
+        auth.login(request, user)
+        return redirect(event)
+    return render_to_response("events/rsvp_account.html", locals(), context_instance=RequestContext(request))
     
 @login_required
 def commitments(request, event_id):

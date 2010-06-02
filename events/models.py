@@ -45,6 +45,12 @@ class Event(models.Model):
             return False
         return user == self.creator or \
             Guest.objects.filter(event=self, user=user, is_host=True).exists()
+            
+    def is_guest(self, user):
+        if not user.is_authenticated():
+            return False
+        return user == self.creator or \
+            Guest.objects.filter(event=self, user=user).exists()
         
     def confirmed_guests(self):
         return Guest.objects.filter(event=self, rsvp_status="A").count()
@@ -52,7 +58,7 @@ class Event(models.Model):
     def outstanding_invitations(self):
         return Guest.objects.filter(event=self, invited__isnull=False, rsvp_status="").count()
         
-    def is_token_valid(self):
+    def is_token_valid(self, token):
         try:
             invite = Invitation.objects.get(token=token)
             return invite.content_object == self

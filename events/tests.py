@@ -30,6 +30,18 @@ class EventTest(TestCase):
         guest.save()
         self.failUnlessEqual(self.event.has_manager_privileges(hacker), True)
         
+    def test_is_guest(self):
+        self.failUnlessEqual(self.event.is_guest(self.creator), True)
+        hacker = User.objects.create_user(username="hacker", email="hacker@email.com", password="hacker")
+        self.failUnlessEqual(self.event.is_guest(hacker), False)
+        guest = Guest.objects.get(first_name="Jane", last_name="Doe")
+        guest.user = hacker
+        guest.save()
+        self.failUnlessEqual(self.event.is_guest(hacker), True)
+        guest.is_host = True
+        guest.save()
+        self.failUnlessEqual(self.event.is_guest(hacker), True)
+        
     def test_confirmed_guests(self):
         self.failUnlessEqual(self.event.confirmed_guests(), 1)
         alex = Guest.objects.get(first_name="Alex", last_name="Smith")

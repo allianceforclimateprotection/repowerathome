@@ -1,7 +1,13 @@
 import datetime
+import hashlib
 import re
 
 from django import forms
+from django.contrib import auth
+from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
+from django.core.mail import EmailMessage
+from django.template import Context, loader
 
 from geo.models import Location
 from invite.models import Invitation
@@ -181,4 +187,49 @@ class RsvpConfirmForm(forms.ModelForm):
         guest = super(RsvpConfirmForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
         return guest
-                
+        
+class RsvpAccountForm(forms.ModelForm):
+    zipcode = forms.CharField(max_length=10, required=False)
+    password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    
+    class Meta:
+        model = Guest
+        fields = ("zipcode", "password1", "password2",)
+        
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1", "")
+        password2 = self.cleaned_data["password2"]
+        if password1 != password2:
+            raise forms.ValidationError("The two password fields didn't match.")
+        if len(password2) < 5:
+            raise forms.ValidationError("Your password must contain at least 5 characters.")
+        return password2
+        
+    def clean_zipcode(self):
+        data = self.cleaned_data['zipcode'].strip()
+        if not len(data):
+            self.instance.location = None
+            return
+        if len(data) <> 5:
+            raise forms.ValidationError("Please enter a 5 digit zipcode")
+        try:
+            self.cleaned_data["location"] = Location.objects.get(zipcode=data)
+        except Location.DoesNotExist, e:
+            raise forms.ValidationError("Zipcode is invalid")
+            
+    def save(self, request, *args, **kwargs):
+        user = User(first_name=self.instance.first_name, last_name=self.instance.last_name, 
+            email=self.instance.email)
+        user.username = hashlib.md5(self.instance.email).hexdigest()[:30]
+        user.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
+        user.save()
+        self.instance.user = user
+        template = loader.get_template("rah/registration_email.html")
+        context = {"user": user, "domain": Site.objects.get_current().domain,}
+        msg = EmailMessage("Registration", template.render(Context(context)), None, [user.email])
+        msg.content_subtype = "html"
+        msg.send()
+        guest = super(RsvpAccountForm, self).save(*args, **kwargs)
+        guest.event.save_guest_in_session(request=request, guest=guest)
+        return guest
