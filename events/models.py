@@ -1,8 +1,10 @@
 import datetime
 
-from django.utils.dateformat import DateFormat
-
+from django.contrib.sites.models import Site
+from django.core.mail import EmailMessage
 from django.db import models
+from django.template import Context, loader
+from django.utils.dateformat import DateFormat
 
 from invite.models import Invitation
 
@@ -46,9 +48,10 @@ class Event(models.Model):
         return user == self.creator or \
             Guest.objects.filter(event=self, user=user, is_host=True).exists()
             
-    def is_guest(self, user):
+    def is_guest(self, request):
+        user = request.user
         if not user.is_authenticated():
-            return False
+            return self._guest_key() in request.session
         return user == self.creator or \
             Guest.objects.filter(event=self, user=user).exists()
         
@@ -144,5 +147,10 @@ models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 
 def notification_on_rsvp(sender, instance, **kwargs):
     if instance.rsvp_status and instance.notify_on_rsvp:
-        pass # send an email out to the creator
+        creator = instance.event.creator
+        context = {"user": creator, "guest": instance, "domain": Site.objects.get_current().domain}
+        msg = EmailMessage("RSVP from %s to %s" % (instance, instance.event),
+            loader.render_to_string("events/rsvp_notify_email.html", context), None, [creator.email])
+        msg.content_subtype = "html"
+        msg.send()
 models.signals.post_save.connect(notification_on_rsvp, sender=Guest)
