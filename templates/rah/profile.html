@@ -4,71 +4,81 @@
 {% block extralinks %}
     <link rel="alternate" type="application/atom+xml"  href="{% url user_activity_feed profile.user.id %}" title="Repower at Home User Activity" />
 {% endblock %}
-
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    {{profile_user.get_full_name}}
+{% endblock %}
 {% block right_content %}
-<div class="grid_2 alpha">
-    <div class="box_two">
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <h1>{{profile_user.get_full_name}}</h1>
-            {% if profile.location %}
-                <b>From: </b> {{ profile.location }}<br/>
-            {% endif %}
-            {% if profile.total_points %}
-                <b>Points: </b>{{ profile.total_points }}<br/>
-            {% endif %}
-            {% if profile.building_type %}
-                <b>Home:</b> {{ profile.get_building_type_display }}<br/>
-            {% endif %}
-            {% if profile.about %}
-                <b>About: </b>{{ profile.about }}<br/>
-            {% endif %}
-            <br/>
-            {% if commitment_list %}
-                <h2>Commitments</h2>
-                <p>
-                {% for row in commitment_list %}
-                    <a href="{% url action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed|date}}<br/>
-                {% endfor %}
-                </p>
-            {% endif %}
-            {% if teams %}
-                <h2>Teams</h2>
-                <p>
-                {% for group in teams %}
-                    <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br />
-                {% endfor %}
-                </p>
-            {% endif %}
-            {% if committed %}
-                <h2>Committed Actions</h2>
-                <p>
-                {% for action in recommended %}
-                    <a href="{% url action_detail action.slug %}">{{action.name}}</a> (+{{action.points}} points)<br/>
-                {% endfor %}
-                </p>
-            {% endif %}
-            {% if completed %}
-                <h2>Completed Actions</h2>
-                <p>
-                {% for action in completed %}
-                    <a href="{% url action_detail action.slug %}">{{action.name}}</a> (+{{action.points}} points)<br/>
-                {% endfor %}
-                </p>
-            {% endif %}
-            {% if records %}
-                <h2>Recent Activity
-                    <a class="atom_link" href="{% url user_activity_feed profile.user.id %}">
-                        <img src="{% dated_static 'images/theme/rss.png' %}" alt="atom feed" />
-                    </a>
-                </h2>
-                {% for rec in records %}
-                    {% render_record rec %}
-                {% endfor %}
-            {% endif %}
-        </div>
-        <div class="box_two_bottom"></div>
+<div class="grid_6 alpha">
+    <div class="box_two_top"></div>
+    <div class="box_two_middle">
+        <h1>{{profile_user.get_full_name}}</h1>
+        {% if profile.location %}
+            <b>From: </b> {{ profile.location }}<br/>
+        {% endif %}
+        {% if profile.total_points %}
+            <b>Points: </b>{{ profile.total_points }}<br/>
+        {% endif %}
+        {% if profile.building_type %}
+            <b>Home:</b> {{ profile.get_building_type_display }}<br/>
+        {% endif %}
+        {% if profile.about %}
+            <b>About: </b>{{ profile.about }}<br/>
+        {% endif %}
+        <br/>
+        {% if commitment_list %}
+            <h2>Commitments</h2>
+            <p>
+            {% for row in commitment_list %}
+                <a href="{% url action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed|date}}<br/>
+            {% endfor %}
+            </p>
+        {% endif %}
+        {% if teams %}
+            <h2>Teams</h2>
+            <p>
+            {% for group in teams %}
+                <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br />
+            {% endfor %}
+            </p>
+        {% endif %}
+        {% if committed %}
+            <h2>Committed Actions</h2>
+            <p>
+            {% for action in recommended %}
+                <a href="{% url action_detail action.slug %}">{{action.name}}</a> (+{{action.points}} points)<br/>
+            {% endfor %}
+            </p>
+        {% endif %}
+        {% if completed %}
+            <h2>Completed Actions</h2>
+            <p>
+            {% for action in completed %}
+                <a href="{% url action_detail action.slug %}">{{action.name}}</a> (+{{action.points}} points)<br/>
+            {% endfor %}
+            </p>
+        {% endif %}
+        {% if records %}
+            <h2>Recent Activity
+                <a class="atom_link" href="{% url user_activity_feed profile.user.id %}">
+                    <img src="{% dated_static 'images/theme/rss.png' %}" alt="atom feed" />
+                </a>
+            </h2>
+            {% for rec in records %}
+                {% render_record rec %}
+            {% endfor %}
+        {% endif %}
     </div>
+    <div class="box_two_bottom"></div>
+</div>
+<div class="grid_3 omega">
+    
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        <img src="{{ profile.get_gravatar_url_large }}" alt="user gravatar"/>
+        <p class="smaller right">Avatar provided by <a href="http://www.gravatar.com/">Gravatar</a></p>
+    </div>
+    <div class="box_one_bottom"></div>
 </div>
 {% endblock %}
 {% block js %}page_profile{% endblock %}

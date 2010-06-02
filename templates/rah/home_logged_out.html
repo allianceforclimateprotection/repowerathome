@@ -3,63 +3,86 @@
 {% block title %}
     Welcome
 {% endblock %}
-{% block content %}
-<div class="grid_9 alpha">
-	<a href="{% url action_detail 'eliminate-standby-vampire-power' %}">
-		<img src="{% dated_static 'images/actions/eliminate-standby-vampire-power/featured.png' %}" width="740" height="402"/>
-	</a>
-	<div class="clear"></div>
-	<div class="grid_3 alpha">
-		<img src="{% dated_static 'images/index/home_make_a_plan.png' %}" width="240" height="147"/>
-		<p>
-			Use the actions page to find smart solutions to home energy waste
-		</p>
-	</div>
-	<div class="grid_3">
-		<img src="{% dated_static 'images/index/home_save_energy.png' %}" width="240" height="147"/>		
-		<p>
-			Complete actions to lower your monthly bills and create a cleaner world
-		</p>	
-	</div>
-	<div class="grid_3 omega">
-		<img src="{% dated_static 'images/index/home_take_the_lead.png' %}" width="240" height="149"/>
-		<p>
-			Organize your friends, family, and neighbors on the community page
-		</p>
-	</div>
+{% block right_content %}
+<div class="box_three_top"></div>
+<div class="box_three_middle" id="logged_out_call_to_action">
+    <h1>Join the Repower at Home Challenge</h1>
+    <h2>Better  Homes, Cleaner Air, Cleaner Communities </h2>
+    <p>
+        We Can Eliminate 10,000,000 pounds of coal by 10/10/2010 <br/>
+        On 10/10/2010, we'll show that America is ready for Clean Energy!
+    </p>
+    <h2><a href="{% url register %}" class="button">Join Now</a></h2>
+</div>
+<div class="box_three_bottom"></div>
+
+<div class="box_three_top"></div>
+<div class="box_three_middle">
+    {% for action in featured_actions %}
+        <div class="action_nugget home_page_action_nugget">
+            <h3 class="action_nugget_title"><a class="blue" href="{% url action_detail action.slug %}">{{ action.name }}</a></h3>
+            {% if action.has_illustration %}
+                <a href="{% url action_detail action.slug %}">
+            	    <img src="{{ action.get_nugget_illustration }}" alt="{{action.name}} illustration" height="72" width="306"/>
+            	</a>
+            {% endif %}	
+            <div class="action_nugget_teaser">{{ action.teaser|safe|linebreaks }}</div>
+            <div class="action_nugget_points">{{ action.points }} Points</div>
+        </div>
+    {% endfor %}
+</div>
+<div class="box_three_bottom"></div>
+
+{# 306   189 #}
+{# 72     48 #}
+<div class="grid_3 alpha">
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        <h3>Top Teams</h3>
+        {% for team in top_teams %}
+            <p>
+                <a href="{{ team.get_absolute_url }}">{{team.name}}</a><br/>
+                <span class="smaller">{{team.member_count}} team members</span>
+            </p>
+        {% endfor %}
+        <div class="more_link">
+            <a href="{% url group_list %}">More Teams</a>
+        </div>
+    </div>
+    <div class="box_one_bottom"></div>
+</div>
+<div class="grid_3">
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        <h3>Popular Actions</h3>
+        {% for action in pop_actions %}
+            <p>
+                <a href="{{ action.get_absolute_url }}">{{action.name}}</a><br/>
+                <span class="smaller">{{action.users_completed}} completed, {{action.users_committed}} committed</span>
+            </p>
+        {% endfor %}
+        <div class="more_link">
+            <a href="{% url action_show %}">More Actions</a>
+        </div>
+    </div>
+    <div class="box_one_bottom"></div>
 </div>
 <div class="grid_3 omega">
-	<div class="homepage_form_box">
-    	<div id="minor_col_sign" class="minor_col_img"></div>
-    	<form id="signup_form" action="{% url register %}" method="get">
-    	    <div class="overset">
-    	        <label class="homepage_label" for="id_email">Enter your email</label>
-    	        <input id="id_email" name="email" class="homepage_input" type="text"></input>
-    	    </div>
-    	    <div>
-    	        <input type="submit" value="Get Started"></input>
-    	    </div>
-    	</form>
-    	<div class="minor_col_ord minor_col_img"></div>
-	</div>
-	<div class="homepage_form_box">
-	    <div id="minor_col_host" class="minor_col_img"></div>
-	    <form id="houseparty_form" action="{% url register %}" method="get">
-    	    <div class="overset">
-    	        <label class="homepage_label" for="id_phone">Enter your phone #</label>
-    	        <input id="id_phone" name="phone" class="homepage_input" type="text"></input>
-    	    </div>
-    	    <div>
-    	        <input id="house_party_link" type="submit" value="Get Started"></input>
-    	    </div>
-    	</form>
-	    <div class="minor_col_ord minor_col_img"></div>
-	</div>
-    {% include "rah/_house_party_dialog.html" %}
-    {# <div class="homepage_form_box"> #}
-    {#    <div id="minor_col_find" class="minor_col_img"></div> #}
-    {#    <div class="minor_col_ord minor_col_img"></div> #}
-    {# </div> #}
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        <h3>Recent Blog Posts</h3>
+        {% for post in blog_posts %}
+        <p>
+            <a href="{{ post.get_absolute_url }}">{{post.title}}</a><br/>
+            <span class="smaller">Posted {{post.publish|date}}</span>
+        </p>
+        {% endfor %}
+        <div class="more_link">
+            <a href="{% url blog_index %}">More Posts</a>
+        </div>
+    </div>
+    <div class="box_one_bottom"></div>
 </div>
+
 {% endblock %}
 {% block js %}page_home_logged_out{% endblock %}

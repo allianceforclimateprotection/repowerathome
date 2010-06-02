@@ -15,6 +15,7 @@ from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.sites.models import Site
 
+from basic.blog.models import Post
 from tagging.models import Tag
 from actions.models import Action, UserActionProgress
 from rah.models import Profile
@@ -33,8 +34,7 @@ def index(request):
     """
     # If the user is not logged in, show them the logged out homepage and bail
     if not request.user.is_authenticated():
-        context = {'house_party_form': HousePartyForm(request.user)}
-        return render_to_response("rah/home_logged_out.html", context, context_instance=RequestContext(request))
+        return logged_out_home(request);
     
     recommended, committed, completed = Action.objects.actions_by_status(request.user)[1:4]
     twitter_form = TwitterStatusForm(initial={
@@ -51,6 +51,13 @@ def index(request):
         'my_groups': Group.objects.filter(users=request.user, is_geo_group=False),
         'records': Record.objects.user_records(request.user, 10),
     }, context_instance=RequestContext(request))
+
+def logged_out_home(request):
+    blog_posts = Post.objects.all()[:3]
+    pop_actions = Action.objects.get_popular(count=3)
+    top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:3]
+    featured_actions = Action.objects.filter(id__in=[18,23]).order_by("-id")
+    return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))
 
 def privacy_policy(request):
     return render_to_response("rah/privacy_policy.html", {}, context_instance=RequestContext(request))

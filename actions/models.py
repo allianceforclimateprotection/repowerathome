@@ -10,6 +10,14 @@ from records.models import Record
 from dated_static.templatetags.dated_static import dated_static
 
 class ActionManager(models.Manager):
+    
+    def get_popular(self, count=5):
+        # Returns the most popular actions where popularity is defined as the sum of completed and commited users
+        # TODO: Write a unit test for get_popular
+        actions = Action.objects.all()
+        count = actions.count() if actions.count() < count else count
+        return sorted(actions, reverse=True, key=lambda action: action.users_completed+action.users_committed)[:count]
+    
     def actions_by_status(self, user):
         actions = Action.objects.select_related().all().extra(select_params = (user.id,), 
                     select = { 'completed': 'SELECT uap.is_completed FROM actions_useractionprogress uap \

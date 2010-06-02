@@ -228,11 +228,7 @@ Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners 
 /* ---------------------------------------------------------------------------------------------------------------------
 Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation 
 --------------------------------------------------------------------------------------------------------------------- */
-#nav{
-    position:absolute;
-    font-size:0px;
-    top:64px;
-    left:175px; }
+#nav{ position:absolute; font-size:0px; top:64px; left:175px; }
 #nav a{color:#e3ec9f; display:block; height:46px; float:left;}
 #nav a:hover{color:#e3ec9f;}
 #nav_home{width:125px; background: url(../images/theme/0000000001_nav_sprite.png) -160px 92px;}
@@ -254,8 +250,6 @@ Navigation Navigation Navigation Navigation Navigation Navigation Navigation Nav
 #nav_feedback:hover{background-position: -743px 46px;}
 #nav_feedback.selected{background-position: -743px 0px;}
 
-
-
 /* ---------------------------------------------------------------------------------------------------------------------
 Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer 
 --------------------------------------------------------------------------------------------------------------------- */
@@ -270,41 +264,13 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 
 
 /* ---------------------------------------------------------------------------------------------------------------------
-Homepage-Minor-Col Homepage-Minor-Col Homepage-Minor-Col Homepage-Minor-Col Homepage-Minor-Col Homepage-Minor-Col 
+Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage
 --------------------------------------------------------------------------------------------------------------------- */
-.homepage_form_box {text-align: center; margin-bottom:35px;}
-.minor_col_img {width:178px;  display: inline-block;}
-#minor_col_sign {height:70px; background: url(../images/theme/0000000001_sprite_minor_col.png) 0px -6px;}
-#minor_col_host {height:80px; background: url(../images/theme/0000000001_sprite_minor_col.png) 0px -106px;}
-#minor_col_find {height:72px; background: url(../images/theme/0000000001_sprite_minor_col.png) 0px -216px;}
-.minor_col_ord {width: 42px; height:9px;  background: url(../images/theme/0000000001_sprite_minor_col.png) -60px -290px;}
-.overset .homepage_input {
-    margin: 5px 0;
-    height: 27px;
-    width: 200px;
-    border: 1px #A6CFD9 solid;
-    padding: 2px;
-    font-size: 14px;
-    color: #84CBD6;
-    background: #fff url(../images/theme/0000000001_homepage_input_background.png) repeat-x;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px; }
-.overset .homepage_label {
-    font-family: helvetica;
-    font-size: 12px;
-    color: #C1C1C1;
-    position: absolute;
-    top: -13px;
-    left: 21px; }
-.overset .homepage_label[class~="inside"] {
-    font-family: "superclarendon-1", "superclarendon-2", serif;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 14px;
-    position: absolute;
-    top: 10px;
-    left: -50%;
-    width: 200%; }
+#logged_out_call_to_action { text-align: center; }
+#logged_out_call_to_action input {font-size:36px;}
+.more_link {text-align:right; font-weight: bold;}
+.home_page_action_nugget {width:297px; margin: 0 18px;}
+.home_page_action_nugget img {border:1px solid #5bbcca;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue 
@@ -549,6 +515,7 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .atom_link { margin-left: 5px; }
 #breadcrumbs {font-size:12px; padding-top:12px;}
 .smaller {font-size:12px;}
+.right {text-align:right;}
 .blog_byline {}
 .post_body li,
 #terms_of_use li,
