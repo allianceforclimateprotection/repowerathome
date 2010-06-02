@@ -1,0 +1,9 @@
+<p>
+    Hi {{ user.get_full_name }},
+    {{ guest }} has rsvped to <a href="http://{{ domain }}{{ guest.event.get_absolute_url }}">{{ guest.event }}</a>
+    as {{ guest.get_rsvp_status_display }}.
+</p>
+<p>
+    Later,<br />
+    The Repower at Home team
+</p>

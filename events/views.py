@@ -26,12 +26,12 @@ def create(request):
 
 def show(request, event_id, token=None):
     event = get_object_or_404(Event, id=event_id)
-    if not event.is_guest(request.user) and event.is_private:
+    if not event.is_guest(request) and event.is_private:
         if not token:
             return forbidden(request, "You need an invitation to view this event")
         if not event.is_token_valid(token):
             return forbidden(request, "Invitation code is not valid for this event")
-    guest = event.current_guest(request)
+    guest = event.current_guest(request, token)
     rsvp_form = RsvpForm(instance=guest, initial={"token": token})
     return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
 
@@ -77,7 +77,7 @@ def guests_add(request, event_id, type):
 @csrf_protect
 def rsvp(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    guest = event.current_guest(request)
+    guest = event.current_guest(request=request, token=request.POST.get("token", None))
     rsvp_form = RsvpForm(instance=guest, data=request.POST)
     if rsvp_form.is_valid():
         guest = rsvp_form.save(request)
