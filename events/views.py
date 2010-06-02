@@ -29,7 +29,7 @@ def show(request, event_id, token=None):
     if not event.is_guest(request.user) and event.is_private:
         if not token:
             return forbidden(request, "You need an invitation to view this event")
-        if not event.is_token_valid():
+        if not event.is_token_valid(token):
             return forbidden(request, "Invitation code is not valid for this event")
     guest = event.current_guest(request)
     rsvp_form = RsvpForm(instance=guest, initial={"token": token})
