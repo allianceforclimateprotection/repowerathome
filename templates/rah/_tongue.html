@@ -2,12 +2,12 @@
 <div id="tongue">
     {% if user.is_authenticated %}
         {% with request.user.get_profile as profile %}
-    	<a href="{% url profile profile.user.id %}" title="View your profile">
-    		<img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
-    	</a>
+        <a href="{% url profile profile.user.id %}" title="View your profile">
+            <img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
+        </a>
         <div id="tongue_username">
-    		<a href="{% url profile profile.user.id %}" title="View your profile">{{ profile.user.get_full_name }}</a>
-    	</div>
+            <a href="{% url profile profile.user.id %}" title="View your profile">{{ profile.user.get_full_name }}</a>
+        </div>
         {% if profile.location %}
             <div id="tongue_location">
                 <span class="icon_from"></span> {{ profile.location }}
@@ -37,27 +37,24 @@
     
     {% else %}
         <h3>Log in</h3>
-        <form action="{% url login %}" method="post" id="login_form" autocomplete="off">
+        <form action="{% ifnotequal request.META.SERVER_PORT '8000' %}https://{{request.META.SERVER_NAME}}{%endifnotequal%}{% url login %}" method="post" id="login_form" autocomplete="off">
             <div class="form_row overset"> 
                 <label for="id_email">Email</label> 
                 <input type="text" name="email" id="id_email" /> 
-
             </div> 
-
             <div class="form_row overset"> 
                 <label for="id_password">Password</label> 
                 <input type="password" name="password" id="id_password" /> 
-
             </div>
-    	    <p>
-    	        <input type="submit" value="Log In" id="tongue_login_form_submit"/> <a href="{% url password_reset %}">Recover password</a>
-    	    </p>
-    	    {% csrf_token %}
-    		<p><input type="hidden" name="next" value="{{ request.path|escape }}" /></p>
-    	</form>
-    	<h3>Need an account?</h3>
-    	<p>With an account you can track your progress and join teams!</p>
-    	<a href="{% url register %}" class="button">Sign Up</a>
+            <p>
+                <input type="submit" value="Log In" id="tongue_login_form_submit"/> <a href="{% url password_reset %}">Recover password</a>
+            </p>
+            {% csrf_token %}
+            <p><input type="hidden" name="next" value="{{ request.path|escape }}" /></p>
+        </form>
+        <h3>Need an account?</h3>
+        <p>With an account you can track your progress and join teams!</p>
+        <a href="{% url register %}" class="button">Sign Up</a>
     {% endif %}
     
     

@@ -305,7 +305,7 @@ class EventGuestsViewTest(TestCase):
 
     def test_login_required(self):
         response = self.client.get(self.event_guests_url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "registration/register.html")
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
         
     def test_get(self):
         self.client.login(username="test@test.com", password="test")
