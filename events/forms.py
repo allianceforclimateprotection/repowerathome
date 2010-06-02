@@ -1,9 +1,16 @@
 import datetime
+import hashlib
 import re
 
 from django import forms
+from django.contrib import auth
+from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
+from django.core.mail import EmailMessage
+from django.template import Context, loader
 
 from geo.models import Location
+from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
@@ -83,9 +90,6 @@ class EventForm(forms.ModelForm):
         self.instance.creator = user
         self.instance.location = self.cleaned_data["location"]
         return super(EventForm, self).save(*args, **kwargs)
-        
-class RsvpForm(forms.Form):
-    rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
     
 class GuestInviteForm(InviteForm):
     emails = MultiEmailField(label="Email addresses", required=True, widget=forms.Textarea)
@@ -105,13 +109,12 @@ class GuestInviteForm(InviteForm):
         return guest_invites
 
 class GuestAddForm(forms.ModelForm):
-    name = forms.CharField()
     is_attending = forms.ChoiceField(choices=(("A", "Yes"), ("N", "No")),
         widget=forms.RadioSelect, label="Is this person planning on attending?", required=False)
         
     class Meta:
         model = Guest
-        fields = ("name", "email", "phone", "is_attending",)
+        fields = ("first_name", "last_name", "email", "phone", "is_attending",)
         
     def clean_is_attending(self):
         data = self.cleaned_data["is_attending"]
@@ -151,4 +154,82 @@ class GuestListForm(forms.Form):
     def save(self, *args, **kwargs):
         action = GuestListForm.ACTIONS[self.cleaned_data["action"]][1]
         return action(self.cleaned_data["guests"])
-                
+        
+class RsvpForm(forms.ModelForm):
+    rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
+    token = forms.CharField(required=False, widget=forms.HiddenInput)
+    
+    class Meta:
+        model = Guest
+        fields = ("rsvp_status", "token",)
+        
+    def clean_token(self):
+        data = self.cleaned_data["token"]
+        event = self.instance.event
+        if event.is_private and not event.is_token_valid(data):
+            return forms.ValidationError("Invalid token")
+        return data
+
+    def save(self, request, *args, **kwargs):
+        guest = super(RsvpForm, self).save(*args, **kwargs)
+        guest.event.save_guest_in_session(request=request, guest=guest)
+        return guest
+
+class RsvpConfirmForm(forms.ModelForm):
+    first_name = forms.CharField(required=True, max_length=50)
+    email = forms.EmailField(required=True)
+    
+    class Meta:
+        model = Guest
+        fields = ("first_name", "last_name", "email", "phone",)
+        
+    def save(self, request, *args, **kwargs):
+        guest = super(RsvpConfirmForm, self).save(*args, **kwargs)
+        guest.event.save_guest_in_session(request=request, guest=guest)
+        return guest
+        
+class RsvpAccountForm(forms.ModelForm):
+    zipcode = forms.CharField(max_length=10, required=False)
+    password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    
+    class Meta:
+        model = Guest
+        fields = ("zipcode", "password1", "password2",)
+        
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1", "")
+        password2 = self.cleaned_data["password2"]
+        if password1 != password2:
+            raise forms.ValidationError("The two password fields didn't match.")
+        if len(password2) < 5:
+            raise forms.ValidationError("Your password must contain at least 5 characters.")
+        return password2
+        
+    def clean_zipcode(self):
+        data = self.cleaned_data['zipcode'].strip()
+        if not len(data):
+            self.instance.location = None
+            return
+        if len(data) <> 5:
+            raise forms.ValidationError("Please enter a 5 digit zipcode")
+        try:
+            self.cleaned_data["location"] = Location.objects.get(zipcode=data)
+        except Location.DoesNotExist, e:
+            raise forms.ValidationError("Zipcode is invalid")
+            
+    def save(self, request, *args, **kwargs):
+        user = User(first_name=self.instance.first_name, last_name=self.instance.last_name, 
+            email=self.instance.email)
+        user.username = hashlib.md5(self.instance.email).hexdigest()[:30]
+        user.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
+        user.save()
+        self.instance.user = user
+        template = loader.get_template("rah/registration_email.html")
+        context = {"user": user, "domain": Site.objects.get_current().domain,}
+        msg = EmailMessage("Registration", template.render(Context(context)), None, [user.email])
+        msg.content_subtype = "html"
+        msg.send()
+        guest = super(RsvpAccountForm, self).save(*args, **kwargs)
+        guest.event.save_guest_in_session(request=request, guest=guest)
+        return guest

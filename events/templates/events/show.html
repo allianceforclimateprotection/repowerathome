@@ -37,21 +37,24 @@
     </div>
      
     <div class="grid_3 omega">
-        {% if request.user == event.creator %}
-            <div class="box_one_top"></div>
-            <div class="box_one_middle">
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+            {% if request.user == event.creator %}
                 <p><a class="button" href="{% url event-edit event.id %}">Edit Event</a></p>
                 <p><a class="button" href="{% url event-guests event.id %}">Guest List</a></p>
                 <p><a class="button" href="{% url event-commitments event.id %}">Commitments</a></p>
-            </div>
-            <div class="box_one_bottom"></div>
-        {% else %}
-            <div class="box_one_top"></div>
-            <div class="box_one_middle">
+            {% else %}
                 <h3>RSVP</h3>
-                {% include "events/_rsvp_form.html" %}
-            </div>
-            <div class="box_one_bottom"></div>
-        {% endif %}
+                {% if guest.rsvp_status and not request.GET.reset %}
+                    <p>
+                        You are: <span>{{ guest.get_rsvp_status_display }}</span><br />
+                        (<a href="{% url event-show event.id %}?reset=true">change</a>)
+                    </p>
+                {% else %}
+                    {% include "events/_rsvp_form.html" %}
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="box_one_bottom"></div>
     </div>
 {% endblock %}
