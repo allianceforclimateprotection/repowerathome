@@ -1,14 +1,18 @@
 {% extends "rah/base.html" %}
-{% block content %}
-<h1>Search Repower at Home</h1>
-<div id="cse_search_results"></div>
-<script type="text/javascript">
-    var googleSearchIframeName = "cse_search_results";
-    var googleSearchFormName = "cse_search_box_form";
-    var googleSearchFrameWidth = 500;
-    var googleSearchDomain = "www.google.com";
-    var googleSearchPath = "/cse";
-</script>
-<script type="text/javascript" src="http://www.google.com/afsonline/show_afs_search.js"></script>
+{% block right_content %}
+<div class="box_three_top"></div>
+<div class="box_three_middle">
+    <h1>Search Repower at Home</h1>
+    <div id="cse_search_results"></div>
+    <script type="text/javascript">
+        var googleSearchIframeName = "cse_search_results";
+        var googleSearchFormName = "cse_search_box_form";
+        var googleSearchFrameWidth = 675;
+        var googleSearchDomain = "www.google.com";
+        var googleSearchPath = "/cse";
+    </script>
+    <script type="text/javascript" src="http://www.google.com/afsonline/show_afs_search.js"></script>
+</div>
+<div class="box_three_bottom"></div>
 {% endblock %}
 {% block js %}{% endblock %}
