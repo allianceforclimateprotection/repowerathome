@@ -4,6 +4,7 @@ import re
 from django import forms
 
 from geo.models import Location
+from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
@@ -83,9 +84,6 @@ class EventForm(forms.ModelForm):
         self.instance.creator = user
         self.instance.location = self.cleaned_data["location"]
         return super(EventForm, self).save(*args, **kwargs)
-        
-class RsvpForm(forms.Form):
-    rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
     
 class GuestInviteForm(InviteForm):
     emails = MultiEmailField(label="Email addresses", required=True, widget=forms.Textarea)
@@ -105,13 +103,12 @@ class GuestInviteForm(InviteForm):
         return guest_invites
 
 class GuestAddForm(forms.ModelForm):
-    name = forms.CharField()
     is_attending = forms.ChoiceField(choices=(("A", "Yes"), ("N", "No")),
         widget=forms.RadioSelect, label="Is this person planning on attending?", required=False)
         
     class Meta:
         model = Guest
-        fields = ("name", "email", "phone", "is_attending",)
+        fields = ("first_name", "last_name", "email", "phone", "is_attending",)
         
     def clean_is_attending(self):
         data = self.cleaned_data["is_attending"]
@@ -151,4 +148,37 @@ class GuestListForm(forms.Form):
     def save(self, *args, **kwargs):
         action = GuestListForm.ACTIONS[self.cleaned_data["action"]][1]
         return action(self.cleaned_data["guests"])
+        
+class RsvpForm(forms.ModelForm):
+    rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
+    token = forms.CharField(required=False, widget=forms.HiddenInput)
+    
+    class Meta:
+        model = Guest
+        fields = ("rsvp_status", "token",)
+        
+    def clean_token(self):
+        data = self.cleaned_data["token"]
+        event = self.instance.event
+        if event.is_private and not event.is_token_valid(data):
+            return forms.ValidationError("Invalid token")
+        return data
+
+    def save(self, request, *args, **kwargs):
+        guest = super(RsvpForm, self).save(*args, **kwargs)
+        guest.event.save_guest_in_session(request=request, guest=guest)
+        return guest
+
+class RsvpConfirmForm(forms.ModelForm):
+    first_name = forms.CharField(required=True, max_length=50)
+    email = forms.EmailField(required=True)
+    
+    class Meta:
+        model = Guest
+        fields = ("first_name", "last_name", "email", "phone",)
+        
+    def save(self, request, *args, **kwargs):
+        guest = super(RsvpConfirmForm, self).save(*args, **kwargs)
+        guest.event.save_guest_in_session(request=request, guest=guest)
+        return guest
                 

@@ -1,0 +1,17 @@
+{% extends "events/base.html" %}
+
+{% block right_content %}
+    <div class="grid_6 alpha">
+        <div class="box_three_top"></div>
+        <div class="box_three_middle">
+            <h2>Thanks for the RSVP</h2>
+            <p>We'll put you down as <span>{{ guest.get_rsvp_status_display }}</span></p>
+                <form action="{% url event-rsvp-confirm event.id %}" method="post">
+                    {{ form.as_p }}
+                    {% csrf_token %}
+                    <input type="submit" value="Confirm RSVP" />
+                </form>
+        </div>
+        <div class="box_three_bottom"></div>
+    </div>
+{% endblock %}

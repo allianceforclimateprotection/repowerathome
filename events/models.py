@@ -4,6 +4,8 @@ from django.utils.dateformat import DateFormat
 
 from django.db import models
 
+from invite.models import Invitation
+
 class EventType(models.Model):
     name = models.CharField(max_length=50, unique=True)
     teaser = models.CharField(max_length=150)
@@ -49,7 +51,40 @@ class Event(models.Model):
         
     def outstanding_invitations(self):
         return Guest.objects.filter(event=self, invited__isnull=False, rsvp_status="").count()
-    
+        
+    def is_token_valid(self):
+        try:
+            invite = Invitation.objects.get(token=token)
+            return invite.content_object == self
+        except Invitation.DoesNotExist:
+            return False
+            
+    def _guest_key(self):
+        return "event_%d_guest" % self.id
+            
+    def current_guest(self, request, token=None):
+        if request.user.is_authenticated():
+            try:
+             return Guest.objects.get(event=self, user=request.user)
+            except Guest.DoesNotExist:
+                pass
+        if self._guest_key() in request.session:
+            return request.session[self._guest_key()]
+        if token:
+            try:
+                invite = Invitation.objects.get(token=token)
+                guest = Guest.objects.get(event=self, email=invite.email)
+                if not guest.rsvp_status:
+                    return guest
+            except Invitation.DoesNotExist:
+                pass
+            except Guest.DoesNotExist:
+                pass
+        return Guest(event=self)
+        
+    def save_guest_in_session(self, request, guest):
+        request.session[self._guest_key()] = guest
+        
 class Guest(models.Model):
     RSVP_STATUSES = (
         ("A", "Attending",),
@@ -57,7 +92,8 @@ class Guest(models.Model):
         ("N", "Not Attending",),
     )
     event = models.ForeignKey(Event)
-    name = models.CharField(blank=True, max_length=100)
+    first_name = models.CharField(blank=True, max_length=50)
+    last_name = models.CharField(blank=True, max_length=50)
     email = models.EmailField(blank=True)
     phone = models.CharField(blank=True, max_length=12)
     invited = models.DateField(null=True, blank=True)
@@ -78,11 +114,29 @@ class Guest(models.Model):
             return "Added %s" % DateFormat(self.added).format("M j")
         raise AttributeError
         
+    def needs_more_info(self):
+        return not (self.user or (self.first_name and self.email))
+        
+    def get_full_name(self):
+        if self.first_name and self.last_name:
+            return "%s %s" % (self.first_name, self.last_name)
+        elif self.first_name:
+            return self.first_name
+        elif self.last_name:
+            return self.last_name
+        else:
+            return self.email
+            
     def __unicode__(self):
-        return self.name if self.name else self.email
+        return self.get_full_name()
         
 def make_creator_a_guest(sender, instance, **kwargs):
     creator = instance.creator
-    Guest.objects.create(event=instance, name=creator.get_full_name(), email=creator.email, 
-        added=datetime.date.today(), is_host=True, user=creator)
+    Guest.objects.create(event=instance, first_name=creator.first_name, last_name=creator.last_name, 
+        email=creator.email, added=datetime.date.today(), is_host=True, user=creator)
 models.signals.post_save.connect(make_creator_a_guest, sender=Event)
+
+def notification_on_rsvp(sender, instance, **kwargs):
+    if instance.rsvp_status and instance.notify_on_rsvp:
+        pass # send an email out to the creator
+models.signals.post_save.connect(notification_on_rsvp, sender=Guest)
