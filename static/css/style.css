@@ -320,6 +320,7 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
 .action_nugget_title {max-height:48px; overflow:hidden;}
 .action_nugget_teaser {max-height:54px; overflow:hidden;}
 .action_nugget_wrapper_three { width:729px;}
+.action_nugget_wrapper_two { width:486px;}
 #action_title { margin-bottom: 10px; }
 #action_details object {
     padding: 9px;
@@ -333,6 +334,7 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
     float: left;
     text-align: center; }
 .action_committment, .action_undo { font-size: 12px; }
+.action_complete_form input {margin-left:12px;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments Comments

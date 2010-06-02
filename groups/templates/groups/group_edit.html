@@ -1,21 +1,4 @@
-{% extends "rah/base.html" %}
-
-{% block left_sidebar %}
-    {% if requesters %}
-        <h2>Membership Requests</h2>
-        <ul>
-            {% for requester in requesters %}
-                <li class="membership_request">
-                    {% safe_user_link requester %} would like to join
-                    <div class="membership_tools">
-                        <a href="{% url group_approve group.id requester.id %}">Approve</a> or 
-                        <a href="{% url group_deny group.id requester.id %}">Deny</a>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endblock %}
+{% extends "groups/base.html" %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
     <a href="{% url group_list %}">Teams</a> &rsaquo;
@@ -23,42 +6,68 @@
     Edit Team
 {% endblock %}
 {% block right_content %}
-    <div id="group_edit_tabs" class="tabs">
-        <ul>
-            <li><a href="#group_tab">Team</a></li>
-            <li><a href="#members_tab">Members</a></li>
-            <li><a href="#discussions_tab">Discussions</a></li>
-        </ul>
-        <div id="group_tab">
-            <form id="group_form" action="" method="post" enctype="multipart/form-data">
-                {% with group_form as form %}
-                    {% include "groups/_group_form.html" %}
-                {% endwith %}
-                    <p><input type="submit" name="change_group" value="Save Settings"></input></p>
-                {% csrf_token %}
-            </form>
-            <form id="delete_group_form" action="" method="post">
-                <h3>Delete Team</h3>
-                <p>Deleting a team will immediately remove it from our system.<br/>Teams cannot be undeleted.</p>
-                <p><input type="submit" name="delete_group" value="Delete Team"></input></p>
-                {% csrf_token %}
-            </form>
+    <div class="grid_6 alpha">
+        <div class="box_two_top"></div>
+        <div class="box_two_middle">
+            <div class="tabs" id="group_edit_tabs">
+                <ul>
+                    <li><a href="#group_tab">Team</a></li>
+                    <li><a href="#members_tab">Members</a></li>
+                    <li><a href="#discussions_tab">Discussions</a></li>
+                </ul>
+                <div id="group_tab">
+                    <form id="group_form" action="" method="post" enctype="multipart/form-data">
+                        {% with group_form as form %}
+                            {% include "groups/_group_form.html" %}
+                        {% endwith %}
+                            <p><input type="submit" name="change_group" value="Save Settings"></input></p>
+                        {% csrf_token %}
+                    </form>
+                    <form id="delete_group_form" action="" method="post">
+                        <h3>Delete Team</h3>
+                        <p>Deleting a team will immediately remove it from our system.<br/>Teams cannot be undeleted.</p>
+                        <p><input type="submit" name="delete_group" value="Delete Team"></input></p>
+                        {% csrf_token %}
+                    </form>
+                </div>
+                <div id="members_tab">
+                    <form id="membership_form" action="" method="post">
+                        {% with membership_form as form %}
+                            {% include "groups/_membership_form.html" %}
+                        {% endwith %}
+                        {% csrf_token %}
+                    </form>
+                </div>
+                <div id="discussions_tab">
+                    <form action="" method="post">
+                        {{discussions_form.as_p}}
+                        <p><input type="submit" name="discussion_settings" value="Save Discussion Settings"></input></p>
+                        {% csrf_token %}
+                    </form>
+                </div>
+            </div>
         </div>
-        <div id="members_tab">
-            <form id="membership_form" action="" method="post">
-                {% with membership_form as form %}
-                    {% include "groups/_membership_form.html" %}
-                {% endwith %}
-                {% csrf_token %}
-            </form>
+        <div class="box_two_bottom"></div>
+    </div>
+    <div class="grid_3 omega">
+        {% if requesters %}
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+                <h4>Membership Requests</h4>
+                <ul>
+                    {% for requester in requesters %}
+                        <li class="membership_request">
+                            {% safe_user_link requester %} would like to join
+                            <div class="membership_tools">
+                                <a href="{% url group_approve group.id requester.id %}">Approve</a> or 
+                                <a href="{% url group_deny group.id requester.id %}">Deny</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
         </div>
-        <div id="discussions_tab">
-            <form action="" method="post">
-                {{discussions_form.as_p}}
-                <p><input type="submit" name="discussion_settings" value="Save Discussion Settings"></input></p>
-                {% csrf_token %}
-            </form>
-        </div>
+        <div class="box_one_bottom"></div>
+        {% endif %}
     </div>
 {% endblock %}
 

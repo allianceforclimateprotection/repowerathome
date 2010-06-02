@@ -1,16 +1,5 @@
-{% extends "rah/base.html" %}
+{% extends "actions/base.html" %}
 {% load dated_static %}
-
-{% block left_sidebar %}
-    {#     {% for tag in tags %} #}
-    {#         <li {% if forloop.last %} class="minor_nav_last"{% endif %}> #}
-    {#             <span class="icon_gt"></span> #}
-    {#             <a href='{% url action_tag tag %}#action_show'> #}
-    {#                 {{ tag.name|deslug }} ({{ tag.count }}) #}
-    {#             </a> #}
-    {#         </li> #}
-    {#     {% endfor %} #}
-{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
     {% if tag_filter %}
@@ -23,7 +12,7 @@
 {% block right_content %}
     <div class="box_three_top"></div>
     <div class="box_three_middle">
-        <img src="{% dated_static 'images/theme/actions.jpg' %}" alt="benefits" width="675"/>
+        <img src="{% dated_static 'images/theme/actions.jpg' %}" alt="benefits" width="675" height="290"/>
     </div>
     <div class="box_three_bottom"></div>
     
@@ -33,5 +22,12 @@
         {% endfor %}
     </div>
 {% endblock %}
-
+{#     {% for tag in tags %} #}
+{#         <li {% if forloop.last %} class="minor_nav_last"{% endif %}> #}
+{#             <span class="icon_gt"></span> #}
+{#             <a href='{% url action_tag tag %}#action_show'> #}
+{#                 {{ tag.name|deslug }} ({{ tag.count }}) #}
+{#             </a> #}
+{#         </li> #}
+{#     {% endfor %} #}
 {% block js %}page_action_show{% endblock %}

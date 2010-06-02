@@ -44,7 +44,8 @@ def index(request):
         'total_points': request.user.get_profile().total_points,
         'committed': committed,
         'completed': completed,
-        'recommended': recommended[:6], # Hack to only show 6 "recommended" actions
+        # 'recommended': recommended[:6], # Hack to only show 3 "recommended" actions
+        'featured_actions': Action.objects.filter(id__in=[18,23]).order_by("-id"),
         'house_party_form': HousePartyForm(request.user),
         'twitter_status_form': twitter_form,
         'commitment_list': UserActionProgress.objects.commitments_for_user(request.user),

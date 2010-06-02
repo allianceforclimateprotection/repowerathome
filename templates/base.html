@@ -40,7 +40,7 @@
                     </form>
                     <div id="nav">
                         <a href="{% url index %}" id="nav_home">Home</a>
-                        <a href="{% url action_show %}" id="nav_actions">Actions</a>
+                        <a href="{% url action_show %}" id="nav_actions" >Actions</a>
                         <a href="{% url group_list %}" id="nav_teams">Teams</a>
                         <a href="{% url blog_index %}" id="nav_blog">Blog</a>
                         <a href="{% url rah.views.feedback %}" id="nav_feedback" class="feedback_link">Feedback</a>
@@ -57,7 +57,6 @@
                                 {% block tongue %}
                                     {% include "rah/_tongue.html" %}
                                 {% endblock tongue %}
-                                {% block left_sidebar %}{% endblock left_sidebar %}
                             </div>
                             <div class="grid_9 omega">
                                 <div id="breadcrumbs">{% block breadcrumbs %}{% endblock breadcrumbs %}</div>
@@ -85,6 +84,7 @@
         <script type="text/javascript" charset="utf-8">
             var rah_name = "{% block js %}{% endblock %}";
             var media_url = "{{ MEDIA_URL }}"; // contains trailing slash
+            var rah_nav_select = "{% block rah_nav_select %}{% endblock %}";
         </script>
         {% if debug %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/js_libs.js' %}"></script>

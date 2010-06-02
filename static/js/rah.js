@@ -7,7 +7,9 @@ $(document).ready(function() {
         try{
             rah[rah_name].init();
         }catch(err){
-            console.error(err);
+            if(typeof(console) !== 'undefined' && console != null) {
+                console.log("No page specific javascript was run.");
+            }
         }
     }
 });
@@ -31,6 +33,11 @@ var rah = {
             
             // setup tabs
             $(".tabs").tabs();
+            
+            // Highlight the right nav option if specified
+            if(typeof(rah_nav_select) !== 'undefined' && rah_nav_select != '') {
+                $("#" + rah_nav_select).addClass("selected");
+            }
             
             // style some submit buttons as links
             $(".as_link[type='submit']").each(function(){

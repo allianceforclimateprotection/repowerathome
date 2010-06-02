@@ -23,7 +23,7 @@
                 <tr>
                     <td><input name="memberships" value="{{ membership.pk }}" type="checkbox"></input></td>
                     <td>{% safe_user_link membership.user %}</td>
-                    <td>{{ membership.created }}</td>
+                    <td>{{ membership.created|date }}</td>
                     <td>{% if membership.is_manager %}Manager{% else %}Regular Member{% endif %}</td>
                 </tr>
             {% endfor %}
