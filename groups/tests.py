@@ -155,7 +155,7 @@ class GroupDiscViews(TestCase):
         # try to remove as an anon user
         self.client.logout()
         response = self.client.post(self.urls['d1_remove'], {'is_removed': True}, follow=True)
-        self.assertRedirects(response, "/login/?next=%2Fteams%2Fyankees%2Fdiscussions%2F1%2Fremove")
+        self.assertRedirects(response, "/login/?next=%2Fteams%2Fyankees%2Fdiscussions%2F1%2Fremove%2F")
         disc = Discussion.objects.get(pk=1)
         self.failUnlessEqual(disc.is_removed, False)
         

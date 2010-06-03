@@ -66,7 +66,7 @@ class Flag(models.Model):
         unique_together = ("content_type", "object_pk", "user",)
         
     def __unicode__(self):
-        return u"%s has flagged %s" % (self.user, self.content_object)
+        return u"%s has flagged %s" % (self.user.get_full_name(), self.content_object)
         
 def inform_feedback_of_flag(sender, instance, **kwargs):
     template = loader.get_template("flagged/email.html")
