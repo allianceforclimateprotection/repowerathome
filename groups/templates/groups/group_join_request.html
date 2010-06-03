@@ -1,6 +1,6 @@
 <p>
     Hi all,<br />
-    Your group, {{ group }}, is all the rage right now. {{ user.get_full_name }} <br />
+    Your team, {{ group }}, is all the rage right now. {{ user.get_full_name }} <br />
     ({{ user.email }}) just requested to join.
 </p>
 <p>
@@ -8,12 +8,12 @@
     or <a href="http://{{ domain }}{% url group_deny group.id user.id %}">deny</a> the request
 </p>
 <p>
-    Thanks for steering your group towards a more efficient future!
+    Thanks for steering your team towards a more efficient future!
 </p>
 <p>
-    Remember, {{ group }} is a closed group. Anyone who wants to join the <br />
-    group has to get your nod first. To make it open, 
-    <a href="http://{{ domain }}{% url group_edit group.slug %}">modify your group setting.</a>
+    Remember, {{ group }} is a closed team. Anyone who wants to join the <br />
+    team has to get your nod first. To make it open, 
+    <a href="http://{{ domain }}{% url group_edit group.slug %}">modify your team setting.</a>
 </p>
 <p>
     Kudos,<br />

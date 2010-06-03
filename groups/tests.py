@@ -681,7 +681,7 @@ class GroupJoinViewTest(TestCase):
         self.failUnless(MembershipRequests.objects.filter(user=self.user, group=self.group).exists())
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, [manager.email])
-        self.failUnlessEqual(email.subject, "Group Join Request")
+        self.failUnlessEqual(email.subject, "Team Join Request")
 
 class GroupMembershipRequestViewTest(object):
     def setUp(self):
@@ -746,7 +746,7 @@ class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
         self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), True)
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, [self.requester.email])
-        self.failUnlessEqual(email.subject, "Group Membership Response")
+        self.failUnlessEqual(email.subject, "Team Membership Response")
         self.failUnless("approved your access" in email.body)
         
 
@@ -767,7 +767,7 @@ class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
         self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), False)
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, [self.requester.email])
-        self.failUnlessEqual(email.subject, "Group Membership Response")
+        self.failUnlessEqual(email.subject, "Team Membership Response")
         self.failUnless("turned down" in email.body)
 
 class GroupDetailViewTest(TestCase):
