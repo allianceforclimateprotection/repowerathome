@@ -20,7 +20,7 @@
         	    {% csrf_token %}
         	</form>
         	<p>
-    	        Already have an account? <a href="{% url login %}">Log in</a>
+    	        Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
     	    </p>
         </div>
         <div class="box_two_bottom"></div>
