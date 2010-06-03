@@ -34,7 +34,7 @@
             {% if progress.date_committed and not progress.is_completed %}
                 <h2>Commitment</h2>
                 <p>
-                    You committed to complete this action by {{ progress.date_committed }}. 
+                    You committed to complete this action by {{ progress.date_committed|date }}. 
                     (<a href="#" class="commit_trigger">change date</a> or 
                     <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
                 </p>
