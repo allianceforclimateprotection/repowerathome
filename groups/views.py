@@ -45,11 +45,11 @@ def group_leave(request, group_id):
     if request.user.id in group.users.all().values_list("id", flat=True):
         if group.has_other_managers(request.user):
             GroupUsers.objects.filter(group=group, user=request.user).delete()
-            messages.success(request, "You have been removed from group %s" % group)
+            messages.success(request, "You have been removed from team %s" % group)
         else:
-            messages.error(request, "You can not leave the group, until you've assigned someone else to be manager.", extra_tags="sticky")
+            messages.error(request, "You can not leave the team, until you've assigned someone else to be manager.", extra_tags="sticky")
     else:
-        messages.error(request, "You can not leave a group your not a member of")
+        messages.error(request, "You can not leave a team your not a member of")
     return redirect("group_detail", group_slug=group.slug)
     
 @login_required
@@ -63,13 +63,13 @@ def group_join(request, group_id):
         return redirect("group_detail", group_slug=group.slug)
     if group.is_public():
         GroupUsers.objects.create(group=group, user=request.user, is_manager=False)
-        messages.success(request, "You have successfully joined group %s" % group, extra_tags="sticky")
+        messages.success(request, "You have successfully joined team %s" % group, extra_tags="sticky")
     else:
         template = loader.get_template("groups/group_join_request.html")
         context = { "user": request.user, "group": group, "domain": Site.objects.get_current().domain, }
         manager_emails = [user_dict["email"] for user_dict in User.objects.filter(group=group, groupusers__is_manager=True).values("email")]
         try:
-            msg = EmailMessage("Group Join Request", template.render(Context(context)), None, manager_emails)
+            msg = EmailMessage("Team Join Request", template.render(Context(context)), None, manager_emails)
             msg.content_subtype = "html"
             msg.send()
             MembershipRequests.objects.create(group=group, user=request.user)
@@ -90,19 +90,19 @@ def group_membership_request(request, group_id, user_id, action):
             GroupUsers.objects.create(group=group, user=user, is_manager=False)
             membership_request.delete()
             if __send_response_email(request, group, user, True):
-                messages.success(request, "%s has been added to the group" % user.get_full_name())
+                messages.success(request, "%s has been added to the team" % user.get_full_name())
         elif action == "deny":
             membership_request.delete()
             if __send_response_email(request, group, user, False):
-                messages.success(request, "%s has been denied access to the group" % user.get_full_name())
+                messages.success(request, "%s has been denied access to the team" % user.get_full_name())
     else:
-        messages.error(request, "%s has not requested to join this group" % user.get_full_name())
+        messages.error(request, "%s has not requested to join this team" % user.get_full_name())
     return redirect("group_detail", group_slug=group.slug)
     
 def __send_response_email(request, group, user, approved):
     template = loader.get_template("groups/group_membership_response.html")
     context = { "approved": approved, "group": group, "domain": Site.objects.get_current().domain, "user": user, }
-    msg = EmailMessage("Group Membership Response", template.render(Context(context)), None, [user.email])
+    msg = EmailMessage("Team Membership Response", template.render(Context(context)), None, [user.email])
     msg.content_subtype = "html"
     try:
         msg.send()
