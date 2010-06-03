@@ -3,6 +3,8 @@
     {{ discussion.user.get_full_name }} has posted a new discussion, {{ discussion.subject }}, on your
     {{ discussion.group }}'s team page. 
 </p>
+<h2>{{ discussion.subject }}</h2>
+{{ discussion.body|linebreaks }}
 <p>
     <a href="http://{{ domain }}{{ discussion.get_absolute_url }}">Click here to check it out</a> 
 </p>

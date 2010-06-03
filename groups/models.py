@@ -293,7 +293,7 @@ class Discussion(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        return ("group_disc_detail", [self.group.slug, self.id])
+        return ("group_disc_detail", [self.group.slug, self.parent_id if self.parent_id else self.id])
 
 """
 Signals!
