@@ -533,26 +533,9 @@ var rah = {
     
     page_group_create: {
         init: function() {
-            $("#id_slug").change(function() {
-                $(this).data("changed", true);
-            });
-
-            $("#id_name").keyup(function() {
-                var slug = $("#id_slug");
-                if(!slug.data("changed")) {
-                    slug.focus();
-                    slug.val(URLify($(this).val(), 50));
-                    slug.blur();
-                    $(this).focus();
-                }
-            });
-            
-            $("#group_create_form").validate({
-                rules: {
-                    name: { required: true },
-                    slug: { required: true },
-                    description: { required: true }
-                }
+            $("#id_slug").prepopulate($("#id_name"), 32);
+            $("#id_name").focus(function(){
+                $("#group_slug_address label.inside").removeClass("inside");
             });
         }
     },
