@@ -1,5 +1,5 @@
 <div class="{% if not disc.is_public %}unapproved{% endif %}">
-	{% if disc.is_public or is_manager or disc.user.id == user.id %}
+    {% if disc.is_public or is_manager or disc.user.id == user.id %}
         <div class="grid_6 alpha comment_wrapper">
             <div class="box_two_top"></div>
             <div class="box_two_middle comment">
@@ -15,19 +15,19 @@
                     {{ disc.created|date:"DATETIME_FORMAT" }}
                 </span>
                 {% if not disc.is_public and is_manager %}
-        			<form action="{% url group_disc_approve group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
-        				{{approve_form.as_p}}
-        				<p><input type="submit" value="Approve"/></p>
-        				{% csrf_token %}
-        			</form>
-        		{% endif %}
-        		{% if is_manager %}
-        			<form action="{% url group_disc_remove group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
-        				{{remove_form.as_p}}
-        				<p><input class="as_link" type="submit" value="Remove"/></p>
-        				{% csrf_token %}
-        			</form>
-        		{% endif %}
+                    <form action="{% url group_disc_approve group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
+                        {{approve_form.as_p}}
+                        <p><input type="submit" value="Approve"/></p>
+                        {% csrf_token %}
+                    </form>
+                {% endif %}
+                {% if is_manager %}
+                    <form action="{% url group_disc_remove group_slug=group.slug,disc_id=disc.id %}" method="post" accept-charset="utf-8">
+                        {{remove_form.as_p}}
+                        <p><input class="as_link" type="submit" value="Remove"/></p>
+                        {% csrf_token %}
+                    </form>
+                {% endif %}
             </div>
         </div>
         <div class="grid_3 omega">
@@ -37,7 +37,7 @@
                 {% safe_user_link disc.user %}
             </div>
         </div>
-	{% endif %}
+    {% endif %}
 </div>
 <br class="clear" />
 <br class="clear" />

@@ -1,6 +1,6 @@
 <form action="{% url group_disc_create group.slug %}" method="post" accept-charset="utf-8">
-	{% for field in disc_form %}
-	    {% if field.is_hidden %}
+    {% for field in disc_form %}
+        {% if field.is_hidden %}
             {{ field }}
         {% else %}
             {% if field.name == "subject" or field.name == "body" %}
@@ -14,6 +14,6 @@
             {% endif %}
         {% endif %}
     {% endfor %}
-	<p><input type="submit" value="Submit"/></p>
-	{% csrf_token %}
+    <p><input type="submit" value="Submit"/></p>
+    {% csrf_token %}
 </form>

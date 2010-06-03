@@ -47,24 +47,24 @@
     <div class="box_two_top"></div>
     <div class="box_two_middle">
         {% if not group.is_geo_group %}
-        	<h2>Discussions</h2>
-        	<div class="group_disc_box_links">
-        		{% if is_poster %}
-        			<a href="{% url group_disc_create group.slug %}">New discussion</a> 
-        		{% endif %}
-        		{% if is_poster and discs %}
+            <h2>Discussions</h2>
+            <div class="group_disc_box_links">
+                {% if is_poster %}
+                    <a href="{% url group_disc_create group.slug %}">New discussion</a> 
+                {% endif %}
+                {% if is_poster and discs %}
                     |
-        		{% endif %}
-            	{% if discs %}
-        			<a href="{% url group_disc_list group.slug %}">Archive</a>	
-        		{% endif %}
-        	</div>    		
-    		{% if discs %}
-    			{% include "groups/_group_disc_list.html" %}
-    		{% else %}
-    		    <em>No discussions yet.</em>
-    		{% endif %}
-    	{% endif %}
+                {% endif %}
+                {% if discs %}
+                    <a href="{% url group_disc_list group.slug %}">Archive</a>    
+                {% endif %}
+            </div>            
+            {% if discs %}
+                {% include "groups/_group_disc_list.html" %}
+            {% else %}
+                <em>No discussions yet.</em>
+            {% endif %}
+        {% endif %}
     </div>
     <div class="box_two_bottom"></div>
     
