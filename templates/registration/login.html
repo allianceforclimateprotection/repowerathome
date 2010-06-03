@@ -20,9 +20,8 @@
         		<p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
         	</form>
         	<p>
-    	        Don't have an account? <a href="{% url rah.views.register %}">Sign up</a><br/>
+    	        Don't have an account? <a href="{% url rah.views.register %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Sign up</a><br/>
     	        <a href="{% url password_reset %}">Recover password</a>
-    	        
     	    </p>
         </div>
         <div class="box_two_bottom"></div>
