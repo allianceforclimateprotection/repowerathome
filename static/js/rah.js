@@ -55,7 +55,7 @@ var rah = {
             });
             
             // Hide the nav text content
-            $(".nav a").text("");
+            $("#nav a").text("");
             
             // Setup Feedback dialog
             $("#feedback_dialog").dialog({

@@ -25,14 +25,15 @@ legend{color:#000;}
 /* ---------------------------------------------------------------------------------------------------------------------
 Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors 
 --------------------------------------------------------------------------------------------------------------------- */
-.beige { color: #e3ec9f;}
-.blue { color: #172950;}
-.red { color: #c3262f;}
-.blue_light { color: #5bbcca;}
-.orange { color: #ed6623;}
-.yellow { color: #ffc20e;}
-.green { color: #93c139;}
-.grey { color: #333; }
+.beige      { color: #e3ec9f; }
+.blue       { color: #172950; }
+.red        { color: #c3262f; }
+.blue_light { color: #5bbcca; }
+.orange     { color: #ed6623; }
+.yellow     { color: #ffc20e; }
+.green      { color: #93c139; }
+.grey       { color: #333333; }
+.grey_light { color: #C1C1C1; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements 
@@ -130,13 +131,10 @@ a.button:hover { color: white; }
     color: #C1C1C1;
     top: 31px;
     left: 11px;}
-
 .overset_form_message[class~="error"] {
     color: #DE6060;
     background-color: transparent;
     width: 320px;}
-
-
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages 
@@ -188,20 +186,20 @@ Header Header Header Header Header Header Header Header Header Header Header Hea
 #header{position:relative;}
 #header_logo { position:absolute; left: 322px; top:12px; }
 #header #cse_search_box_form{ position:absolute; right:0px; top:15px; }
-#cse_search_box_form label.inside {
+#cse_search_box_form label.inside{
     font-family: "superclarendon-1", "superclarendon-2", serif;
     font-weight: 700;
     font-style: normal;
     color: #C1C1C1;
-    font-size: 16px;
+    font-size: 18px;
     position: absolute;
     display: block;
-    top: -1px;
-    left: 11px; }
+    top: 6px;
+    left: 9px; }
 #cse_search_box{
-    font-size:14px;
-    color:#9ac059;
-    padding:3px 10px;
+    font-size:18px;
+    color:#333;
+    padding:2px 10px;
     width:180px;
     border:1px solid #638a19;
     background: #e2eb9d url(../images/theme/0000000002_input_text_search_background.png) repeat-x; }
@@ -228,8 +226,8 @@ Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners 
 /* ---------------------------------------------------------------------------------------------------------------------
 Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation 
 --------------------------------------------------------------------------------------------------------------------- */
-#nav{ position:absolute; font-size:0px; top:64px; left:175px; }
-#nav a{color:#e3ec9f; display:block; height:46px; float:left;}
+#nav{ position:absolute; top:64px; left:175px; }
+#nav a{ display:block; height:46px; font-size:0px; float:left; color: #e3ec9f;}
 #nav a:hover{color:#e3ec9f;}
 #nav_home{width:125px; background: url(../images/theme/0000000002_nav_sprite.png) -160px 92px;}
 #nav_home:hover{background-position: -160px 46px;}
