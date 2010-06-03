@@ -10,7 +10,7 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader, Context
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.sites.models import Site
@@ -44,7 +44,6 @@ def index(request):
         'total_points': request.user.get_profile().total_points,
         'committed': committed,
         'completed': completed,
-        # 'recommended': recommended[:6], # Hack to only show 3 "recommended" actions
         'featured_actions': Action.objects.filter(id__in=[18,23]).order_by("-id"),
         'house_party_form': HousePartyForm(request.user),
         'twitter_status_form': twitter_form,
@@ -131,7 +130,8 @@ def register(request):
         'login_form': AuthenticationForm()
     }, context_instance=RequestContext(request))
 
-@csrf_protect
+@csrf_exempt
+# TODO: Use an ajax request to login from the tongue because CSRF is not being used for this view
 def login(request, template_name='registration/login.html',
           redirect_field_name=REDIRECT_FIELD_NAME,
           authentication_form=AuthenticationForm):
