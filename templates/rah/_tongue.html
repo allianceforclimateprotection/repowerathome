@@ -3,7 +3,7 @@
     {% if user.is_authenticated %}
         {% with request.user.get_profile as profile %}
         <a href="{% url profile profile.user.id %}" title="View your profile">
-            <img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar"/>
+            <img class='gravatar' src="{{ profile.get_gravatar_url }}" alt="user gravatar" width="52" height="52"/>
         </a>
         <div id="tongue_username">
             <a href="{% url profile profile.user.id %}" title="View your profile">{{ profile.user.get_full_name }}</a>

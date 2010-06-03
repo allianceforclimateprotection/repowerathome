@@ -46,7 +46,7 @@ class Profile(models.Model):
         return u'%s' % (self.user.email)
 
     def get_gravatar_url(self, default_icon='identicon'):
-        return 'http://www.gravatar.com/avatar/%s?r=g&d=%s' % (self._email_hash(), default_icon)
+        return 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=52' % (self._email_hash(), default_icon)
     
     def get_gravatar_url_large(self, default_icon='identicon'):
         # TODO: Write unit test for get_gravatar_url_large
