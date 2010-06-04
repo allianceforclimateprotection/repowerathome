@@ -5,9 +5,9 @@
         <div class="box_two_top"></div>
         <div class="box_two_middle">
             <h1>{{ event }}</h1>
-            <h3>Guests Confirmed: {{ event.confirmed_guests }}</h3>
+            <h3>Total Guests: {{ event.confirmed_guests }}</h3>
             <h3>Outstanding Invitations: {{ event.outstanding_invitations }}</h3>
-            <form action="{% url event-guests event.id %}" method="post">
+            <form action="" method="post">
                 {{ form.errors }}
                 {{ form.action }}
                 <table>
@@ -40,16 +40,7 @@
     </div>
  
     <div class="grid_3 omega">
-        {% if request.user == event.creator %}
-            <div class="box_one_top"></div>
-            <div class="box_one_middle">
-                <p><a class="button" href="{% url event-edit event.id %}">Edit Event</a></p>
-                <p><a class="button" href="{% url event-guests event.id %}">Guest List</a></p>
-                <p><a class="button" href="{% url event-commitments event.id %}">Commitments</a></p>
-            </div>
-            <div class="box_one_bottom"></div>
-        {% endif %}
-        
+        {% include "events/_manager_links.html" %}
         <div class="box_one_top"></div>
         <div class="box_one_middle">
             <p><a class="button" href="{% url event-guests-add event.id %}">Add Guest</a></p>

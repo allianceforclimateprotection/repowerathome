@@ -14,7 +14,7 @@ from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
-from models import Event, Guest
+from models import Event, Guest, Commitment
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
@@ -101,8 +101,11 @@ class GuestInviteForm(InviteForm):
         event = self.instance.content_object
         rsvp_notification = self.cleaned_data["rsvp_notification"]
         for email in self.cleaned_data["emails"]:
-            guest_invites.append(Guest.objects.create(event=event, email=email, 
-                invited=datetime.date.today(), notify_on_rsvp=rsvp_notification))
+            guest, created = Guest.objects.get_or_create(event=event, email=email, 
+                defaults={"invited":datetime.date.today()})
+            guest.notify_on_rsvp = rsvp_notification
+            guest.save()
+            guest_invites.append(guest)
         if self.cleaned_data["copy_me"]:
             self.cleaned_data["emails"].append(self.instance.user.email)
         super(GuestInviteForm, self).save(*args, **kwargs)
@@ -233,3 +236,8 @@ class RsvpAccountForm(forms.ModelForm):
         guest = super(RsvpAccountForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
         return guest
+        
+class CommitmentCardForm(forms.ModelForm):
+    class Meta:
+        model = Commitment
+        fields = ("done", "pledge", "challenge", "guest",)

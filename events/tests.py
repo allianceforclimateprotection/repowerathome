@@ -226,11 +226,19 @@ class EventEditViewTest(TestCase):
             self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
             self.event_type = EventType.objects.get(pk=1)
             self.event = Event.objects.get(pk=1)
+            self.event.creator = self.user
+            self.event.save()
             self.event_edit_url = reverse("event-edit", args=[self.event.id])
             
         def test_login_required(self):
             response = self.client.get(self.event_edit_url, follow=True)
             self.failUnlessEqual(response.template[0].name, "registration/login.html")
+            
+        def test_no_permissions(self):
+            self.hacker = User.objects.create_user(username="2", email="hacker@test.com", password="test")
+            self.client.login(username="hacker@test.com", password="test")
+            response = self.client.get(self.event_edit_url, follow=True)
+            self.failUnlessEqual(response.status_code, 403)
             
         def test_get(self):
             self.client.login(username="test@test.com", password="test")
@@ -289,18 +297,26 @@ class EventGuestsViewTest(TestCase):
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
         self.event_type = EventType.objects.get(pk=1)
         self.event = Event.objects.get(pk=1)
+        self.event.creator = self.user
+        self.event.save()
         self.event_guests_url = reverse("event-guests", args=[self.event.id])
 
     def test_login_required(self):
         response = self.client.get(self.event_guests_url, follow=True)
         self.failUnlessEqual(response.template[0].name, "registration/login.html")
         
+    def test_no_permissions(self):
+        self.hacker = User.objects.create_user(username="2", email="hacker@test.com", password="test")
+        self.client.login(username="hacker@test.com", password="test")
+        response = self.client.get(self.event_guests_url, follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+        
     def test_get(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.get(self.event_guests_url, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests.html")
         guests = response.context["event"].guest_set.all()
-        self.failUnlessEqual(len(guests), 6)
+        self.failUnlessEqual(len(guests), 7)
         
     def test_missing_required(self):
         self.client.login(username="test@test.com", password="test")

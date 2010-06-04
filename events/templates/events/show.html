@@ -37,13 +37,11 @@
     </div>
      
     <div class="grid_3 omega">
-        <div class="box_one_top"></div>
-        <div class="box_one_middle">
-            {% if request.user == event.creator %}
-                <p><a class="button" href="{% url event-edit event.id %}">Edit Event</a></p>
-                <p><a class="button" href="{% url event-guests event.id %}">Guest List</a></p>
-                <p><a class="button" href="{% url event-commitments event.id %}">Commitments</a></p>
-            {% else %}
+        {% if request.user == event.creator %}
+            {% include "events/_manager_links.html" %}
+        {% else %}
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
                 <h3>RSVP</h3>
                 {% if guest.rsvp_status and not request.GET.reset %}
                     <p>
@@ -53,8 +51,8 @@
                 {% else %}
                     {% include "events/_rsvp_form.html" %}
                 {% endif %}
-            {% endif %}
-        </div>
-        <div class="box_one_bottom"></div>
+                </div>
+                <div class="box_one_bottom"></div>
+        {% endif %}
     </div>
 {% endblock %}

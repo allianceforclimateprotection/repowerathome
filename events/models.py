@@ -58,6 +58,9 @@ class Event(models.Model):
     def confirmed_guests(self):
         return Guest.objects.filter(event=self, rsvp_status="A").count()
         
+    def attendees(self):
+        return Guest.objects.filter(event=self, rsvp_status="A")
+        
     def outstanding_invitations(self):
         return Guest.objects.filter(event=self, invited__isnull=False, rsvp_status="").count()
         
@@ -94,6 +97,10 @@ class Event(models.Model):
     def save_guest_in_session(self, request, guest):
         request.session[self._guest_key()] = guest
         
+class GuestManager(models.Manager):
+    def create_or_update(self, *args, **kwargs):
+        pass
+        
 class Guest(models.Model):
     RSVP_STATUSES = (
         ("A", "Attending",),
@@ -113,6 +120,9 @@ class Guest(models.Model):
     user = models.ForeignKey("auth.User", null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = (("event", "email",),("event", "user",),)
     
     def status(self):
         if self.rsvp_status:
@@ -139,10 +149,30 @@ class Guest(models.Model):
     def __unicode__(self):
         return self.get_full_name()
         
+class Challenge(models.Model):
+    name = models.CharField(max_length=100)
+    order = models.PositiveIntegerField(unique=True)
+    is_active = models.BooleanField(default=True)
+    action = models.ForeignKey("actions.Action", null=True)
+    guests = models.ManyToManyField(Guest, through="Commitment")
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    def __unicode__(self):
+        return self.name
+        
+class Commitment(models.Model):
+    guest = models.ForeignKey(Guest)
+    challenge = models.ForeignKey(Challenge)
+    done = models.BooleanField(default=False)
+    pledge = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
 def make_creator_a_guest(sender, instance, **kwargs):
     creator = instance.creator
-    Guest.objects.create(event=instance, first_name=creator.first_name, last_name=creator.last_name, 
-        email=creator.email, added=datetime.date.today(), is_host=True, user=creator)
+    Guest.objects.get_or_create(event=instance, user=creator, defaults={"first_name":creator.first_name, 
+        "last_name":creator.last_name, "email":creator.email, "added":datetime.date.today(), "is_host":True})
 models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 
 def notification_on_rsvp(sender, instance, **kwargs):
