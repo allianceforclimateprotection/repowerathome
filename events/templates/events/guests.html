@@ -24,7 +24,10 @@
                     {% for guest in form.guests.field.choices.queryset %}
                         <tr>
                             <td><input type="checkbox" name="guests" value="{{ guest.id }}" /></td>
-                            <td>{{ guest.name }} {% if guest.is_host %}(host){% endif %}</td>
+                            <td>
+                                {% if guest.user %}{% safe_user_link guest.user %}{% else %}{{ guest.name }}{% endif %}
+                                {% if guest.is_host %}(host){% endif %}
+                            </td>
                             <td>{{ guest.email }}</td>
                             <td>{{ guest.phone }}</td>
                             <td>{{ guest.status }}</td>
