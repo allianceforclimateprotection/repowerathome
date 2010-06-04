@@ -10,18 +10,18 @@
     <div class="prefix_3">
         <div class="box_two_top"></div>
         <div class="box_two_middle">
-        	<form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
-        		<h1>Create an account</h1>
-        		{% with register_form as form %}
-        	    	{% include "rah/_overset_form.html" %}
-        		{% endwith %}
-        		<p><input type="submit" value="Register" id="register_submit"/></p>
-        	    <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
-        	    {% csrf_token %}
-        	</form>
-        	<p>
-    	        Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
-    	    </p>
+            <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
+                <h1>Create an account</h1>
+                {% with register_form as form %}
+                    {% include "rah/_overset_form.html" %}
+                {% endwith %}
+                <p><input type="submit" value="Register" id="register_submit"/></p>
+                <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
+                {% csrf_token %}
+            </form>
+            <p>
+                Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
+            </p>
         </div>
         <div class="box_two_bottom"></div>
     </div>

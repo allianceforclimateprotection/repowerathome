@@ -20,10 +20,10 @@
         <div class="action_nugget_points">{{ action.points }} Points</div>
         {% if action.has_illustration %}
             <a href="{% url action_detail action.slug %}">
-        	    <img src="{{ action.get_nugget_illustration }}" alt="{{action.name}} illustration" height="48" width="189"/>
-        	</a>
-        {% endif %}	
-	
+                <img src="{{ action.get_nugget_illustration }}" alt="{{action.name}} illustration" height="48" width="189"/>
+            </a>
+        {% endif %}    
+    
         <h3 class="action_nugget_title"><a class="blue" href="{% url action_detail action.slug %}">{{ action.name }}</a></h3>
         <div class="action_nugget_teaser">{{ action.teaser|safe|linebreaks }}</div>
     </div>

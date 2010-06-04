@@ -27,7 +27,7 @@ class ProfileTest(TestCase):
         test_user_email    = "test@test.com"
         user               = User(username='1', id=1, email=test_user_email)
         self.profile       = Profile.objects.create(user=user)
-        self.expected_url  = "http://www.gravatar.com/avatar/b642b4217b34b1e8d3bd915fc65c4452?r=g&d=identicon"
+        self.expected_url  = "http://www.gravatar.com/avatar/b642b4217b34b1e8d3bd915fc65c4452?r=g&d=identicon&s=52"
         self.expected_hash = "b642b4217b34b1e8d3bd915fc65c4452"
         
     def test_get_gravatar_url(self):

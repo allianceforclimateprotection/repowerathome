@@ -10,19 +10,19 @@
     <div class="prefix_3">
         <div class="box_two_top"></div>
         <div class="box_two_middle">
-        	<form action="{% url login %}" method="post" id="login_form" autocomplete="off">
-        		<h1>Log In</h1>
+            <form action="{% url login %}" method="post" id="login_form" autocomplete="off">
+                <h1>Log In</h1>
                 {% with login_form as form %}
                     {% include "rah/_overset_form.html" %}
                 {% endwith %}
                 <p><input type="submit" value="Log in" /></p>
-        	    {% csrf_token %}
-        		<p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
-        	</form>
-        	<p>
-    	        Don't have an account? <a href="{% url rah.views.register %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Sign up</a><br/>
-    	        <a href="{% url password_reset %}">Recover password</a>
-    	    </p>
+                {% csrf_token %}
+                <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
+            </form>
+            <p>
+                Don't have an account? <a href="{% url rah.views.register %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Sign up</a><br/>
+                <a href="{% url password_reset %}">Recover password</a>
+            </p>
         </div>
         <div class="box_two_bottom"></div>
     </div>

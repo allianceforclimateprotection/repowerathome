@@ -26,11 +26,11 @@
         {% with object as post %}
             <div>
                 <h1 class="title">
-					{{ post.title }}
-				</h1>
-				<p>
-					<em>Posted by {% safe_user_link post.author %} on {{ post.publish|date }}</em>
-				</p>
+                    {{ post.title }}
+                </h1>
+                <p>
+                    <em>Posted by {% safe_user_link post.author %} on {{ post.publish|date }}</em>
+                </p>
                 <div class="post_body">{{ post.body|safe }}</div>
             </div>
         {% endwith %}
