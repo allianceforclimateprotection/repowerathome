@@ -3,6 +3,7 @@ import hashlib
 import re
 
 from django import forms
+from django.forms import formsets
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
@@ -14,7 +15,7 @@ from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
-from models import Event, Guest, Commitment
+from models import Event, Guest, Challenge, Commitment
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
@@ -240,4 +241,7 @@ class RsvpAccountForm(forms.ModelForm):
 class CommitmentCardForm(forms.ModelForm):
     class Meta:
         model = Commitment
-        fields = ("done", "pledge", "challenge", "guest",)
+        fields = ("done", "pledge", "challenge",)
+        widgets = {
+            "challenge": forms.HiddenInput,
+        }

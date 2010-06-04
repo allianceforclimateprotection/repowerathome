@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.forms.models import inlineformset_factory
+from django.forms.models import modelformset_factory
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.views.decorators.http import require_POST
@@ -105,12 +105,19 @@ def rsvp_account(request, event_id):
     
 @login_required
 @user_is_event_manager
-def commitments(request, event_id):
+def commitments(request, event_id, guest_id=None):
     event = get_object_or_404(Event, id=event_id)
-    guest = Guest.objects.filter(event=event)[2]
-    # CommitmentFormset = inlineformset_factory(Guest, Challenge, form=CommitmentCardForm, 
-    #     can_delete=False)
-    # formset = CommitmentFormset(instance=guest, queryset=Challenge.objects.filter(is_active=True))
+    if guest_id:
+        guest = get_object_or_404(Guest, id=guest_id)
+    else:
+        guests = Guest.objects.filter(event=event)
+        guest = guests[0] if len(guests) > 0 else None
+    # forms = []
+    # for challenge in Challenge.objects.filter(is_active=True):
+    #     commitment = Commitment(guest=guest, challenge=challenge)
+    #     forms.append(CommitmentCardForm(instance=commitment, data=(request.POST or None)))
+    CommitmentFormset = modelformset_factory(Commitment, form=CommitmentCardForm)
+    formset = CommitmentFormset(queryset=Commitment.objects.none())
     return render_to_response("events/commitments.html", locals(), context_instance=RequestContext(request))
         
 def print_sheet(request, event_id):

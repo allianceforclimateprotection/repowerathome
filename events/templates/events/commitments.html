@@ -9,9 +9,27 @@
             <h3>Total Actions Committed: 0</h3>
             <h3>Total Actions Already Done: 0</h3>
             <form action="" method="post">
-                {% for form in formset.forms %}
-                    {{ form.as_p }}
+                {% for form in forms %}
+                    {{ form.errors }}
                 {% endfor %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Will Do</th>
+                            <th>Already Done</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in forms %}
+                            <tr>
+                                <td>{{ form.instance.challenge }}{{ form.challenge }}</td>
+                                <td>{{ form.pledge }}</td>
+                                <td>{{ form.done }}</td>
+                            <tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
                 {% csrf_token %}
                 <input type="submit" value="Save" />
             </form>
@@ -26,7 +44,7 @@
             <h2>Attendee List</h2>
             <ul>
                 {% for attendee in event.attendees %}
-                    <li><a href="">{{ attendee }}</a></li>
+                    <li><a href="{% url event-commitments-guest event.id attendee.id %}">{{ attendee }}</a></li>
                 {% endfor %}
             </ul>
         </div>

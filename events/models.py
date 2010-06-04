@@ -169,6 +169,9 @@ class Commitment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        unique_together = (("guest", "challenge"),)
+    
 def make_creator_a_guest(sender, instance, **kwargs):
     creator = instance.creator
     Guest.objects.get_or_create(event=instance, user=creator, defaults={"first_name":creator.first_name, 
