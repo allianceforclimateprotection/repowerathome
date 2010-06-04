@@ -1,0 +1,5 @@
+[
+    {"pk": 1, "model": "events.eventtype", "fields": {"teaser": "Dom something good", "created": null, "updated": null, "name": "Energy Meeting", "description": "It's that time again! Dunkin Donuts is giving away free 16 Oz. Iced Coffee's at any participating Dunkin Donuts location! stop by! get one! And enjoy!"}}, 
+    {"pk": 2, "model": "events.eventtype", "fields": {"teaser": "Do something good", "created": null, "updated": null, "name": "Caulker Rally", "description": "It's that time again! Dunkin Donuts is giving away free 16 Oz. Iced Coffee's at any participating Dunkin Donuts location! stop by! get one! And enjoy!"}}, 
+    {"pk": 3, "model": "events.eventtype", "fields": {"teaser": "Do something good", "created": null, "updated": null, "name": "Field Training", "description": "It's that time again! Dunkin Donuts is giving away free 16 Oz. Iced Coffee's at any participating Dunkin Donuts location! stop by! get one! And enjoy!"}}
+]

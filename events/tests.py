@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.test.client import Client
 
 from geo.models import Location
+from invite.models import Invitation, make_token
 
 from models import EventType, Event, Guest
 
@@ -52,12 +53,14 @@ class EventTest(TestCase):
         self.failUnlessEqual(self.event.place(), "123 Garden Street Ashaway, RI")
         
     def test_is_token_valid(self):
-        # TODO: create unit tests for event.is_token_valid()
-        pass
-        
-    def test_current_guest(self):
-        # TODO: create unit tests for event.current_guest()
-        pass
+        token = make_token()
+        invite = Invitation.objects.create(user=self.creator, email="test@email.com", 
+            token=token, content_object=self.event)
+        self.failUnless(self.event.is_token_valid(token))
+        new_event = Event.objects.create(creator=self.creator, event_type=self.event_type,
+            location=self.ashaway, when=datetime.date(2050, 9, 9), start=datetime.time(9,0),
+            end=datetime.time(10,0), details="test")
+        self.failUnless(not new_event.is_token_valid(token))
 
 class GuestTest(TestCase):
     fixtures = ["test_events.json",]
@@ -218,68 +221,154 @@ class EventCreateViewTest(TestCase):
         self.failUnlessEqual(event.details, "test")
         self.failUnlessEqual(event.is_private, True)
         
-class EventEditViewTest(TestCase):
-        fixtures = ["test_geo_02804.json", "test_events.json"]
+class EventShowViewTest(TestCase):
+    fixtures = ["test_geo_02804.json", "test_events.json"]
+    
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.event_type = EventType.objects.get(pk=1)
+        self.event = Event.objects.get(pk=1)
+        self.event_show_url = reverse("event-show", args=[self.event.id])
 
-        def setUp(self):
-            self.client = Client()
-            self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
-            self.event_type = EventType.objects.get(pk=1)
-            self.event = Event.objects.get(pk=1)
-            self.event_edit_url = reverse("event-edit", args=[self.event.id])
-            
-        def test_login_required(self):
-            response = self.client.get(self.event_edit_url, follow=True)
-            self.failUnlessEqual(response.template[0].name, "registration/login.html")
-            
-        def test_get(self):
-            self.client.login(username="test@test.com", password="test")
-            response = self.client.get(self.event_edit_url, follow=True)
-            self.failUnlessEqual(response.template[0].name, "events/edit.html")
-            event = response.context["event"]
-            self.failUnlessEqual(event.event_type, self.event_type)
-            self.failUnlessEqual(event.where, "123 Garden Street")
-            self.failUnlessEqual(event.location.name, "Ashaway")
-            self.failUnlessEqual(event.location.st, "RI")
-            self.failUnlessEqual(event.location.zipcode, "02804")
-            self.failUnlessEqual(event.when, datetime.date(2050, 8, 14))
-            self.failUnlessEqual(event.start, datetime.time(6, 0))
-            self.failUnlessEqual(event.end, datetime.time(8, 0))
-            self.failUnlessEqual(event.details, "You can park on the street.  My apartment is on the second floor.")
-            self.failUnlessEqual(event.is_private, False)
-            
-        def test_missing_required(self):
-            self.client.login(username="test@test.com", password="test")
-            response = self.client.post(self.event_edit_url, {"event_type": "", "where": "",
-                "city": "", "state": "", "zipcode": "", "when": "", 
-                "start": "", "end": "", "details": "", "is_private": "False"}, follow=True)
-            self.failUnlessEqual(response.template[0].name, "events/edit.html")
-            errors = response.context["form"].errors
-            self.failUnlessEqual(len(errors), 7)
-            self.failUnless("event_type" in errors)
-            self.failUnless("where" in errors)
-            self.failUnless("when" in errors)
-            self.failUnless("start" in errors)
-            self.failUnless("end" in errors)
-            self.failUnless("details" in errors)
-            
-        def test_change_event(self):
-            self.client.login(username="test@test.com", password="test")
-            response = self.client.post(self.event_edit_url, {"event_type": self.event_type.pk, 
-                "where": "11 Fake St.", "city": "ashaway", "state": "RI", "zipcode": "02804", "when": "2050-09-09", 
-                "start": "10:00", "end": "11:00", "details": "test", "is_private": "True"}, follow=True)
-            self.failUnlessEqual(response.template[0].name, "events/show.html")
-            event = response.context["event"]
-            self.failUnlessEqual(event.event_type, self.event_type)
-            self.failUnlessEqual(event.where, "11 Fake St.")
-            self.failUnlessEqual(event.location.name, "Ashaway")
-            self.failUnlessEqual(event.location.st, "RI")
-            self.failUnlessEqual(event.location.zipcode, "02804")
-            self.failUnlessEqual(event.when, datetime.date(2050, 9, 9))
-            self.failUnlessEqual(event.start, datetime.time(10, 0))
-            self.failUnlessEqual(event.end, datetime.time(11, 0))
-            self.failUnlessEqual(event.details, "test")
-            self.failUnlessEqual(event.is_private, True)
+    def test_invalid_event(self):
+        response = self.client.get(reverse("event-show", args=[999]))
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_get(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.event_show_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/show.html")
+        
+    def test_not_a_guest_and_private(self):
+        self.event.is_private = True
+        self.event.save()
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.event_show_url, follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+        
+    def test_invalid_token(self):
+        self.event.is_private = True
+        self.event.save()
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(reverse("event-invite", args=[self.event.id, "81234f0a90c7ef4"]), follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+        
+    def test_guest_and_private(self):
+        self.event.is_private = True
+        self.event.save()
+        Guest.objects.create(event=self.event, first_name="test", email="test@test.com", user=self.user)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.event_show_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/show.html")
+        event = response.context["event"]
+        self.failUnlessEqual(event.event_type, self.event_type)
+        self.failUnlessEqual(event.where, "123 Garden Street")
+        self.failUnlessEqual(event.location.name, "Ashaway")
+        self.failUnlessEqual(event.location.st, "RI")
+        self.failUnlessEqual(event.location.zipcode, "02804")
+        self.failUnlessEqual(event.when, datetime.date(2050, 8, 14))
+        self.failUnlessEqual(event.start, datetime.time(6, 0))
+        self.failUnlessEqual(event.end, datetime.time(8, 0))
+        self.failUnlessEqual(event.details, "You can park on the street.  My apartment is on the second floor.")
+        self.failUnlessEqual(event.is_private, True)
+        
+    def test_valid_token(self):
+        self.event.is_private = True
+        self.event.save()
+        token = make_token()
+        invite = Invitation.objects.create(user=self.user, email="test@email.com", 
+            token=token, content_object=self.event)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(reverse("event-invite", args=[self.event.id, invite.token]), follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/show.html")
+        event = response.context["event"]
+        self.failUnlessEqual(event.event_type, self.event_type)
+        self.failUnlessEqual(event.where, "123 Garden Street")
+        self.failUnlessEqual(event.location.name, "Ashaway")
+        self.failUnlessEqual(event.location.st, "RI")
+        self.failUnlessEqual(event.location.zipcode, "02804")
+        self.failUnlessEqual(event.when, datetime.date(2050, 8, 14))
+        self.failUnlessEqual(event.start, datetime.time(6, 0))
+        self.failUnlessEqual(event.end, datetime.time(8, 0))
+        self.failUnlessEqual(event.details, "You can park on the street.  My apartment is on the second floor.")
+        self.failUnlessEqual(event.is_private, True)
+        
+class EventEditViewTest(TestCase):
+    fixtures = ["test_geo_02804.json", "test_events.json"]
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.event_type = EventType.objects.get(pk=1)
+        self.event = Event.objects.get(pk=1)
+        self.event.creator = self.user
+        self.event.save()
+        self.event_edit_url = reverse("event-edit", args=[self.event.id])
+        
+    def test_login_required(self):
+        response = self.client.get(self.event_edit_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        
+    def test_no_permissions(self):
+        self.hacker = User.objects.create_user(username="2", email="hacker@test.com", password="test")
+        self.client.login(username="hacker@test.com", password="test")
+        response = self.client.get(self.event_edit_url, follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+        
+    def test_invalid_event(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(reverse("event-edit", args=[999]))
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_get(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.event_edit_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/edit.html")
+        event = response.context["event"]
+        self.failUnlessEqual(event.event_type, self.event_type)
+        self.failUnlessEqual(event.where, "123 Garden Street")
+        self.failUnlessEqual(event.location.name, "Ashaway")
+        self.failUnlessEqual(event.location.st, "RI")
+        self.failUnlessEqual(event.location.zipcode, "02804")
+        self.failUnlessEqual(event.when, datetime.date(2050, 8, 14))
+        self.failUnlessEqual(event.start, datetime.time(6, 0))
+        self.failUnlessEqual(event.end, datetime.time(8, 0))
+        self.failUnlessEqual(event.details, "You can park on the street.  My apartment is on the second floor.")
+        self.failUnlessEqual(event.is_private, False)
+        
+    def test_missing_required(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.event_edit_url, {"event_type": "", "where": "",
+            "city": "", "state": "", "zipcode": "", "when": "", 
+            "start": "", "end": "", "details": "", "is_private": "False"}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/edit.html")
+        errors = response.context["form"].errors
+        self.failUnlessEqual(len(errors), 7)
+        self.failUnless("event_type" in errors)
+        self.failUnless("where" in errors)
+        self.failUnless("when" in errors)
+        self.failUnless("start" in errors)
+        self.failUnless("end" in errors)
+        self.failUnless("details" in errors)
+        
+    def test_change_event(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.event_edit_url, {"event_type": self.event_type.pk, 
+            "where": "11 Fake St.", "city": "ashaway", "state": "RI", "zipcode": "02804", "when": "2050-09-09", 
+            "start": "10:00", "end": "11:00", "details": "test", "is_private": "True"}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/show.html")
+        event = response.context["event"]
+        self.failUnlessEqual(event.event_type, self.event_type)
+        self.failUnlessEqual(event.where, "11 Fake St.")
+        self.failUnlessEqual(event.location.name, "Ashaway")
+        self.failUnlessEqual(event.location.st, "RI")
+        self.failUnlessEqual(event.location.zipcode, "02804")
+        self.failUnlessEqual(event.when, datetime.date(2050, 9, 9))
+        self.failUnlessEqual(event.start, datetime.time(10, 0))
+        self.failUnlessEqual(event.end, datetime.time(11, 0))
+        self.failUnlessEqual(event.details, "test")
+        self.failUnlessEqual(event.is_private, True)
             
 class EventGuestsViewTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_events.json"]
@@ -289,18 +378,30 @@ class EventGuestsViewTest(TestCase):
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
         self.event_type = EventType.objects.get(pk=1)
         self.event = Event.objects.get(pk=1)
+        self.event.creator = self.user
+        self.event.save()
         self.event_guests_url = reverse("event-guests", args=[self.event.id])
 
     def test_login_required(self):
         response = self.client.get(self.event_guests_url, follow=True)
         self.failUnlessEqual(response.template[0].name, "registration/login.html")
         
+    def test_no_permissions(self):
+        self.hacker = User.objects.create_user(username="2", email="hacker@test.com", password="test")
+        self.client.login(username="hacker@test.com", password="test")
+        response = self.client.get(self.event_guests_url, follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+    def test_invalid_event(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(reverse("event-guests", args=[999]))
+        self.failUnlessEqual(response.status_code, 404)
+        
     def test_get(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.get(self.event_guests_url, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests.html")
         guests = response.context["event"].guest_set.all()
-        self.failUnlessEqual(len(guests), 6)
+        self.failUnlessEqual(len(guests), 7)
         
     def test_missing_required(self):
         self.client.login(username="test@test.com", password="test")
