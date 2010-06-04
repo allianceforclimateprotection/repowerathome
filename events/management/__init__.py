@@ -2,6 +2,7 @@ from django.db.models import get_models, signals
 from events import models as events_app
 
 def create_default_events(app, created_models, verbosity, **kwargs):
+    print("signal triggered")
     from events.models import EventType, Challenge
     from django.core.management import call_command
     if EventType in created_models and kwargs.get('interactive', True):
@@ -26,6 +27,6 @@ def create_default_events(app, created_models, verbosity, **kwargs):
             if confirm == 'yes':
                 call_command("loaddata", "events/fixtures/challenges.json", verbosity=0, interactive=True)
             break
-
+print("setting up signal")
 signals.post_syncdb.connect(create_default_events, sender=events_app, 
     dispatch_uid="rah.management.create_default_events")
