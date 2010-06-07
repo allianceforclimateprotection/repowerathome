@@ -19,6 +19,11 @@
         {% block extralinks %}{% endblock %}
     </head>
     <body>
+        <!-- ClickTale Top part -->
+        <script type="text/javascript">
+        var WRInitTime=(new Date()).getTime();
+        </script>
+        <!-- ClickTale end of Top part -->
         <div id="loading" class="warning">Loading...</div>
         <div id="header_container">
             <div id="header_bg">
@@ -81,6 +86,9 @@
             </div>
         </div>
         <div id="feedback_dialog"></div>
+        <div id="message_box">
+            {% include '_messages.html' %}
+        </div>
         <script type="text/javascript" charset="utf-8">
             var rah_name = "{% block js %}{% endblock %}";
             var media_url = "{{ MEDIA_URL }}"; // contains trailing slash
@@ -104,8 +112,15 @@
                 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
             })();
         </script>
-        <div id="message_box">
-            {% include '_messages.html' %}
-        </div>
+        <!-- ClickTale Bottom part -->
+        <div id="ClickTaleDiv" style="display: none;"></div>
+        <script type="text/javascript">
+        if(document.location.protocol!='https:')
+          document.write(unescape("%3Cscript%20src='http://s.clicktale.net/WRb.js'%20type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        if(typeof ClickTale=='function') ClickTale(4835,0.225,"www03");
+        </script>
+        <!-- ClickTale end of Bottom part -->
     </body>
 </html>
