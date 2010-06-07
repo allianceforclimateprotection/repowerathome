@@ -13,17 +13,6 @@
     <div class="box_two_top"></div>
     <div class="box_two_middle">
         <h1>{{profile_user.get_full_name}}</h1>
-        <b>Points: </b>{{ profile.total_points }}<br/>
-        {% if profile.location %}
-            <b>From: </b> {{ profile.location }}<br/>
-        {% endif %}
-        {% if profile.building_type %}
-            <b>Home:</b> {{ profile.get_building_type_display }}<br/>
-        {% endif %}
-        {% if profile.about %}
-            <b>About: </b>{{ profile.about }}<br/>
-        {% endif %}
-        <br/>
         {% if commitment_list %}
             <h2>Commitments</h2>
             <p>
@@ -74,6 +63,16 @@
     <div class="box_one_middle">
         <img src="{{ profile.get_gravatar_url_large }}" alt="user gravatar"/>
         <p class="smaller right">Avatar provided by <a href="http://www.gravatar.com/">Gravatar</a></p>
+        <b>Points: </b>{{ profile.total_points }}<br/>
+        {% if profile.location %}
+            <b>From: </b> {{ profile.location }}<br/>
+        {% endif %}
+        {% if profile.building_type %}
+            <b>Home:</b> {{ profile.get_building_type_display }}<br/>
+        {% endif %}
+        {% if profile.about %}
+            <b>About: </b>{{ profile.about }}<br/>
+        {% endif %}
     </div>
     <div class="box_one_bottom"></div>
 </div>
