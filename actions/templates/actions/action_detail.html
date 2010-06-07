@@ -39,7 +39,7 @@
                     <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
                 </p>
             {% endif %}
-            <h2>Who's doing this?</h2>
+            <h3>Who's doing this?</h3>
             <span class='total_users'>{{ action.users_completed }}</span> pe{{ action.users_completed|pluralize:"rson has,ople have" }} completed this action.<br/>
             {% if action.users_completed %}
                 <ul>
