@@ -1,0 +1,3 @@
+[
+    {"pk": 1, "model": "events.survey", "fields": {"name": "first survey", "event_type": 1, "is_active": "True", "created": null, "updated": null}}
+]

@@ -1,8 +1,8 @@
 [
-    {"pk": 1, "model": "events.challenge", "fields": {"updated": "2010-06-04 10:00:00", "name": "Eliminate vampire power", "created": "2010-06-04 10:00:00", "is_active": true, "action": 23, "order": 1}}, 
-    {"pk": 2, "model": "events.challenge", "fields": {"updated": "2010-06-04 10:00:00", "name": "Program your thermostat", "created": "2010-06-04 10:00:00", "is_active": true, "action": 24, "order": 2}}, 
-    {"pk": 3, "model": "events.challenge", "fields": {"updated": "2010-06-04 10:00:00", "name": "Replace your HVAC filter", "created": "2010-06-04 10:00:00", "is_active": true, "action": 30, "order": 3}}, 
-    {"pk": 4, "model": "events.challenge", "fields": {"updated": "2010-06-04 10:00:00", "name": "Have an energy audit", "created": "2010-06-04 10:00:00", "is_active": true, "action": 19, "order": 4}}, 
-    {"pk": 5, "model": "events.challenge", "fields": {"updated": "2010-06-04 10:00:00", "name": "Host an Event", "created": "2010-06-04 10:00:00", "is_active": true, "action": null, "order": 5}}, 
-    {"pk": 6, "model": "events.challenge", "fields": {"updated": "2010-06-04 10:00:00", "name": "Help with follow-up", "created": "2010-06-04 10:00:00", "is_active": true, "action": null, "order": 6}}
+    {"pk": 1, "model": "events.challenge", "fields": {"survey": 1, "updated": "2010-06-04 10:00:00", "name": "Eliminate vampire power", "created": "2010-06-04 10:00:00", "action": 23, "order": 1}}, 
+    {"pk": 2, "model": "events.challenge", "fields": {"survey": 1, "updated": "2010-06-04 10:00:00", "name": "Program your thermostat", "created": "2010-06-04 10:00:00", "action": 24, "order": 2}}, 
+    {"pk": 3, "model": "events.challenge", "fields": {"survey": 1, "updated": "2010-06-04 10:00:00", "name": "Replace your HVAC filter", "created": "2010-06-04 10:00:00", "action": 30, "order": 3}}, 
+    {"pk": 4, "model": "events.challenge", "fields": {"survey": 1, "updated": "2010-06-04 10:00:00", "name": "Have an energy audit", "created": "2010-06-04 10:00:00", "action": 19, "order": 4}}, 
+    {"pk": 5, "model": "events.challenge", "fields": {"survey": 1, "updated": "2010-06-04 10:00:00", "name": "Host an Event", "created": "2010-06-04 10:00:00", "action": null, "order": 5}}, 
+    {"pk": 6, "model": "events.challenge", "fields": {"survey": 1, "updated": "2010-06-04 10:00:00", "name": "Help with follow-up", "created": "2010-06-04 10:00:00", "action": null, "order": 6}}
 ]

@@ -3,7 +3,7 @@ from events import models as events_app
 
 def create_default_events(app, created_models, verbosity, **kwargs):
     print("signal triggered")
-    from events.models import EventType, Challenge
+    from events.models import EventType, Survey, Challenge
     from django.core.management import call_command
     if EventType in created_models and kwargs.get('interactive', True):
         msg = "\nYou just installed the event_types table, would you like to install the " \
@@ -15,6 +15,17 @@ def create_default_events(app, created_models, verbosity, **kwargs):
                 continue
             if confirm == 'yes':
                 call_command("loaddata", "events/fixtures/event_types.json", verbosity=0, interactive=True)
+            break
+    if Survey in created_models and kwargs.get('interactive', True):
+        msg = "\nYou just installed the survey table, would you like to install the " \
+                "default set of surveys? (yes/no): "
+        confirm = raw_input(msg)
+        while 1:
+            if confirm not in ('yes', 'no'):
+                confirm = raw_input('Please enter either "yes" or "no": ')
+                continue
+            if confirm == 'yes':
+                call_command("loaddata", "events/fixtures/surveys.json", verbosity=0, interactive=True)
             break
     if Challenge in created_models and kwargs.get('interactive', True):
         msg = "\nYou just installed the challenges table, would you like to install the " \
