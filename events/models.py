@@ -110,7 +110,7 @@ class Guest(models.Model):
     event = models.ForeignKey(Event)
     first_name = models.CharField(blank=True, max_length=50)
     last_name = models.CharField(blank=True, max_length=50)
-    email = models.EmailField(blank=True)
+    email = models.EmailField(blank=True, db_index=True)
     phone = models.CharField(blank=True, max_length=12)
     invited = models.DateField(null=True, blank=True)
     added = models.DateField(null=True, blank=True)
@@ -180,8 +180,8 @@ class Commitment(models.Model):
         ("D", "Already Done"),
     )
     
-    guest = models.ForeignKey(Guest)
-    challenge = models.ForeignKey(Challenge)
+    guest = models.ForeignKey(Guest, db_index=True)
+    challenge = models.ForeignKey(Challenge, db_index=True)
     answer = models.CharField(choices=ANSWERS, max_length=1)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

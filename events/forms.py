@@ -15,7 +15,7 @@ from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
-from models import Event, Guest, Challenge, Commitment
+from models import Event, Guest, Survey, Challenge, Commitment
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
@@ -238,10 +238,28 @@ class RsvpAccountForm(forms.ModelForm):
         guest.event.save_guest_in_session(request=request, guest=guest)
         return guest
         
-class CommitmentCardForm(forms.ModelForm):
+class SurveyForm(forms.ModelForm):
     class Meta:
-        model = Commitment
-        fields = ("done", "pledge", "challenge",)
-        widgets = {
-            "challenge": forms.HiddenInput,
-        }
+        model = Survey
+        exclude = ("name", "event_type", "is_active",)
+        
+    def __init__(self, guest, *args, **kwargs):
+        self.guest = guest
+        super(SurveyForm, self).__init__(*args, **kwargs)
+        for challenge in self.instance.challenge_set.order_by("order"):
+            self.fields[challenge.name] = forms.ChoiceField(choices=Commitment.ANSWERS, 
+                widget=forms.RadioSelect, required=False)
+            try:
+                commitment = Commitment.objects.get(guest=self.guest, challenge=challenge)
+                self.fields[challenge.name].initial = commitment.answer
+            except Commitment.DoesNotExist:
+                pass
+                
+    def save(self, *args, **kwargs):
+        for key,data in self.cleaned_data.items():
+            if data:
+                challenge = self.instance.challenge_set.get(name=key)
+                commitment, created = Commitment.objects.get_or_create(guest=self.guest, challenge=challenge)
+                commitment.answer = data
+                commitment.save()
+        return self.instance

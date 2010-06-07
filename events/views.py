@@ -8,9 +8,9 @@ from django.views.decorators.http import require_POST
 
 from invite.models import Invitation, make_token
 
-from models import Event, Guest, Challenge, Commitment
+from models import Event, Guest, Survey, Challenge, Commitment
 from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, \
-    RsvpForm, RsvpConfirmForm, RsvpAccountForm, CommitmentCardForm
+    RsvpForm, RsvpConfirmForm, RsvpAccountForm, SurveyForm
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
 
 @login_required
@@ -112,12 +112,11 @@ def commitments(request, event_id, guest_id=None):
     else:
         guests = Guest.objects.filter(event=event)
         guest = guests[0] if len(guests) > 0 else None
-    # forms = []
-    # for challenge in Challenge.objects.filter(is_active=True):
-    #     commitment = Commitment(guest=guest, challenge=challenge)
-    #     forms.append(CommitmentCardForm(instance=commitment, data=(request.POST or None)))
-    CommitmentFormset = modelformset_factory(Commitment, form=CommitmentCardForm)
-    formset = CommitmentFormset(queryset=Commitment.objects.none())
+    survey = Survey.objects.get(event_type=event.event_type, is_active=True)
+    form = SurveyForm(guest=guest, instance=survey, data=(request.POST or None))
+    if form.is_valid():
+        form.save()
+        redirect("event-commitments", event_id=event.id)
     return render_to_response("events/commitments.html", locals(), context_instance=RequestContext(request))
         
 def print_sheet(request, event_id):
