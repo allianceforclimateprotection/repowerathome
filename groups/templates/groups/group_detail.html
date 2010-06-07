@@ -146,14 +146,12 @@
     <div class="box_one_top"></div>
     <div class="box_one_middle">
         <h3>Popular Actions</h3>
-        <ol>
         {% for action in popular_actions %}
-            <li>
-                <a href="{% url action_detail action.slug %}">{{ action }}</a><br/>
-                <span class="smaller">{{ action.completes_in_group }} member{{ action.completes_in_group|pluralize }}</span>
-            </li>
+        <p>
+            <a href="{% url action_detail action.slug %}">{{ action }}</a><br/>
+            <span class="smaller">{{ action.completes_in_group }} member{{ action.completes_in_group|pluralize }}</span>
+        </p>
         {% endfor %}
-        </ol>
     </div>
     <div class="box_one_bottom"></div>
     {% endif %}
