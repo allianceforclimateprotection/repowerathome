@@ -492,6 +492,11 @@ ul#vampire_worksheet_wizard_nav {
 #vampire_plan .col-1 { width: 150px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
+Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events 
+--------------------------------------------------------------------------------------------------------------------- */
+#event_map { width: 400px; height: 200px; }
+
+/* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 --------------------------------------------------------------------------------------------------------------------- */
 .hidden { display: none;}

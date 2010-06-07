@@ -15,7 +15,7 @@ $(document).ready(function() {
 });
 
 // Object containing all javascript necessary for Repower at Home
-var rah = {    
+var rah = {
     /**
     * Base contains code that needs to be excecuted with every 
     * page request. e.g., navigation with drop down menus
@@ -657,6 +657,36 @@ var rah = {
                     form.submit(); 
                 }
             });
+        }
+    },
+    
+    page_event_show: {
+        init: function() {
+            var address = $("#event_address").text()
+            var location = $("#event_location").text();
+            geocoder = new google.maps.Geocoder();
+            var myOptions = {
+              zoom: 9,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("event_map"), myOptions);
+            if(geocoder) {
+                geocoder.geocode( { 'address': address+" "+location}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        map.setCenter(results[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                            map: map, 
+                            position: results[0].geometry.location
+                        });
+                        var infowindow = new google.maps.InfoWindow({
+                            content: "<h4>" + address + "</h4><h6>" + location + "</h6>"
+                        });
+                        google.maps.event.addListener(marker, 'click', function() {
+                            infowindow.open(map,marker);
+                        });
+                    }
+                });
+            }
         }
     }
 };
