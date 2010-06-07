@@ -1,6 +1,7 @@
 import json, logging
 
 from django.conf import settings
+from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -107,6 +108,12 @@ def register(request):
             messages.success(request, 'Thanks for registering.')
             messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
             
+            # Temp code. Send an email to Jon when people register
+            try:
+                send_mail("New RAH User: %s" % user.email, "http://repowerathome.com/user/%s" % user.id, None, ["jon.lesser@climateprotect.org"], fail_silently=True)
+            except Exception, e:
+                pass
+                        
             # Light security check -- make sure redirect_to isn't garbage.
             if not redirect_to or ' ' in redirect_to:
                 redirect_to = settings.LOGIN_REDIRECT_URL
