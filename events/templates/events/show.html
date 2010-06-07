@@ -20,9 +20,11 @@
             </div>
             <div>
                 <h3>Where</h3>
-                <p>{{ event.where }}<br />{{ event.location }}</p>
-                <img src="http://maps.google.com/maps/api/staticmap?markers=color:blue|{{ event.place|urlencode }}&zoom=12&size=400x200&sensor=false"
-                    alt="{{ event.place }} map" />
+                <p>
+                    <span id="event_address">{{ event.where }}</span><br />
+                    <span id="event_location">{{ event.location }}</span>
+                </p>
+                <div id="event_map"></div>
             </div>
         </div>
         <div class="box_two_bottom"></div>
@@ -56,3 +58,8 @@
         {% endif %}
     </div>
 {% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+{% endblock %}
+{% block js %}page_event_show{% endblock %}
