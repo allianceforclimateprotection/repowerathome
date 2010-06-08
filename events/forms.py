@@ -105,11 +105,6 @@ class GuestInviteForm(InviteForm):
             guest, created = Guest.objects.get_or_create(event=event, email=email, 
                 defaults={"invited":datetime.date.today()})
             guest.notify_on_rsvp = rsvp_notification
-            try:
-                user = User.objects.get(email=email)
-                guest.user = user
-            except User.DoesNotExist:
-                pass
             guest.save()
             guest_invites.append(guest)
         if self.cleaned_data["copy_me"]:
@@ -132,13 +127,6 @@ class GuestAddForm(forms.ModelForm):
         
     def save(self, *args, **kwargs):
         self.instance.added = datetime.date.today()
-        email = self.cleaned_data["email"]
-        if email:
-            try:
-                user = User.objects.get(email=email)
-                self.instance.user = user
-            except User.DoesNotExist:
-                pass
         return super(GuestAddForm, self).save(*args, **kwargs)
         
 class GuestListForm(forms.Form):

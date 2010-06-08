@@ -24,7 +24,7 @@ class EventTest(TestCase):
         hacker = User.objects.create_user(username="hacker", email="hacker@email.com", password="hacker")
         self.failUnlessEqual(self.event.has_manager_privileges(hacker), False)
         guest = Guest.objects.get(first_name="Jane", last_name="Doe")
-        guest.user = hacker
+        guest.email = hacker.email
         guest.save()
         self.failUnlessEqual(self.event.has_manager_privileges(hacker), False)
         guest.is_host = True

@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.db import models
@@ -204,3 +205,12 @@ def notification_on_rsvp(sender, instance, **kwargs):
         msg.content_subtype = "html"
         msg.send()
 models.signals.post_save.connect(notification_on_rsvp, sender=Guest)
+
+def link_guest_to_user(sender, instance, **kwargs):
+    if instance.email:
+        try:
+            user = User.objects.get(email=instance.email)
+            instance.user = user
+        except User.DoesNotExist:
+            instance.user = None
+models.signals.pre_save.connect(link_guest_to_user, sender=Guest)
