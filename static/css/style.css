@@ -497,6 +497,7 @@ Events Events Events Events Events Events Events Events Events Events Events Eve
 #event_map { width: 400px; height: 200px; }
 .event_inline_placeholder { color: grey; font-style: italic; }
 .editable { }
+.editable_highlight { background-color: #ffff99; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
