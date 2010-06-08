@@ -20,7 +20,7 @@ class GroupForm(forms.ModelForm):
         "in", "ks", "ky", "la", "ma", "md", "me", "mi", "mn", "mo", "ms", "mt", "nc", "nd", "ne", 
         "nh", "nj", "nm", "nv", "ny", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", 
         "va", "vt", "wa", "wi", "wv", "wy"]
-    group_name_blacklist = ["user", "users", "admin",]
+    group_name_blacklist = ["user", "users", "admin", "about", "event", "terms", "privacy"]
     
     class Meta:
         model = Group

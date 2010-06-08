@@ -1,6 +1,7 @@
+import settings
 from django.conf.urls.defaults import *
-from django.contrib import admin
 
+# Register apps with the admin interface
 from actions import admin as actions_admin
 from basic.blog import admin as blog_admin
 from rah import admin as rah_admin
@@ -10,19 +11,36 @@ from geo import admin as geo_admin
 from groups import admin as groups_admin
 from tagging import admin as tagging_admin
 from events import admin as event_admin
+from django.contrib.flatpages import admin as flatpages_admin
 
+# Unregister some models within some apps from the admin
+from django.contrib import admin
 from basic.blog.models import Category, BlogRoll
+from tagging.models import TaggedItem
 admin.site.unregister(Category)
 admin.site.unregister(BlogRoll)
-
-from tagging.models import TaggedItem
 admin.site.unregister(TaggedItem)
 
+# Sitemaps
+from basic.blog.sitemap import BlogSitemap
+from django.contrib.sitemaps import FlatPageSitemap
+from actions.sitemap import ActionSitemap
+from groups.sitemap import GroupSitemap
+from rah.sitemap import RahSitemap
+sitemaps = {
+    'blog':     BlogSitemap, 
+    'flat':     FlatPageSitemap,
+    'actions':  ActionSitemap,
+    'groups':   GroupSitemap,
+    'rah':      RahSitemap,
+}
+
+# Prepare some feed classes
 from basic.blog.feeds import BlogPostsFeed
 from groups.feeds import GroupActivityFeed
-from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
 
-import settings
+# Import some custom forms to pass into the auth app urls
+from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
 
 urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
@@ -34,26 +52,23 @@ urlpatterns = patterns('rah.views',
     url(r'^reset/done/$', 'password_reset_complete', name='password_reset_complete'),
     url(r'^user/(?P<user_id>\d+)/$', 'profile', name='profile'),
     url(r'^user/edit/(?P<user_id>\d+)/$', 'profile_edit', name='profile_edit'),
-    (r'^validate/$', 'validate_field'),
+    url(r'^validate/$', 'validate_field', name="validate_field"),
     url(r'^houseparty/$', 'house_party', name='house_party'),
     url(r'^feedback/$', 'feedback', name='feedback'),
-    (r'^search/$', 'search'),
-    url(r'^terms/$', 'terms_of_use', name='terms_of_use'),
-    url(r'^privacy/$', 'privacy_policy', name='privacy_policy'),
-    url(r'^about/$', 'about_us', name='about_us'),
+    url(r'^search/$', 'search', name='search'),
     url(r'user/(?P<user_id>\d+)/feed/$', UserActivityFeed(), name='user_activity_feed'),
 )
 
 urlpatterns += patterns('',
-    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^password_change/$', 'django.contrib.auth.views.password_change', { 'post_change_redirect': '/password_change_done/', 'password_change_form': PasswordChangeForm }, name='password_change'),
     url(r'^password_reset/$', 'django.contrib.auth.views.password_reset', { 'post_reset_redirect': '/password_reset_done/' }, name='password_reset'),
     url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', { 'post_reset_redirect': '/reset/done/', 'set_password_form': SetPasswordForm }, name='password_reset_confirm'),
-    (r'^', include('django.contrib.auth.urls')),
+    url(r'^', include('django.contrib.auth.urls')),
     url(r'^admin/(.*)', admin.site.root, name='admin_root'),
-    (r'^blog/', include('basic.blog.urls')),
+    url(r'^blog/', include('basic.blog.urls')),
     url(r'^blog/feed/$', BlogPostsFeed(), name='blog_feed'),
-    (r'^comments/', include('django.contrib.comments.urls')),
+    url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^twitter/', include('twitter_app.urls')),
     url(r'^rateable/', include('rateable.urls')),
     url(r'^teams/', include('groups.urls')),
@@ -63,15 +78,15 @@ urlpatterns += patterns('',
     url(r'^actions/', include('actions.urls')),
     url(r'^records/', include('records.urls')),
     url(r'^events/', include('events.urls')),
+    url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}, name='sitemap'),
 )
 
 if settings.DEBUG:
     urlpatterns += patterns('lib.static',
-    (r'^static/(?P<path>.*)$', 
-        'serve', {
-        'document_root': settings.MEDIA_ROOT,
-        'show_indexes': True }),)
+        url(r'^static/(?P<path>.*)$', 'serve', {'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
+    )
         
+# These patterns are redeclared here so they can be at the domain root. e.g. /team-name instead of /teams/team-name
 urlpatterns += patterns('groups.views',
     url(r'^(?P<group_slug>[a-z0-9-]+)/$', 'group_detail', name='group_detail'),
     url(r'^(?P<group_slug>[a-z0-9-]+)/edit/$', 'group_edit', name='group_edit'),

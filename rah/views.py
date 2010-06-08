@@ -59,15 +59,6 @@ def logged_out_home(request):
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:3]
     featured_actions = Action.objects.filter(id__in=[18,23]).order_by("-id")
     return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))
-
-def privacy_policy(request):
-    return render_to_response("rah/privacy_policy.html", {}, context_instance=RequestContext(request))
-
-def terms_of_use(request):
-    return render_to_response("rah/terms_of_use.html", {}, context_instance=RequestContext(request))
-
-def about_us(request):
-    return render_to_response("rah/about_us.html", {}, context_instance=RequestContext(request))
  
 def logout(request):
     response = auth.logout(request)

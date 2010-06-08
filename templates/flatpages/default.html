@@ -1,0 +1,15 @@
+{% extends "rah/base.html" %}
+{% block title %}{{ flatpage.title }}{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    {{ flatpage.title }}
+{% endblock %}
+{% block right_content %}
+<div class="box_three_top"></div>
+<div id="flat_page" class="box_three_middle">
+    <h1>{{ flatpage.title }}</h1>
+    {{ flatpage.content }}
+</div>
+<div class="box_three_bottom"></div>
+{% endblock %}
+{% block js %}{% endblock %}

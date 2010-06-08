@@ -514,9 +514,7 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .right {text-align:right;}
 .blog_byline {}
 .post_body li,
-#terms_of_use li,
-#privacy_policy li,
-#about_us li{ list-style: disc; }
+#flat_page li{ list-style: disc; }
 
 /* spite icons */
 .icon_gt {background: url(../images/theme/0000000003_sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}

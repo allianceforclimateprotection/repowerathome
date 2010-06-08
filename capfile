@@ -30,7 +30,7 @@ namespace :deploy do
         puts "Deploying to #{deploy_to}"
         update
         minify
-        staticupload
+        # staticupload
         syncdb
         restart
         add_deployment_to_codebase
