@@ -1,0 +1,13 @@
+<td><input type="checkbox" name="guests" value="{{ guest.id }}" /></td>
+{% if guest.user %}
+    <td id="{% url event-guests-edit-name event.id,guest.id %}">
+        {% safe_user_link guest.user %} {% if guest.is_host %}(host){% endif %}
+    </td>
+{% else %}
+    <td id="{% url event-guests-edit-name event.id,guest.id %}" class="editable">
+        {{ guest.name }} {% if guest.is_host %}(host){% endif %}
+    </td>
+{% endif %}
+<td id="{% url event-guests-edit-email event.id,guest.id %}" class="editable">{{ guest.email }}</td>
+<td id="{% url event-guests-edit-phone event.id,guest.id %}" class="editable">{{ guest.phone }}</td>
+<td>{{ guest.status }}</td>

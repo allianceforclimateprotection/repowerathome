@@ -688,5 +688,28 @@ var rah = {
                 });
             }
         }
+    },
+    
+    page_event_guests: {
+        init: function() {
+            var namespace = this;
+            $(".editable").each(rah.page_event_guests.make_editable);
+        },
+        make_editable: function() {
+            var element = $(this);
+            element.editable(function(value, settings) {
+                var original = this.revert;
+                $.post(element.attr("id"), {"value": value}, function(data) {
+                    rah.mod_messages.init(data["message_html"]);
+                    var row = element.parents("tr");
+                    row.html(data["guest_row"]).effect(
+                           "highlight", {"backgroundColor": "#FFF"}, 1500);
+                    $(".editable", row).each(rah.page_event_guests.make_editable);
+                }, "json");
+                return value;
+            }, {
+                placeholder: '<span class="event_inline_placeholder">click to add</span>'
+            });
+        }
     }
 };

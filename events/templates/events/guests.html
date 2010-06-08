@@ -22,16 +22,7 @@
                     </thead>
                     <tbody>
                     {% for guest in form.guests.field.choices.queryset %}
-                        <tr>
-                            <td><input type="checkbox" name="guests" value="{{ guest.id }}" /></td>
-                            <td>
-                                {% if guest.user %}{% safe_user_link guest.user %}{% else %}{{ guest.name }}{% endif %}
-                                {% if guest.is_host %}(host){% endif %}
-                            </td>
-                            <td>{{ guest.email }}</td>
-                            <td>{{ guest.phone }}</td>
-                            <td>{{ guest.status }}</td>
-                        </tr>
+                        <tr>{% include "events/_guest_row.html" %}</tr>
                     {% endfor %}
                     </tbody>
                 </table>
@@ -52,3 +43,4 @@
         <div class="box_one_bottom"></div>
     </div>
 {% endblock %}
+{% block js %}page_event_guests{% endblock %}

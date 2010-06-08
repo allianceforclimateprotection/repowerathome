@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.db import models
+from django.dispatch import Signal
 from django.template import Context, loader
 from django.utils.dateformat import DateFormat
 
@@ -122,6 +123,16 @@ class Guest(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
+    def _set_name(self, value):
+        first, space, last = value.partition(" ")
+        self.first_name = first
+        self.last_name = last
+    
+    def _get_name(self):
+        return "%s %s" % (self.first_name, self.last_name)
+        
+    name = property(_get_name, _set_name)
+    
     class Meta:
         unique_together = (("event", "email",),("event", "user",),)
     
@@ -138,7 +149,9 @@ class Guest(models.Model):
         return not (self.user or (self.first_name and self.email))
         
     def get_full_name(self):
-        if self.first_name and self.last_name:
+        if self.user:
+            return self.user.get_full_name()
+        elif self.first_name and self.last_name:
             return "%s %s" % (self.first_name, self.last_name)
         elif self.first_name:
             return self.first_name
@@ -196,15 +209,16 @@ def make_creator_a_guest(sender, instance, **kwargs):
         "last_name":creator.last_name, "email":creator.email, "added":datetime.date.today(), "is_host":True})
 models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 
-def notification_on_rsvp(sender, instance, **kwargs):
-    if instance.rsvp_status and instance.notify_on_rsvp:
-        creator = instance.event.creator
-        context = {"user": creator, "guest": instance, "domain": Site.objects.get_current().domain}
-        msg = EmailMessage("RSVP from %s to %s" % (instance, instance.event),
+rsvp_recieved = Signal(providing_args=["guest"])
+def notification_on_rsvp(sender, guest, **kwargs):
+    if guest.rsvp_status and guest.notify_on_rsvp:
+        creator = guest.event.creator
+        context = {"user": creator, "guest": guest, "domain": Site.objects.get_current().domain}
+        msg = EmailMessage("RSVP from %s to %s" % (guest, guest.event),
             loader.render_to_string("events/rsvp_notify_email.html", context), None, [creator.email])
         msg.content_subtype = "html"
         msg.send()
-models.signals.post_save.connect(notification_on_rsvp, sender=Guest)
+rsvp_recieved.connect(notification_on_rsvp)
 
 def link_guest_to_user(sender, instance, **kwargs):
     if instance.email:

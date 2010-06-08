@@ -15,7 +15,7 @@ from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
-from models import Event, Guest, Survey, Challenge, Commitment
+from models import Event, Guest, Survey, Challenge, Commitment, rsvp_recieved
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
@@ -177,6 +177,7 @@ class RsvpForm(forms.ModelForm):
     def save(self, request, *args, **kwargs):
         guest = super(RsvpForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
+        rsvp_recieved.send(sender=self, guest=guest)
         return guest
 
 class RsvpConfirmForm(forms.ModelForm):

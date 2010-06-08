@@ -1,10 +1,17 @@
+import json
+
 from django.contrib import messages
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.forms.models import modelformset_factory
+from django.db.models.fields import FieldDoesNotExist
+from django.forms import ValidationError
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
+
+from utils import forbidden
 
 from invite.models import Invitation, make_token
 
@@ -66,6 +73,33 @@ def guests_add(request, event_id, type):
         guest_invite_form.save()
         return redirect("event-guests", event_id=event.id)
     return render_to_response("events/guests_add.html", locals(), context_instance=RequestContext(request))
+    
+@login_required
+@require_POST
+@user_is_event_manager
+def guests_edit(request, event_id, guest_id, type):
+    event = get_object_or_404(Event, id=event_id)
+    guest = get_object_or_404(Guest, id=guest_id)
+    if guest.event != event:
+        return forbidden(request, "Guest is not a member of this event")
+    if not hasattr(guest, type):
+        return forbidden(request, "Guest has no attribute %s" % type)
+    value = request.POST.get("value", None)
+    try:
+        field = guest._meta.get_field(type)
+        field.run_validators(value)
+        var = setattr(guest, type, value)
+        guest.save()
+        messages.success(request, "%s has been updated" % guest)
+    except FieldDoesNotExist:
+        var = setattr(guest, type, value)
+        guest.save()
+        messages.success(request, "%s has been updated" % guest)
+    except ValidationError as err:
+        messages.error(request, err.messages[0])
+    message_html = render_to_string("_messages.html", {}, context_instance=RequestContext(request))
+    guest_row = render_to_string("events/_guest_row.html", {"event": event, "guest": guest}, context_instance=RequestContext(request))
+    return HttpResponse(json.dumps({"message_html": message_html, "guest_row": guest_row}))
 
 @require_POST
 @user_is_guest_or_has_token
