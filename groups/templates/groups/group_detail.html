@@ -4,6 +4,7 @@
 {% load dated_static %}
 {% load thumbnail %}
 
+{% block title %}{{group.name}}{% endblock %}
 {% block extralinks %}
     {% if group.slug %}
         <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower at Home Team Activity" />

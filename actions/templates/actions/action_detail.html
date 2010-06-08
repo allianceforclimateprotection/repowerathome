@@ -1,10 +1,12 @@
 {% extends "actions/base.html" %}
 {% load comments %}
+{% block meta_desc %}{{action.name}}: {{action.teaser}}{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
     <a href="{% url action_show %}">Actions</a> &rsaquo;
     {{action.name}}
 {% endblock %}
+{% block title %}{{action.name}}{% endblock %}
 {% block right_content %}
     <div class="box_three_top"></div>
     <div class="box_three_middle">

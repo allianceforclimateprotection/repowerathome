@@ -1,4 +1,5 @@
 {% extends "groups/base.html" %}
+{% block title %}{{group.is_joinable}} discussions{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
     <a href="{% url group_list %}">Teams</a> &rsaquo;
