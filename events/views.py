@@ -19,6 +19,7 @@ from models import Event, Guest, Survey, Challenge, Commitment
 from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, \
     RsvpForm, RsvpConfirmForm, RsvpAccountForm, SurveyForm
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
+from pdf import render_to_pdf
 
 @login_required
 def create(request):
@@ -155,4 +156,4 @@ def commitments(request, event_id, guest_id=None):
         
 def print_sheet(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    return render_to_response("events/guests.html", locals(), context_instance=RequestContext(request))
+    return render_to_pdf("events/sign_in_sheet.html", { "event": event })

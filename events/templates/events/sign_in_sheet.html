@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Sign In Sheet</title>
+        <style type="text/css">
+            @page {
+                size: letter;
+                margin: 1cm;
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0cm;
+                    margin-left: 9cm;
+                    margin-right: 9cm;
+                    height: 1cm;
+                }
+            }
+            h1 { font-size: 24px; }
+            h2 { font-size: 18px; }
+            h1,h2,h3,h4,h5,h6 { margin: 0 0 0 5px; padding: 0; }
+            th { text-decoration: underline; font-size: 12px; }
+            th,td { text-align: left; padding: 5px; border: 1px solid black; }
+        </style>
+    </head>
+    <body>
+        <h1>Sign In Sheet</h1>
+        <h2>{{ event }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for guest in event.attendees %}
+                    <tr>
+                        <td><input type="checkbox"></input></td>
+                        <td>{{ guest.name }}</td>
+                        <td>{{ guest.email }}</td>
+                        <td>{{ guest.phone }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div id="footerContent">
+            {%block page_foot%}
+                Page <pdf:pagenumber>
+            {%endblock%}
+        </div>
+    </body>
+</html>

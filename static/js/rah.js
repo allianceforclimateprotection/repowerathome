@@ -693,7 +693,11 @@ var rah = {
     page_event_guests: {
         init: function() {
             var namespace = this;
-            $(".editable").each(rah.page_event_guests.make_editable);
+            $(".editable").each(rah.page_event_guests.make_editable).live("mouseover", function(){
+                $(this).addClass("editable_highlight");
+            }).live("mouseout", function(){
+                $(this).removeClass("editable_highlight");
+            });
         },
         make_editable: function() {
             var element = $(this);
