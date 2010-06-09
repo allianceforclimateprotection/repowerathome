@@ -149,12 +149,8 @@ class Guest(models.Model):
     def get_full_name(self):
         if self.user:
             return self.user.get_full_name()
-        elif self.first_name and self.last_name:
-            return "%s %s" % (self.first_name, self.last_name)
-        elif self.first_name:
-            return self.first_name
-        elif self.last_name:
-            return self.last_name
+        elif self.name:
+            return self.name
         else:
             return self.email
             
