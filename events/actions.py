@@ -23,8 +23,6 @@ def announcement_email(queryset):
     
 def reminder_email(queryset):
     event = queryset[0].event
-    import pdb
-    pdb.set_trace()
     _send_guest_emails(queryset, event, "%s Reminder" % event, "events/reminder_email.html")
     
 def _send_guest_emails(queryset, event, subject, template):
