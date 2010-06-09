@@ -702,7 +702,6 @@ var rah = {
         make_editable: function() {
             var element = $(this);
             element.editable(function(value, settings) {
-                var original = this.revert;
                 $.post(element.attr("id"), {"value": value}, function(data) {
                     rah.mod_messages.init(data["message_html"]);
                     var row = element.parents("tr");

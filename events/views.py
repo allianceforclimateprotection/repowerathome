@@ -86,17 +86,20 @@ def guests_edit(request, event_id, guest_id, type):
     if not hasattr(guest, type):
         return forbidden(request, "Guest has no attribute %s" % type)
     value = request.POST.get("value", None)
+    original = getattr(guest, type)
     try:
         field = guest._meta.get_field(type)
         field.run_validators(value)
-        var = setattr(guest, type, value)
+        setattr(guest, type, value)
+        guest.validate_unique()
         guest.save()
         messages.success(request, "%s has been updated" % guest)
     except FieldDoesNotExist:
-        var = setattr(guest, type, value)
+        setattr(guest, type, value)
         guest.save()
         messages.success(request, "%s has been updated" % guest)
     except ValidationError as err:
+        setattr(guest, type, original)
         messages.error(request, err.messages[0])
     message_html = render_to_string("_messages.html", {}, context_instance=RequestContext(request))
     guest_row = render_to_string("events/_guest_row.html", {"event": event, "guest": guest}, context_instance=RequestContext(request))
