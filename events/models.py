@@ -123,18 +123,16 @@ class Guest(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        unique_together = (("event", "email",),("event", "user",),)
+        
     def _set_name(self, value):
         first, space, last = value.partition(" ")
         self.first_name = first
         self.last_name = last
-    
     def _get_name(self):
-        return "%s %s" % (self.first_name, self.last_name)
-        
+        return ("%s %s" % (self.first_name, self.last_name)).strip()
     name = property(_get_name, _set_name)
-    
-    class Meta:
-        unique_together = (("event", "email",),("event", "user",),)
     
     def status(self):
         if self.rsvp_status:

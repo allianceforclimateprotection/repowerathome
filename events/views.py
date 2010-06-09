@@ -16,7 +16,7 @@ from utils import forbidden
 from invite.models import Invitation, make_token
 
 from models import Event, Guest, Survey, Challenge, Commitment
-from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, \
+from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, GuestEditForm, \
     RsvpForm, RsvpConfirmForm, RsvpAccountForm, SurveyForm
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
 from pdf import render_to_pdf
@@ -85,22 +85,19 @@ def guests_edit(request, event_id, guest_id, type):
         return forbidden(request, "Guest is not a member of this event")
     if not hasattr(guest, type):
         return forbidden(request, "Guest has no attribute %s" % type)
-    value = request.POST.get("value", None)
-    original = getattr(guest, type)
-    try:
-        field = guest._meta.get_field(type)
-        field.run_validators(value)
-        setattr(guest, type, value)
-        guest.validate_unique()
-        guest.save()
+    data = request.POST.copy()
+    for field in guest._meta.fields:
+        data[field.name] = field.value_from_object(guest)
+    data[type] = data.get("value")
+    form = GuestEditForm(instance=guest, data=data)
+    if form.is_valid():
+        form.save()
         messages.success(request, "%s has been updated" % guest)
-    except FieldDoesNotExist:
-        setattr(guest, type, value)
-        guest.save()
-        messages.success(request, "%s has been updated" % guest)
-    except ValidationError as err:
-        setattr(guest, type, original)
-        messages.error(request, err.messages[0])
+    else:
+        for field,errors in form.errors.items():
+            for error in errors:
+                messages.error(request, error)
+    guest = Guest.objects.get(id=guest_id)
     message_html = render_to_string("_messages.html", {}, context_instance=RequestContext(request))
     guest_row = render_to_string("events/_guest_row.html", {"event": event, "guest": guest}, context_instance=RequestContext(request))
     return HttpResponse(json.dumps({"message_html": message_html, "guest_row": guest_row}))

@@ -162,6 +162,18 @@ class GuestListForm(forms.Form):
         action = GuestListForm.ACTIONS[self.cleaned_data["action"]][1]
         return action(self.cleaned_data["guests"])
         
+class GuestEditForm(forms.ModelForm):
+    name = forms.CharField(required=False, max_length=100)
+    
+    class Meta:
+        model = Guest
+        
+    def save(self, *args, **kwargs):
+        name = self.cleaned_data.get("name", None)
+        if name:
+            self.instance.name = name
+        return super(GuestEditForm, self).save(*args, **kwargs)
+        
 class RsvpForm(forms.ModelForm):
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
     token = forms.CharField(required=False, widget=forms.HiddenInput)
