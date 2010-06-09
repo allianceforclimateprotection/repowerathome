@@ -414,7 +414,7 @@ class EventGuestsViewTest(TestCase):
         
     def test_missing_email(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.event_guests_url, {"action": "3_EI", 
+        response = self.client.post(self.event_guests_url, {"action": "4_EI", 
             "guests": ("5", "6",)}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests.html")
         errors = response.context["form"].errors
@@ -427,7 +427,7 @@ class EventGuestsViewTest(TestCase):
         guest_6 = Guest.objects.get(pk=6)
         self.failUnlessEqual(guest_5.is_host, False)
         self.failUnlessEqual(guest_6.is_host, False)
-        response = self.client.post(self.event_guests_url, {"action": "4_MH", 
+        response = self.client.post(self.event_guests_url, {"action": "7_MH", 
             "guests": ("5", "6",)}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests.html")
         guest_5 = Guest.objects.get(pk=5)
@@ -437,6 +437,6 @@ class EventGuestsViewTest(TestCase):
         
     def test_action_redirect(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.event_guests_url, {"action": "3_EI", 
+        response = self.client.post(self.event_guests_url, {"action": "4_EI", 
             "guests": ("6",)}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests_add.html")

@@ -130,14 +130,17 @@ class GuestAddForm(forms.ModelForm):
         return super(GuestAddForm, self).save(*args, **kwargs)
         
 class GuestListForm(forms.Form):
-    from actions import attending, not_attending, invitation_email, remove, make_host, unmake_host
+    from actions import attending, not_attending, announcement_email, invitation_email, \
+        reminder_email, remove, make_host, unmake_host
     ACTIONS = {
         "1_SA": ("Mark as Attending", attending),
         "2_SN": ("Mark as Not Attending", not_attending),
-        "3_EI": ("Send Invitation Email", invitation_email),
-        "3_MR": ("Remove from guest list", remove),
-        "4_MH": ("Make a guest a host", make_host),
-        "5_MU": ("Remove host privledges", unmake_host),
+        "3_EA": ("Send Announcement Email", announcement_email),
+        "4_EI": ("Send Invitation Email", invitation_email),
+        "5_ER": ("Send Reminder Email", reminder_email),
+        "6_MR": ("Remove from guest list", remove),
+        "7_MH": ("Make a guest a host", make_host),
+        "8_MU": ("Remove host privledges", unmake_host),
     }
     ACTION_CHOICES = [("", "- Select One -")] + sorted([(k, v[0]) for k,v in ACTIONS.iteritems()])
     
