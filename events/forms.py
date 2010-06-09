@@ -113,6 +113,7 @@ class GuestInviteForm(InviteForm):
         return guest_invites
 
 class GuestAddForm(forms.ModelForm):
+    first_name = forms.CharField(required=True, max_length=50)
     is_attending = forms.ChoiceField(choices=(("A", "Yes"), ("N", "No")),
         widget=forms.RadioSelect, label="Is this person planning on attending?", required=False)
         
@@ -123,6 +124,12 @@ class GuestAddForm(forms.ModelForm):
     def clean_is_attending(self):
         data = self.cleaned_data["is_attending"]
         self.instance.rsvp_status = data
+        return data
+        
+    def clean_email(self):
+        data = self.cleaned_data["email"]
+        if data and Guest.objects.filter(event=self.instance.event, email=data).exists():
+            raise forms.ValidationError("A Guest with this email address already exists.")
         return data
         
     def save(self, *args, **kwargs):

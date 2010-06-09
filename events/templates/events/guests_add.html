@@ -14,14 +14,14 @@
                     <form action="{% url event-guests-invite event.id %}" method="post">
                         {{ guest_invite_form.as_p }}
                         {% csrf_token %}
-                        <input type="submit" value="Send" />
+                        <input type="submit" value="Send" /> | <a href="{% url event-guests event.id %}">cancel</a>
                     </form>
                 </div>
                 <div id="guests_add_without_invite">
                     <form action="{% url event-guests-add event.id %}" method="post">
                         {{ guest_add_form.as_p }}
                         {% csrf_token %}
-                        <input type="submit" value="Add" />
+                        <input type="submit" value="Add" /> | <a href="{% url event-guests event.id %}">cancel</a>
                     </form>
                 </div>
             </div>

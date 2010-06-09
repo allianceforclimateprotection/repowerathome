@@ -156,4 +156,4 @@ def commitments(request, event_id, guest_id=None):
         
 def print_sheet(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    return render_to_pdf("events/sign_in_sheet.html", { "event": event })
+    return render_to_pdf("events/sign_in_sheet.html", "%s Sign In.pdf" % event, { "event": event })
