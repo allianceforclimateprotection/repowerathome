@@ -528,9 +528,9 @@ class EventGuestsInviteViewTest(TestCase):
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
         self.event_type = EventType.objects.get(pk=1)
         self.event = Event.objects.get(pk=1)
-        self.event_content_type = ContentType.objects.get(app_label="events", model="event")
         self.event.creator = self.user
         self.event.save()
+        self.event_content_type = ContentType.objects.get(app_label="events", model="event")
         self.event_guests_invite_url = reverse("event-guests-invite", args=[self.event.id])
         
     def test_login_required(self):
@@ -658,3 +658,214 @@ class EventGuestsInviteViewTest(TestCase):
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 7)
+        
+class EventGuestsEditNameViewTest(TestCase):
+    fixtures = ["test_geo_02804.json", "test_events.json"]
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.event_type = EventType.objects.get(pk=1)
+        self.event = Event.objects.get(pk=1)
+        self.guest = Guest.objects.get(pk=1)
+        self.event.creator = self.user
+        self.event.save()
+        self.event_guests_edit_url = reverse("event-guests-edit-name", args=[self.event.id, self.guest.id])
+        
+    def test_login_required(self):
+        response = self.client.get(self.event_guests_edit_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        
+    def test_get(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.event_guests_edit_url, follow=True)
+        self.failUnlessEqual(response.status_code, 405)
+        
+    def test_no_permissions(self):
+        self.hacker = User.objects.create_user(username="2", email="hacker@test.com", password="test")
+        self.client.login(username="hacker@test.com", password="test")
+        response = self.client.post(self.event_guests_edit_url, {}, follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+        
+    def test_invalid_event(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-guests-edit-name", args=[999,self.guest.id]))
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_invalid_guest(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-guests-edit-name", args=[self.event.id,999]))
+        self.failUnlessEqual(response.status_code, 404)
+    
+    def test_invalid_event_guest_pair(self):
+        ashaway = Location.objects.get(zipcode="02804")
+        new_event = Event.objects.create(creator=self.user, event_type=self.event_type,
+            location=ashaway, when=datetime.date(2050, 9, 9), start=datetime.time(9,0),
+            end=datetime.time(10,0), details="test")
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-guests-edit-name", args=[new_event.id,self.guest.id]))
+        self.failUnlessEqual(response.status_code, 403)
+        
+    def test_set_first_name(self):
+        self.client.login(username="test@test.com", password="test")
+        self.failUnlessEqual(self.guest.first_name, "Jane")
+        self.failUnlessEqual(self.guest.last_name, "Doe")
+        response = self.client.post(self.event_guests_edit_url, {"value": "Jimmy"}, follow=True)
+        self.guest = Guest.objects.get(pk=1)
+        self.failUnlessEqual(self.guest.first_name, "Jimmy")
+        self.failUnlessEqual(self.guest.last_name, "")
+        self.failUnlessEqual(response.get("content-type", 1), "text/json")
+        self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("success" in message.tags)
+        
+    def test_set_name(self):
+        self.client.login(username="test@test.com", password="test")
+        self.failUnlessEqual(self.guest.first_name, "Jane")
+        self.failUnlessEqual(self.guest.last_name, "Doe")
+        response = self.client.post(self.event_guests_edit_url, {"value": "Jimmy Smith Williams"}, follow=True)
+        self.guest = Guest.objects.get(pk=1)
+        self.failUnlessEqual(self.guest.first_name, "Jimmy")
+        self.failUnlessEqual(self.guest.last_name, "Smith Williams")
+        self.failUnlessEqual(response.get("content-type", 1), "text/json")
+        self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("success" in message.tags)
+        
+class EventGuestsEditEmailViewTest(TestCase):
+    fixtures = ["test_geo_02804.json", "test_events.json"]
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.event_type = EventType.objects.get(pk=1)
+        self.event = Event.objects.get(pk=1)
+        self.guest = Guest.objects.get(pk=1)
+        self.event.creator = self.user
+        self.event.save()
+        self.event_guests_edit_url = reverse("event-guests-edit-email", args=[self.event.id, self.guest.id])
+        
+    def test_login_required(self):
+        response = self.client.get(self.event_guests_edit_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+        
+    def test_get(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.event_guests_edit_url, follow=True)
+        self.failUnlessEqual(response.status_code, 405)
+        
+    def test_no_permissions(self):
+        self.hacker = User.objects.create_user(username="2", email="hacker@test.com", password="test")
+        self.client.login(username="hacker@test.com", password="test")
+        response = self.client.post(self.event_guests_edit_url, {}, follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+        
+    def test_invalid_event(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-guests-edit-name", args=[999,self.guest.id]))
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_invalid_guest(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-guests-edit-name", args=[self.event.id,999]))
+        self.failUnlessEqual(response.status_code, 404)
+    
+    def test_invalid_event_guest_pair(self):
+        ashaway = Location.objects.get(zipcode="02804")
+        new_event = Event.objects.create(creator=self.user, event_type=self.event_type,
+            location=ashaway, when=datetime.date(2050, 9, 9), start=datetime.time(9,0),
+            end=datetime.time(10,0), details="test")
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-guests-edit-name", args=[new_event.id,self.guest.id]))
+        self.failUnlessEqual(response.status_code, 403)
+        
+    def test_set_invalid_email(self):
+        self.client.login(username="test@test.com", password="test")
+        self.failUnlessEqual(self.guest.email, "jd@email.com")
+        response = self.client.post(self.event_guests_edit_url, {"value": "jimmy@"}, follow=True)
+        self.guest = Guest.objects.get(pk=1)
+        self.failUnlessEqual(self.guest.email, "jd@email.com")
+        self.failUnlessEqual(response.get("content-type", 1), "text/json")
+        self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("error" in message.tags)
+        
+    def test_set_duplicate_email(self):
+        self.client.login(username="test@test.com", password="test")
+        self.failUnlessEqual(self.guest.email, "jd@email.com")
+        response = self.client.post(self.event_guests_edit_url, {"value": "jondoe@email.com"}, follow=True)
+        self.guest = Guest.objects.get(pk=1)
+        self.failUnlessEqual(self.guest.email, "jd@email.com")
+        self.failUnlessEqual(response.get("content-type", 1), "text/json")
+        self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("error" in message.tags)
+        
+    def test_set_email(self):
+        self.client.login(username="test@test.com", password="test")
+        self.failUnlessEqual(self.guest.email, "jd@email.com")
+        response = self.client.post(self.event_guests_edit_url, {"value": "jimmy@email.com"}, follow=True)
+        self.guest = Guest.objects.get(pk=1)
+        self.failUnlessEqual(self.guest.email, "jimmy@email.com")
+        self.failUnlessEqual(response.get("content-type", 1), "text/json")
+        self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("success" in message.tags)
+        
+class EventGuestsEditPhoneViewTest(TestCase):
+    fixtures = ["test_geo_02804.json", "test_events.json"]
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.event_type = EventType.objects.get(pk=1)
+        self.event = Event.objects.get(pk=1)
+        self.guest = Guest.objects.get(pk=1)
+        self.event.creator = self.user
+        self.event.save()
+        self.event_guests_edit_url = reverse("event-guests-edit-phone", args=[self.event.id, self.guest.id])
+
+    def test_login_required(self):
+        response = self.client.get(self.event_guests_edit_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+
+    def test_get(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.event_guests_edit_url, follow=True)
+        self.failUnlessEqual(response.status_code, 405)
+
+    def test_no_permissions(self):
+        self.hacker = User.objects.create_user(username="2", email="hacker@test.com", password="test")
+        self.client.login(username="hacker@test.com", password="test")
+        response = self.client.post(self.event_guests_edit_url, {}, follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+
+    def test_invalid_event(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-guests-edit-name", args=[999,self.guest.id]))
+        self.failUnlessEqual(response.status_code, 404)
+
+    def test_invalid_guest(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-guests-edit-name", args=[self.event.id,999]))
+        self.failUnlessEqual(response.status_code, 404)
+
+    def test_invalid_event_guest_pair(self):
+        ashaway = Location.objects.get(zipcode="02804")
+        new_event = Event.objects.create(creator=self.user, event_type=self.event_type,
+            location=ashaway, when=datetime.date(2050, 9, 9), start=datetime.time(9,0),
+            end=datetime.time(10,0), details="test")
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-guests-edit-name", args=[new_event.id,self.guest.id]))
+        self.failUnlessEqual(response.status_code, 403)
+
+    def test_set_phone(self):
+        self.client.login(username="test@test.com", password="test")
+        self.failUnlessEqual(self.guest.phone, "")
+        response = self.client.post(self.event_guests_edit_url, {"value": "555-555-5555"}, follow=True)
+        self.guest = Guest.objects.get(pk=1)
+        self.failUnlessEqual(self.guest.phone, "555-555-5555")
+        self.failUnlessEqual(response.get("content-type", 1), "text/json")
+        self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("success" in message.tags)

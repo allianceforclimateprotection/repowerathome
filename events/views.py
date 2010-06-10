@@ -100,7 +100,7 @@ def guests_edit(request, event_id, guest_id, type):
     guest = Guest.objects.get(id=guest_id)
     message_html = render_to_string("_messages.html", {}, context_instance=RequestContext(request))
     guest_row = render_to_string("events/_guest_row.html", {"event": event, "guest": guest}, context_instance=RequestContext(request))
-    return HttpResponse(json.dumps({"message_html": message_html, "guest_row": guest_row}))
+    return HttpResponse(json.dumps({"message_html": message_html, "guest_row": guest_row}), mimetype="text/json")
 
 @require_POST
 @user_is_guest_or_has_token
