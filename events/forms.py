@@ -16,6 +16,7 @@ from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
 from models import EventType, Event, Guest, Survey, Challenge, Commitment, rsvp_recieved
+from widgets import SelectTimeWidget
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
@@ -34,6 +35,17 @@ def _times():
     return times
 TIMES = _times()
 
+def _durations():
+    durations = []
+    hours = range(1,3)
+    for hour in hours:
+        for minute in [0,15,30,45]:
+            durations.append(("%s" % (hour*60+minute), "%0.2d:%0.2d" % (hour, minute)))
+    next_hour = hours[-1] + 1
+    durations.append(("%s" % (next_hour*60), "%0.2d:00" % next_hour))
+    return durations
+DURATIONS = _durations()
+
 class EventForm(forms.ModelForm):
     where = forms.CharField(max_length=100, label="Address")
     city = forms.CharField(required=False, max_length=50)
@@ -45,13 +57,13 @@ class EventForm(forms.ModelForm):
     
     class Meta:
         model = Event
-        fields = ["event_type", "where", "city", "state", "zipcode", "when", "start", "end", 
+        fields = ["event_type", "where", "city", "state", "zipcode", "when", "start", "duration", 
             "details", "is_private"]
         widgets = {
             "event_type": forms.RadioSelect,
             "when": forms.TextInput(attrs={"class": "datepicker future_date_warning"}),
-            "start": forms.Select(choices=[("", "start")]+TIMES),
-            "end": forms.Select(choices=[("", "end")]+TIMES),
+            "start": SelectTimeWidget(minute_step=15, twelve_hr=True, use_seconds=False),
+            "duration": forms.Select(choices=[("", "---")]+DURATIONS)
         }
         
     def __init__(self, user, *args, **kwargs):
@@ -114,8 +126,6 @@ class GuestInviteForm(InviteForm):
 
 class GuestAddForm(forms.ModelForm):
     first_name = forms.CharField(required=True, max_length=50)
-    # is_attending = forms.ChoiceField(choices=(("A", "Yes"), ("N", "No")),
-    #     widget=forms.RadioSelect, label="Is this person planning on attending?", required=False)
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, 
         label="Is this person planning on attending?", widget=forms.RadioSelect)
         
@@ -125,11 +135,6 @@ class GuestAddForm(forms.ModelForm):
         widgets = {
             "rsvp_status": forms.RadioSelect,
         }
-        
-    def clean_is_attending(self):
-        data = self.cleaned_data["is_attending"]
-        self.instance.rsvp_status = data
-        return data
         
     def clean_email(self):
         data = self.cleaned_data["email"]

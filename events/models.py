@@ -27,7 +27,7 @@ class Event(models.Model):
     location = models.ForeignKey("geo.Location", null=True)
     when = models.DateField()
     start = models.TimeField()
-    end = models.TimeField(blank=True, null=True)
+    duration = models.PositiveIntegerField(blank=True, null=True)
     details = models.TextField(help_text="For example, where should people park,\
         what's the nearest subway, do people need to be buzzed in, etc.", blank=True)
     is_private = models.BooleanField(default=False)
