@@ -2,6 +2,8 @@
 
 {% block right_content %}
     {% with "Edit Event" as button_text %}
+        {% url event-show event.id as cancel_link %}
         {% include "events/_form.html" %}
     {% endwith %}
 {% endblock %}
+{% block js %}page_event_edit{% endblock %}

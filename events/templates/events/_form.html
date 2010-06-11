@@ -1,5 +1,6 @@
 <form id="event_form" action="" method="post">
     {{ form.as_p }}
     {% csrf_token %}
-    <input type="submit" value="{{ button_text|default:'Submit' }}" />
+    <input type="submit" value="{{ button_text|default:'Submit' }}" /> |
+    <a href="{{ cancel_link }}">cancel</a>
 </form>

@@ -2,6 +2,8 @@
 
 {% block right_content %}
     {% with "Create Event" as button_text %}
+        {% url event-list as cancel_link %}
         {% include "events/_form.html" %}
     {% endwith %}
 {% endblock %}
+{% block js %}page_event_create{% endblock %}
