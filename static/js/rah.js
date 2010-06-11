@@ -718,6 +718,13 @@ var rah = {
     
     page_event_guests: {
         init: function() {
+            var table = $("#event_guests_table");
+            $(".selector").click(function(){
+                var checked = $(this).hasClass("select_all");
+                $("input[type='checkbox']", table).attr("checked", checked);
+                return false;
+            });
+            $("#event_guests_selectors").removeClass("hidden");
             var namespace = this;
             var editables = $(".editable");
             editables.each(rah.page_event_guests.make_editable);
