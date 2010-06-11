@@ -41,7 +41,7 @@ def action_detail(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
     default_vars = _default_action_vars(action, request.user)
     default_vars.update(_build_action_form_vars(action, request.user))
-    action_commit_form = ActionCommitForm(user=request.user, action=action)
+    action_commit_form = ActionCommitForm(user=request.user, action=action, initial={'date_committed':datetime.date.today()+datetime.timedelta(days=1)})
     default_vars.update(locals())
     return render_to_response("actions/action_detail.html", default_vars, RequestContext(request))
         
