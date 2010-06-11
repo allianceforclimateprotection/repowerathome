@@ -6,4 +6,5 @@
 {% endif %}
 <td id="{% url event-guests-edit-email event.id,guest.id %}" class="editable">{{ guest.email }}</td>
 <td id="{% url event-guests-edit-phone event.id,guest.id %}" class="editable">{{ guest.phone }}</td>
+<td id="{% url event-guests-edit-zipcode event.id,guest.id %}" class="editable">{{ guest.location.zipcode }}</td>
 <td id="{% url event-guests-edit-status event.id,guest.id %}" class="editable rsvp_select">{{ guest.status }}</td>

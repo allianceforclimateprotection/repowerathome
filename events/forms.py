@@ -126,12 +126,13 @@ class GuestInviteForm(InviteForm):
 
 class GuestAddForm(forms.ModelForm):
     first_name = forms.CharField(required=True, max_length=50)
+    zipcode = forms.CharField(max_length=5, min_length=5, required=False)
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, 
         label="Is this person planning on attending?", widget=forms.RadioSelect)
         
     class Meta:
         model = Guest
-        fields = ("first_name", "last_name", "email", "phone", "rsvp_status",)
+        fields = ("first_name", "last_name", "email", "phone", "zipcode", "rsvp_status",)
         widgets = {
             "rsvp_status": forms.RadioSelect,
         }
@@ -140,6 +141,15 @@ class GuestAddForm(forms.ModelForm):
         data = self.cleaned_data["email"]
         if data and Guest.objects.filter(event=self.instance.event, email=data).exists():
             raise forms.ValidationError("A Guest with this email address already exists.")
+        return data
+            
+    def clean_zipcode(self):
+        data = self.cleaned_data["zipcode"]
+        if data:
+            try:
+                self.cleaned_data["location"] = Location.objects.get(zipcode=data)
+            except Location.DoesNotExist:
+                raise forms.ValidationError("Invalid zipcode %s" % data)
         return data
         
     def save(self, *args, **kwargs):
@@ -182,14 +192,27 @@ class GuestListForm(forms.Form):
         
 class GuestEditForm(forms.ModelForm):
     name = forms.CharField(required=False, max_length=100)
+    zipcode = forms.CharField(required=False, max_length=5)
     
     class Meta:
         model = Guest
+        
+    def clean_zipcode(self):
+        data = self.cleaned_data["zipcode"]
+        if data:
+            try:
+                self.cleaned_data["location"] = Location.objects.get(zipcode=data)
+            except Location.DoesNotExist:
+                raise forms.ValidationError("Invalid zipcode %s" % data)
+        return data
         
     def save(self, *args, **kwargs):
         name = self.cleaned_data.get("name", None)
         if name:
             self.instance.name = name
+        zipcode = self.cleaned_data.get("zipcode", None)
+        if zipcode:
+            self.instance.zipcode = zipcode
         return super(GuestEditForm, self).save(*args, **kwargs)
         
 class RsvpForm(forms.ModelForm):

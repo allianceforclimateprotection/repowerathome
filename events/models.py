@@ -8,6 +8,7 @@ from django.dispatch import Signal
 from django.template import Context, loader
 from django.utils.dateformat import DateFormat
 
+from geo.models import Location
 from invite.models import Invitation
 
 class EventType(models.Model):
@@ -122,6 +123,7 @@ class Guest(models.Model):
     last_name = models.CharField(blank=True, max_length=50)
     email = models.EmailField(blank=True, db_index=True)
     phone = models.CharField(blank=True, max_length=12)
+    location = models.ForeignKey("geo.Location", blank=True, null=True)
     invited = models.DateField(null=True, blank=True)
     added = models.DateField(null=True, blank=True)
     rsvp_status = models.CharField(blank=True, max_length=1, choices=RSVP_STATUSES)
@@ -141,6 +143,15 @@ class Guest(models.Model):
     def _get_name(self):
         return ("%s %s" % (self.first_name, self.last_name)).strip()
     name = property(_get_name, _set_name)
+    
+    def _set_zipcode(self, value):
+        try:
+            self.location = Location.objects.get(zipcode=value)
+        except Location.DoesNotExist:
+            self.location = None
+    def _get_zipcode(self):
+        return self.location.zipcode if self.location else ""
+    zipcode = property(_get_zipcode, _set_zipcode)
     
     def status(self):
         if self.rsvp_status:
