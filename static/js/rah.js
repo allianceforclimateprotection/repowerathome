@@ -690,6 +690,32 @@ var rah = {
         }
     },
     
+    mod_warn_of_future_date: {
+        init: function() {
+            $(".future_date_warning").change(function(){
+                var now = new Date();
+                var when = new Date(this.value);
+                if(when-now < 0) {
+                    if(!confirm("Has this event really already taken place?")){
+                        this.value = "";
+                    }
+                }
+            });
+        }
+    },
+    
+    page_event_create: {
+        init: function() {
+            rah.mod_warn_of_future_date.init();
+        }
+    },
+    
+    page_event_edit: {
+        init: function() {
+            rah.mod_warn_of_future_date.init();
+        }
+    },
+    
     page_event_guests: {
         init: function() {
             var namespace = this;

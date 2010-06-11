@@ -49,7 +49,7 @@ class EventForm(forms.ModelForm):
             "details", "is_private"]
         widgets = {
             "event_type": forms.RadioSelect,
-            "when": forms.TextInput(attrs={"class": "datepicker"}),
+            "when": forms.TextInput(attrs={"class": "datepicker future_date_warning"}),
             "start": forms.Select(choices=[("", "start")]+TIMES),
             "end": forms.Select(choices=[("", "end")]+TIMES),
         }
@@ -72,12 +72,6 @@ class EventForm(forms.ModelForm):
                 self.cleaned_data["location"] = Location.objects.get(zipcode=data)
             except Location.DoesNotExist:
                 raise forms.ValidationError("Invalid zipcode %s" % data)
-        return data
-        
-    def clean_when(self):
-        data = self.cleaned_data["when"]
-        if (data - datetime.date.today()).days < 0:
-            raise forms.ValidationError("Event must occur in the future.")
         return data
         
     def clean(self):
