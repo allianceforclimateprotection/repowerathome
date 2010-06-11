@@ -16,7 +16,11 @@
             <form action="" method="post">
                 {{ form.errors }}
                 {{ form.action }}
-                <table>
+                <div id="event_guests_selectors" class="hidden">
+                    <a class="selector select_all" href="">Select All</a> |
+                    <a class="selector deselect_all" href="">Deselect All</a>
+                </div>
+                <table id="event_guests_table">
                     <thead>
                         <tr>
                             <th></th>
