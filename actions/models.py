@@ -66,10 +66,16 @@ class Action(models.Model):
         return True
             
     def commit_for_user(self, user, date):
-        uap, c = UserActionProgress.objects.get_or_create(user=user, action=self)
+        # This used to use get_or_create, but was giving us trouble. Not sure why...
+        # See ticket 328 for details: https://rah.codebasehq.com/rah/tickets/328
+        try:
+            uap = UserActionProgress.objects.get(user=user, action=self)
+        except UserActionProgress.DoesNotExist:
+            uap = UserActionProgress(user=user, action=self)    
         was_committed = uap.date_committed <> None
         uap.date_committed = date
         uap.save()
+        
         if not was_committed:
             Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
             
