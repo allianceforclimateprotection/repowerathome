@@ -118,7 +118,7 @@ class EventCreateViewTest(TestCase):
         response = self.client.post(self.event_create_url, {"event_type": "", "where": "",
             "city": "", "state": "", "zipcode": "", "when": "", 
             "start_hour": "", "start_minute": "", "start_meridiem": "",  "duration": "", 
-            "details": "", "is_private": "False"}, follow=True)
+            "details": "", "is_private": "False", "limit": ""}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/create.html")
         errors = response.context["form"].errors
         self.failUnlessEqual(len(errors), 5)
@@ -133,7 +133,7 @@ class EventCreateViewTest(TestCase):
         response = self.client.post(self.event_create_url, {"event_type": self.event_type.pk, 
             "where": "11 Fake St.", "city": "", "state": "", "zipcode": "99999", "when": "2050-09-09", 
             "start_hour": "10", "start_minute": "00", "start_meridiem": "p.m.", "duration": "120", 
-            "details": "test", "is_private": "False"}, follow=True)
+            "details": "test", "is_private": "False", "limit": ""}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/create.html")
         errors = response.context["form"].errors
         self.failUnlessEqual(len(errors), 1)
@@ -144,7 +144,7 @@ class EventCreateViewTest(TestCase):
         response = self.client.post(self.event_create_url, {"event_type": self.event_type.pk, 
             "where": "11 Fake St.", "city": "ashawa", "state": "RI", "zipcode": "", "when": "2050-09-09", 
             "start_hour": "10", "start_minute": "00", "start_meridiem": "p.m.", "duration": "120", 
-            "details": "test", "is_private": "False"}, follow=True)
+            "details": "test", "is_private": "False", "limit": ""}, follow=True)
         errors = response.context["form"].errors
         self.failUnlessEqual(len(errors), 1)
         error = errors["__all__"][0]
@@ -155,7 +155,7 @@ class EventCreateViewTest(TestCase):
         response = self.client.post(self.event_create_url, {"event_type": self.event_type.pk, 
             "where": "11 Fake St.", "city": "", "state": "", "zipcode": "", "when": "2050-09-09", 
             "start_hour": "10", "start_minute": "00", "start_meridiem": "p.m.", "duration": "120", 
-            "details": "test", "is_private": "False"}, follow=True)
+            "details": "test", "is_private": "False", "limit": ""}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/create.html")
         errors = response.context["form"].errors
         self.failUnlessEqual(len(errors), 1)
@@ -169,7 +169,7 @@ class EventCreateViewTest(TestCase):
         response = self.client.post(self.event_create_url, {"event_type": self.event_type.pk, 
             "where": "11 Fake St.", "city": "ashaway", "state": "RI", "zipcode": "", "when": "2050-09-09", 
             "start_hour": "10", "start_minute": "00", "start_meridiem": "p.m.", "duration": "120", 
-            "details": "test", "is_private": "False"}, follow=True)
+            "details": "test", "is_private": "False", "limit": "20"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/show.html")
         event = response.context["event"]
         self.failUnlessEqual(event.event_type, self.event_type)
@@ -182,13 +182,14 @@ class EventCreateViewTest(TestCase):
         self.failUnlessEqual(event.duration, 120)
         self.failUnlessEqual(event.details, "test")
         self.failUnlessEqual(event.is_private, False)
+        self.failUnlessEqual(event.limit, 20)
         
     def test_valid_zipcode_create(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.event_create_url, {"event_type": self.event_type.pk, 
             "where": "11 Fake St.", "city": "", "state": "", "zipcode": "02804", "when": "2050-09-09", 
             "start_hour": "10", "start_minute": "00", "start_meridiem": "p.m.", "duration": "120", 
-            "details": "test", "is_private": "True"}, follow=True)
+            "details": "test", "is_private": "True", "limit": "20"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/show.html")
         event = response.context["event"]
         self.failUnlessEqual(event.event_type, self.event_type)
@@ -201,13 +202,14 @@ class EventCreateViewTest(TestCase):
         self.failUnlessEqual(event.duration, 120)
         self.failUnlessEqual(event.details, "test")
         self.failUnlessEqual(event.is_private, True)
+        self.failUnlessEqual(event.limit, 20)
         
     def test_valid_city_state_zipcode_create(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.event_create_url, {"event_type": self.event_type.pk, 
             "where": "11 Fake St.", "city": "ashaway", "state": "RI", "zipcode": "02804", "when": "2050-09-09", 
             "start_hour": "10", "start_minute": "00", "start_meridiem": "p.m.", "duration": "120", 
-            "details": "test", "is_private": "True"}, follow=True)
+            "details": "test", "is_private": "True", "limit": "20"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/show.html")
         event = response.context["event"]
         self.failUnlessEqual(event.event_type, self.event_type)
@@ -220,6 +222,7 @@ class EventCreateViewTest(TestCase):
         self.failUnlessEqual(event.duration, 120)
         self.failUnlessEqual(event.details, "test")
         self.failUnlessEqual(event.is_private, True)
+        self.failUnlessEqual(event.limit, 20)
         
 class EventShowViewTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_events.json"]
@@ -342,7 +345,7 @@ class EventEditViewTest(TestCase):
         response = self.client.post(self.event_edit_url, {"event_type": "", "where": "",
             "city": "", "state": "", "zipcode": "", "when": "", 
             "start_hour": "", "start_minute": "", "start_meridiem": "",
-            "duration": "", "details": "", "is_private": "False"}, follow=True)
+            "duration": "", "details": "", "is_private": "False", "limit": ""}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/edit.html")
         errors = response.context["form"].errors
         self.failUnlessEqual(len(errors), 5)
@@ -357,7 +360,7 @@ class EventEditViewTest(TestCase):
         response = self.client.post(self.event_edit_url, {"event_type": self.event_type.pk, 
             "where": "11 Fake St.", "city": "ashaway", "state": "RI", "zipcode": "02804", "when": "2050-09-09", 
             "start_hour": "10", "start_minute": "00", "start_meridiem": "a.m.",
-            "duration": "90", "details": "test", "is_private": "True"}, follow=True)
+            "duration": "90", "details": "test", "is_private": "True", "limit": "30"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/show.html")
         event = response.context["event"]
         self.failUnlessEqual(event.event_type, self.event_type)
@@ -370,6 +373,7 @@ class EventEditViewTest(TestCase):
         self.failUnlessEqual(event.duration, 90)
         self.failUnlessEqual(event.details, "test")
         self.failUnlessEqual(event.is_private, True)
+        self.failUnlessEqual(event.limit, 30)
             
 class EventGuestsViewTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_events.json"]
