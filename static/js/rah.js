@@ -693,7 +693,9 @@ var rah = {
     page_event_guests: {
         init: function() {
             var namespace = this;
-            $(".editable").each(rah.page_event_guests.make_editable).live("mouseover", function(){
+            var editables = $(".editable");
+            editables.each(rah.page_event_guests.make_editable);
+            editables.live("mouseover", function(){
                 $(this).addClass("editable_highlight");
             }).live("mouseout", function(){
                 $(this).removeClass("editable_highlight");
@@ -701,6 +703,13 @@ var rah = {
         },
         make_editable: function() {
             var element = $(this);
+            var args = {
+                placeholder: '<span class="event_inline_placeholder">click to add</span>'
+            }
+            if(element.hasClass("rsvp_select")) {
+                args.type = "select";
+                args.loadurl = "/events/rsvp_statuses/";
+            }
             element.editable(function(value, settings) {
                 $.post(element.attr("id"), {"value": value}, function(data) {
                     rah.mod_messages.init(data["message_html"]);
@@ -710,9 +719,7 @@ var rah = {
                     $(".editable", row).each(rah.page_event_guests.make_editable);
                 }, "json");
                 return value;
-            }, {
-                placeholder: '<span class="event_inline_placeholder">click to add</span>'
-            });
+            }, args);
         }
     }
 };

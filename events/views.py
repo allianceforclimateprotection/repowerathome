@@ -34,6 +34,7 @@ def create(request):
 def show(request, event_id, token=None):
     event = get_object_or_404(Event, id=event_id)
     guest = event.current_guest(request, token)
+    has_manager_privileges = event.has_manager_privileges(request.user)
     rsvp_form = RsvpForm(instance=guest, initial={"token": token})
     return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
 
@@ -137,6 +138,9 @@ def rsvp_account(request, event_id):
         auth.login(request, user)
         return redirect(event)
     return render_to_response("events/rsvp_account.html", locals(), context_instance=RequestContext(request))
+    
+def rsvp_statuses(request):
+    return HttpResponse(json.dumps(dict(Guest.RSVP_STATUSES)), mimetype="text/json")
     
 @login_required
 @user_is_event_manager
