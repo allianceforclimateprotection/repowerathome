@@ -1,0 +1,42 @@
+{% extends "events/base.html" %}
+{% block title %}Events on Repower at Home{% endblock %}
+{% block breadcrumbs %}
+<a href="{% url index %}">Home</a> &rsaquo;
+Events
+{% endblock %}
+{% block right_content %}
+<div class="grid_6 alpha">
+    <div class="box_two_top"></div>
+    <div class="box_two_middle">
+        <h1>Create an Event</h1>
+        <p>
+            lorem...
+        </p>
+        <p><a class="button" href="{% url event-create %}">Create an Event</a></p>
+        {% if events %}
+            <h1>Attend an Upcoming Event</h1>
+            <p>
+                lorem....
+            </p>
+            {% include "events/_event_nugget_list.html" %}
+        {% endif %}
+    </div>
+    <div class="box_two_bottom"></div>
+</div>
+    {% if user.is_authenticated %}
+        <div class="grid_3 omega">
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                <h3>Your Events</h3>
+                {% if my_events %}
+                    {% with my_events as events %}
+                        {% include "events/_event_nugget_list.html" %}
+                    {% endwith %}
+                {% else %}
+                    <em>You're not a member of any teams yet!</em>
+                {% endif %}
+            </div>
+            <div class="box_one_bottom"></div>
+        </div>
+    {% endif %}
+{% endblock %}

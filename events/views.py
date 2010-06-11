@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from django.contrib import messages
@@ -20,6 +21,11 @@ from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, Guest
     RsvpForm, RsvpConfirmForm, RsvpAccountForm, SurveyForm
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
 from pdf import render_to_pdf
+
+def list(request):
+    events = Event.objects.filter(when__gt=datetime.datetime.now()).order_by("when", "start")
+    my_events = Event.objects.filter(guest__user=request.user)
+    return render_to_response("events/list.html", locals(), context_instance=RequestContext(request))
 
 @login_required
 def create(request):

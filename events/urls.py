@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns("events.views",
+    url(r"^$", "list", name="event-list"),
     url(r"^create/$", "create", name="event-create"),
     url(r"^(?P<event_id>\d+)/$", "show", name="event-show"),
     url(r"^(?P<event_id>\d+)/invite/(?P<token>[a-f0-9]{15})/$", "show", name="event-invite"),
