@@ -1,5 +1,10 @@
 {% extends "events/base.html" %}
-
+{% block title %}Create an Event{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url event-list %}">Events</a> &rsaquo;
+    Create an Event
+{% endblock %}
 {% block right_content %}
     {% with "Create Event" as button_text %}
         {% url event-list as cancel_link %}

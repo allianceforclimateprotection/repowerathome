@@ -1,5 +1,11 @@
 {% extends "events/base.html" %}
-
+{% block title %}Edit {{ event }}{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url event-list %}">Events</a> &rsaquo;
+    <a href="{% url event-show event.id %}">{{ event }}</a> &rsaquo;
+    Edit Event
+{% endblock %}
 {% block right_content %}
     {% with "Edit Event" as button_text %}
         {% url event-show event.id as cancel_link %}

@@ -136,16 +136,6 @@ class EventCreateViewTest(TestCase):
         self.failUnlessEqual(len(errors), 1)
         self.failUnless("zipcode" in errors)
         
-    # def test_invalid_when(self):
-    #     self.client.login(username="test@test.com", password="test")
-    #     response = self.client.post(self.event_create_url, {"event_type": self.event_type.pk, 
-    #         "where": "11 Fake St.", "city": "", "state": "", "zipcode": "02804", "when": "2009-09-09", 
-    #         "start": "10:00", "end": "11:00", "details": "test", "is_private": "False"}, follow=True)
-    #     self.failUnlessEqual(response.template[0].name, "events/create.html")
-    #     errors = response.context["form"].errors
-    #     self.failUnlessEqual(len(errors), 1)
-    #     self.failUnless("when" in errors)
-        
     def test_invalid_city_state(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.event_create_url, {"event_type": self.event_type.pk, 

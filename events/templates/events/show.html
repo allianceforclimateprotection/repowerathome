@@ -1,6 +1,11 @@
 {% extends "events/base.html" %}
+{% block title %}{{ event }}{% endblock %}
 {% load comments %}
-
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url event-list %}">Events</a> &rsaquo;
+    {{ event }}
+{% endblock %}
 {% block right_content %}
     <div class="grid_6 alpha">
         <div class="box_two_top"></div>
