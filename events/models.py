@@ -27,9 +27,9 @@ class Event(models.Model):
     location = models.ForeignKey("geo.Location", null=True)
     when = models.DateField()
     start = models.TimeField()
-    end = models.TimeField()
+    end = models.TimeField(blank=True, null=True)
     details = models.TextField(help_text="For example, where should people park,\
-        what's the nearest subway, do people need to be buzzed in, etc.")
+        what's the nearest subway, do people need to be buzzed in, etc.", blank=True)
     is_private = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -200,7 +200,8 @@ class Commitment(models.Model):
 def make_creator_a_guest(sender, instance, **kwargs):
     creator = instance.creator
     Guest.objects.get_or_create(event=instance, user=creator, defaults={"first_name":creator.first_name, 
-        "last_name":creator.last_name, "email":creator.email, "added":datetime.date.today(), "is_host":True})
+        "last_name":creator.last_name, "email":creator.email, "added":datetime.date.today(), 
+        "rsvp_status": "A", "is_host":True})
 models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 
 rsvp_recieved = Signal(providing_args=["guest"])
