@@ -34,6 +34,11 @@ class Event(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        permissions = (
+            ("host_any_event_type", "Can host any event type"),
+        )
+    
     def __unicode__(self):
         return u"%s in %s" % (self.event_type, self.location)
         
