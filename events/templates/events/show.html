@@ -39,7 +39,7 @@
     </div>
      
     <div class="grid_3 omega">
-        {% if request.user == event.creator %}
+        {% if has_manager_privileges %}
             {% include "events/_manager_links.html" %}
         {% else %}
             <div class="box_one_top"></div>

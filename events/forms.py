@@ -35,11 +35,13 @@ def _times():
 TIMES = _times()
 
 class EventForm(forms.ModelForm):
+    where = forms.CharField(max_length=100, label="Address")
     city = forms.CharField(required=False, max_length=50)
     state = forms.ChoiceField(required=False, choices=[("", "state")]+[(state, state) for state in STATES])
     zipcode = forms.CharField(required=False, max_length=5)
     is_private = forms.ChoiceField(choices=((True, "Yes"), (False, "No")), initial=False,
-        widget=forms.RadioSelect)
+        widget=forms.RadioSelect, help_text="If your event is kept private, only individuals\
+            who receive an invite email will be able to RSVP.")
     
     class Meta:
         model = Event
@@ -114,12 +116,17 @@ class GuestInviteForm(InviteForm):
 
 class GuestAddForm(forms.ModelForm):
     first_name = forms.CharField(required=True, max_length=50)
-    is_attending = forms.ChoiceField(choices=(("A", "Yes"), ("N", "No")),
-        widget=forms.RadioSelect, label="Is this person planning on attending?", required=False)
+    # is_attending = forms.ChoiceField(choices=(("A", "Yes"), ("N", "No")),
+    #     widget=forms.RadioSelect, label="Is this person planning on attending?", required=False)
+    rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, 
+        label="Is this person planning on attending?", widget=forms.RadioSelect)
         
     class Meta:
         model = Guest
-        fields = ("first_name", "last_name", "email", "phone", "is_attending",)
+        fields = ("first_name", "last_name", "email", "phone", "rsvp_status",)
+        widgets = {
+            "rsvp_status": forms.RadioSelect,
+        }
         
     def clean_is_attending(self):
         data = self.cleaned_data["is_attending"]
@@ -160,7 +167,8 @@ class GuestListForm(forms.Form):
         self.fields["guests"].queryset = event.guest_set.all()
         
     def clean(self):
-        if re.search("^\d+_E", self.cleaned_data.get("action", "")): # Check to see if the action is of type Email
+        action = self.cleaned_data.get("action", "")
+        if re.search("^\d+_E", action): # Check to see if the action is of type Email
             if any([not g.email for g in self.cleaned_data["guests"]]): # Action of type Email can only be performed on guests with emails
                 raise forms.ValidationError("All guests must have an email address")
         return self.cleaned_data

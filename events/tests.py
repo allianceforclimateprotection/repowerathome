@@ -120,13 +120,11 @@ class EventCreateViewTest(TestCase):
             "start": "", "end": "", "details": "", "is_private": "False"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/create.html")
         errors = response.context["form"].errors
-        self.failUnlessEqual(len(errors), 7)
+        self.failUnlessEqual(len(errors), 5)
         self.failUnless("event_type" in errors)
         self.failUnless("where" in errors)
         self.failUnless("when" in errors)
         self.failUnless("start" in errors)
-        self.failUnless("end" in errors)
-        self.failUnless("details" in errors)
         
     def test_invalid_zipcode(self):
         self.client.login(username="test@test.com", password="test")
@@ -348,13 +346,11 @@ class EventEditViewTest(TestCase):
             "start": "", "end": "", "details": "", "is_private": "False"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/edit.html")
         errors = response.context["form"].errors
-        self.failUnlessEqual(len(errors), 7)
+        self.failUnlessEqual(len(errors), 5)
         self.failUnless("event_type" in errors)
         self.failUnless("where" in errors)
         self.failUnless("when" in errors)
         self.failUnless("start" in errors)
-        self.failUnless("end" in errors)
-        self.failUnless("details" in errors)
         
     def test_change_event(self):
         self.client.login(username="test@test.com", password="test")
@@ -483,16 +479,17 @@ class EventGuestsAddViewTest(TestCase):
     def test_missing_required(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.event_guests_add_url, {"first_name": "", "last_name": "",
-            "email": "", "phone": "", "is_attending": ""}, follow=True)
+            "email": "", "phone": "", "rsvp_status": ""}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests_add.html")
         errors = response.context["guest_add_form"].errors
-        self.failUnlessEqual(len(errors), 1)
+        self.failUnlessEqual(len(errors), 2)
         self.failUnless("first_name" in errors)
+        self.failUnless("rsvp_status" in errors)
         
     def test_invalid_email(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.event_guests_add_url, {"first_name": "Jon", "last_name": "",
-            "email": "jon@", "phone": "", "is_attending": ""}, follow=True)
+            "email": "jon@", "phone": "", "rsvp_status": "N"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests_add.html")
         errors = response.context["guest_add_form"].errors
         self.failUnlessEqual(len(errors), 1)
@@ -501,7 +498,7 @@ class EventGuestsAddViewTest(TestCase):
     def test_duplicate_email(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.event_guests_add_url, {"first_name": "Jon", "last_name": "Doe",
-            "email": "jd@email.com", "phone": "", "is_attending": ""}, follow=True)
+            "email": "jd@email.com", "phone": "", "rsvp_status": "A"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests_add.html")
         errors = response.context["guest_add_form"].errors
         self.failUnlessEqual(len(errors), 1)
@@ -511,7 +508,7 @@ class EventGuestsAddViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         self.failUnlessEqual(self.event.guest_set.all().count(), 7)
         response = self.client.post(self.event_guests_add_url, {"first_name": "Jon", "last_name": "",
-            "email": "jon@gmail.com", "phone": "", "is_attending": ""}, follow=True)
+            "email": "jon@gmail.com", "phone": "", "rsvp_status": "N"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests.html")
         event = response.context["event"]
         guests = event.guest_set.all()
@@ -519,6 +516,7 @@ class EventGuestsAddViewTest(TestCase):
         jon = guests[7]
         self.failUnlessEqual(jon.first_name, "Jon")
         self.failUnlessEqual(jon.email, "jon@gmail.com")
+        self.failUnlessEqual(jon.rsvp_status, "N")
         
 class EventGuestsInviteViewTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_events.json"]
