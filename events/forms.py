@@ -15,7 +15,7 @@ from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
-from models import Event, Guest, Survey, Challenge, Commitment, rsvp_recieved
+from models import EventType, Event, Guest, Survey, Challenge, Commitment, rsvp_recieved
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
@@ -54,12 +54,16 @@ class EventForm(forms.ModelForm):
             "end": forms.Select(choices=[("", "end")]+TIMES),
         }
         
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         if self.instance.location:
             self.fields["city"].initial = self.instance.location.name
             self.fields["state"].initial = self.instance.location.st
             self.fields["zipcode"].initial = self.instance.location.zipcode
+        self.user = user
+        if not self.user.has_perm("host_any_event_type"):
+            self.fields["event_type"].initial = EventType.objects.get(name="Energy Meeting").pk
+            self.fields["event_type"].widget = forms.HiddenInput()
         
     def clean_zipcode(self):
         data = self.cleaned_data["zipcode"]
@@ -89,8 +93,8 @@ class EventForm(forms.ModelForm):
             raise forms.ValidationError("You must specify city and state or a zipcode")
         return self.cleaned_data
         
-    def save(self, user, *args, **kwargs):
-        self.instance.creator = user
+    def save(self, *args, **kwargs):
+        self.instance.creator = self.user
         self.instance.location = self.cleaned_data["location"]
         return super(EventForm, self).save(*args, **kwargs)
     

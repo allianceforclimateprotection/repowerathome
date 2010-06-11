@@ -29,9 +29,9 @@ def list(request):
 
 @login_required
 def create(request):
-    form = EventForm(request.POST or None)
+    form = EventForm(user=request.user, data=(request.POST or None))
     if form.is_valid():
-        event = form.save(user=request.user)
+        event = form.save()
         messages.success(request, "%s has been created." % event)
         return redirect(event)
     return render_to_response("events/create.html", locals(), context_instance=RequestContext(request))
@@ -48,9 +48,9 @@ def show(request, event_id, token=None):
 @user_is_event_manager
 def edit(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    form = EventForm(instance=event, data=(request.POST or None))
+    form = EventForm(user=request.user, instance=event, data=(request.POST or None))
     if form.is_valid():
-        event = form.save(user=request.user)
+        event = form.save()
         messages.success(request, "%s has been changed." % event)
         return redirect(event)
     return render_to_response("events/edit.html", locals(), context_instance=RequestContext(request))
