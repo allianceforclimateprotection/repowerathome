@@ -24,7 +24,8 @@ from pdf import render_to_pdf
 
 def list(request):
     events = Event.objects.filter(when__gt=datetime.datetime.now()).order_by("when", "start")
-    my_events = Event.objects.filter(guest__user=request.user)
+    if request.user.is_authenticated():
+        my_events = Event.objects.filter(guest__user=request.user)
     return render_to_response("events/list.html", locals(), context_instance=RequestContext(request))
 
 @login_required
