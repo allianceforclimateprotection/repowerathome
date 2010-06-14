@@ -724,6 +724,7 @@ var rah = {
                 $("input[type='checkbox']", table).attr("checked", checked);
                 return false;
             });
+            rah.page_event_guests.submit_on_select();
             $("#event_guests_selectors").removeClass("hidden");
             var namespace = this;
             var editables = $(".editable");
@@ -774,6 +775,21 @@ var rah = {
                 }, "json");
                 return value;
             }, args);
+        },
+        submit_on_select: function() {
+            var form = $("#guest_edit_form");
+            $("#id_action").change(function(){
+                var select = $(this);
+                if(!select.val()) {
+                    return;
+                }
+                if($("input[type='checkbox']", form).is(":checked")) {
+                    form.submit();
+                } else {
+                    alert("Please select at least one guest.");
+                    return;
+                }
+            });
         }
     }
 };

@@ -13,7 +13,7 @@
             <h1>{{ event }}</h1>
             <h3>Total Guests: {{ event.confirmed_guests }}</h3>
             <h3>Outstanding Invitations: {{ event.outstanding_invitations }}</h3>
-            <form action="" method="post">
+            <form id="guest_edit_form" action="" method="post">
                 {{ form.errors }}
                 {{ form.action }}
                 <div id="event_guests_selectors" class="hidden">
@@ -39,7 +39,9 @@
                     </tbody>
                 </table>
                 {% csrf_token %}
-                <input type="submit" value="Submit" />
+                <noscript>
+                    <input type="submit" value="Submit" />
+                </noscript>
             </form>
         </div>
         <div class="box_two_bottom"></div>
