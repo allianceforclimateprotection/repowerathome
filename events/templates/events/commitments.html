@@ -14,11 +14,16 @@
             <h3>Guests Confirmed: {{ event.confirmed_guests }}</h3>
             <h3>Total Actions Committed: 0</h3>
             <h3>Total Actions Already Done: 0</h3>
-            <form action="" method="post">
-                {{ form.as_ul }}
-                {% csrf_token %}
-                <input type="submit" value="Save" />
-            </form>
+            <div id="commitment_card">
+                <div><label>Name: </label><span>{{ guest.name }}</span></div>
+                <div><label>Email: </label><span>{{ guest.email }}</span></div>
+                <div><label>Phone: </label><span>{{ guest.phone }}</span></div>
+                <form action="" method="post">
+                    {{ form.as_ul }}
+                    {% csrf_token %}
+                    <input type="submit" value="Save" />
+                </form>
+            </div>
         </div>
         <div class="box_two_bottom"></div>
     </div>
@@ -28,9 +33,16 @@
         <div class="box_one_top"></div>
         <div class="box_one_middle">
             <h2>Attendee List</h2>
-            <ul>
+            <ul id="attendee_list">
                 {% for attendee in event.attendees %}
-                    <li><a href="{% url event-commitments-guest event.id attendee.id %}">{{ attendee }}</a></li>
+                    <li>
+                        <span class="attendee_check{% if attendee.has_made_commitments %} ui-icon ui-icon-check{% endif %}"></span>
+                        {% if attendee == guest %}
+                            <span>{{ attendee }}</span>
+                        {% else %}
+                            <a href="{% url event-commitments-guest event.id attendee.id %}">{{ attendee }}</a>
+                        {% endif %}
+                    </li>
                 {% endfor %}
             </ul>
         </div>

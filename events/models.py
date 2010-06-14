@@ -82,6 +82,11 @@ class Event(models.Model):
         except Invitation.DoesNotExist:
             return False
             
+    def next_guest(self, guest):
+        guests = list(self.guest_set.all())
+        next_index = guests.index(guest) + 1
+        return guests[0] if next_index == len(guests) else guests[next_index]
+        
     def _guest_key(self):
         return "event_%d_guest" % self.id
             
@@ -107,10 +112,6 @@ class Event(models.Model):
         
     def save_guest_in_session(self, request, guest):
         request.session[self._guest_key()] = guest
-        
-class GuestManager(models.Manager):
-    def create_or_update(self, *args, **kwargs):
-        pass
         
 class Guest(models.Model):
     RSVP_STATUSES = (
@@ -166,6 +167,9 @@ class Guest(models.Model):
     def needs_more_info(self):
         return not (self.user or (self.first_name and self.email))
         
+    def has_made_commitments(self):
+        return Commitment.objects.filter(guest=self).exists()
+    
     def get_full_name(self):
         if self.user:
             return self.user.get_full_name()

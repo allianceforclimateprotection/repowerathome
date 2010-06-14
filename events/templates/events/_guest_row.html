@@ -10,6 +10,6 @@
 <td id="{% url event-guests-edit-status event.id,guest.id %}" class="editable rsvp_select">{{ guest.status }}</td>
 <td>
     {% if guest.comments %}
-        <img class="ui-icon ui-icon-comment tooltip" title="{{ guest.comments }}"></img>
+        <span class="ui-icon ui-icon-comment tooltip" title="{{ guest.comments }}"></span>
     {% endif %}
 </td>

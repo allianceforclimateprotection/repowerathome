@@ -162,7 +162,7 @@ def commitments(request, event_id, guest_id=None):
     form = SurveyForm(guest=guest, instance=survey, data=(request.POST or None))
     if form.is_valid():
         form.save()
-        redirect("event-commitments", event_id=event.id)
+        return redirect("event-commitments-guest", event_id=event.id, guest_id=event.next_guest(guest).id)
     return render_to_response("events/commitments.html", locals(), context_instance=RequestContext(request))
         
 def print_sheet(request, event_id):

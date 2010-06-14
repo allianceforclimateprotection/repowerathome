@@ -498,6 +498,11 @@ Events Events Events Events Events Events Events Events Events Events Events Eve
 .event_inline_placeholder { color: grey; font-style: italic; }
 .editable { }
 .editable_highlight { background-color: #ffff99; cursor: text; }
+#commitment_card { padding: 5px; border: 1px solid black; }
+#attendee_list { font-weight: bold; }
+.active_attendee { font-weight: bold; font-size: 16px; }
+.made_commitment { text-decoration: line-through; }
+#attendee_list .attendee_check { display: inline-table; width: 16px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
