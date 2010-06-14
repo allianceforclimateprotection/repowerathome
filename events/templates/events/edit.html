@@ -7,9 +7,17 @@
     Edit Event
 {% endblock %}
 {% block right_content %}
-    {% with "Edit Event" as button_text %}
-        {% url event-show event.id as cancel_link %}
-        {% include "events/_form.html" %}
-    {% endwith %}
+    <div class="grid_6 alpha">
+        <div class="box_two_top"></div>
+        <div class="box_two_middle">
+            <form id="event_form" action="" method="post">
+                {% include "events/_form.html" %}
+                {% csrf_token %}
+                <input type="submit" value="Edit Event" /> |
+                <a href="{% url event-show event.id %}">cancel</a>
+            </form>
+        </div>
+        <div class="box_two_bottom"></div>
+    </div>
 {% endblock %}
 {% block js %}page_event_edit{% endblock %}

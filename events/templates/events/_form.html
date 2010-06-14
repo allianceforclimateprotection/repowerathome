@@ -1,6 +1,13 @@
-<form id="event_form" action="" method="post">
-    {{ form.as_p }}
-    {% csrf_token %}
-    <input type="submit" value="{{ button_text|default:'Submit' }}" /> |
-    <a href="{{ cancel_link }}">cancel</a>
-</form>
+{% for error in form.non_field_errors %}
+    <div class="overset_form_message error">{{ error }}</div>
+{% endfor %}
+{% for field in form %}
+    <div class="form_row {% if field.errors %}error{% endif %}{% if 'TextInput' in field.field.widget|pprint or 'Textarea' in field.field.widget|pprint %} overset{% endif %}">
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.help_text }}
+        {% for error in field.errors %}
+            <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+        {% endfor %}
+    </div>
+{% endfor %}
