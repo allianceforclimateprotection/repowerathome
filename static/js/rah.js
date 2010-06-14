@@ -733,6 +733,27 @@ var rah = {
             }).live("mouseout", function(){
                 $(this).removeClass("editable_highlight");
             });
+            $(".tooltip").qtip({
+                position: {
+                    corner: {
+                        target: 'rightMiddle',
+                        tooltip: 'leftTop'
+                    }
+                },
+                style: {
+                    name: 'green',
+                    tip: 'leftTop',
+                    background: '#E3EC9F',
+                    color: '#00AAD8',
+                    border: {
+                        width: 3,
+                        radius: 2,
+                        color: '#92C139'
+                    }
+                },
+                show: 'click',
+                hide: 'click'
+            });
         },
         make_editable: function() {
             var element = $(this);

@@ -127,6 +127,7 @@ class Guest(models.Model):
     invited = models.DateField(null=True, blank=True)
     added = models.DateField(null=True, blank=True)
     rsvp_status = models.CharField(blank=True, max_length=1, choices=RSVP_STATUSES)
+    comments = models.TextField(blank=True)
     notify_on_rsvp = models.BooleanField(default=False)
     is_host = models.BooleanField(default=False)
     user = models.ForeignKey("auth.User", null=True, blank=True)
