@@ -22,27 +22,15 @@ STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI"
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
     "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", 
     "UT", "VA", "VT", "WA", "WI", "WV", "WY",)
-    
-def _times():
-    times = []
-    for hour_24 in range(0,24):
-        for minute in [0,15,30,45]:
-            hour_12 = hour_24 % 12
-            if hour_12 == 0: hour_12 = 12
-            meridiem = "am" if hour_24 / 12 == 0 else "pm"
-            times.append(("%0.2d:%0.2d:00" % (hour_24, minute), 
-                "%0.2d:%0.2d%s" % (hour_12, minute, meridiem)))
-    return times
-TIMES = _times()
 
 def _durations():
     durations = []
     hours = range(1,3)
     for hour in hours:
         for minute in [0,15,30,45]:
-            durations.append(("%s" % (hour*60+minute), "%0.2d:%0.2d" % (hour, minute)))
+            durations.append(("%s" % (hour*60+minute), "%sh %0.2dm" % (hour, minute)))
     next_hour = hours[-1] + 1
-    durations.append(("%s" % (next_hour*60), "%0.2d:00" % next_hour))
+    durations.append(("%s" % (next_hour*60), "%sh 00m" % next_hour))
     return durations
 DURATIONS = _durations()
 
@@ -72,6 +60,7 @@ class EventForm(forms.ModelForm):
             self.fields["city"].initial = self.instance.location.name
             self.fields["state"].initial = self.instance.location.st
             self.fields["zipcode"].initial = self.instance.location.zipcode
+        self.fields["start"].initial = datetime.time(18,0)
         self.user = user
         if not self.user.has_perm("events.host_any_event_type"):
             self.fields["event_type"].initial = EventType.objects.get(name="Energy Meeting").pk
