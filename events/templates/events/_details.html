@@ -10,7 +10,7 @@
 {% endif %}
 <div>
     <h3>When</h3>
-    <p>{{ event.when|date }} at {{ event.start|time }}</p>
+    <p>{{ event.when|date:"LONG_DATE_FORMAT" }} at {{ event.start|time }}</p>
 </div>
 <div>
     <h3>Where</h3>

@@ -140,6 +140,7 @@ SHORT_DATE_FORMAT = "m/d/Y"
 SHORT_DATETIME_FORMAT = "m/d/Y P"
 YEAR_MONTH_FORMAT = "F Y"
 MONTH_DAY_FORMAT = "F j"
+LONG_DATE_FORMAT = "l F j, Y"
 
 try:
     from local_settings import *
