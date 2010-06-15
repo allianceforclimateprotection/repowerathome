@@ -1,7 +1,8 @@
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from django.core.validators import email_re
 
-class EmailBackend:
+class EmailBackend(ModelBackend):
     def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
