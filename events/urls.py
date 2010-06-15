@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns("events.views",
+    # TODO: Make these underscores instead of hyphens
     url(r"^$", "list", name="event-list"),
     url(r"^create/$", "create", name="event-create"),
     url(r"^(?P<event_id>\d+)/$", "show", name="event-show"),
