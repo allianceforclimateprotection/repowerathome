@@ -4,7 +4,7 @@
     <div class="grid_6 alpha">
         <div class="box_three_top"></div>
         <div class="box_three_middle">
-            <h2>Thanks for the RSVP</h2>
+            <h1>Thanks for the RSVP</h1>
             <p>We'll put you down as <span>{{ guest.get_rsvp_status_display }}</span></p>
                 <form action="{% url event-rsvp-confirm event.id %}" method="post">
                     {% include "events/_form.html" %}
