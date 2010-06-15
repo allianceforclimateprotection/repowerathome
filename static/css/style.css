@@ -494,15 +494,20 @@ ul#vampire_worksheet_wizard_nav {
 /* ---------------------------------------------------------------------------------------------------------------------
 Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events 
 --------------------------------------------------------------------------------------------------------------------- */
+#event_manager_nav li { display: inline; }
+.event_help_text { font-size: 12px; color: grey; }
+#edit_event_link { float: right; }
 #event_map { width: 400px; height: 200px; }
 .event_inline_placeholder { color: grey; font-style: italic; }
-.editable { }
 .editable_highlight { background-color: #ffff99; cursor: text; }
-#commitment_card { padding: 5px; border: 1px solid black; }
-#attendee_list { font-weight: bold; }
+#commitment_card { width: 400px; padding: 5px; border: 1px solid black; }
+#commitment_table { margin-bottom: 18px; }
+#attendee_list { float: right; font-weight: bold; clear: both; margin-right: 40px; }
+#attendee_list ul { margin-left: 0; padding-left: 5px; }
 .active_attendee { font-weight: bold; font-size: 16px; }
 .made_commitment { text-decoration: line-through; }
 #attendee_list .attendee_check { display: inline-table; width: 16px; }
+.guest_comments { text-align: center; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 

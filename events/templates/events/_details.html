@@ -1,0 +1,22 @@
+<div>
+    <h3>Description</h3>
+    <p>{{ event.event_type.description }}</p>
+</div>
+{% if event.details %}
+    <div>
+        <h3>Details</h3>
+        <p>{{ event.details }}</p>
+    </div>
+{% endif %}
+<div>
+    <h3>When</h3>
+    <p>{{ event.when|date }} at {{ event.start|time }}</p>
+</div>
+<div>
+    <h3>Where</h3>
+    <p>
+        <span id="event_address">{{ event.where }}</span><br />
+        <span id="event_location">{{ event.location }}</span>
+    </p>
+    <div id="event_map"></div>
+</div>

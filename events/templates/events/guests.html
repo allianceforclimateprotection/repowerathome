@@ -1,60 +1,12 @@
-{% extends "events/base.html" %}
+{% extends "events/management.html" %}
 {% block title %}Guests for {{ event }}{% endblock %}
 {% block breadcrumbs %}
-    <a href="{% url index %}">Home</a> &rsaquo;
-    <a href="{% url event-list %}">Events</a> &rsaquo;
+    {{ block.super }}
     <a href="{% url event-show event.id %}">{{ event }}</a> &rsaquo;
     Guests
 {% endblock %}
-{% block right_content %}
-    <div class="grid_6 alpha">
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <h1>{{ event }}</h1>
-            <h3>Total Guests: {{ event.confirmed_guests }}</h3>
-            <h3>Outstanding Invitations: {{ event.outstanding_invitations }}</h3>
-            <form id="guest_edit_form" action="" method="post">
-                {{ form.errors }}
-                {{ form.action }}
-                <div id="event_guests_selectors" class="hidden">
-                    <a class="selector select_all" href="">Select All</a> |
-                    <a class="selector deselect_all" href="">Deselect All</a>
-                </div>
-                <table id="event_guests_table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Zipcode</th>
-                            <th>Status</th>
-                            <th>Comments</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for guest in form.guests.field.choices.queryset %}
-                        <tr>{% include "events/_guest_row.html" %}</tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                {% csrf_token %}
-                <noscript>
-                    <input type="submit" value="Submit" />
-                </noscript>
-            </form>
-        </div>
-        <div class="box_two_bottom"></div>
-    </div>
- 
-    <div class="grid_3 omega">
-        {% include "events/_manager_links.html" %}
-        <div class="box_one_top"></div>
-        <div class="box_one_middle">
-            <p><a class="button" href="{% url event-guests-add event.id %}">Add Guest</a></p>
-            <p><a class="button" href="{% url event-print event.id %}">Print Sign In Sheet</a></p>
-        </div>
-        <div class="box_one_bottom"></div>
-    </div>
+{% block event_details_content %}
+    {% include "events/_guests.html" %}
 {% endblock %}
+
 {% block js %}page_event_guests{% endblock %}

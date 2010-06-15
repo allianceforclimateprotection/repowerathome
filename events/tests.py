@@ -241,7 +241,7 @@ class EventShowViewTest(TestCase):
     def test_get(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.get(self.event_show_url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "events/show.html")
+        self.failUnlessEqual(response.template[0].name, "events/rsvp.html")
         
     def test_not_a_guest_and_private(self):
         self.event.is_private = True
@@ -263,7 +263,7 @@ class EventShowViewTest(TestCase):
         Guest.objects.create(event=self.event, first_name="test", email="test@test.com", user=self.user)
         self.client.login(username="test@test.com", password="test")
         response = self.client.get(self.event_show_url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "events/show.html")
+        self.failUnlessEqual(response.template[0].name, "events/rsvp.html")
         event = response.context["event"]
         self.failUnlessEqual(event.event_type, self.event_type)
         self.failUnlessEqual(event.where, "123 Garden Street")
@@ -284,7 +284,7 @@ class EventShowViewTest(TestCase):
             token=token, content_object=self.event)
         self.client.login(username="test@test.com", password="test")
         response = self.client.get(reverse("event-invite", args=[self.event.id, invite.token]), follow=True)
-        self.failUnlessEqual(response.template[0].name, "events/show.html")
+        self.failUnlessEqual(response.template[0].name, "events/rsvp.html")
         event = response.context["event"]
         self.failUnlessEqual(event.event_type, self.event_type)
         self.failUnlessEqual(event.where, "123 Garden Street")

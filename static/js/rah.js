@@ -660,8 +660,25 @@ var rah = {
         }
     },
     
+    mod_event_tabs: {
+        init: function(tab_number) {
+            $("#event_tabs").tabs({
+                select: function(event, ui) {
+                    var url = $.data(ui.tab, "load.tabs");
+                    if( url ) {
+                        window.location.href = url;
+                        return false;
+                    }
+                    return true;
+                },
+                selected: tab_number
+            });
+        }
+    },
+    
     page_event_show: {
         init: function() {
+            rah.mod_event_tabs.init(0);
             var address = $("#event_address").text()
             var location = $("#event_location").text();
             geocoder = new google.maps.Geocoder();
@@ -718,6 +735,7 @@ var rah = {
     
     page_event_guests: {
         init: function() {
+            rah.mod_event_tabs.init(1);
             var table = $("#event_guests_table");
             $(".selector").click(function(){
                 var checked = $(this).hasClass("select_all");
@@ -737,13 +755,13 @@ var rah = {
             $(".tooltip").qtip({
                 position: {
                     corner: {
-                        target: 'rightMiddle',
-                        tooltip: 'leftTop'
+                        target: 'leftMiddle',
+                        tooltip: 'rightMiddle'
                     }
                 },
                 style: {
                     name: 'green',
-                    tip: 'leftTop',
+                    tip: 'rightMiddle',
                     background: '#E3EC9F',
                     color: '#00AAD8',
                     border: {
@@ -790,6 +808,13 @@ var rah = {
                     return;
                 }
             });
+        }
+    },
+    
+    page_event_commitments: {
+        init: function() {
+            rah.mod_event_tabs.init(2);
+            $("#ui-tabs-2").removeClass("ui-tabs-hide");
         }
     }
 };

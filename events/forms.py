@@ -16,7 +16,7 @@ from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
 from models import EventType, Event, Guest, Survey, Challenge, Commitment, rsvp_recieved
-from widgets import SelectTimeWidget
+from widgets import SelectTimeWidget, RadioRendererForTable
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
@@ -308,7 +308,7 @@ class SurveyForm(forms.ModelForm):
         super(SurveyForm, self).__init__(*args, **kwargs)
         for challenge in self.instance.challenge_set.order_by("order"):
             self.fields[challenge.name] = forms.ChoiceField(choices=Commitment.ANSWERS, 
-                widget=forms.RadioSelect, required=False)
+                widget=forms.RadioSelect(renderer=RadioRendererForTable), required=False)
             try:
                 commitment = Commitment.objects.get(guest=self.guest, challenge=challenge)
                 self.fields[challenge.name].initial = commitment.answer

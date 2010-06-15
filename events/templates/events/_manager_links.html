@@ -1,7 +1,8 @@
-<div class="box_one_top"></div>
-<div class="box_one_middle">
-    <p><a class="button" href="{% url event-edit event.id %}">Edit Event</a></p>
-    <p><a class="button" href="{% url event-guests event.id %}">Guest List</a></p>
-    <p><a class="button" href="{% url event-commitments event.id %}">Commitments</a></p>
-</div>
-<div class="box_one_bottom"></div>
+<ul id="event_manager_nav">
+    {% url event-show event.id as link %}
+    <li><a href="{% if link == request.path %}#{% else %}{{ link }}{% endif %}">Details</a></li>
+    {% url event-guests event.id as link %}
+    <li><a href="{% if link == request.path %}#{% else %}{{ link }}{% endif %}">Guest List</a></li>
+    {% url event-commitments event.id as link %}
+    <li><a href="{% if link in request.path %}#{% else %}{{ link }}{% endif %}">Commitments</a></li>
+</ul>
