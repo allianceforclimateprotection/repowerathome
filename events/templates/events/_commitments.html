@@ -1,7 +1,7 @@
 <a id="edit_event_link" class="button" href="{% url event-edit event.id %}">Edit Event</a>
 <h3>Guests Confirmed: {{ event.confirmed_guests }}</h3>
-<h3>Total Actions Committed: 0</h3>
-<h3>Total Actions Already Done: 0</h3>
+<h3>Total Challenges Committed: {{ event.challenges_committed.count }}</h3>
+<h3>Total Challenges Already Done: {{ event.challenges_done.count }}</h3>
 <div id="attendee_list">
     <h2>Attendee List</h2>
     <ul>

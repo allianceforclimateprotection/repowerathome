@@ -87,6 +87,12 @@ class Event(models.Model):
         next_index = guests.index(guest) + 1
         return guests[0] if next_index == len(guests) else guests[next_index]
         
+    def challenges_committed(self):
+        return Commitment.objects.filter(answer="C", guest__event=self)
+        
+    def challenges_done(self):
+        return Commitment.objects.filter(answer="D", guest__event=self)
+        
     def _guest_key(self):
         return "event_%d_guest" % self.id
             
@@ -208,7 +214,7 @@ class Challenge(models.Model):
         
 class Commitment(models.Model):
     ANSWERS = (
-        ("P", "Will Do"),
+        ("C", "Will Do"),
         ("D", "Already Done"),
     )
     
