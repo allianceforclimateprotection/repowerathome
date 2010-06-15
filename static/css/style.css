@@ -495,6 +495,7 @@ ul#vampire_worksheet_wizard_nav {
 Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events 
 --------------------------------------------------------------------------------------------------------------------- */
 #event_manager_nav li { display: inline; }
+#event_form ul { margin: 0 0 0 0; }
 .event_help_text { font-size: 12px; color: grey; }
 #edit_event_link { float: right; }
 #event_map { width: 400px; height: 200px; }
