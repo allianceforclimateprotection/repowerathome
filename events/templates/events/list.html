@@ -38,18 +38,14 @@
     </div>
     <div class="box_two_bottom"></div>
 </div>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and my_events %}
         <div class="grid_3 omega">
             <div class="box_one_top"></div>
             <div class="box_one_middle">
                 <h3>Your Events</h3>
-                {% if my_events %}
-                    {% with my_events as events %}
-                        {% include "events/_event_nugget_list.html" %}
-                    {% endwith %}
-                {% else %}
-                    <em>You're not a member of any teams yet!</em>
-                {% endif %}
+                {% with my_events as events %}
+                    {% include "events/_event_nugget_list.html" %}
+                {% endwith %}
             </div>
             <div class="box_one_bottom"></div>
         </div>
