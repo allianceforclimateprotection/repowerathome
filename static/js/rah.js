@@ -685,7 +685,8 @@ var rah = {
             geocoder = new google.maps.Geocoder();
             var myOptions = {
               zoom: 9,
-              mapTypeId: google.maps.MapTypeId.ROADMAP
+              mapTypeId: google.maps.MapTypeId.ROADMAP,
+              scrollwheel: false
             };
             var map = new google.maps.Map(document.getElementById("event_map"), myOptions);
             if(geocoder) {
