@@ -18,9 +18,9 @@ from invite.fields import MultiEmailField
 from models import EventType, Event, Guest, Survey, Challenge, Commitment, rsvp_recieved
 from widgets import SelectTimeWidget, RadioRendererForTable
 
-STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", 
-    "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", 
-    "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", 
+STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID",
+    "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND",
+    "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX",
     "UT", "VA", "VT", "WA", "WI", "WV", "WY",)
 
 def _durations():
@@ -45,7 +45,7 @@ class EventForm(forms.ModelForm):
     
     class Meta:
         model = Event
-        fields = ["event_type", "where", "city", "state", "zipcode", "when", "start", "duration", 
+        fields = ["event_type", "where", "city", "state", "zipcode", "when", "start", "duration",
             "details", "is_private", "limit"]
         widgets = {
             "event_type": forms.RadioSelect,
@@ -53,7 +53,7 @@ class EventForm(forms.ModelForm):
             "start": SelectTimeWidget(minute_step=15, twelve_hr=True, use_seconds=False),
             "duration": forms.Select(choices=[("", "---")]+DURATIONS)
         }
-        
+    
     def __init__(self, user, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         if self.instance.location:
@@ -65,7 +65,7 @@ class EventForm(forms.ModelForm):
         if not self.user.has_perm("events.host_any_event_type"):
             self.fields["event_type"].initial = EventType.objects.get(name="Energy Meeting").pk
             self.fields["event_type"].widget = forms.HiddenInput()
-        
+    
     def clean_zipcode(self):
         data = self.cleaned_data["zipcode"]
         if data:
@@ -74,7 +74,7 @@ class EventForm(forms.ModelForm):
             except Location.DoesNotExist:
                 raise forms.ValidationError("Invalid zipcode %s" % data)
         return data
-        
+    
     def clean(self):
         city = self.cleaned_data.get("city", None)
         state = self.cleaned_data.get("state", None)
@@ -87,14 +87,14 @@ class EventForm(forms.ModelForm):
         if not "location" in self.cleaned_data and not "zipcode" in self.errors:
             raise forms.ValidationError("You must specify city and state or a zipcode")
         return self.cleaned_data
-        
+    
     def save(self, *args, **kwargs):
         self.instance.creator = self.user
         self.instance.location = self.cleaned_data["location"]
         return super(EventForm, self).save(*args, **kwargs)
-    
+
 class GuestInviteForm(InviteForm):
-    emails = MultiEmailField(label="Email addresses", required=True, 
+    emails = MultiEmailField(label="Email addresses", required=True,
         widget=forms.Textarea(attrs={"rows": 5}))
     note = forms.CharField(label="Personal note (optional)", required=False,
         widget=forms.Textarea(attrs={"rows": 5}))
@@ -106,7 +106,7 @@ class GuestInviteForm(InviteForm):
         event = self.instance.content_object
         rsvp_notification = self.cleaned_data["rsvp_notification"]
         for email in self.cleaned_data["emails"]:
-            guest, created = Guest.objects.get_or_create(event=event, email=email, 
+            guest, created = Guest.objects.get_or_create(event=event, email=email,
                 defaults={"invited":datetime.date.today()})
             guest.notify_on_rsvp = rsvp_notification
             guest.save()
@@ -119,22 +119,22 @@ class GuestInviteForm(InviteForm):
 class GuestAddForm(forms.ModelForm):
     first_name = forms.CharField(required=True, max_length=50)
     zipcode = forms.CharField(max_length=5, min_length=5, required=False)
-    rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, 
+    rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES,
         label="Is this person planning on attending?", widget=forms.RadioSelect)
-        
+    
     class Meta:
         model = Guest
         fields = ("first_name", "last_name", "email", "phone", "zipcode", "rsvp_status",)
         widgets = {
             "rsvp_status": forms.RadioSelect,
         }
-        
+    
     def clean_email(self):
         data = self.cleaned_data["email"]
         if data and Guest.objects.filter(event=self.instance.event, email=data).exists():
             raise forms.ValidationError("A Guest with this email address already exists.")
         return data
-            
+    
     def clean_zipcode(self):
         data = self.cleaned_data["zipcode"]
         if data:
@@ -143,11 +143,11 @@ class GuestAddForm(forms.ModelForm):
             except Location.DoesNotExist:
                 raise forms.ValidationError("Invalid zipcode %s" % data)
         return data
-        
+    
     def save(self, *args, **kwargs):
         self.instance.added = datetime.date.today()
         return super(GuestAddForm, self).save(*args, **kwargs)
-        
+
 class GuestListForm(forms.Form):
     from actions import attending, not_attending, announcement_email, invitation_email, \
         reminder_email, remove, make_host, unmake_host
@@ -170,18 +170,18 @@ class GuestListForm(forms.Form):
         super(GuestListForm, self).__init__(*args, **kwargs)
         self.event = event
         self.fields["guests"].queryset = event.guest_set.all()
-        
+    
     def clean(self):
         action = self.cleaned_data.get("action", "")
         if re.search("^\d+_E", action): # Check to see if the action is of type Email
             if any([not g.email for g in self.cleaned_data["guests"]]): # Action of type Email can only be performed on guests with emails
                 raise forms.ValidationError("All guests must have an email address")
         return self.cleaned_data
-        
+    
     def save(self, *args, **kwargs):
         action = GuestListForm.ACTIONS[self.cleaned_data["action"]][1]
         return action(self.cleaned_data["guests"])
-        
+
 class GuestEditForm(forms.ModelForm):
     name = forms.CharField(required=False, max_length=100)
     zipcode = forms.CharField(required=False, max_length=5)
@@ -189,6 +189,13 @@ class GuestEditForm(forms.ModelForm):
     class Meta:
         model = Guest
         
+    def clean_email(self):
+        data = self.cleaned_data["email"]
+        if data and Guest.objects.filter(event=self.instance.event, email=data).exclude(
+            id=self.instance.id).exists():
+            raise forms.ValidationError("A Guest with this email address already exists.")
+        return data
+                
     def clean_zipcode(self):
         data = self.cleaned_data["zipcode"]
         if data:
@@ -197,7 +204,7 @@ class GuestEditForm(forms.ModelForm):
             except Location.DoesNotExist:
                 raise forms.ValidationError("Invalid zipcode %s" % data)
         return data
-        
+    
     def save(self, *args, **kwargs):
         name = self.cleaned_data.get("name", None)
         if name:
@@ -206,7 +213,7 @@ class GuestEditForm(forms.ModelForm):
         if zipcode:
             self.instance.zipcode = zipcode
         return super(GuestEditForm, self).save(*args, **kwargs)
-        
+
 class RsvpForm(forms.ModelForm):
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)
     token = forms.CharField(required=False, widget=forms.HiddenInput)
@@ -217,17 +224,22 @@ class RsvpForm(forms.ModelForm):
         widgets = {
             "comments": forms.Textarea(attrs={"cols": "17"})
         }
-        
+    
     def clean_token(self):
         data = self.cleaned_data["token"]
         event = self.instance.event
         if event.is_private and not event.is_token_valid(data):
             return forms.ValidationError("Invalid token")
         return data
-
-    def save(self, request, *args, **kwargs):
-        guest = super(RsvpForm, self).save(*args, **kwargs)
+        
+    def store(self, request):
+        guest = self.instance
         guest.event.save_guest_in_session(request=request, guest=guest)
+        return guest
+        
+    def save(self, *args, **kwargs):
+        guest = super(RsvpForm, self).save(*args, **kwargs)
+        # guest.event.save_guest_in_session(request=request, guest=guest)
         rsvp_recieved.send(sender=self, guest=guest)
         return guest
 
@@ -239,11 +251,24 @@ class RsvpConfirmForm(forms.ModelForm):
         model = Guest
         fields = ("first_name", "last_name", "email", "phone",)
         
+    def clean_email(self):
+        data = self.cleaned_data["email"]
+        if data:
+            try:
+                existing = Guest.objects.get(event=self.instance.event, email=data)
+                existing.rsvp_status = self.instance.rsvp_status
+                existing.comments = self.instance.comments
+                self.instance = existing
+            except Guest.DoesNotExist:
+                pass
+        return data
+    
     def save(self, request, *args, **kwargs):
         guest = super(RsvpConfirmForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
+        rsvp_recieved.send(sender=self, guest=guest)
         return guest
-        
+
 class RsvpAccountForm(forms.ModelForm):
     zipcode = forms.CharField(max_length=10, required=False)
     password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
@@ -252,7 +277,7 @@ class RsvpAccountForm(forms.ModelForm):
     class Meta:
         model = Guest
         fields = ("zipcode", "password1", "password2",)
-        
+    
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1", "")
         password2 = self.cleaned_data["password2"]
@@ -261,7 +286,7 @@ class RsvpAccountForm(forms.ModelForm):
         if len(password2) < 5:
             raise forms.ValidationError("Your password must contain at least 5 characters.")
         return password2
-        
+    
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
         if not len(data):
@@ -273,9 +298,9 @@ class RsvpAccountForm(forms.ModelForm):
             self.cleaned_data["location"] = Location.objects.get(zipcode=data)
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
-            
+    
     def save(self, request, *args, **kwargs):
-        user = User(first_name=self.instance.first_name, last_name=self.instance.last_name, 
+        user = User(first_name=self.instance.first_name, last_name=self.instance.last_name,
             email=self.instance.email)
         user.username = hashlib.md5(self.instance.email).hexdigest()[:30]
         user.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
@@ -289,24 +314,24 @@ class RsvpAccountForm(forms.ModelForm):
         guest = super(RsvpAccountForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
         return guest
-        
+
 class SurveyForm(forms.ModelForm):
     class Meta:
         model = Survey
         exclude = ("name", "event_type", "is_active",)
-        
+    
     def __init__(self, guest, *args, **kwargs):
         self.guest = guest
         super(SurveyForm, self).__init__(*args, **kwargs)
         for challenge in self.instance.challenge_set.order_by("order"):
-            self.fields[challenge.name] = forms.ChoiceField(choices=Commitment.ANSWERS, 
+            self.fields[challenge.name] = forms.ChoiceField(choices=Commitment.ANSWERS,
                 widget=forms.RadioSelect(renderer=RadioRendererForTable), required=False)
             try:
                 commitment = Commitment.objects.get(guest=self.guest, challenge=challenge)
                 self.fields[challenge.name].initial = commitment.answer
             except Commitment.DoesNotExist:
                 pass
-                
+    
     def save(self, *args, **kwargs):
         for key,data in self.cleaned_data.items():
             if data:

@@ -122,10 +122,11 @@ def rsvp(request, event_id):
     guest = event.current_guest(request=request, token=request.POST.get("token", None))
     rsvp_form = RsvpForm(instance=guest, data=request.POST)
     if rsvp_form.is_valid():
-        guest = rsvp_form.save(request)
+        guest = rsvp_form.store(request)
         if guest.needs_more_info():
             return redirect("event-rsvp-confirm", event_id=event.id)
         else:
+            rsvp_form.save()
             return redirect(event)
     return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
 
