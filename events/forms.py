@@ -239,7 +239,6 @@ class RsvpForm(forms.ModelForm):
         
     def save(self, *args, **kwargs):
         guest = super(RsvpForm, self).save(*args, **kwargs)
-        # guest.event.save_guest_in_session(request=request, guest=guest)
         rsvp_recieved.send(sender=self, guest=guest)
         return guest
 
