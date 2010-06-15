@@ -3,7 +3,11 @@
 {% endfor %}
 {% for field in form.visible_fields %}
     <div class="form_row {% if field.errors %}error{% endif %}{% if 'TextInput' in field.field.widget|pprint or 'Textarea' in field.field.widget|pprint %} overset{% endif %}">
-        {{ field.label_tag }}{{ field }}
+        {% if "CheckboxInput" in field.field.widget|pprint %}
+            {{ field }}{{ field.label_tag }}
+        {% else %}
+            {{ field.label_tag }}{{ field }}
+        {% endif %}
         <span class="event_help_text">{{ field.help_text }}</span>
         {% for error in field.errors %}
             <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>

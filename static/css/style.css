@@ -104,6 +104,11 @@ a.button:hover { color: white; }
 .form_row input { height: 18px; }
 .form_row input[type="file"] { height: 24px; }
 .form_row input[type="checkbox"] { width: 15px; }
+.form_row input[type="checkbox"] + label { 
+    position: relative;
+    margin-left: 5px;
+    top: -4px;
+}
 .form_row[class~="error"] { background: transparent; }
 .form_row input.error, 
 .form_row[class~="error"] input,
