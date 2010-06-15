@@ -4,10 +4,10 @@
     <div class="grid_6 alpha">
         <div class="box_three_top"></div>
         <div class="box_three_middle">
-            <h2>Thanks for the RSVP</h2>
-            <p>We'll put you down as <span>{{ guest.get_rsvp_status_display }}</span></p>
+            <h2>Create an Account</h2>
+            <p></p>
                 <form action="{% url event-rsvp-account event.id %}" method="post">
-                    {{ form.as_p }}
+                    {% include "events/_form.html" %}
                     {% csrf_token %}
                     <input type="submit" value="Create Account" /> |
                     <a href="{% url event-show event.id %}">No Thanks</a>
