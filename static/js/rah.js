@@ -780,6 +780,7 @@ var rah = {
                 $(".tabs", guests_add_container).tabs();
                 $("button, input:submit, a.button, input.button", guests_add_container).button();
                 rah.mod_overset.init(guests_add_container);
+                rah.page_guest_add.init();
                 guests_add_container.dialog({ 
                     autoOpen: false,
                     modal: true,
@@ -825,6 +826,18 @@ var rah = {
                     alert("Please select at least one guest.");
                     return;
                 }
+            });
+        }
+    },
+    
+    page_guest_add: {
+        init: function() {
+            $("#guests_add .tab").each(function() {
+                var tab = $(this);
+                $("form", tab).each(function() {
+                    var form = $(this);
+                    form.attr("action", form.attr("action") + "#" + tab.attr("id"));
+                });
             });
         }
     },

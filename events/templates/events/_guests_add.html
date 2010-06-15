@@ -3,7 +3,7 @@
         <li><a href="#guests_add_with_invite">Send Invitations</a></li>
         <li><a href="#guests_add_without_invite">Add without Invite</a></li>
     </ul>
-    <div id="guests_add_with_invite">
+    <div id="guests_add_with_invite" class="tab">
         <form action="{% url event-guests-invite event.id %}" method="post">
             {% with guest_invite_form as form %}
                 {% include "events/_form.html" %}
@@ -12,7 +12,7 @@
             <input type="submit" value="Send" /> | <a href="{% url event-guests event.id %}">cancel</a>
         </form>
     </div>
-    <div id="guests_add_without_invite">
+    <div id="guests_add_without_invite" class="tab">
         <form action="{% url event-guests-add event.id %}" method="post">
             {% with guest_add_form as form %}
                 {% include "events/_form.html" %}
