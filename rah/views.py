@@ -26,6 +26,8 @@ from settings import GA_TRACK_PAGEVIEW, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
+from events.models import Event
+
 from decorators import save_queued_POST
 
 @csrf_protect
@@ -50,6 +52,7 @@ def index(request):
         'twitter_status_form': twitter_form,
         'commitment_list': UserActionProgress.objects.commitments_for_user(request.user),
         'my_groups': Group.objects.filter(users=request.user, is_geo_group=False),
+        'my_events': Event.objects.filter(guest__user=request.user),
         'records': Record.objects.user_records(request.user, 10),
     }, context_instance=RequestContext(request))
 

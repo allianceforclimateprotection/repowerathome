@@ -85,6 +85,17 @@
         <div class="box_one_bottom"></div>
         {% endif %}
         
+        {% if my_events %}
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                <h3>Your Events</h3>
+                {% with my_events as events %}
+                    {% include "events/_event_nugget_list.html" %}
+                {% endwith %}
+            </div>
+            <div class="box_one_bottom"></div>
+        {% endif %}
+        
         {% if completed %}
         <div class="box_one_top"></div>
         <div class="box_one_middle">
