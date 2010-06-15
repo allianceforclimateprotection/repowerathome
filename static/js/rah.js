@@ -95,8 +95,9 @@ var rah = {
     * setup all of the overset inputs
     **/
     mod_overset: {
-        init: function(){
-            $(".overset input, .overset textarea").blur(function(){
+        init: function(container){
+            if(!container) { container = $("body"); }
+            $(".overset input, .overset textarea", container).blur(function(){
                var field = $(this);
                var label = field.prev("label");
                if(field.val() == "") {
@@ -105,7 +106,7 @@ var rah = {
                    label.removeClass("inside");
                }
             }).blur();
-            $(".overset input, .overset textarea").focus(function(){
+            $(".overset input, .overset textarea", container).focus(function(){
                $(this).prev("label").removeClass("inside");
             });
         }
@@ -772,6 +773,23 @@ var rah = {
                 },
                 show: 'click',
                 hide: 'click'
+            });
+            var guests_add_link = $("#guests_add_link");
+            var guests_add_container = $("#guests_add_container");
+            guests_add_container.load(guests_add_link.attr("href"), function() {
+                $(".tabs", guests_add_container).tabs();
+                $("button, input:submit, a.button, input.button", guests_add_container).button();
+                rah.mod_overset.init(guests_add_container);
+                guests_add_container.dialog({ 
+                    autoOpen: false,
+                    modal: true,
+                    height: 650,
+                    width: 500
+                });
+            });
+            guests_add_link.click(function() {
+                guests_add_container.dialog("open");
+                return false;
             });
         },
         make_editable: function() {

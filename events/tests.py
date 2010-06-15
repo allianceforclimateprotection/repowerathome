@@ -793,17 +793,6 @@ class EventGuestsEditEmailViewTest(TestCase):
         message = iter(response.context["messages"]).next()
         self.failUnless("error" in message.tags)
         
-    def test_set_duplicate_email(self):
-        self.client.login(username="test@test.com", password="test")
-        self.failUnlessEqual(self.guest.email, "jd@email.com")
-        response = self.client.post(self.event_guests_edit_url, {"value": "jondoe@email.com"}, follow=True)
-        self.guest = Guest.objects.get(pk=1)
-        self.failUnlessEqual(self.guest.email, "jd@email.com")
-        self.failUnlessEqual(response.get("content-type", 1), "text/json")
-        self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
-        message = iter(response.context["messages"]).next()
-        self.failUnless("error" in message.tags)
-        
     def test_set_email(self):
         self.client.login(username="test@test.com", password="test")
         self.failUnlessEqual(self.guest.email, "jd@email.com")

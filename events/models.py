@@ -142,7 +142,7 @@ class Guest(models.Model):
     updated = models.DateTimeField(auto_now=True)
     
     class Meta:
-        unique_together = (("event", "email",),("event", "user",),)
+        unique_together = (("event", "user",),)
         
     def _set_name(self, value):
         first, space, last = value.partition(" ")

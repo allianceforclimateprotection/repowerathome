@@ -85,7 +85,8 @@ def guests_add(request, event_id, type):
     if guest_invite_form.is_valid():
         guest_invite_form.save()
         return redirect("event-guests", event_id=event.id)
-    return render_to_response("events/guests_add.html", locals(), context_instance=RequestContext(request))
+    template = "events/_guests_add.html" if request.is_ajax() else "events/guests_add.html"
+    return render_to_response(template, locals(), context_instance=RequestContext(request))
     
 @login_required
 @require_POST

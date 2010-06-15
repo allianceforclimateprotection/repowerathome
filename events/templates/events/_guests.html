@@ -33,6 +33,7 @@
 </form>
 <br />
 <p>
-    <a class="button" href="{% url event-guests-add event.id %}">Add Guest</a>
+    <a id="guests_add_link" class="button" href="{% url event-guests-add event.id %}">Add Guest</a>
     <a class="button" href="{% url event-print event.id %}">Print Sign In Sheet</a>
 </p>
+<div id="guests_add_container" class="hidden"></div>

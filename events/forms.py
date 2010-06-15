@@ -105,7 +105,10 @@ class EventForm(forms.ModelForm):
         return super(EventForm, self).save(*args, **kwargs)
     
 class GuestInviteForm(InviteForm):
-    emails = MultiEmailField(label="Email addresses", required=True, widget=forms.Textarea)
+    emails = MultiEmailField(label="Email addresses", required=True, 
+        widget=forms.Textarea(attrs={"rows": 5}))
+    note = forms.CharField(label="Personal note (optional)", required=False,
+        widget=forms.Textarea(attrs={"rows": 5}))
     rsvp_notification = forms.BooleanField(required=False, label="Email me when people RSVP")
     copy_me = forms.BooleanField(required=False, label="Send me a copy of the invitation")
     

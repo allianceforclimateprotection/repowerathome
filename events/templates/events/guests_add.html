@@ -5,26 +5,7 @@
         <div class="box_three_top"></div>
         <div class="box_three_middle">
             <h1>Add Guest</h1>
-            <div id="guests_add" class="tabs">
-                <ul>
-                    <li><a href="#guests_add_with_invite">Send Invitations</a></li>
-                    <li><a href="#guests_add_without_invite">Add without Invite</a></li>
-                </ul>
-                <div id="guests_add_with_invite">
-                    <form action="{% url event-guests-invite event.id %}" method="post">
-                        {{ guest_invite_form.as_p }}
-                        {% csrf_token %}
-                        <input type="submit" value="Send" /> | <a href="{% url event-guests event.id %}">cancel</a>
-                    </form>
-                </div>
-                <div id="guests_add_without_invite">
-                    <form action="{% url event-guests-add event.id %}" method="post">
-                        {{ guest_add_form.as_p }}
-                        {% csrf_token %}
-                        <input type="submit" value="Add" /> | <a href="{% url event-guests event.id %}">cancel</a>
-                    </form>
-                </div>
-            </div>
+            {% include "events/_guests_add.html" %}
         </div>
         <div class="box_three_bottom"></div>
     </div>
