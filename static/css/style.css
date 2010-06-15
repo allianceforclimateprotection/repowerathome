@@ -26,7 +26,7 @@ legend{color:#000;}
 Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors 
 --------------------------------------------------------------------------------------------------------------------- */
 .beige      { color: #e3ec9f; }
-.blue       { color: #172950; }
+.blue       { color: #388ca0; }
 .red        { color: #c3262f; }
 .blue_light { color: #5bbcca; }
 .orange     { color: #ed6623; }
@@ -42,7 +42,7 @@ body {
     font: 14px/18px Helvetica, Arial, sans-serif;
     color: #333; 
     background-color: #b0d8f2; }
-a { color: #5fbdcc; text-decoration: none; }
+a { color: #388ca0; text-decoration: none; }
 a:hover { text-decoration:underline; }
 a:active { color: #6EC3D1; text-decoration:underline; }
 h1, h1 a {
@@ -50,8 +50,8 @@ h1, h1 a {
     font-weight:700;
     font-style: normal; 
     color: #ed6623;}
-h2, h3, h4, h5, h6 { font-weight:bold; color: #172950;}
-h1 { font-size: 30px; line-height:45px; margin-bottom:9px;}
+h2, h3, h4, h5, h6 { font-weight:bold; color: #6e9b31; }
+h1 { font-size: 30px; line-height:45px; margin-bottom:9px; }
 h2 { font-size: 24px; line-height:27px; margin-bottom:9px; }
 h3 { font-size: 16px; margin-bottom:9px; }
 h4 { font-size: 14px; color: #333333; }
@@ -226,7 +226,7 @@ Corners Corners Corners Corners Corners Corners Corners Corners Corners Corners 
 .box_one_middle, .box_two_middle, .box_three_middle,
 .box_one_bottom, .box_two_bottom, .box_three_bottom {margin-left:-5px; position:relative;}
 .box_one_top, .box_two_top, .box_three_top {margin-top:10px;}
-.box_one_middle, .box_two_middle, .box_three_middle {height:100%; padding:0px 23px 0px 23px; overflow:auto;}
+.box_one_middle, .box_two_middle, .box_three_middle {height:100%; padding:0px 23px 0px 18px; overflow:auto;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation Navigation 
@@ -235,20 +235,21 @@ Navigation Navigation Navigation Navigation Navigation Navigation Navigation Nav
 #nav a{ display:block; height:55px; font-size:0px; float:left; color: #e3ec9f;}
 #nav a:hover{color:#e3ec9f;}
 #nav_home{width:125px; background: url(../images/theme/0000000004_nav_sprite.png) 0px 110px;}
-#nav_home:hover{background-position: 0px 55px;}
-#nav_home.selected{background-position: 0px 0px;}
+#nav_home:hover{background-position: 0px 0px;}
+#nav_home.selected{background-position: 0px 55px;}
 #nav_actions{width:160px; background: url(../images/theme/0000000004_nav_sprite.png) -125px 110px;}
-#nav_actions:hover{background-position: -125px 55px;}
-#nav_actions.selected{background-position: -125px 0px;}
+#nav_actions:hover{background-position: -125px 0px;}
+#nav_actions.selected{background-position: -125px 55px;}
 #nav_teams{width:137px; background: url(../images/theme/0000000004_nav_sprite.png) -285px 110px;}
-#nav_teams:hover{background-position: -285px 55px;}
-#nav_teams.selected{background-position: -285px 0px;}
+#nav_teams:hover{background-position: -285px 0px;}
+#nav_teams.selected{background-position: -285px 55px;}
 #nav_events{width:152px; background: url(../images/theme/0000000004_nav_sprite.png) -422px 110px;}
-#nav_events:hover{background-position: -422px 55px;}
-#nav_events.selected{background-position: -422px 0px;}
+#nav_events:hover{background-position: -422px 0px;}
+#nav_events.selected{background-position: -422px 55px;}
 #nav_blog{width:117px; background: url(../images/theme/0000000004_nav_sprite.png) -574px 110px;}
-#nav_blog:hover{background-position: -574px 55px;}
-#nav_blog.selected{background-position: -574px 0px;}
+#nav_blog:hover{background-position: -574px 0px;}
+#nav_blog.selected{background-position: -574px 55px;}
+
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer 
@@ -317,7 +318,7 @@ Actions Actions Actions Actions Actions Actions Actions Actions Actions Actions 
 .action_nugget_status { float:left; font-weight:bold;}
 .action_nugget_points { text-align:right; font-weight: bold;}
 .action_nugget img {  margin-top:3px;}
-.action_nugget_title {max-height:48px; overflow:hidden; font-weight:bold; color: #172950; font-size:18px; line-height:24px;}
+.action_nugget_title {max-height:48px; overflow:hidden; font-weight:bold; color: #388ca0; font-size:18px; line-height:24px;}
 .action_nugget_teaser {max-height:54px; overflow:hidden;}
 .action_nugget_wrapper_three { width:729px;}
 .action_nugget_wrapper_two { width:486px;}
@@ -529,6 +530,7 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .blog_byline {}
 .post_body li,
 #flat_page li{ list-style: disc; }
+ul.plain_list {margin-left: 0px; padding-left: 0px; list-style: none;}
 
 /* spite icons */
 .icon_gt {background: url(../images/theme/0000000004_sprite_minor_col.png) -20px -303px; width:5px; height:10px; display:inline-block;}

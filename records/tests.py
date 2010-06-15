@@ -83,7 +83,7 @@ class RecordManagerTest(TestCase):
 
         self.failUnlessEqual(rec_4.user.email, "test@test.com")
         self.failUnlessEqual(rec_4.activity.slug, "comment_mark_useful")
-        self.failUnlessEqual(rec_4.points, 5)
+        self.failUnlessEqual(rec_4.points, 0)
         self.failUnlessEqual(len(rec_4.content_objects.all()), 0)
         
     def test_create_batch_records(self):
@@ -108,7 +108,7 @@ class RecordManagerTest(TestCase):
         self.failUnlessEqual(len(chart_data), 1)
         chart_point = chart_data[0]
         self.failUnlessEqual(chart_point.date, datetime.date.today())
-        self.failUnlessEqual(chart_point.points, 160)
+        self.failUnlessEqual(chart_point.points, 110)
         self.failUnlessEqual(chart_point.records, [self.rec_1, self.rec_2, self.rec_3])
         
 class RecordTest(TestCase):
@@ -134,7 +134,7 @@ class RecordTest(TestCase):
         
         self.rec_2 = Record.objects.create_record(self.user, "mag_tweet")
         self.user = User.objects.get(pk=self.user.pk)
-        self.failUnlessEqual(self.user.get_profile().total_points, 90)
+        self.failUnlessEqual(self.user.get_profile().total_points, 40)
         
         
         Record.objects.void_record(self.user, "mag_tweet")
