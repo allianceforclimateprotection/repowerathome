@@ -1,39 +1,12 @@
-{% extends "events/base.html" %}
+{% extends "events/management.html" %}
 {% block title %}Commitments for {{ event }}{% endblock %}
 {% block breadcrumbs %}
-    <a href="{% url index %}">Home</a> &rsaquo;
-    <a href="{% url event-list %}">Events</a> &rsaquo;
+    {{ block.super }}
     <a href="{% url event-show event.id %}">{{ event }}</a> &rsaquo;
     Commitments
 {% endblock %}
-{% block right_content %}
-    <div class="grid_6 alpha">
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <h1>{{ event }}</h1>
-            <h3>Guests Confirmed: {{ event.confirmed_guests }}</h3>
-            <h3>Total Actions Committed: 0</h3>
-            <h3>Total Actions Already Done: 0</h3>
-            <form action="" method="post">
-                {{ form.as_ul }}
-                {% csrf_token %}
-                <input type="submit" value="Save" />
-            </form>
-        </div>
-        <div class="box_two_bottom"></div>
-    </div>
- 
-    <div class="grid_3 omega">
-        {% include "events/_manager_links.html" %}
-        <div class="box_one_top"></div>
-        <div class="box_one_middle">
-            <h2>Attendee List</h2>
-            <ul>
-                {% for attendee in event.attendees %}
-                    <li><a href="{% url event-commitments-guest event.id attendee.id %}">{{ attendee }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="box_one_bottom"></div>
-    </div>
+{% block event_details_content %}
+    {% include "events/_commitments.html" %}
 {% endblock %}
+
+{% block js %}page_event_commitments{% endblock %}

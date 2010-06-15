@@ -23,8 +23,9 @@ from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_ha
 from pdf import render_to_pdf
 
 def list(request):
-    events = Event.objects.filter(when__gt=datetime.datetime.now()).order_by("when", "start")
-    my_events = Event.objects.filter(guest__user=request.user)
+    events = Event.objects.filter(is_private=False, when__gt=datetime.datetime.now()).order_by("when", "start")
+    if request.user.is_authenticated():
+        my_events = Event.objects.filter(guest__user=request.user)
     return render_to_response("events/list.html", locals(), context_instance=RequestContext(request))
 
 @login_required
@@ -40,9 +41,12 @@ def create(request):
 def show(request, event_id, token=None):
     event = get_object_or_404(Event, id=event_id)
     guest = event.current_guest(request, token)
-    has_manager_privileges = event.has_manager_privileges(request.user)
-    rsvp_form = RsvpForm(instance=guest, initial={"token": token})
-    return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
+    if event.has_manager_privileges(request.user):
+        template = "events/_show.html" if request.is_ajax() else "events/show.html"
+    else:
+        rsvp_form = RsvpForm(instance=guest, initial={"token": token})
+        template = "events/rsvp.html"
+    return render_to_response(template, locals(), context_instance=RequestContext(request))
 
 @login_required
 @user_is_event_manager
@@ -63,7 +67,8 @@ def guests(request, event_id):
     if form.is_valid():
         response = form.save()
         return response if response else redirect("event-guests", event_id=event.id)
-    return render_to_response("events/guests.html", locals(), context_instance=RequestContext(request))
+    template = "events/_guests.html" if request.is_ajax() else "events/guests.html"
+    return render_to_response(template, locals(), context_instance=RequestContext(request))
 
 @login_required
 @user_is_event_manager
@@ -80,7 +85,8 @@ def guests_add(request, event_id, type):
     if guest_invite_form.is_valid():
         guest_invite_form.save()
         return redirect("event-guests", event_id=event.id)
-    return render_to_response("events/guests_add.html", locals(), context_instance=RequestContext(request))
+    template = "events/_guests_add.html" if request.is_ajax() else "events/guests_add.html"
+    return render_to_response(template, locals(), context_instance=RequestContext(request))
     
 @login_required
 @require_POST
@@ -161,8 +167,9 @@ def commitments(request, event_id, guest_id=None):
     form = SurveyForm(guest=guest, instance=survey, data=(request.POST or None))
     if form.is_valid():
         form.save()
-        redirect("event-commitments", event_id=event.id)
-    return render_to_response("events/commitments.html", locals(), context_instance=RequestContext(request))
+        return redirect("event-commitments-guest", event_id=event.id, guest_id=event.next_guest(guest).id)
+    template = "events/_commitments.html" if request.is_ajax() else "events/commitments.html"
+    return render_to_response(template, locals(), context_instance=RequestContext(request))
         
 def print_sheet(request, event_id):
     event = get_object_or_404(Event, id=event_id)

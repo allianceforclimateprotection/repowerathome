@@ -6,9 +6,18 @@
     Create an Event
 {% endblock %}
 {% block right_content %}
-    {% with "Create Event" as button_text %}
-        {% url event-list as cancel_link %}
-        {% include "events/_form.html" %}
-    {% endwith %}
+    <div class="grid_6 alpha">
+        <div class="box_two_top"></div>
+        <div class="box_two_middle">
+            <h1>Create an Event</h1>
+            <form id="event_form" action="" method="post">
+                {% include "events/_form.html" %}
+                {% csrf_token %}
+                <input type="submit" value="Create Event" /> |
+                <a href="{% url event-list %}">cancel</a>
+            </form>
+        </div>
+        <div class="box_two_bottom"></div>
+    </div>
 {% endblock %}
 {% block js %}page_event_create{% endblock %}

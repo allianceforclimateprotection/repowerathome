@@ -1,0 +1,39 @@
+<a id="edit_event_link" class="button" href="{% url event-edit event.id %}">Edit Event</a>
+<h3>Total Guests: {{ event.confirmed_guests }}</h3>
+<h3>Outstanding Invitations: {{ event.outstanding_invitations }}</h3>
+<form id="guest_edit_form" action="" method="post">
+    {{ form.errors }}
+    {{ form.action }}
+    <div id="event_guests_selectors" class="hidden">
+        <a class="selector select_all" href="">Select All</a> |
+        <a class="selector deselect_all" href="">Deselect All</a>
+    </div>
+    <table id="event_guests_table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Zipcode</th>
+                <th>Status</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for guest in form.guests.field.choices.queryset %}
+            <tr>{% include "events/_guest_row.html" %}</tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% csrf_token %}
+    <noscript>
+        <input type="submit" value="Submit" />
+    </noscript>
+</form>
+<br />
+<p>
+    <a id="guests_add_link" class="button" href="{% url event-guests-add event.id %}">Add Guest</a>
+    <a class="button" href="{% url event-print event.id %}">Print Sign In Sheet</a>
+</p>
+<div id="guests_add_container" class="hidden"></div>

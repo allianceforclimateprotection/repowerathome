@@ -1,67 +1,12 @@
-{% extends "events/base.html" %}
+{% extends "events/management.html" %}
 {% block title %}{{ event }}{% endblock %}
 {% load comments %}
 {% block breadcrumbs %}
-    <a href="{% url index %}">Home</a> &rsaquo;
-    <a href="{% url event-list %}">Events</a> &rsaquo;
+    {{ block.super }}
     {{ event }}
 {% endblock %}
-{% block right_content %}
-    <div class="grid_6 alpha">
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <h1>{{ event }}</h1>
-            <div>
-                <h3>Description</h3>
-                <p>{{ event.event_type.description }}</p>
-            </div>
-            <div>
-                <h3>Details</h3>
-                <p>{{ event.details }}</p>
-            </div>
-            <div>
-                <h3>When</h3>
-                <p>{{ event.when|date }} at {{ event.start|time }}</p>
-            </div>
-            <div>
-                <h3>Where</h3>
-                <p>
-                    <span id="event_address">{{ event.where }}</span><br />
-                    <span id="event_location">{{ event.location }}</span>
-                </p>
-                <div id="event_map"></div>
-            </div>
-        </div>
-        <div class="box_two_bottom"></div>
-     
-        <div id="comments">
-            <div id="comments_divider"></div>
-            {% with event as object %}
-                {% render_comment_list for object %}
-                {% render_comment_form for object %}
-            {% endwith %}
-        </div>
-    </div>
-     
-    <div class="grid_3 omega">
-        {% if has_manager_privileges %}
-            {% include "events/_manager_links.html" %}
-        {% else %}
-            <div class="box_one_top"></div>
-            <div class="box_one_middle">
-                <h3>RSVP</h3>
-                {% if guest.rsvp_status and not request.GET.reset %}
-                    <p>
-                        You are: <span>{{ guest.get_rsvp_status_display }}</span><br />
-                        (<a href="{% url event-show event.id %}?reset=true">change</a>)
-                    </p>
-                {% else %}
-                    {% include "events/_rsvp_form.html" %}
-                {% endif %}
-                </div>
-                <div class="box_one_bottom"></div>
-        {% endif %}
-    </div>
+{% block event_details_content %}
+    {% include "events/_show.html" %}
 {% endblock %}
 
 {% block extrajs %}

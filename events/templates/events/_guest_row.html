@@ -8,3 +8,8 @@
 <td id="{% url event-guests-edit-phone event.id,guest.id %}" class="editable">{{ guest.phone }}</td>
 <td id="{% url event-guests-edit-zipcode event.id,guest.id %}" class="editable">{{ guest.location.zipcode }}</td>
 <td id="{% url event-guests-edit-status event.id,guest.id %}" class="editable rsvp_select">{{ guest.status }}</td>
+<td class="guest_comments">
+    {% if guest.comments %}
+        <span class="ui-icon ui-icon-comment tooltip" title="{{ guest.comments }}"></span>
+    {% endif %}
+</td>

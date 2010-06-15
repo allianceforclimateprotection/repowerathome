@@ -82,6 +82,17 @@ class Event(models.Model):
         except Invitation.DoesNotExist:
             return False
             
+    def next_guest(self, guest):
+        guests = list(self.guest_set.all())
+        next_index = guests.index(guest) + 1
+        return guests[0] if next_index == len(guests) else guests[next_index]
+        
+    def challenges_committed(self):
+        return Commitment.objects.filter(answer="C", guest__event=self)
+        
+    def challenges_done(self):
+        return Commitment.objects.filter(answer="D", guest__event=self)
+        
     def _guest_key(self):
         return "event_%d_guest" % self.id
             
@@ -108,10 +119,6 @@ class Event(models.Model):
     def save_guest_in_session(self, request, guest):
         request.session[self._guest_key()] = guest
         
-class GuestManager(models.Manager):
-    def create_or_update(self, *args, **kwargs):
-        pass
-        
 class Guest(models.Model):
     RSVP_STATUSES = (
         ("A", "Attending",),
@@ -127,6 +134,7 @@ class Guest(models.Model):
     invited = models.DateField(null=True, blank=True)
     added = models.DateField(null=True, blank=True)
     rsvp_status = models.CharField(blank=True, max_length=1, choices=RSVP_STATUSES)
+    comments = models.TextField(blank=True)
     notify_on_rsvp = models.BooleanField(default=False)
     is_host = models.BooleanField(default=False)
     user = models.ForeignKey("auth.User", null=True, blank=True)
@@ -134,7 +142,7 @@ class Guest(models.Model):
     updated = models.DateTimeField(auto_now=True)
     
     class Meta:
-        unique_together = (("event", "email",),("event", "user",),)
+        unique_together = (("event", "user",),)
         
     def _set_name(self, value):
         first, space, last = value.partition(" ")
@@ -165,6 +173,9 @@ class Guest(models.Model):
     def needs_more_info(self):
         return not (self.user or (self.first_name and self.email))
         
+    def has_made_commitments(self):
+        return Commitment.objects.filter(guest=self).exists()
+    
     def get_full_name(self):
         if self.user:
             return self.user.get_full_name()
@@ -203,7 +214,7 @@ class Challenge(models.Model):
         
 class Commitment(models.Model):
     ANSWERS = (
-        ("P", "Will Do"),
+        ("C", "Will Do"),
         ("D", "Already Done"),
     )
     

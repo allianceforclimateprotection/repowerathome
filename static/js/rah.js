@@ -95,8 +95,9 @@ var rah = {
     * setup all of the overset inputs
     **/
     mod_overset: {
-        init: function(){
-            $(".overset input, .overset textarea").blur(function(){
+        init: function(container){
+            if(!container) { container = $("body"); }
+            $(".overset input, .overset textarea", container).blur(function(){
                var field = $(this);
                var label = field.prev("label");
                if(field.val() == "") {
@@ -105,7 +106,7 @@ var rah = {
                    label.removeClass("inside");
                }
             }).blur();
-            $(".overset input, .overset textarea").focus(function(){
+            $(".overset input, .overset textarea", container).focus(function(){
                $(this).prev("label").removeClass("inside");
             });
         }
@@ -660,8 +661,25 @@ var rah = {
         }
     },
     
+    mod_event_tabs: {
+        init: function(tab_number) {
+            $("#event_tabs").tabs({
+                select: function(event, ui) {
+                    var url = $.data(ui.tab, "load.tabs");
+                    if( url ) {
+                        window.location.href = url;
+                        return false;
+                    }
+                    return true;
+                },
+                selected: tab_number
+            });
+        }
+    },
+    
     page_event_show: {
         init: function() {
+            rah.mod_event_tabs.init(0);
             var address = $("#event_address").text()
             var location = $("#event_location").text();
             geocoder = new google.maps.Geocoder();
@@ -718,12 +736,14 @@ var rah = {
     
     page_event_guests: {
         init: function() {
+            rah.mod_event_tabs.init(1);
             var table = $("#event_guests_table");
             $(".selector").click(function(){
                 var checked = $(this).hasClass("select_all");
                 $("input[type='checkbox']", table).attr("checked", checked);
                 return false;
             });
+            rah.page_event_guests.submit_on_select();
             $("#event_guests_selectors").removeClass("hidden");
             var namespace = this;
             var editables = $(".editable");
@@ -732,6 +752,44 @@ var rah = {
                 $(this).addClass("editable_highlight");
             }).live("mouseout", function(){
                 $(this).removeClass("editable_highlight");
+            });
+            $(".tooltip").qtip({
+                position: {
+                    corner: {
+                        target: 'leftMiddle',
+                        tooltip: 'rightMiddle'
+                    }
+                },
+                style: {
+                    name: 'green',
+                    tip: 'rightMiddle',
+                    background: '#E3EC9F',
+                    color: '#00AAD8',
+                    border: {
+                        width: 3,
+                        radius: 2,
+                        color: '#92C139'
+                    }
+                },
+                show: 'click',
+                hide: 'click'
+            });
+            var guests_add_link = $("#guests_add_link");
+            var guests_add_container = $("#guests_add_container");
+            guests_add_container.load(guests_add_link.attr("href"), function() {
+                $(".tabs", guests_add_container).tabs();
+                $("button, input:submit, a.button, input.button", guests_add_container).button();
+                rah.mod_overset.init(guests_add_container);
+                guests_add_container.dialog({ 
+                    autoOpen: false,
+                    modal: true,
+                    height: 650,
+                    width: 500
+                });
+            });
+            guests_add_link.click(function() {
+                guests_add_container.dialog("open");
+                return false;
             });
         },
         make_editable: function() {
@@ -753,6 +811,28 @@ var rah = {
                 }, "json");
                 return value;
             }, args);
+        },
+        submit_on_select: function() {
+            var form = $("#guest_edit_form");
+            $("#id_action").change(function(){
+                var select = $(this);
+                if(!select.val()) {
+                    return;
+                }
+                if($("input[type='checkbox']", form).is(":checked")) {
+                    form.submit();
+                } else {
+                    alert("Please select at least one guest.");
+                    return;
+                }
+            });
+        }
+    },
+    
+    page_event_commitments: {
+        init: function() {
+            rah.mod_event_tabs.init(2);
+            $("#ui-tabs-2").removeClass("ui-tabs-hide");
         }
     }
 };
