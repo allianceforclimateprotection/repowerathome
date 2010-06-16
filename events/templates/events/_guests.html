@@ -12,12 +12,12 @@
         <thead>
             <tr>
                 <th></th>
+                {% if event.has_comments %}<th></th>{% endif %}
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Zipcode</th>
                 <th>Status</th>
-                <th>Comments</th>
             </tr>
         </thead>
         <tbody>

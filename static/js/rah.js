@@ -757,13 +757,13 @@ var rah = {
             $(".tooltip").qtip({
                 position: {
                     corner: {
-                        target: 'leftMiddle',
-                        tooltip: 'rightMiddle'
+                        target: 'rightMiddle',
+                        tooltip: 'leftMiddle'
                     }
                 },
                 style: {
                     name: 'green',
-                    tip: 'rightMiddle',
+                    tip: 'leftMiddle',
                     background: '#E3EC9F',
                     color: '#00AAD8',
                     border: {
@@ -772,8 +772,8 @@ var rah = {
                         color: '#92C139'
                     }
                 },
-                show: 'click',
-                hide: 'click'
+                show: 'mouseover',
+                hide: 'mouseout'
             });
             var guests_add_link = $("#guests_add_link");
             var guests_add_container = $("#guests_add_container");
@@ -797,7 +797,9 @@ var rah = {
         make_editable: function() {
             var element = $(this);
             var args = {
-                placeholder: '<span class="event_inline_placeholder">click to add</span>'
+                placeholder: '<span class="event_inline_placeholder">click to add</span>',
+                cancel: 'Cancel',
+                submit: '<br/><button type="submit">Ok</button>'
             }
             if(element.hasClass("rsvp_select")) {
                 args.type = "select";
