@@ -37,7 +37,7 @@
                 {% for guest in event.attendees %}
                     <tr>
                         <td><input type="checkbox"></input></td>
-                        <td>{{ guest.get_full_name }}</td>
+                        <td>{{ guest.name }}</td>
                         <td>{{ guest.email }}</td>
                         <td>{{ guest.phone }}</td>
                     </tr>

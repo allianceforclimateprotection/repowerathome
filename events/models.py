@@ -70,7 +70,7 @@ class Event(models.Model):
         return Guest.objects.filter(event=self, rsvp_status="A").count()
         
     def attendees(self):
-        return Guest.objects.filter(event=self, rsvp_status="A")
+        return Guest.objects.filter(event=self).exclude(rsvp_status="N")
         
     def outstanding_invitations(self):
         return Guest.objects.filter(event=self, invited__isnull=False, rsvp_status="").count()
