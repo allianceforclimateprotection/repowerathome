@@ -371,7 +371,7 @@ Comments Comments Comments Comments Comments Comments Comments Comments Comments
 /* form */
 #id_comment { height: 100px; background: #FFF; font-family: Helvetica, Arial; width:454px; }
 #id_comment[class~="error"] { background: #FEDEDE; }
-#add_comment_submit { width: 490px; }
+#add_comment_submit { width: 474px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups 

@@ -14,16 +14,7 @@
             {% include "events/_details.html" %}
         </div>
         <div class="box_two_bottom"></div>
-     
-        <div id="comments">
-            <div id="comments_divider"></div>
-            {% with event as object %}
-                {% render_comment_list for object %}
-                {% render_comment_form for object %}
-            {% endwith %}
-        </div>
     </div>
-     
     <div class="grid_3 omega">
         <div class="box_one_top"></div>
         <div class="box_one_middle">
@@ -36,9 +27,18 @@
             {% else %}
                 {% include "events/_rsvp_form.html" %}
             {% endif %}
-            </div>
-            <div class="box_one_bottom"></div>
+        </div>
+        <div class="box_one_bottom"></div>
     </div>
+    <br class="clear"/>
+    <br class="clear"/>
+    <div id="comments">
+        {% with event as object %}
+            {% render_comment_list for object %}
+            {% render_comment_form for object %}
+        {% endwith %}
+    </div>
+    
 {% endblock %}
 
 {% block extrajs %}
