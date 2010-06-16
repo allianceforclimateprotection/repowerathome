@@ -710,7 +710,7 @@ var rah = {
         }
     },
     
-    mod_warn_of_future_date: {
+    mod_event_date: {
         init: function() {
             $(".future_date_warning").change(function(){
                 var now = new Date();
@@ -721,18 +721,26 @@ var rah = {
                     }
                 }
             });
+            $(".form_row:has(.datepicker)").change(function() {
+                var row = $(this);
+                if($(".datepicker", row).val() != "") {
+                    $("label.inside", row).removeClass("inside");
+                } else {
+                    $("label:first", row).addClass("inside");
+                }
+            });
         }
     },
     
     page_event_create: {
         init: function() {
-            rah.mod_warn_of_future_date.init();
+            rah.mod_event_date.init();
         }
     },
     
     page_event_edit: {
         init: function() {
-            rah.mod_warn_of_future_date.init();
+            rah.mod_event_date.init();
         }
     },
     
