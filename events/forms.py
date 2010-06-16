@@ -139,7 +139,7 @@ class GuestAddForm(forms.ModelForm):
         data = self.cleaned_data["zipcode"]
         if data:
             try:
-                self.cleaned_data["location"] = Location.objects.get(zipcode=data)
+                self.instance.location = Location.objects.get(zipcode=data)
             except Location.DoesNotExist:
                 raise forms.ValidationError("Invalid zipcode %s" % data)
         return data
