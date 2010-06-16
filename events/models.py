@@ -98,10 +98,12 @@ class Event(models.Model):
             
     def current_guest(self, request, token=None):
         if request.user.is_authenticated():
+            user = request.user
             try:
-             return Guest.objects.get(event=self, user=request.user)
+                return Guest.objects.get(event=self, user=user)
             except Guest.DoesNotExist:
-                pass
+                return Guest(event=self, first_name=user.first_name, last_name=user.last_name,
+                    email=user.email, location=user.get_profile().location, user=user)
         if self._guest_key() in request.session:
             return request.session[self._guest_key()]
         if token:
@@ -119,7 +121,7 @@ class Event(models.Model):
     def save_guest_in_session(self, request, guest):
         request.session[self._guest_key()] = guest
         
-    def delete_guest_in_session(self, request):
+    def delete_guest_in_ession(self, request):
         del request.session[self._guest_key()]
         
 class Guest(models.Model):
@@ -234,7 +236,7 @@ def make_creator_a_guest(sender, instance, **kwargs):
     creator = instance.creator
     Guest.objects.get_or_create(event=instance, user=creator, defaults={"first_name":creator.first_name, 
         "last_name":creator.last_name, "email":creator.email, "added":datetime.date.today(), 
-        "rsvp_status": "A", "is_host":True})
+        "rsvp_status": "A", "is_host":True, "location": creator.get_profile().location })
 models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 
 rsvp_recieved = Signal(providing_args=["guest"])
