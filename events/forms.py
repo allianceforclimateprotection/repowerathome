@@ -45,8 +45,8 @@ class EventForm(forms.ModelForm):
     
     class Meta:
         model = Event
-        fields = ["event_type", "where", "city", "state", "zipcode", "when", "start", "duration",
-            "details", "is_private", "limit"]
+        fields = ("event_type", "where", "city", "state", "zipcode", "when", "start", "duration",
+            "details", "is_private")
         widgets = {
             "event_type": forms.RadioSelect,
             "when": forms.TextInput(attrs={"class": "datepicker future_date_warning"}),
