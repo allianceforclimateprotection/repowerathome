@@ -679,6 +679,7 @@ var rah = {
     
     page_event_show: {
         init: function() {
+            rah.mod_comment_form.init();
             rah.mod_event_tabs.init(0);
             var address = $("#event_address").text()
             var location = $("#event_location").text();
