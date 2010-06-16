@@ -93,6 +93,9 @@ class Event(models.Model):
     def challenges_done(self):
         return Commitment.objects.filter(answer="D", guest__event=self)
         
+    def has_comments(self):
+        return Guest.objects.filter(event=self).exclude(comments="").exists()
+        
     def _guest_key(self):
         return "event_%d_guest" % self.id
             
@@ -121,7 +124,7 @@ class Event(models.Model):
     def save_guest_in_session(self, request, guest):
         request.session[self._guest_key()] = guest
         
-    def delete_guest_in_ession(self, request):
+    def delete_guest_in_session(self, request):
         del request.session[self._guest_key()]
         
 class Guest(models.Model):

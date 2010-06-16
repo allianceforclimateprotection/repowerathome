@@ -1,15 +1,17 @@
 <td><input type="checkbox" name="guests" value="{{ guest.id }}" /></td>
+{% if event.has_comments %}
+    <td>
+        {% if guest.comments %}
+            <span class="ui-icon ui-icon-comment tooltip guest_comment" title="{{ guest.comments }}"></span>
+        {% endif %}
+    </td>
+{% endif %}
 {% if guest.user %}
     <td id="{% url event-guests-edit-name event.id,guest.id %}">{% safe_user_link guest.user %}{% if guest.is_host %} (host){% endif %}</td>
 {% else %}
     <td id="{% url event-guests-edit-name event.id,guest.id %}" class="editable">{{ guest.name }}{% if guest.is_host %} (host){% endif %}</td>
 {% endif %}
 <td id="{% url event-guests-edit-email event.id,guest.id %}" class="editable">{{ guest.email }}</td>
-<td id="{% url event-guests-edit-phone event.id,guest.id %}" class="editable">{{ guest.phone }}</td>
-<td id="{% url event-guests-edit-zipcode event.id,guest.id %}" class="editable">{{ guest.location.zipcode }}</td>
+<td id="{% url event-guests-edit-phone event.id,guest.id %}" class="editable phone">{{ guest.phone }}</td>
+<td id="{% url event-guests-edit-zipcode event.id,guest.id %}" class="editable zipcode">{{ guest.location.zipcode }}</td>
 <td id="{% url event-guests-edit-status event.id,guest.id %}" class="editable rsvp_select">{{ guest.status }}</td>
-<td class="guest_comments">
-    {% if guest.comments %}
-        <span class="ui-icon ui-icon-comment tooltip" title="{{ guest.comments }}"></span>
-    {% endif %}
-</td>

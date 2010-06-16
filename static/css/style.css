@@ -512,6 +512,9 @@ Events Events Events Events Events Events Events Events Events Events Events Eve
 .made_commitment { text-decoration: line-through; }
 #attendee_list .attendee_check { display: inline-table; width: 16px; }
 .guest_comments { text-align: center; }
+#event_guests_table .phone,
+#event_guests_table .zipcode  { width: 90px; }
+#event_guests_table .guest_comment { display: inline-table; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
