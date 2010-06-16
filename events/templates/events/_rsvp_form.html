@@ -1,6 +1,6 @@
 <form id="rsvp_form" action="{% url event-rsvp event.id %}" method="post">
     {{ rsvp_form.errors }}
-    <p>{{ rsvp_form.rsvp_status }}</p>
+    {{ rsvp_form.rsvp_status }}
     <p>
         {{ rsvp_form.comments.label }}
         {{ rsvp_form.comments }}

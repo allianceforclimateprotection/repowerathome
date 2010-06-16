@@ -179,4 +179,25 @@ def commitments(request, event_id, guest_id=None):
         
 def print_sheet(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    return render_to_pdf("events/sign_in_sheet.html", "%s Sign In.pdf" % event, { "event": event })
+    attendees = event.attendees()
+    attendee_count = len(attendees)   
+
+    # Fill every page with blank rows adding rows beyond the initial value of blank_rows if necessary
+    blank_rows      = 10
+    first_page_rows = 20
+    page_rows       = 23
+    if attendee_count + blank_rows <= first_page_rows:
+        blank_rows = first_page_rows - attendee_count
+    else:
+        rows_after_first_page = attendee_count + blank_rows - first_page_rows
+        if rows_after_first_page <= page_rows:
+            blank_rows += page_rows - rows_after_first_page
+        else: 
+            blank_rows += page_rows - (rows_after_first_page % page_rows)
+    
+    blank_rows = range(blank_rows)
+    return render_to_pdf("events/sign_in_sheet.html", "%s Sign In.pdf" % event, {
+        "event": event, 
+        "attendees": attendees, 
+        "blank_rows": blank_rows
+    })

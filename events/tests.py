@@ -518,7 +518,7 @@ class EventGuestsAddViewTest(TestCase):
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 8)
-        jon = guests[7]
+        jon = guests[4]
         self.failUnlessEqual(jon.first_name, "Jon")
         self.failUnlessEqual(jon.email, "jon@gmail.com")
         self.failUnlessEqual(jon.rsvp_status, "N")
@@ -601,7 +601,7 @@ class EventGuestsInviteViewTest(TestCase):
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 8)
-        jon = guests[7]
+        jon = guests[2]
         self.failUnlessEqual(jon.first_name, "")
         self.failUnlessEqual(jon.email, "jon@gmail.com")
         
@@ -621,10 +621,10 @@ class EventGuestsInviteViewTest(TestCase):
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 9)
-        jon = guests[7]
+        jon = guests[2]
         self.failUnlessEqual(jon.first_name, "")
         self.failUnlessEqual(jon.email, "jon@gmail.com")
-        eric = guests[8]
+        eric = guests[3]
         self.failUnlessEqual(eric.first_name, "")
         self.failUnlessEqual(eric.email, "eric@gmail.com")
         
@@ -644,7 +644,7 @@ class EventGuestsInviteViewTest(TestCase):
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 8)
-        jon = guests[7]
+        jon = guests[2]
         self.failUnlessEqual(jon.first_name, "")
         self.failUnlessEqual(jon.email, "jon@gmail.com")
         

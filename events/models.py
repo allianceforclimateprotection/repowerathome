@@ -148,6 +148,7 @@ class Guest(models.Model):
     
     class Meta:
         unique_together = (("event", "user",),)
+        ordering = ['first_name', 'last_name']
         
     def _set_name(self, value):
         first, space, last = value.partition(" ")
