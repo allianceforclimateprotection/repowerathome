@@ -14,7 +14,7 @@
             <form id="event_form" action="" method="post">
                 {% include "events/_form.html" %}
                 {% csrf_token %}
-                <input type="submit" value="Edit Event" /> |
+                <input type="submit" value="Save Changes" /> |
                 <a href="{% url event-show event.id %}">cancel</a>
             </form>
         </div>
