@@ -9,7 +9,8 @@
                 <form action="{% url event-rsvp-confirm event.id %}" method="post">
                     {% include "events/_form.html" %}
                     {% csrf_token %}
-                    <input type="submit" value="Confirm RSVP" />
+                    <input type="submit" value="Confirm RSVP" /> |
+                    <a href="{% url event-rsvp-cancel event.id %}">cancel</a>
                 </form>
         </div>
         <div class="box_three_bottom"></div>

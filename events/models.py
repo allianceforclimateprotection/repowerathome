@@ -119,6 +119,9 @@ class Event(models.Model):
     def save_guest_in_session(self, request, guest):
         request.session[self._guest_key()] = guest
         
+    def delete_guest_in_session(self, request):
+        del request.session[self._guest_key()]
+        
 class Guest(models.Model):
     RSVP_STATUSES = (
         ("A", "Attending",),

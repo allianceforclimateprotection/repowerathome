@@ -152,6 +152,11 @@ def rsvp_account(request, event_id):
         return redirect(event)
     return render_to_response("events/rsvp_account.html", locals(), context_instance=RequestContext(request))
     
+def rsvp_cancel(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    event.delete_guest_in_session(request)
+    return redirect(event)
+    
 def rsvp_statuses(request):
     return HttpResponse(json.dumps(dict(Guest.RSVP_STATUSES)), mimetype="text/json")
     
