@@ -16,6 +16,7 @@ from django.views.decorators.http import require_POST
 from utils import forbidden
 from rah.forms import HousePartyForm
 from invite.models import Invitation, make_token
+from records.models import Record
 
 from models import Event, Guest, Survey, Challenge, Commitment
 from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, GuestEditForm, \
@@ -34,6 +35,7 @@ def create(request):
     form = EventForm(user=request.user, data=(request.POST or None))
     if form.is_valid():
         event = form.save()
+        Record.objects.create_record(request.user, "event_create", event)
         messages.success(request, "%s has been created." % event)
         return redirect(event)
     return render_to_response("events/create.html", locals(), context_instance=RequestContext(request))
