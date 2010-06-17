@@ -24,7 +24,7 @@ class EventTest(TestCase):
         self.event = Event.objects.get(pk=1)
             
     def test_has_manager_privileges(self):
-        self.failUnlessEqual(self.event.has_manager_privileges(self.creator), True)
+        self.failUnlessEqual(self.event.has_manager_privileges(self.creator), False)
         hacker = User.objects.create_user(username="hacker", email="hacker@email.com", password="hacker")
         self.failUnlessEqual(self.event.has_manager_privileges(hacker), False)
         guest = Guest.objects.get(first_name="Jane", last_name="Doe")
