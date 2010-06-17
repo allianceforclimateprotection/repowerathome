@@ -725,6 +725,7 @@ var rah = {
     page_event_guests: {
         init: function() {
             rah.mod_event_tabs.init(1);
+            rah.mod_comment_form.init();
             var table = $("#event_guests_table");
             $(".selector").click(function(){
                 var checked = $(this).hasClass("select_all");
@@ -836,6 +837,7 @@ var rah = {
         init: function() {
             rah.mod_event_tabs.init(2);
             $("#ui-tabs-2").removeClass("ui-tabs-hide");
+            rah.mod_comment_form.init();
         }
     }
 };
