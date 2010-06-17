@@ -49,7 +49,7 @@ class EventForm(forms.ModelForm):
             "details", "is_private")
         widgets = {
             "event_type": forms.RadioSelect,
-            "when": forms.TextInput(attrs={"class": "datepicker future_date_warning"}),
+            "when": forms.DateInput(format="%m/%d/%Y", attrs={"class": "datepicker future_date_warning"}),
             "start": SelectTimeWidget(minute_step=15, twelve_hr=True, use_seconds=False),
             "duration": forms.Select(choices=[("", "---")]+DURATIONS)
         }
@@ -78,7 +78,8 @@ class EventForm(forms.ModelForm):
     def clean(self):
         city = self.cleaned_data.get("city", None)
         state = self.cleaned_data.get("state", None)
-        if city and state:
+        zipcode = self.cleaned_data.get("zipcode", None)
+        if city and state and not zipcode:
             locations = Location.objects.filter(name__iexact=city, st=state)
             if not locations:
                 raise forms.ValidationError("Invalid place %s, %s" % (city, state))
