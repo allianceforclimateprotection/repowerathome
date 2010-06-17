@@ -49,7 +49,7 @@ class EventForm(forms.ModelForm):
             "details", "is_private")
         widgets = {
             "event_type": forms.RadioSelect,
-            "when": forms.TextInput(attrs={"class": "datepicker future_date_warning"}),
+            "when": forms.DateInput(format="%m/%d/%Y", attrs={"class": "datepicker future_date_warning"}),
             "start": SelectTimeWidget(minute_step=15, twelve_hr=True, use_seconds=False),
             "duration": forms.Select(choices=[("", "---")]+DURATIONS)
         }
