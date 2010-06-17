@@ -235,7 +235,11 @@ class Commitment(models.Model):
     
     class Meta:
         unique_together = (("guest", "challenge"),)
-    
+
+# 
+# Signals!!!
+#
+
 def make_creator_a_guest(sender, instance, **kwargs):
     creator = instance.creator
     Guest.objects.get_or_create(event=instance, user=creator, defaults={"first_name":creator.first_name, 

@@ -94,5 +94,17 @@
             "use_content_object_for_points": 0, 
             "created": "2010-02-19 18:10:12"
         }
+    },
+    {
+        "pk": 9, 
+        "model": "records.activity", 
+        "fields": {
+            "updated": "2010-06-17 18:10:12", 
+            "points": 0, 
+            "batch_time_minutes": 0, 
+            "slug": "event_create",
+            "use_content_object_for_points": 0, 
+            "created": "2010-06-17 18:10:12"
+        }
     }
 ]
