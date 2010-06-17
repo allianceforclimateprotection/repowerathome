@@ -78,7 +78,8 @@ class EventForm(forms.ModelForm):
     def clean(self):
         city = self.cleaned_data.get("city", None)
         state = self.cleaned_data.get("state", None)
-        if city and state:
+        zipcode = self.cleaned_data.get("zipcode", None)
+        if city and state and not zipcode:
             locations = Location.objects.filter(name__iexact=city, st=state)
             if not locations:
                 raise forms.ValidationError("Invalid place %s, %s" % (city, state))
