@@ -298,7 +298,7 @@ Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Ton
 /* logged out tongue */
 #tongue #id_password, #tongue #id_email {width:167px;}
 #tongue .form_row {padding-bottom:6px;}
-#tongue_login_form_submit {margin-top:12px;}
+#tongue_login_form_submit {margin-top:12px; width:100%;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart Chart 
