@@ -44,7 +44,7 @@ class Event(models.Model):
         )
     
     def __unicode__(self):
-        return u"%s in %s" % (self.event_type, self.location)
+        return u"%s %s" % (self.location, self.event_type)
         
     @models.permalink
     def get_absolute_url(self):
