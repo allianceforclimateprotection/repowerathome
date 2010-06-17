@@ -9,6 +9,21 @@
     </div>
 {% endif %}
 <div>
+    <h3>Hosts</h3>
+    <p>
+        {% for host in event.hosts %}
+            {% if host.user %}
+                {% safe_user_link host.user %}
+            {% else %}
+                {{ host }}
+            {% endif %}
+            {% if not forloop.last %}
+                <br />
+            {% endif %}
+        {% endfor %}
+    </p>
+</div>
+<div>
     <h3>When</h3>
     <p>{{ event.when|date:"LONG_DATE_FORMAT" }} at {{ event.start|time }}</p>
 </div>

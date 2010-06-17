@@ -64,6 +64,9 @@ class Event(models.Model):
             return self._guest_key() in request.session
         return Guest.objects.filter(event=self, user=user).exists()
         
+    def hosts(self):
+        return Guest.objects.filter(event=self, is_host=True)
+        
     def confirmed_guests(self):
         return Guest.objects.filter(event=self, rsvp_status="A").count()
         
