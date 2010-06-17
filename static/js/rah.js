@@ -145,35 +145,13 @@ var rah = {
                 }
             });
         }
-    },
-    
-    page_home_logged_out: {
-        init: function() {
-            // $("#signup_form").validate({
-            //     rules: {
-            //         email: { required: true, email: true, remote: { url: "/validate/", type: "post" } }
-            //     },
-            //     messages: {
-            //         email: { remote: "That email is already registered" }
-            //     }
-            // });
-            rah.mod_house_party_form.init();
-            $("#houseparty_form #id_phone").change(function(){
-                $("#house_party_dialog #id_phone_number").val($(this).val());
-            });
-        }
-    },
-    
+    },    
     /**
-    * Profile page
+    * Logged in Home Page
     **/
-    page_profile: {
+    page_home_logged_in: {
         init: function(){
             rah.mod_action_nugget.init();
-            
-            // Setup house party form, link, and dialog
-            rah.mod_house_party_form.init();
-            
             rah.mod_invite_friend.init();
             
             // Setup twitter update form, link, and dialog
@@ -185,18 +163,7 @@ var rah = {
             });
         }
     },
-    
-    mod_house_party_form: {
-        init: function() {
-            $("#house_party_form").validate({rules: {phone_number: { required: true }}});
-            $('#house_party_link').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
-            $('#house_party_dialog').dialog({
-                title: 'House Party', modal: true, resizable: false, draggable: false, autoOpen: false, 
-                buttons: { "Give me a call": function() { $('#house_party_form').submit(); }}
-            });
-        }
-    },
-    
+        
     mod_chart_dialog: {
         init: function() {
             $(".chart_link").click(function(){
@@ -673,6 +640,17 @@ var rah = {
                     return true;
                 },
                 selected: tab_number
+            });
+        }
+    },
+    
+    page_event_list: {
+        init: function() {
+            $("#house_party_form").validate({rules: {phone_number: { required: true }}});
+            $('#house_party_link').click(function(){ $('#house_party_dialog').dialog('open'); return false; });
+            $('#house_party_dialog').dialog({
+                title: 'Energy meeting contact', modal: true, resizable: false, draggable: false, autoOpen: false, 
+                buttons: { "Give me a call": function() { $('#house_party_form').submit(); }}
             });
         }
     },

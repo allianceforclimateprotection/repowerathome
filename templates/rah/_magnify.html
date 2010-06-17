@@ -3,29 +3,12 @@
 <div class="box_one_top"></div>
 <div class="box_one_middle">
     <h3>Magnify Your Impact</h3>
-    <p>
-        {% activity_by_slug mag_request_party_host_info as house_party_act %}
-        <a href='{% url house_party %}' id='house_party_link'> Learn about hosting an energy meeting in your community</a><br/>
-        <span class="smaller">{{ house_party_act.points }} points</span>
-    </p>
-    <p>
-        {% activity_by_slug mag_invite_friend as invite_friend_act %}
-        <a href='{% url invite-invite %}' class='invite_friend_link'>Invite a friend</a><br/>
-        <span class="smaller">{{ invite_friend_act.points }} points</span>
-    </p>
-    <p>
-        {% activity_by_slug mag_tweet as tweet_act %}
-        <a href='{% url twitter_oauth_post_status %}' id='twitter_status_link'>Share on twitter</a><br/>
-        <span class="smaller">{{ tweet_act.points }} points</span>
-    </p>
-    <p>
-        {% activity_by_slug group_create as group_create_act %}
-        <a href='{% url group_create %}'>Create a team</a><br/>
-        <span class="smaller">{{ group_create_act.points }} points</span>
-    </p>
+    <a href='{% url event-list %}'> Host an energy meeting</a><br/>
+    <a href='{% url invite-invite %}' class='invite_friend_link'>Invite a friend</a><br/>
+    <a href='{% url twitter_oauth_post_status %}' id='twitter_status_link'>Share on twitter</a><br/>
+    <a href='{% url group_create %}'>Create a team</a><br/>
 </div> 
 <div class="box_one_bottom"></div>
-{% include "rah/_house_party_dialog.html" %}
 <div id='invite_friend_dialog'>
     {% get_invite_form %}
 </div>

@@ -1,5 +1,6 @@
 import datetime
 import json
+from pdf import render_to_pdf
 
 from django.contrib import messages
 from django.contrib import auth
@@ -13,19 +14,19 @@ from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
 from utils import forbidden
-
+from rah.forms import HousePartyForm
 from invite.models import Invitation, make_token
 
 from models import Event, Guest, Survey, Challenge, Commitment
 from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, GuestEditForm, \
     RsvpForm, RsvpConfirmForm, RsvpAccountForm, SurveyForm
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
-from pdf import render_to_pdf
 
 def list(request):
     events = Event.objects.filter(is_private=False, when__gt=datetime.datetime.now()).order_by("when", "start")
     if request.user.is_authenticated():
         my_events = Event.objects.filter(guest__user=request.user)
+    house_party_form = HousePartyForm(request.user)
     return render_to_response("events/list.html", locals(), context_instance=RequestContext(request))
 
 @login_required

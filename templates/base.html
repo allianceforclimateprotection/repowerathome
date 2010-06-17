@@ -7,7 +7,7 @@
         <meta name="msvalidate.01" content="DC928E84A1569AF4933A7DB431C08DB4" />
         <meta name="y_key" content="9d9c6c76735e5a92"/>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-        <meta name="keywords" content="energy efficiency, home energy, climate change, repower at home, alliance for climage protection" />
+        <meta name="keywords" content="{% block meta_keywords %}energy efficiency, home energy, climate change, repower at home, alliance for climage protection{% endblock %}" />
         <meta name="description" content="{% block meta_desc %}Repower at Home helps you save energy at home and organize your community for a cleaner future.{% endblock %}" />
         <link rel="shortcut icon" href="{% dated_static 'images/theme/favicon.ico' %}"/>
         {% if debug %}
@@ -83,9 +83,9 @@
                 <p id="footer_copy" class="smaller">
                     Copyright &copy; <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> 
                     2010. All Rights Reserved. 
-                    <a href="{% url rah.views.feedback %}" class="feedback_link">Feedback</a> | 
-                    <a href="/terms/">Terms of Use</a> | 
-                    <a href="/privacy/">Privacy Policy</a> |
+                    <a href="{% url rah.views.feedback %}" class="feedback_link" rel="nofollow">Feedback</a> | 
+                    <a href="/terms/" rel="nofollow">Terms of Use</a> | 
+                    <a href="/privacy/" rel="nofollow">Privacy Policy</a> |
                     <a href="/about/">About Us</a>
                 </p>
             </div>

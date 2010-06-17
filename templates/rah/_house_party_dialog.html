@@ -1,15 +1,11 @@
 <div id='house_party_dialog'>
     <form action="{% url rah.views.house_party %}" method="post" id="house_party_form">
         <p>
-            Community energy meetings play a critical role in educating newcomers about the importance of saving energy.
-            These meetings are only made possible by trendsetters like you, who already understand the enormous rewards
-            of conservation. You don’t need to be an expert in home energy efficiency to host a meeting. A Repower at
-            Home staff member will provide all the content and walk you through the ins and outs of organizing an event.
-            All you need to bring is your enthusiasm and your friends. To find out more, fill out the form below and
-            you’ll hear back from us soon.
+            We're happy to talk to you about hosting an energy meeting. Give us your phone number and one of our
+            organizers will give you call.
         </p>
         <div>
-        {{ house_party_form.as_p }}
+            {{house_party_form.as_p}}
         </div>
         {% csrf_token %}
     </form>

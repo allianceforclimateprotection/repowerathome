@@ -48,7 +48,6 @@ def index(request):
         'committed': committed,
         'completed': completed,
         'featured_actions': Action.objects.filter(id__in=[18,23]).order_by("-id"),
-        'house_party_form': HousePartyForm(request.user),
         'twitter_status_form': twitter_form,
         'commitment_list': UserActionProgress.objects.commitments_for_user(request.user),
         'my_groups': Group.objects.filter(users=request.user, is_geo_group=False),
@@ -296,7 +295,7 @@ def house_party(request):
             if request.user.is_authenticated():
                 Record.objects.create_record(request.user, 'mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
-    return redirect('rah.views.index')
+    return redirect('event-list')
 
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))
