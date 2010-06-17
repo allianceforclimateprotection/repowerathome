@@ -2,51 +2,34 @@
 {% load dated_static %}
 {% block rah_nav_select %}nav_home{% endblock %}
 {% block right_content %}
-<div class="box_three_top"></div>
-<div class="box_three_middle" id="logged_out_call_to_action">
-    <h1>Join the Repower at Home Challenge</h1>
-    <h2>Better  Homes, Cleaner Air, Cleaner Communities </h2>
-    <p>
-        We Can Eliminate 1,000,000 pounds of coal by 10/10/2010 <br/>
-        On 10/10/2010, we'll show that America is ready for Clean Energy!
-    </p>
-    <h2><a href="{% url register %}" class="button">Join Now</a></h2>
-</div>
-<div class="box_three_bottom"></div>
-
-<div class="box_three_top"></div>
-<div class="box_three_middle">
-    {% for action in featured_actions %}
-        <div class="action_nugget home_page_action_nugget">
-            <h3 class="action_nugget_title"><a class="blue" href="{% url action_detail action.slug %}">{{ action.name }}</a></h3>
-            {% if action.has_illustration %}
-                <a href="{% url action_detail action.slug %}">
-                    <img src="{{ action.get_nugget_illustration }}" alt="{{action.name}} illustration" height="72" width="306"/>
-                </a>
-            {% endif %}    
-            <div class="action_nugget_teaser">{{ action.teaser|safe|linebreaks }}</div>
-            <div class="action_nugget_points">{{ action.points }} Points</div>
-        </div>
-    {% endfor %}
-</div>
-<div class="box_three_bottom"></div>
-<div class="grid_3 alpha">
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
-        <h3>Top Teams</h3>
-        {% for team in top_teams %}
-            <p>
-                <a href="{{ team.get_absolute_url }}">{{team.name}}</a><br/>
-                <span class="smaller">{{team.member_count}} team members</span>
-            </p>
-        {% endfor %}
-        <div class="more_link">
-            <a href="{% url group_list %}">More Teams</a>
-        </div>
+<div id="home_page_header" class="box_three_middle">
+    <div class="grid_4 alpha" style="padding-left:18px;">
+        <br/>
+        <div class="blue"><b>The October 10th</b></div>
+        <h1>Coal Challenge</h1>
+        <p>
+            By October 10th, we can take action to keep <br/><b>1 million pounds</b> of dirty coal from polluting our air and our communities.
+        </p>
+        <h3>How it works</h3>
+        <p>
+            Earn points for completing actions. Every point you earn means one less pound of coal is burned.
+        </p> 
+        <p class="center">
+            <a href="{% url register %}" class="button" id="home_page_join_button">Join the Challenge</a><br/>
+            <a href="/coal-challenge/">Learn more</a> about the challenge.
+        </p>
+           
     </div>
-    <div class="box_one_bottom"></div>
+    <div id="home_page_numbers">
+        <div>{{total_people}} people</div>
+        have taken
+        <div>{{total_actions}} actions</div>
+        to keep
+        <div>{{total_points}} lbs of coal</div>
+        out of our air!
+    </div>
 </div>
-<div class="grid_3">
+<div class="grid_3 alpha">
     <div class="box_one_top"></div>
     <div class="box_one_middle">
         <h3>Popular Actions</h3>
@@ -58,6 +41,22 @@
         {% endfor %}
         <div class="more_link">
             <a href="{% url action_show %}">More Actions</a>
+        </div>
+    </div>
+    <div class="box_one_bottom"></div>
+</div>
+<div class="grid_3">
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        <h3>Top Teams</h3>
+        {% for team in top_teams %}
+            <p>
+                <a href="{{ team.get_absolute_url }}">{{team.name}}</a><br/>
+                <span class="smaller">{{team.member_count}} team members</span>
+            </p>
+        {% endfor %}
+        <div class="more_link">
+            <a href="{% url group_list %}">More Teams</a>
         </div>
     </div>
     <div class="box_one_bottom"></div>

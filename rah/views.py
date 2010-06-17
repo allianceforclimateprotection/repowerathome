@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.sites.models import Site
+from django.db.models import Sum
 
 from basic.blog.models import Post
 from tagging.models import Tag
@@ -59,7 +60,11 @@ def logged_out_home(request):
     blog_posts = Post.objects.all()[:3]
     pop_actions = Action.objects.get_popular(count=3)
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:3]
-    featured_actions = Action.objects.filter(id__in=[18,23]).order_by("-id")
+    import locale
+    locale.setlocale(locale.LC_ALL, "")
+    total_people = locale.format('%d', User.objects.all().count(), True)
+    total_actions = locale.format('%d', Record.objects.filter(void=False, activity=1).count(), True)
+    total_points = locale.format('%d', Profile.objects.all().aggregate(Sum('total_points'))['total_points__sum'], True)
     return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))
  
 def logout(request):
