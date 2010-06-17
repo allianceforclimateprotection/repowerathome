@@ -69,7 +69,12 @@ def guests(request, event_id):
     form = GuestListForm(event=event, data=(request.POST or None))
     if form.is_valid():
         response = form.save()
-        return response if response else redirect("event-guests", event_id=event.id)
+        if response:
+            return response
+        if event.has_manager_privileges(request.user):
+            return redirect("event-guests", event_id=event.id)
+        else:
+            return redirect(event)
     template = "events/_guests.html" if request.is_ajax() else "events/guests.html"
     return render_to_response(template, locals(), context_instance=RequestContext(request))
 

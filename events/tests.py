@@ -383,7 +383,7 @@ class EventGuestsViewTest(TestCase):
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
         self.event_type = EventType.objects.get(pk=1)
         self.event = Event.objects.get(pk=1)
-        self.event.creator = self.user
+        Guest.objects.create(event=self.event, user=self.user, is_host=True)
         self.event.save()
         self.event_guests_url = reverse("event-guests", args=[self.event.id])
 
@@ -407,7 +407,7 @@ class EventGuestsViewTest(TestCase):
         response = self.client.get(self.event_guests_url, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/guests.html")
         guests = response.context["event"].guest_set.all()
-        self.failUnlessEqual(len(guests), 7)
+        self.failUnlessEqual(len(guests), 8)
         
     def test_missing_required(self):
         self.client.login(username="test@test.com", password="test")

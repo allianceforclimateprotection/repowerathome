@@ -177,6 +177,11 @@ class GuestListForm(forms.Form):
         if re.search("^\d+_E", action): # Check to see if the action is of type Email
             if any([not g.email for g in self.cleaned_data["guests"]]): # Action of type Email can only be performed on guests with emails
                 raise forms.ValidationError("All guests must have an email address")
+        if action in ["6_MR", "8_MU"]:
+            guests = self.cleaned_data["guests"]
+            not_selected_guests = [g for g in self.event.guest_set.all() if not (g in guests)] # get all of the guests not selected
+            if not any([g.is_host for g in not_selected_guests]):
+                raise forms.ValidationError("You must leave at least one host for the event")
         return self.cleaned_data
     
     def save(self, *args, **kwargs):

@@ -39,5 +39,5 @@ def make_host(queryset):
     queryset.update(is_host=True)
     
 def unmake_host(queryset):
-    # not sure if this is right, but we only remove host privledges if the quest is not the creator
-    queryset.filter(Q(user__isnull=True)|~Q(event__creator=F("user"))).update(is_host=False)
+    # queryset.filter(Q(user__isnull=True)|~Q(event__creator=F("user"))).update(is_host=False)
+    queryset.update(is_host=False)

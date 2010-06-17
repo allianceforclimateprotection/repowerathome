@@ -2,7 +2,9 @@
 <h3>Total Guests: {{ event.confirmed_guests }}</h3>
 <h3>Outstanding Invitations: {{ event.outstanding_invitations }}</h3>
 <form id="guest_edit_form" action="" method="post">
-    {{ form.errors }}
+    {% for key,error in form.errors.items %}
+        <div class="overset_form_message error">{{ error }}</div>
+    {% endfor %}
     {{ form.action }}
     <div id="event_guests_selectors" class="hidden">
         <a class="selector select_all" href="">Select All</a> |
