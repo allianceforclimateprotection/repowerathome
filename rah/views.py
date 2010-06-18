@@ -1,4 +1,6 @@
-import json, logging
+import json
+import logging
+import locale
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -60,7 +62,8 @@ def logged_out_home(request):
     blog_posts = Post.objects.all()[:3]
     pop_actions = Action.objects.get_popular(count=3)
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:3]
-    import locale
+    
+    # Get totals for we sign. Definialty want to cache this.
     locale.setlocale(locale.LC_ALL, "en_US")
     total_people = locale.format('%d', User.objects.all().count(), True)
     total_actions = locale.format('%d', Record.objects.filter(void=False, activity=1).count(), True)
