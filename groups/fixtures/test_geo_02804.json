@@ -1,11 +1,11 @@
 [
     {"pk": 30602, "model": "geo.location", "fields": 
-        {"name": "Ashaway", "recruit": 0, "lon": "-71.7856238", "zipcode": "02804", "pop": 1547, "st": "RI", "county": "Washington County", "state": "Rhode Island", "lat": "41.4234329", "timezone": "America/New_York"}
+        {"name": "Ashaway", "recruit": 0, "lon": "-71.7856238", "zipcode": "02804", "st": "RI", "county": "Washington County", "state": "Rhode Island", "lat": "41.4234329"}
     },
     {"pk": 30604, "model": "geo.location", "fields": 
-        {"name": "Bradford", "recruit": 0, "lon": "-71.7370107", "zipcode": "02808", "pop": 1479, "st": "RI", "county": "Washington County", "state": "Rhode Island", "lat": "41.3989889", "timezone": "America/New_York"}
+        {"name": "Bradford", "recruit": 0, "lon": "-71.7370107", "zipcode": "02808", "st": "RI", "county": "Washington County", "state": "Rhode Island", "lat": "41.3989889"}
     },
     {"pk": 30600, "model": "geo.location", "fields": 
-        {"name": "Adamsville", "recruit": 0, "lon": "-71.131155", "zipcode": "02801", "pop": 1479, "st": "RI", "county": "Newport County", "state": "Rhode Island", "lat": "41.5545477", "timezone": "America/New_York"}
+        {"name": "Adamsville", "recruit": 0, "lon": "-71.131155", "zipcode": "02801", "st": "RI", "county": "Newport County", "state": "Rhode Island", "lat": "41.5545477"}
     }
 ]
