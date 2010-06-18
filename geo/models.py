@@ -8,8 +8,6 @@ class Location(models.Model):
     state = models.CharField(max_length=50)
     lon = models.CharField(max_length=50)
     lat = models.CharField(max_length=50)
-    pop = models.PositiveIntegerField()
-    timezone = models.CharField(max_length=100)
     recruit = models.BooleanField(default=False)
 
     def __unicode__(self):
