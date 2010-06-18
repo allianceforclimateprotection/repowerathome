@@ -106,6 +106,7 @@ INSTALLED_APPS = (
     'notification',
     'actions',
     'events',
+    'migrations',
 )
 
 FIXTURE_DIR = ('fixtures',)
