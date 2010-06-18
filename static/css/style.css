@@ -267,7 +267,7 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 /* ---------------------------------------------------------------------------------------------------------------------
 Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage
 --------------------------------------------------------------------------------------------------------------------- */
-#home_page_join_button {font-size:24px; text-shadow:none; margin-bottom:9px;}
+#home_page_join_button {font-size:24px; text-shadow:none; margin-bottom:9px; width:100%;}
 #home_page_numbers {text-align:center; line-height:22px; position:absolute; top:30px; left:400px; width:200px; font-style: italic;}
 #home_page_numbers div {color:#ed6623; font-size:18px; font-weight:bold; line-height:18px;}
 #home_page_header {

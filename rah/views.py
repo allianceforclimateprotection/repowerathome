@@ -61,7 +61,7 @@ def logged_out_home(request):
     pop_actions = Action.objects.get_popular(count=3)
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:3]
     import locale
-    locale.setlocale(locale.LC_ALL, "")
+    locale.setlocale(locale.LC_ALL, "en_US")
     total_people = locale.format('%d', User.objects.all().count(), True)
     total_actions = locale.format('%d', Record.objects.filter(void=False, activity=1).count(), True)
     total_points = locale.format('%d', Profile.objects.all().aggregate(Sum('total_points'))['total_points__sum'], True)
