@@ -31,7 +31,7 @@ Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Col
 .blue_light { color: #5bbcca; }
 .orange     { color: #ed6623; }
 .yellow     { color: #ffc20e; }
-.green      { color: #93c139; }
+.green      { color: #6e9b31; }
 .grey       { color: #333333; }
 .grey_light { color: #C1C1C1; }
 
@@ -267,11 +267,16 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 /* ---------------------------------------------------------------------------------------------------------------------
 Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage
 --------------------------------------------------------------------------------------------------------------------- */
-#logged_out_call_to_action { text-align: center; }
-#logged_out_call_to_action input {font-size:36px;}
-.more_link {text-align:right; font-weight: bold;}
-.home_page_action_nugget {width:297px; margin: 0 18px;}
-.home_page_action_nugget img {border:1px solid #5bbcca;}
+#home_page_join_button {font-size:24px; text-shadow:none; margin-bottom:9px; width:100%;}
+#home_page_numbers {text-align:center; line-height:22px; position:absolute; top:30px; left:400px; width:200px; font-style: italic;}
+#home_page_numbers div {color:#ed6623; font-size:18px; font-weight:bold; line-height:18px;}
+#home_page_header {
+    background: #fff url(../images/home_page/0000000004_header.jpg) no-repeat top center; 
+    height:399px;
+    position:relative;}
+#home_page_header p{text-shadow: #FFF 1px 1px 1px;}
+#home_page_header h3, #home_page_header h1 {text-shadow: #FFF 2px 2px 1px;}
+#home_page_header h1 { padding-top:-18px; font-size:34px;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue 
@@ -531,6 +536,7 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .atom_link { margin-left: 5px; }
 #breadcrumbs {font-size:12px; padding-top:12px;}
 .smaller {font-size:12px;}
+.center {text-align:center;}
 .right {text-align:right;}
 .blog_byline {}
 .post_body li,
@@ -677,7 +683,7 @@ JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #ffffff; text-decoration: none; }
 .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus { border: 2px solid #62DDFF; background: #79c9ec url(../images/theme/0000000004_button_bg_hover.png) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
 .ui-state-hover a, .ui-state-hover a:hover { color: #ffffff; text-decoration: none; }
-.ui-state-active, .ui-widget-content .ui-state-active { border: 2px solid #62DDFF; background: #93c139; font-weight: normal; color: #ffffff; }
+.ui-state-active, .ui-widget-content .ui-state-active { border: 2px solid #62DDFF; background: #6e9b31; font-weight: normal; color: #ffffff; }
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #ffffff; text-decoration: none; }
 .ui-widget :active { outline: none; }
 
