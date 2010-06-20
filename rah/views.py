@@ -59,7 +59,7 @@ def index(request):
     }, context_instance=RequestContext(request))
 
 def logged_out_home(request):
-    blog_posts = Post.objects.all()[:3]
+    blog_posts = Post.objects.filter(status=2)[:3]
     pop_actions = Action.objects.get_popular(count=3)
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:3]
     
