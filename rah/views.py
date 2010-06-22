@@ -59,7 +59,6 @@ def index(request):
         'records': Record.objects.user_records(request.user, 10),
     }, context_instance=RequestContext(request))
 
-@cache_page(60 * 15)
 def logged_out_home(request):
     blog_posts = Post.objects.filter(status=2)[:3]
     pop_actions = Action.objects.get_popular(count=3)

@@ -37,7 +37,7 @@ ADMIN_MEDIA_PREFIX = '/media/'
 
 # Caching
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
-CACHE_MIDDLEWARE_ANONYMOUS_ONLY = False
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 CACHE_MIDDLEWARE_SECONDS = 60 * 60
 CACHE_MIDDLEWARE_KEY_PREFIX = os.path.dirname(__file__)[:12] # This is enough for /scripts/{pr|de|st}
 
