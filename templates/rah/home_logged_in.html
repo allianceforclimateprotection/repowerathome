@@ -3,6 +3,34 @@
 {% load dated_static %}
 {% block rah_nav_select %}nav_home{% endblock %}
 {% block right_content %}
+<div id="home_page_header" class="box_three_middle">
+    <div class="grid_4 alpha" style="padding-left:18px;">
+        <br/>
+        <div class="blue"><b>The October 10th</b></div>
+        <h1>Coal Challenge</h1>
+        <p>
+            By October 10th, we can take action to keep <br/><b>1 million pounds</b> of dirty coal from polluting our air and our communities.
+        </p>
+        <h3>How it works</h3>
+        <p>
+            You earn points by completing <a href="{% url action_show %}">actions</a>. Every point you earn means one less pound of coal needs to be burned.
+        </p> 
+        <p class="center">
+            <a href="{% url register %}" class="button" id="home_page_join_button">Join the Challenge</a><br/>
+            <a href="/coal-challenge/">Learn more</a> about the challenge.
+        </p>
+           
+    </div>
+    <div id="home_page_numbers">
+        <div>{{total_people}} people</div>
+        have taken
+        <div>{{total_actions}} actions</div>
+        to keep
+        <div>{{total_points}} lbs of coal</div>
+        out of our air!
+    </div>
+</div>
+<br class="clear"/>
     <div class="grid_6 alpha">
         {% if featured_actions %}
         <div class="box_two_top"></div>
