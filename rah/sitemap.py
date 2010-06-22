@@ -16,6 +16,7 @@ class RahSitemap(Sitemap):
             "/actions/",
             "/teams/",
             "/",
+            "/user/list/",
         ]
         return [GenericUrl(url) for url in urls]
     

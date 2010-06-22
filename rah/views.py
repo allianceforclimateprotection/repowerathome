@@ -14,6 +14,7 @@ from django.template import RequestContext, loader, Context
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.views.decorators.cache import cache_page
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.sites.models import Site
@@ -58,6 +59,7 @@ def index(request):
         'records': Record.objects.user_records(request.user, 10),
     }, context_instance=RequestContext(request))
 
+@cache_page(60 * 15)
 def logged_out_home(request):
     blog_posts = Post.objects.filter(status=2)[:3]
     pop_actions = Action.objects.get_popular(count=3)
@@ -69,7 +71,13 @@ def logged_out_home(request):
     total_actions = locale.format('%d', Record.objects.filter(void=False, activity=1).count(), True)
     total_points = locale.format('%d', Profile.objects.all().aggregate(Sum('total_points'))['total_points__sum'], True)
     return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))
- 
+
+@cache_page(60 * 60)
+def user_list(request):
+    """This page of links allows google CSE to find user profile pages"""
+    users = User.objects.filter(profile__is_profile_private=False).only('first_name', 'last_name', 'id')
+    return render_to_response("rah/user_list.html", {'users': users}, context_instance=RequestContext(request))
+
 def logout(request):
     response = auth.logout(request)
     messages.success(request, "You have successfully logged out.", extra_tags="sticky")
