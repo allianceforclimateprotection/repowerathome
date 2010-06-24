@@ -2,8 +2,8 @@
     {% csrf_token %}
     <p>
         <input id="id_flagged_{{ form.id }}" class="flag_box button" type="checkbox" name="flagged"
-            {% if form.flagged.field.initial %}checked="checked" disabled="disabled"{% endif %}/>
-        <label class="flag_label" for="id_flagged_{{ form.id }}">
+            {% if form.flagged.field.initial %}checked="checked" disabled="disabled"{% endif %} />
+        <label class="flag_label tooltip" for="id_flagged_{{ form.id }}" title="Flag as inappropriate">
             <span class="icon_flag"></span>
         </label>
     </p>

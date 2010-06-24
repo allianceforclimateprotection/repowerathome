@@ -439,6 +439,27 @@ var rah = {
             });
             rah.mod_thumbs_radio_widget.init();
             rah.mod_flag.init();
+            $(".tooltip").qtip({
+                position: {
+                    corner: {
+                        target: 'topMiddle',
+                        tooltip: 'bottomMiddle'
+                    }
+                },
+                style: {
+                    name: 'green',
+                    tip: 'bottomMiddle',
+                    background: '#E3EC9F',
+                    color: '#00AAD8',
+                    border: {
+                        width: 3,
+                        radius: 2,
+                        color: '#92C139'
+                    }
+                },
+                show: 'mouseover',
+                hide: 'mouseout'
+            });
         }
     },
     
