@@ -131,7 +131,9 @@
     <div class="box_one_top"></div>
     <div class="box_one_middle">
         <h3>Magnify your Impact</h3>
-        <a href='{% url invite-invite %}' class='invite_friend_link'>Invite a friend to this team</a><br/>
+        <p>
+            <a href='{% url invite-invite %}' class='invite_friend_link'>Invite a friend to this team</a>
+        </p>
         <div id='invite_friend_dialog'>
             {% get_invite_form for group %}
         </div>
