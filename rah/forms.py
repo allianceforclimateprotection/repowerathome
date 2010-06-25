@@ -139,7 +139,7 @@ class FeedbackForm(forms.ModelForm):
         msg.send()
         
 class ProfileEditForm(forms.ModelForm):
-    about = forms.CharField(max_length=255, required=False, label="About you")   
+    about = forms.CharField(max_length=255, required=False, label="About you", widget=forms.Textarea)
     zipcode = forms.CharField(max_length=5, required=False)
     is_profile_private = forms.BooleanField(label="Make Profile Private", required=False)
     
