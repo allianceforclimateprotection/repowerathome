@@ -509,8 +509,8 @@ var rah = {
     mod_ajax_setup: {
         init: function() {
             $.ajaxSetup({
-                beforeSend: function() { $("#loading").show(); },
-                complete: function() { $("#loading").hide(); },
+                beforeSend: function() { },
+                complete: function() { },
                 error: function(XMLHttpRequest, textStatus) { 
                     var error_html = "<ul class='messages'><li class='messages error sticky'>" + textStatus;
                     error_html += "<a href='#' class='dismiss'>close</a></li></ul>";
