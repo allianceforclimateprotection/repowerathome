@@ -829,7 +829,7 @@ var rah = {
             var form = $("#guest_edit_form");
             $("#id_action").change(function(){
                 var select = $(this);
-                if(!select.val()) {
+                if(!select.val().trim()) {
                     return;
                 }
                 if($("input[type='checkbox']", form).is(":checked")) {
