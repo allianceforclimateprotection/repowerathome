@@ -96,7 +96,8 @@ class EventForm(forms.ModelForm):
 
 class GuestInviteForm(InviteForm):
     emails = MultiEmailField(label="Email addresses", required=True,
-        widget=forms.Textarea(attrs={"rows": 5}))
+        widget=forms.Textarea(attrs={"rows": 5}), 
+        help_text="For multiple email addresses, seperate them with a comma")
     note = forms.CharField(label="Personal note (optional)", required=False,
         widget=forms.Textarea(attrs={"rows": 5}))
     rsvp_notification = forms.BooleanField(required=False, label="Email me when people RSVP")
