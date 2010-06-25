@@ -328,7 +328,7 @@ var rah = {
                     return false;
                 });
                 $(".slayer_help").button("destroy");
-                $(".tooltip").each(function(){
+                $("#vampire_worksheet .tooltip").each(function(){
                     var link = $(this);
                     var location = link.attr("href");
                     link.qtip({
@@ -439,7 +439,7 @@ var rah = {
             });
             rah.mod_thumbs_radio_widget.init();
             rah.mod_flag.init();
-            $(".tooltip").qtip({
+            $("#comments .tooltip").qtip({
                 position: {
                     corner: {
                         target: 'topMiddle',
@@ -763,7 +763,7 @@ var rah = {
             }).live("mouseout", function(){
                 $(this).removeClass("editable_highlight");
             });
-            $(".tooltip").qtip({
+            $("#event_guests_table .tooltip").qtip({
                 position: {
                     corner: {
                         target: 'rightMiddle',
