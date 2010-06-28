@@ -18,9 +18,9 @@ from rah.forms import HousePartyForm
 from invite.models import Invitation, make_token
 from records.models import Record
 
-from models import Event, Guest, Survey, Challenge, Commitment
+from models import Event, Guest, Survey, Commitment
 from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, GuestEditForm, \
-    RsvpForm, RsvpConfirmForm, RsvpAccountForm, SurveyForm
+    RsvpForm, RsvpConfirmForm, RsvpAccountForm
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
 
 def list(request):
@@ -171,6 +171,8 @@ def rsvp_statuses(request):
 @login_required
 @user_is_event_manager
 def commitments(request, event_id, guest_id=None):
+    import survey_forms
+
     event = get_object_or_404(Event, id=event_id)
     if guest_id:
         guest = get_object_or_404(Guest, id=guest_id)
@@ -178,7 +180,7 @@ def commitments(request, event_id, guest_id=None):
         guests = Guest.objects.filter(event=event)
         guest = guests[0] if len(guests) > 0 else None
     survey = Survey.objects.get(event_type=event.event_type, is_active=True)
-    form = SurveyForm(guest=guest, instance=survey, data=(request.POST or None))
+    form = getattr(survey_forms, survey.form_name)(guest=guest, instance=survey, data=(request.POST or None))
     if form.is_valid():
         form.save()
         return redirect("event-commitments-guest", event_id=event.id, guest_id=event.next_guest(guest).id)
