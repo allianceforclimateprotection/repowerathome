@@ -394,10 +394,8 @@ Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Gro
 .membership_request { list-style: disc inside; }
 .membership_tools {  font-weight: bold; margin-left: 30px; }
 .group_details { padding-left: 10px; }
-.group_list {margin:0px; padding:0px; list-style-type: none; height:100%; overflow:auto;}
-.group_list li{ float:left; width:189px; margin:0px 18px 0px 0; height:72px;}
-.group_list_thumb { float:left; margin-right:8px;}
-.group_list_name {float:left; width:130px;}
+.group_list li{ width:100%; height:100%; overflow:auto; margin-bottom:18px;}
+.group_list_thumb { float:left; margin-right:9px;}
 th.header {  
     cursor: pointer;
     background-repeat: no-repeat; 
