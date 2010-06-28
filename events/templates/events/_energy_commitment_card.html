@@ -1,0 +1,47 @@
+<h4>Name: <span class="attendee_label">{{ guest.name }}</span></h4>
+<h4>Email: <span class="attendee_label">{{ guest.email }}</span></h4>
+<h4>Phone: <span class="attendee_label">{{ guest.phone }}</span></h4>
+<br />
+<form action="" method="post">
+    <h2>Repower Your Home</h2>
+    <table class="commitment_table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>I've Done this</th>
+                <th>I pledge to do this</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for field in form %}
+                {% if field.field.action %}
+                    <tr>
+                        <td>{{ field.label }}</td>
+                        {{ field }}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Magnify Your Impact</h2>
+    <table class="commitment_table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Commit to Do</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for field in form %}
+                {% if not field.field.action %}
+                    <tr>
+                        <td>{{ field.label }}</td>
+                        <td>{{ field }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% csrf_token %}
+    <div><input type="submit" value="Save" /></div>
+</form>

@@ -204,42 +204,26 @@ class Guest(models.Model):
 class Survey(models.Model):
     name = models.CharField(max_length=50, unique=True)
     event_type = models.ForeignKey(EventType)
+    form_name = models.CharField(max_length=75)
+    template_name = models.CharField(max_length=200)
     is_active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return "Survey for %s" % self.event_type
-        
-class Challenge(models.Model):
-    name = models.CharField(max_length=100)
-    survey = models.ForeignKey(Survey)
-    order = models.PositiveIntegerField()
-    action = models.ForeignKey("actions.Action", null=True)
-    guests = models.ManyToManyField(Guest, through="Commitment")
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        unique_together = (("survey", "order",),)
-    
-    def __unicode__(self):
-        return self.name
+        return "%s Survey" % self.name
         
 class Commitment(models.Model):
-    ANSWERS = (
-        ("C", "Will Do"),
-        ("D", "Already Done"),
-    )
-    
     guest = models.ForeignKey(Guest, db_index=True)
-    challenge = models.ForeignKey(Challenge, db_index=True)
-    answer = models.CharField(choices=ANSWERS, max_length=1)
+    survey = models.ForeignKey(Survey, db_index=True)
+    question = models.CharField(max_length=50)
+    answer = models.CharField(max_length=100)
+    action = models.ForeignKey("actions.Action", null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
     class Meta:
-        unique_together = (("guest", "challenge"),)
+        unique_together = (("guest", "survey", "question",),)
 
 # 
 # Signals!!!

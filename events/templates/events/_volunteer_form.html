@@ -1,0 +1,27 @@
+<h4>Name: <span class="attendee_label">{{ guest.name }}</span></h4>
+<h4>Email: <span class="attendee_label">{{ guest.email }}</span></h4>
+<h4>Phone: <span class="attendee_label">{{ guest.phone }}</span></h4>
+<br />
+<form action="" method="post">
+    <p>
+        <h3>How did you hear about the meeting?</h3>
+        <ul>
+            <li>{{ form.phone }}{{ form.phone.label_tag }}</li>
+            <li>{{ form.flyer }}{{ form.flyer.label_tag }}</li>
+            <li>{{ form.email }}{{ form.email.label_tag }}</li>
+            <li>{{ form.mouth }}{{ form.mouth.label_tag }}</li>
+        </ul>
+    </p>
+    <p>
+        <h3>What type of team will you start?</h3>
+        <ul>
+            <li>{{ form.school }}{{ form.school.label_tag }}</li>
+            <li>{{ form.workplace }}{{ form.workplace.label_tag }}</li>
+            <li>{{ form.club }}{{ form.club.label_tag }}</li>
+            <li>{{ form.neighborhood }}{{ form.neighborhood.label_tag }}</li>
+            <li>{{ form.faith }}{{ form.faith.label_tag }}</li>
+        </ul>
+    </p>
+    {% csrf_token %}
+    <div><input type="submit" value="Save" /></div>
+</form>

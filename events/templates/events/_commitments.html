@@ -1,7 +1,5 @@
 <a id="edit_event_link" class="button" href="{% url event-edit event.id %}">Edit Event</a>
 <h3>Guests Confirmed: {{ event.confirmed_guests }}</h3>
-<h3>Total Challenges Committed: {{ event.challenges_committed.count }}</h3>
-<h3>Total Challenges Already Done: {{ event.challenges_done.count }}</h3>
 <div id="attendee_list">
     <h2>Attendee List</h2>
     <ul>
@@ -19,29 +17,5 @@
 </div>
 <br class="spacer" />
 <div id="commitment_card">
-    <h4>Name: <span class="attendee_label">{{ guest.name }}</span></h4>
-    <h4>Email: <span class="attendee_label">{{ guest.email }}</span></h4>
-    <h4>Phone: <span class="attendee_label">{{ guest.phone }}</span></h4>
-    <br />
-    <form action="" method="post">
-        <table id="commitment_table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Will Do</th>
-                    <th>Already Done</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for field in form %}
-                    <tr>
-                        <td>{{ field.label }}</td>
-                        {{ field }}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% csrf_token %}
-        <div><input type="submit" value="Save" /></div>
-    </form>
+    {% include survey.template_name %}
 </div>

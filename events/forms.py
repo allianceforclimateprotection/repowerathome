@@ -15,7 +15,7 @@ from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 
-from models import EventType, Event, Guest, Survey, Challenge, Commitment, rsvp_recieved
+from models import EventType, Event, Guest, Survey, Commitment, rsvp_recieved
 from widgets import SelectTimeWidget, RadioRendererForTable
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID",
@@ -151,7 +151,7 @@ class GuestAddForm(forms.ModelForm):
         return super(GuestAddForm, self).save(*args, **kwargs)
 
 class GuestListForm(forms.Form):
-    from actions import attending, not_attending, announcement_email, invitation_email, \
+    from guest_actions import attending, not_attending, announcement_email, invitation_email, \
         reminder_email, remove, make_host, unmake_host
     EMAIL_ACTIONS = {
         # "1_SA": ("Mark as Attending", attending),
@@ -327,29 +327,3 @@ class RsvpAccountForm(forms.ModelForm):
         guest = super(RsvpAccountForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
         return guest
-
-class SurveyForm(forms.ModelForm):
-    class Meta:
-        model = Survey
-        exclude = ("name", "event_type", "is_active",)
-    
-    def __init__(self, guest, *args, **kwargs):
-        self.guest = guest
-        super(SurveyForm, self).__init__(*args, **kwargs)
-        for challenge in self.instance.challenge_set.order_by("order"):
-            self.fields[challenge.name] = forms.ChoiceField(choices=Commitment.ANSWERS,
-                widget=forms.RadioSelect(renderer=RadioRendererForTable), required=False)
-            try:
-                commitment = Commitment.objects.get(guest=self.guest, challenge=challenge)
-                self.fields[challenge.name].initial = commitment.answer
-            except Commitment.DoesNotExist:
-                pass
-    
-    def save(self, *args, **kwargs):
-        for key,data in self.cleaned_data.items():
-            if data:
-                challenge = self.instance.challenge_set.get(name=key)
-                commitment, created = Commitment.objects.get_or_create(guest=self.guest, challenge=challenge)
-                commitment.answer = data
-                commitment.save()
-        return self.instance
