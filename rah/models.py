@@ -62,4 +62,3 @@ def user_post_save(sender, instance, **kwargs):
     Profile.objects.get_or_create(user=instance)
     
 models.signals.post_save.connect(user_post_save, sender=User)
-models.signals.post_save.connect(user_post_save, sender=User)

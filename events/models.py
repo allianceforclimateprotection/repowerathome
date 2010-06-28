@@ -264,3 +264,15 @@ def link_guest_to_user(sender, instance, **kwargs):
         except User.DoesNotExist:
             instance.user = None
 models.signals.pre_save.connect(link_guest_to_user, sender=Guest)
+
+def link_new_user_to_guest(sender, instance, created, **kwargs):
+    """
+    When a user registers, see if they exists as a guest record and if so, link them up.
+    """
+    if created and instance.email:
+        guests = Guest.objects.filter(email=instance.email)
+        for guest in guests:
+            guest.user = instance
+            guest.save()
+        
+models.signals.post_save.connect(link_new_user_to_guest, sender=User)
