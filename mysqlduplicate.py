@@ -69,7 +69,7 @@ class ServerAlias(object):
         include a list of tables to be excluded.
         """
         command = self._connect_to_server()
-        command += "mysqldump -u %s -p%s %s " % (self.user, self.password, self.database)
+        command += "mysqldump -u %s -p'%s' %s " % (self.user, self.password, self.database)
         if exclude:
             command += " ".join(self.get_tables(exclude))
         return command
@@ -81,7 +81,7 @@ class ServerAlias(object):
         a list of tables to be excluded.
         """
         command = self._connect_to_server()
-        command += "mysql -u %s -p%s %s" % (self.user, self.password, self.database)
+        command += "mysql -u %s -p'%s' %s" % (self.user, self.password, self.database)
         return command
         
     def backup_data(self):
