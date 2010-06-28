@@ -25,7 +25,7 @@ class IsHelpfulWidget(Widget):
         return u'\n'.join(output)
         
 class ThumbsRadio(forms.RadioSelect):
-    CHOICES = ((1, "Up"), (0, "Down"))
+    CHOICES = ((1, "I like this"), (0, "I dislike this"))
     
     def __init__(self, *args, **kwargs):
         return super(ThumbsRadio, self).__init__(*args, choices=ThumbsRadio.CHOICES, **kwargs)

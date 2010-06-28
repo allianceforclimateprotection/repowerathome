@@ -159,6 +159,8 @@ class Guest(models.Model):
         self.first_name = first
         self.last_name = last
     def _get_name(self):
+        if self.user:
+            return self.user.get_full_name()
         return ("%s %s" % (self.first_name, self.last_name)).strip()
     name = property(_get_name, _set_name)
     

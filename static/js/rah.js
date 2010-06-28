@@ -328,7 +328,7 @@ var rah = {
                     return false;
                 });
                 $(".slayer_help").button("destroy");
-                $(".tooltip").each(function(){
+                $("#vampire_worksheet .tooltip").each(function(){
                     var link = $(this);
                     var location = link.attr("href");
                     link.qtip({
@@ -439,6 +439,27 @@ var rah = {
             });
             rah.mod_thumbs_radio_widget.init();
             rah.mod_flag.init();
+            $("#comments .tooltip").qtip({
+                position: {
+                    corner: {
+                        target: 'topMiddle',
+                        tooltip: 'bottomMiddle'
+                    }
+                },
+                style: {
+                    name: 'green',
+                    tip: 'bottomMiddle',
+                    background: '#E3EC9F',
+                    color: '#00AAD8',
+                    border: {
+                        width: 3,
+                        radius: 2,
+                        color: '#92C139'
+                    }
+                },
+                show: 'mouseover',
+                hide: 'mouseout'
+            });
         }
     },
     
@@ -488,8 +509,8 @@ var rah = {
     mod_ajax_setup: {
         init: function() {
             $.ajaxSetup({
-                beforeSend: function() { $("#loading").show(); },
-                complete: function() { $("#loading").hide(); },
+                beforeSend: function() { },
+                complete: function() { },
                 error: function(XMLHttpRequest, textStatus) { 
                     var error_html = "<ul class='messages'><li class='messages error sticky'>" + textStatus;
                     error_html += "<a href='#' class='dismiss'>close</a></li></ul>";
@@ -742,7 +763,7 @@ var rah = {
             }).live("mouseout", function(){
                 $(this).removeClass("editable_highlight");
             });
-            $(".tooltip").qtip({
+            $("#event_guests_table .tooltip").qtip({
                 position: {
                     corner: {
                         target: 'rightMiddle',
@@ -808,7 +829,7 @@ var rah = {
             var form = $("#guest_edit_form");
             $("#id_action").change(function(){
                 var select = $(this);
-                if(!select.val()) {
+                if(!select.val().trim()) {
                     return;
                 }
                 if($("input[type='checkbox']", form).is(":checked")) {
