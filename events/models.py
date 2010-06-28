@@ -24,6 +24,8 @@ class EventType(models.Model):
 class Event(models.Model):
     creator = models.ForeignKey("auth.User")
     event_type = models.ForeignKey(EventType, default="")
+    place_name = models.CharField(max_length=100, blank=True,
+        help_text="Label for where the event is being held (e.g. Jon's Home)")
     where = models.CharField(max_length=100)
     location = models.ForeignKey("geo.Location", null=True)
     when = models.DateField()

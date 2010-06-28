@@ -45,7 +45,7 @@ class EventForm(forms.ModelForm):
     
     class Meta:
         model = Event
-        fields = ("event_type", "where", "city", "state", "zipcode", "when", "start", "duration",
+        fields = ("event_type", "place_name", "where", "city", "state", "zipcode", "when", "start", "duration",
             "details", "is_private")
         widgets = {
             "event_type": forms.RadioSelect,
