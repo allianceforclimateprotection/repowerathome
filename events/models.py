@@ -72,8 +72,17 @@ class Event(models.Model):
     def confirmed_guests(self):
         return Guest.objects.filter(event=self, rsvp_status="A").count()
         
+    def maybe_attending_count(self):
+        return Guest.objects.filter(event=self, rsvp_status="M").count()
+        
+    def not_attending_count(self):
+        return Guest.objects.filter(event=self, rsvp_status="N").count()
+        
     def attendees(self):
         return Guest.objects.filter(event=self).exclude(rsvp_status="N")
+        
+    def invited(self):
+         return Guest.objects.filter(event=self, invited__isnull=False).count()
         
     def outstanding_invitations(self):
         return Guest.objects.filter(event=self, invited__isnull=False, rsvp_status="").count()
