@@ -11,7 +11,6 @@ from utils import hash_val
 
 from geo.models import Location
 from invite.models import Invitation, make_token
-
 from models import EventType, Event, Guest
 
 class EventTest(TestCase):
