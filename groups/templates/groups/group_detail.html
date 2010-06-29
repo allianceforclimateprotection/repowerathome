@@ -134,9 +134,10 @@
     {% if is_member %}
     <div class="box_one_top"></div>
     <div class="box_one_middle">
-        <h3>Magnify your Impact</h3>
+        <h3>Team Invitations</h3>
         <p>
-            <a href='{% url invite-invite %}' class='invite_friend_link'>Invite a friend to this team</a>
+            Invites sent: {{ group.invites_sent }}
+            <a class="button invite_friend_link" href="{% url invite-invite %}">Send Invite</a>
         </p>
         <div id='invite_friend_dialog'>
             {% get_invite_form for group %}

@@ -11,7 +11,7 @@ from geo.models import Location
 from records.models import Record
 from rah.models import Profile
 from actions.models import Action
-from invite.models import Rsvp
+from invite.models import Invitation, Rsvp
 from notification import models as notification
    
 class GroupManager(models.Manager):
@@ -236,6 +236,10 @@ class Group(models.Model):
         
     def total_members(self):
         return GroupUsers.objects.filter(group=self).count()
+        
+    def invites_sent(self):
+        content_type = ContentType.objects.get_for_model(self)
+        return Invitation.objects.filter(content_type=content_type, object_pk=self.pk).count()
         
     def __unicode__(self):
         return u'%s' % self.name
