@@ -11,7 +11,6 @@ from utils import hash_val
 
 from geo.models import Location
 from invite.models import Invitation, make_token
-
 from models import EventType, Event, Guest
 
 class EventTest(TestCase):
@@ -92,6 +91,28 @@ class GuestTest(TestCase):
         self.failUnlessEqual(self.me.needs_more_info(), True)
         self.failUnlessEqual(self.jonathan.needs_more_info(), True)
         self.failUnlessEqual(self.mike.needs_more_info(), False)
+
+    def test_link_new_user_to_guest(self):
+        # Make sure the guest isn't currently linked to a user
+        self.failUnlessEqual(self.me.user, None)
+        # Add a new user with the same email as an existing guest.
+        u1 = User.objects.create_user(username="mememe", email="me@gmail.com", password="test")
+        # Refetch the list
+        self.me = Guest.objects.get(email="me@gmail.com")
+        # Make sure only the right guest record was linked to a user
+        self.failUnlessEqual(self.me.user, u1)
+        self.failUnlessEqual(Guest.objects.exclude(user=None).count(), 1)
+        
+        # Create two guest with the same email for two different events.
+        g1a = Guest.objects.create(email="g1@gmail.com", event_id=1)
+        g1b = Guest.objects.create(email="g1@gmail.com", event_id=2)
+        u2 = User.objects.create_user(username="g1", email="g1@gmail.com", password="test")
+        g1a = Guest.objects.get(pk=g1a.id)
+        g1b = Guest.objects.get(pk=g1b.id)
+        # Both guest records should be updated with the user after registration
+        self.failUnlessEqual(g1a.user, u2)
+        self.failUnlessEqual(g1b.user, u2)
+        self.failUnlessEqual(Guest.objects.exclude(user=None).count(), 3)
         
 class EventCreateViewTest(TestCase):
     fixtures = ["test_geo_02804.json"]
