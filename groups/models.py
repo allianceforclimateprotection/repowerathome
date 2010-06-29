@@ -231,6 +231,12 @@ class Group(models.Model):
     def users_not_blacklisted(self):
         return User.objects.filter(group=self).exclude(pk__in=self.email_blacklisted.all())
         
+    def total_points(self):
+        return Profile.objects.filter(user__group=self).aggregate(t_p=models.Sum("total_points"))["t_p"]
+        
+    def total_members(self):
+        return GroupUsers.objects.filter(group=self).count()
+        
     def __unicode__(self):
         return u'%s' % self.name
         

@@ -92,6 +92,10 @@
         <img src="{% thumbnail group.safe_image 189x157 crop='smart' %}" alt="group image" height="157" width="189" />
         <div>{{ group.description|linebreaks }}</div>
         <p>
+            Team points: {{ group.total_points }}<br />
+            Total members: {{ group.total_members }}</br />
+        </p>
+        <p>
             {% if is_manager %}
                 <a href="{% url group_edit group.slug %}">Edit Team</a><br/>
             {% endif %}
