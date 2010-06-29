@@ -1,15 +1,62 @@
-{% extends "events/management.html" %}
-{% block title %}{{ event }}{% endblock %}
-{% load comments %}
+{% extends "events/base.html" %}
+{% block title %}Events on Repower at Home{% endblock %}
 {% block breadcrumbs %}
-    {{ block.super }}
-    {{ event }}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    Events
 {% endblock %}
-{% block event_details_content %}
-    {% include "events/_show.html" %}
-{% endblock %}
+{% block right_content %}
+<div class="grid_6 alpha">
+    <div class="box_two_top"></div>
+    <div class="box_two_middle">
+        <h1>Host an energy meeting</h1>
+        <p>
+            Energy meetings let you introduce your friends, coworkers, and neighbors to the 
+            benefits of saving energy. These fun events teach participants about key 
+            energy actions and get them excited about saving energy as a team. 
+        </p>
+        <p>
+            Repower at Home will provide all the materials you need. 
+            <b>You don’t have to be an expert in energy efficiency to host an event.</b> 
+        </p>
+        <h3>Who would I invite?</h3>
+        <p>
+            You’re already plugged into many networks: your office, your children’s school, 
+            your bowling team, and so on. Who isn’t interested in cleaner air and better homes? 
+            Many hosts are unsure in the beginning, but find it easy to develop a guest list of 
+            well over thirty people! The host materials will help you think through the process 
+            and develop a guest list. 
+        </p>
+        <p><a class="button" href="{% url event-create %}">Create an Event</a></p>
+        {% if events %}
+            <h2>Upcoming Events</h2>
+            {% include "events/_event_nugget_list.html" %}
+        {% endif %}
+    </div>
+    <div class="box_two_bottom"></div>
+</div>
+<div class="grid_3 omega">
+    {% if user.is_authenticated and my_events %}
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        <h3>Your Events</h3>
+        {% with my_events as events %}
+            {% include "events/_event_nugget_list.html" %}
+        {% endwith %}
+    </div>
+    <div class="box_one_bottom"></div>
+    {% endif %}
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        <h3>Need some help?</h3>
+        <p>
+            If you would like to talk to a real person about hosting an energy meeting you can 
+            <a href="mailto:field@repowerathome.com?subject=Hosting%20an%20energy%20meeting">send us an email</a> or we can 
+            <a href="{% url house_party %}" id='house_party_link' rel="nofollow">give you a call</a>. 
+        </p>
+    </div>
+    <div class="box_one_bottom"></div>
+</div>
 
-{% block extrajs %}
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+{% include "rah/_house_party_dialog.html" %}
 {% endblock %}
-{% block js %}page_event_show{% endblock %}
+{% block js %}page_event_list{% endblock %}

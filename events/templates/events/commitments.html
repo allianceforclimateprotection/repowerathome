@@ -2,7 +2,7 @@
 {% block title %}Commitments for {{ event }}{% endblock %}
 {% block breadcrumbs %}
     {{ block.super }}
-    <a href="{% url event-show event.id %}">{{ event }}</a> &rsaquo;
+    <a href="{% url event-detail event.id %}">{{ event }}</a> &rsaquo;
     Commitments
 {% endblock %}
 {% block event_details_content %}

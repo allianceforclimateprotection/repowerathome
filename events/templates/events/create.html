@@ -2,7 +2,7 @@
 {% block title %}Create an Event{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
-    <a href="{% url event-list %}">Events</a> &rsaquo;
+    <a href="{% url event-show %}">Events</a> &rsaquo;
     Create an Event
 {% endblock %}
 {% block right_content %}
@@ -14,7 +14,7 @@
                 {% include "events/_form.html" %}
                 {% csrf_token %}
                 <input type="submit" value="Create Event" /> |
-                <a href="{% url event-list %}">cancel</a>
+                <a href="{% url event-show %}">cancel</a>
             </form>
         </div>
         <div class="box_two_bottom"></div>

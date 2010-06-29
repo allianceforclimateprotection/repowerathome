@@ -1,3 +1,4 @@
+import csv
 import datetime
 import json
 from pdf import render_to_pdf
@@ -18,17 +19,17 @@ from rah.forms import HousePartyForm
 from invite.models import Invitation, make_token
 from records.models import Record
 
-from models import Event, Guest, Survey, Commitment
+from models import Event, Guest
 from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, GuestEditForm, \
     RsvpForm, RsvpConfirmForm, RsvpAccountForm
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
 
-def list(request):
+def show(request):
     events = Event.objects.filter(is_private=False, when__gt=datetime.datetime.now()).order_by("when", "start")
     if request.user.is_authenticated():
         my_events = Event.objects.filter(guest__user=request.user)
     house_party_form = HousePartyForm(request.user)
-    return render_to_response("events/list.html", locals(), context_instance=RequestContext(request))
+    return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
 
 @login_required
 def create(request):
@@ -41,11 +42,11 @@ def create(request):
     return render_to_response("events/create.html", locals(), context_instance=RequestContext(request))
 
 @user_is_guest_or_has_token
-def show(request, event_id, token=None):
+def detail(request, event_id, token=None):
     event = get_object_or_404(Event, id=event_id)
     guest = event.current_guest(request, token)
     if event.has_manager_privileges(request.user):
-        template = "events/_show.html" if request.is_ajax() else "events/show.html"
+        template = "events/_detail.html" if request.is_ajax() else "events/detail.html"
     else:
         rsvp_form = RsvpForm(instance=guest, initial={"token": token})
         template = "events/rsvp.html"
@@ -179,18 +180,20 @@ def commitments(request, event_id, guest_id=None):
     else:
         guests = Guest.objects.filter(event=event)
         guest = guests[0] if len(guests) > 0 else None
-    survey = Survey.objects.get(event_type=event.event_type, is_active=True)
+    survey = event.survey()
     form = getattr(survey_forms, survey.form_name)(guest=guest, instance=survey, data=(request.POST or None))
     if form.is_valid():
         form.save()
         return redirect("event-commitments-guest", event_id=event.id, guest_id=event.next_guest(guest).id)
     template = "events/_commitments.html" if request.is_ajax() else "events/commitments.html"
     return render_to_response(template, locals(), context_instance=RequestContext(request))
-        
+
+@login_required
+@user_is_event_manager
 def print_sheet(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     attendees = event.attendees()
-    attendee_count = len(attendees)   
+    attendee_count = len(attendees)
 
     # Fill every page with blank rows adding rows beyond the initial value of blank_rows if necessary
     blank_rows      = 10
@@ -211,3 +214,21 @@ def print_sheet(request, event_id):
         "attendees": attendees, 
         "blank_rows": blank_rows
     })
+
+@login_required
+@user_is_event_manager
+def spreadsheet(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    response = HttpResponse(mimetype="text/csv")
+    response["Content-Disposition"] = "attachment; filename=%s Guest List.csv" % event
+    
+    questions = event.survey_questions()
+    writer = csv.writer(response)
+    writer.writerow(["Name", "Email", "Phone", "Zipcode", "Status"] + list(questions))
+    
+    for g in event.guests_with_commitments():
+        answers = [getattr(g, question) for question in questions]
+        writer.writerow([g.name, g.email, g.phone, g.zipcode, g.status()] + answers)
+    
+    return response
+    
