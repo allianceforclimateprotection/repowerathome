@@ -50,7 +50,7 @@ class Event(models.Model):
         
     @models.permalink
     def get_absolute_url(self):
-        return ("event-show", [str(self.id)])
+        return ("event-detail", [str(self.id)])
         
     def place(self):
         return "%s %s" % (self.where, self.location)
@@ -107,6 +107,26 @@ class Event(models.Model):
         
     def has_comments(self):
         return Guest.objects.filter(event=self).exclude(comments="").exists()
+        
+    def survey(self):
+        return Survey.objects.get(event_type=self.event_type, is_active=True)
+        
+    def survey_questions(self):
+        return Commitment.objects.distinct().filter(survey__event_type=self.event_type, survey__is_active=True,
+            guest__event=self).values_list("question", flat=True).order_by("question")
+            
+    def guests_with_commitments(self):
+        survey = self.survey()
+        query = Guest.objects.filter(event=self)
+        for question in self.survey_questions():
+            query = query.extra(select_params=(survey.id, question,),
+                select={question: """
+                    SELECT answer FROM events_commitment ec 
+                    WHERE events_guest.id = ec.guest_id AND ec.survey_id = %s AND ec.question = %s
+                    """
+                }
+            )
+        return query
         
     def _guest_key(self):
         return "event_%d_guest" % self.id

@@ -1,0 +1,15 @@
+{% extends "events/management.html" %}
+{% block title %}{{ event }}{% endblock %}
+{% load comments %}
+{% block breadcrumbs %}
+    {{ block.super }}
+    {{ event }}
+{% endblock %}
+{% block event_details_content %}
+    {% include "events/_detail.html" %}
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+{% endblock %}
+{% block js %}page_event_show{% endblock %}

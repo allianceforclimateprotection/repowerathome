@@ -310,7 +310,7 @@ def house_party(request):
             if request.user.is_authenticated():
                 Record.objects.create_record(request.user, 'mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
-    return redirect('event-list')
+    return redirect('event-show')
 
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))

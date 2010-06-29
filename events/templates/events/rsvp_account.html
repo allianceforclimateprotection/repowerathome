@@ -10,7 +10,7 @@
                     {% include "events/_form.html" %}
                     {% csrf_token %}
                     <input type="submit" value="Create Account" /> |
-                    <a href="{% url event-show event.id %}">No Thanks</a>
+                    <a href="{% url event-detail event.id %}">No Thanks</a>
                 </form>
         </div>
         <div class="box_three_bottom"></div>

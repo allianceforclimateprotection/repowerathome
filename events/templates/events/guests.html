@@ -2,7 +2,7 @@
 {% block title %}Guests for {{ event }}{% endblock %}
 {% block breadcrumbs %}
     {{ block.super }}
-    <a href="{% url event-show event.id %}">{{ event }}</a> &rsaquo;
+    <a href="{% url event-detail event.id %}">{{ event }}</a> &rsaquo;
     Guests
 {% endblock %}
 {% block event_details_content %}
