@@ -181,10 +181,11 @@ def commitments(request, event_id, guest_id=None):
         guests = Guest.objects.filter(event=event)
         guest = guests[0] if len(guests) > 0 else None
     survey = event.survey()
-    form = getattr(survey_forms, survey.form_name)(guest=guest, instance=survey, data=(request.POST or None))
-    if form.is_valid():
-        form.save()
-        return redirect("event-commitments-guest", event_id=event.id, guest_id=event.next_guest(guest).id)
+    if survey:
+        form = getattr(survey_forms, survey.form_name)(guest=guest, instance=survey, data=(request.POST or None))
+        if form.is_valid():
+            form.save()
+            return redirect("event-commitments-guest", event_id=event.id, guest_id=event.next_guest(guest).id)
     template = "events/_commitments.html" if request.is_ajax() else "events/commitments.html"
     return render_to_response(template, locals(), context_instance=RequestContext(request))
 
@@ -231,4 +232,3 @@ def spreadsheet(request, event_id):
         writer.writerow([g.name, g.email, g.phone, g.zipcode, g.status()] + answers)
     
     return response
-    
