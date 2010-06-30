@@ -34,6 +34,23 @@ class EventTest(TestCase):
         guest.save()
         self.failUnlessEqual(self.event.has_manager_privileges(hacker), True)
         
+    def test_start_datetime(self):
+        self.failUnlessEqual(self.event.start_datetime(), datetime.datetime(2050, 8, 14, 6, 0))
+        
+    def test_hosts(self):
+        self.failUnlessEqual(list(self.event.hosts()), [])
+        jane = Guest.objects.get(first_name="Jane", last_name="Doe")
+        alex = Guest.objects.get(first_name="Alex", last_name="Smith")
+        jane.is_host = True
+        jane.save()
+        self.failUnlessEqual(list(self.event.hosts()), [jane])
+        alex.is_host = True
+        alex.save()
+        self.failUnlessEqual(list(self.event.hosts()), [alex, jane])
+        jane.is_host = False
+        jane.save()
+        self.failUnlessEqual(list(self.event.hosts()), [alex])
+        
     def test_confirmed_guests(self):
         self.failUnlessEqual(self.event.confirmed_guests(), 1)
         alex = Guest.objects.get(first_name="Alex", last_name="Smith")
@@ -51,6 +68,23 @@ class EventTest(TestCase):
         jon.rsvp_status = "M"
         jon.save()
         self.failUnlessEqual(self.event.outstanding_invitations(), 1)
+        
+    def test_maybe_attending_count(self):
+        self.failUnlessEqual(self.event.maybe_attending_count(), 1)
+        jon = Guest.objects.get(first_name="Jon", last_name="Doe")
+        jon.rsvp_status = "M"
+        jon.save()
+        self.failUnlessEqual(self.event.maybe_attending_count(), 2)
+        
+    def test_not_attending_count(self):
+        self.failUnlessEqual(self.event.not_attending_count(), 1)
+        jonathan = Guest.objects.get(first_name="Jonathan")
+        jonathan.rsvp_status = "N"
+        jonathan.save()
+        self.failUnlessEqual(self.event.not_attending_count(), 2)
+        
+    def test_attendees(self):
+        self.failUnlessEqual(len(self.event.attendees()), 5)
         
     def test_place(self):
         self.failUnlessEqual(self.event.place(), "123 Garden Street Ashaway, RI")
