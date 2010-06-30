@@ -1,4 +1,6 @@
 from django.contrib.sitemaps import Sitemap
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from datetime import datetime
 
 class GenericUrl(object):
@@ -18,6 +20,10 @@ class RahSitemap(Sitemap):
             "/",
             "/user/list/",
         ]
+        # Add all the users
+        users = User.objects.filter(profile__is_profile_private=False).only('id')
+        for user in users:
+            urls.append(reverse("profile", args=[user.id]))
         return [GenericUrl(url) for url in urls]
     
     def location(self, obj):
