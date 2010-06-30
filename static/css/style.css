@@ -122,6 +122,7 @@ a.button:hover { color: white; }
     position: absolute;
     top: 0;
     left: 0; }
+.form_row .help_text { font-size: 12px; color: grey; }
 .form_row label.error {
     color: #DE6060;
     position: static;
@@ -504,7 +505,6 @@ Events Events Events Events Events Events Events Events Events Events Events Eve
 --------------------------------------------------------------------------------------------------------------------- */
 #event_manager_nav li { display: inline; }
 #event_form ul { margin: 0 0 0 0; }
-.event_help_text { font-size: 12px; color: grey; }
 #edit_event_link { float: right; }
 #event_map { width: 431px; height: 200px; }
 .event_inline_placeholder { color: grey; font-style: italic; }
