@@ -160,4 +160,3 @@ class Stream(models.Model):
     
     class Meta:
         unique_together = ("slug", "ab_test",)
-    
