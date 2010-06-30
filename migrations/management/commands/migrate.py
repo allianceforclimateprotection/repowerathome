@@ -5,7 +5,7 @@ import sys
 from django.conf import settings
 from django.core.management.base import NoArgsCommand
 from django.core.management.color import no_style
-from django.db import connections, transaction, DEFAULT_DB_ALIAS
+from django.db import connections, models, transaction, DEFAULT_DB_ALIAS
 from django.utils.importlib import import_module
 
 from migrations.models import Migrate
