@@ -17,5 +17,9 @@
 </div>
 <br class="spacer" />
 <div id="commitment_card">
-    {% include survey.template_name %}
+    {% if survey %}
+        {% include survey.template_name %}
+    {% else %}
+        <p>A commitment card does not yet exist for this event type</p>
+    {% endif %}
 </div>

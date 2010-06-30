@@ -113,7 +113,10 @@ class Event(models.Model):
         return Guest.objects.filter(event=self).exclude(comments="").exists()
         
     def survey(self):
-        return Survey.objects.get(event_type=self.event_type, is_active=True)
+        try:
+            return Survey.objects.get(event_type=self.event_type, is_active=True)
+        except Survey.DoesNotExist:
+            return None
         
     def survey_questions(self):
         return Commitment.objects.distinct().filter(survey__event_type=self.event_type, survey__is_active=True,
