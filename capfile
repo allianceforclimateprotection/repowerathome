@@ -14,7 +14,7 @@ role :app, "repowerathome.com"
 # role :web, "repowerathome.com"
 # role :db, "repowerathome.com", :primary => true
 
-namespace :deploy do    
+namespace :deploy do
     task :staging do
         set :deploy_to, "/scripts/staging"
         default
@@ -31,6 +31,7 @@ namespace :deploy do
         update
         minify
         # staticupload
+        migrate
         syncdb
         restart
         add_deployment_to_codebase
@@ -57,9 +58,22 @@ namespace :deploy do
         end
     end
     
+    desc "Migrate DB"
+    task :migrate, :roles => :app do
+        run_migrate = Capistrano::CLI.ui.ask "Would you like to migrate the DB? Y[n] : "
+        if run_migrate == "Y" then
+            run "cd #{deploy_to}; python manage.py migrate"
+        end
+    end
+    
     desc "Sync DB"
     task :syncdb, :roles => :app do
-        run "cd #{deploy_to}; python manage.py syncdb --noinput"
+        input = ''
+        run "cd #{deploy_to}; python manage.py syncdb", :pty => true do |channel, stream, data|
+            next if data.chomp == input.chomp || data.chomp == ''
+            print data
+            channel.send_data(input = $stdin.gets) if data =~ /:\s*$/
+        end
     end
     
     desc "Restart Apache"
