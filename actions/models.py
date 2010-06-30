@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import models
@@ -6,6 +7,7 @@ from django.contrib.auth.models import User
 
 import tagging
 
+from events.models import Commitment
 from records.models import Record
 from dated_static.templatetags.dated_static import dated_static
 
@@ -31,6 +33,32 @@ class ActionManager(models.Manager):
         committed = [a for a in actions if a.completed != 1 and a.committed != None]
         completed = [a for a in actions if a.completed == 1]
         return actions, recommended, committed, completed
+    
+    def process_commitment_card(self, user, new_user=False):
+        # Are there any event_commitments for this user that were updated after the user's last_login timestamp?
+        if new_user:
+            commitments = Commitment.objects.filter(guest__email=user.email, action__isnull=False)
+        else:
+            commitments = Commitment.objects.filter(updated__gt=user.last_login, guest__email=user.email, action__isnull=False)
+        changes = []
+        
+        # If yes, apply those commitments to the user's account
+        for commitment in commitments:
+            try:
+                # If there is a conflict, go with the later of: user's action date | event date
+                uap = UserActionProgress.objects.get(action=commitment.action, user=user)
+                if commitment.guest.event.start_datetime() > uap.updated and commitment.answer == "D":
+                    uap.is_completed = True;
+                    uap.save()
+                    changes.append(commitment)
+            except UserActionProgress.DoesNotExist:
+                if commitment.answer == "D":
+                    commitment.action.complete_for_user(user)
+                elif commitment.answer == "C":
+                    # We are defaulting the commitment date to 21 days from now
+                    commitment.action.commit_for_user(user, datetime.now() + timedelta(days=21))
+                changes.append(commitment)
+        return changes
         
 class Action(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -185,5 +213,4 @@ def update_action_aggregates(sender, instance, **kwargs):
     instance.action.users_completed = UserActionProgress.objects.filter(action=instance.action, is_completed=True).count()
     instance.action.users_committed = UserActionProgress.objects.filter(action=instance.action, date_committed__isnull=False).count()
     instance.action.save()
-
 models.signals.post_save.connect(update_action_aggregates, sender=UserActionProgress)

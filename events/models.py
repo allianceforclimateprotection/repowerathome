@@ -25,7 +25,7 @@ class Event(models.Model):
     creator = models.ForeignKey("auth.User")
     event_type = models.ForeignKey(EventType, default="")
     place_name = models.CharField(max_length=100, blank=True,
-        help_text="Label for where the event is being held (e.g. Jon's Home)")
+        help_text="Label for where the event is being held (e.g. Jon's House)")
     where = models.CharField(max_length=100)
     location = models.ForeignKey("geo.Location", null=True)
     when = models.DateField()
@@ -54,6 +54,10 @@ class Event(models.Model):
         
     def place(self):
         return "%s %s" % (self.where, self.location)
+    
+    # TODO: Write a unit test for start_as_datetime
+    def start_datetime(self):
+        return datetime.datetime.combine(self.when, self.start)
         
     def has_manager_privileges(self, user):
         if not user.is_authenticated():

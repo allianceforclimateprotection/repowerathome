@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.core import management
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from records.models import Record
@@ -16,7 +17,72 @@ class ActionTest(TestCase):
         self.iwh = Action.objects.get(slug="insulate-water-heater")
         self.csp = Action.objects.get(slug="eliminate-standby-vampire-power")
         self.cfw = Action.objects.get(slug="use-ceiling-fan-winter")
+
+    def test_process_commitment_card(self):
+        event_date = datetime.datetime(2010, 1, 2)
+        date_after_event = event_date + datetime.timedelta(1)
+        date_before_event = event_date - datetime.timedelta(1)
         
+        # Create an event cruft (the creator is automatically a guest)
+        from events.models import EventType, Event, Guest, Survey, Commitment
+        event_type = EventType.objects.create()
+        event = Event.objects.create(creator=self.user, event_type=event_type, when=event_date, start="06:00:00")
+        guest = Guest.objects.get(pk=1)
+        guest2 = Guest.objects.create(email="guest2@gmail.com", event=event)
+        survey = Survey.objects.create(event_type=event_type)
+        
+        # Create commitments
+        Commitment.objects.create(guest=guest, survey=survey, action=self.iwh, answer="D", question="1")
+        Commitment.objects.create(guest=guest, survey=survey, action=self.csp, answer="D", question="2")
+        Commitment.objects.create(guest=guest, survey=survey, action=self.cfw, answer="C", question="3")
+        
+        # Set last_login to be after the event
+        # User has no entries in User Action Progress, so all actions and commitments should be applied
+        response = self.client.post(reverse("login"), {"email":self.user.email, "password": "test"}, follow=True)
+        self.client.get(reverse("logout"))
+        self.failUnlessEqual(UserActionProgress.objects.filter(user=self.user).count(), 3)
+        self.failUnlessEqual(UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False).count(), 1)
+                
+        # Clear out UAP and login again
+        # There should be nothing applied in UAP because the user's last_login time is after the updated time of the commitments
+        UserActionProgress.objects.all().delete()
+        response = self.client.post(reverse("login"), {"email":self.user.email, "password": "test"}, follow=True)
+        self.client.get(reverse("logout"))
+        self.failUnlessEqual(UserActionProgress.objects.filter(user=self.user).count(), 0)
+        
+        # Test that the commitments are added when a new user registers with an email that matches a guest with commitments
+        Commitment.objects.create(guest=guest2, survey=survey, action=self.iwh, answer="D", question="1")
+        Commitment.objects.create(guest=guest2, survey=survey, action=self.csp, answer="D", question="2")
+        Commitment.objects.create(guest=guest2, survey=survey, action=self.cfw, answer="C", question="3")
+        # Register a rando user whose email does not match a guest
+        reg_post = {"email": "ada@asd.com", "password1": "userpass", "password2": "userpass", "first_name": "guest2"}
+        response = self.client.post(reverse("register"), reg_post, follow=True)
+        self.client.get(reverse("logout"))
+        user2 = User.objects.get(pk=2)
+        self.failUnlessEqual(UserActionProgress.objects.filter(user=user2).count(), 0)
+        # Register a user whose email matches a guest
+        reg_post = {"email": guest2.email, "password1": "userpass", "password2": "userpass", "first_name": "guest2"}
+        response = self.client.post(reverse("register"), reg_post, follow=True)
+        self.client.get(reverse("logout"))
+        user3 = User.objects.get(pk=3)
+        self.failUnlessEqual(UserActionProgress.objects.filter(user=user3).count(), 3)
+        self.failUnlessEqual(UserActionProgress.objects.filter(user=user3, date_committed__isnull=False).count(), 1)
+        
+        # User had committed to an action before the event, but said it was completed on the commitment card
+        # reset last_login date to be before updated field on commitments
+        # UserActionProgress.objects.all().delete()
+        self.user.last_login = date_before_event
+        self.user.save()
+        # Commit and then change the event date to be in the future
+        self.iwh.commit_for_user(self.user, datetime.datetime.now())
+        event.when = datetime.datetime.now() + datetime.timedelta(1)
+        event.save()
+        response = self.client.post(reverse("login"), {"email":self.user.email, "password": "test"}, follow=True)
+        self.failUnlessEqual(UserActionProgress.objects.filter(user=self.user).count(), 3)
+        self.failUnlessEqual(UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False).count(), 2)
+        self.failUnlessEqual(UserActionProgress.objects.filter(user=self.user, is_completed=True).count(), 2)
+        self.failUnlessEqual(UserActionProgress.objects.get(user=self.user, action=self.iwh).is_completed, True)
+                
     def test_actions_by_status(self):
         self.iwh.complete_for_user(self.user)
         self.csp.complete_for_user(self.user)

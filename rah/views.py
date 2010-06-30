@@ -47,6 +47,10 @@ def index(request):
     twitter_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
     })
+    
+    # Set this location so that we can format ints with commas
+    locale.setlocale(locale.LC_ALL, "en_US")
+    
     return render_to_response('rah/home_logged_in.html', {
         'total_points': request.user.get_profile().total_points,
         'committed': committed,
@@ -57,6 +61,9 @@ def index(request):
         'my_groups': Group.objects.filter(users=request.user, is_geo_group=False),
         'my_events': Event.objects.filter(guest__user=request.user),
         'records': Record.objects.user_records(request.user, 10),
+        'total_people' : locale.format('%d', User.objects.all().count(), True),
+        'total_actions' : locale.format('%d', Record.objects.filter(void=False, activity=1).count(), True),
+        'total_points' : locale.format('%d', Profile.objects.all().aggregate(Sum('total_points'))['total_points__sum'], True),
     }, context_instance=RequestContext(request))
 
 def logged_out_home(request):
@@ -106,7 +113,12 @@ def register(request):
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
             save_queued_POST(request)
-
+            
+            # Apply changes from commitment card.
+            changes = Action.objects.process_commitment_card(user, new_user=True)
+            if len(changes):
+                messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes))
+            
             # Add the location to profile if the user registered with one
             if "location" in form.cleaned_data:
                 profile = user.get_profile()
@@ -166,12 +178,17 @@ def login(request, template_name='registration/login.html',
             # should be allowed. This regex checks if there is a '//' *before* a
             # question mark.
             elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
-                    redirect_to = settings.LOGIN_REDIRECT_URL
+                redirect_to = settings.LOGIN_REDIRECT_URL
             
             # Okay, security checks complete. Log the user in.
-            auth.login(request, form.get_user())
+            user = form.get_user()
+            changes = Action.objects.process_commitment_card(user)
+            if len(changes):
+                messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes))
+            auth.login(request, user)
             save_queued_POST(request)
-
+            messages.add_message(request, GA_TRACK_PAGEVIEW, '/login/success')
+            
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
 
