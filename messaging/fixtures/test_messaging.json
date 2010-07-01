@@ -1,0 +1,9 @@
+[
+    {"pk": 1, "model": "messaging.message", "fields": {"body": "test message", "delta_value": 24, "sends": 0, "delta_type": "after_start", "recipient_function": "recipients", "subject": "after start"}}, 
+    {"pk": 2, "model": "messaging.message", "fields": {"body": "test message", "delta_value": 72, "sends": 0, "delta_type": "before_end", "recipient_function": "recipients", "subject": "before end"}}, 
+    {"pk": 3, "model": "messaging.message", "fields": {"body": "test message", "delta_value": 168, "sends": 0, "delta_type": "after_end", "recipient_function": "recipients", "subject": "after end"}}, 
+    {"pk": 4, "model": "messaging.message", "fields": {"body": "test message", "delta_value": 50, "sends": 0, "delta_type": "timeline_scale", "recipient_function": "recipients", "subject": "timeline scale"}}, 
+    {"pk": 1, "model": "messaging.abtest", "fields": {"is_enabled": true, "test_percentage": 100, "message": 1, "test_message": 2}}, 
+    {"pk": 2, "model": "messaging.abtest", "fields": {"is_enabled": true, "test_percentage": 0, "message": 3, "test_message": 4}}, 
+    {"pk": 3, "model": "messaging.abtest", "fields": {"is_enabled": true, "test_percentage": 50, "message": 1, "test_message": 3}}
+]
