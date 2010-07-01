@@ -55,7 +55,6 @@ class Event(models.Model):
     def place(self):
         return "%s %s" % (self.where, self.location)
     
-    # TODO: Write a unit test for start_as_datetime
     def start_datetime(self):
         return datetime.datetime.combine(self.when, self.start)
         

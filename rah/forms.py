@@ -26,7 +26,7 @@ class RegistrationForm(DefaultRahForm):
     """
     email = forms.EmailField(label='Email', widget=forms.TextInput(attrs={'id':'email_register'}))
     first_name = forms.CharField(min_length=2)
-    zipcode = forms.CharField(max_length=10, required=False)
+    zipcode = forms.CharField(max_length=10, required=False, help_text="Leave blank if not a US resident")
     password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
     
