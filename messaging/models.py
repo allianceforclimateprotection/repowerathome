@@ -1,3 +1,4 @@
+import datetime
 import random
 
 from django.contrib.contenttypes import generic
@@ -14,22 +15,28 @@ class Message(models.Model):
     
     subject = models.CharField(max_length=100)
     body = models.TextField()
-    sends = models.PositiveIntegerField(default=0)
+    sends = models.PositiveIntegerField(default=0, editable=False)
     delta_type = models.CharField(max_length=20, choices=DELTA_TYPES)
     delta_value = models.PositiveIntegerField()
     recipient_function = models.CharField( max_length=100)
     
     def send_time(self, start, end):
+        """
+        Note that if an 'after start' or 'before end' send time is created, and it falls
+        outside of the start, end range.  This function will return None
+        """
         if self.delta_type == "timeline_scale":
             timeline = end - start
-            delta = timeline * (self.delta_value / 100)
+            delta = (timeline * self.delta_value) / 100
             return start + delta
         else:
             delta = datetime.timedelta(hours=self.delta_value)
             if self.delta_type == "after_start":
-                return start + delta
+                send = start + delta
+                return send if send < end else None
             elif self.delta_type == "before_end":
-                return end - delta
+                send = end - delta
+                return send if send > start else None
             elif self.delta_type == "after_end":
                 return end + delta
         raise NotImplementedError("unknown delta type: %s" % self.delta_type)
@@ -43,29 +50,35 @@ class Message(models.Model):
     def send(self):
         pass
         
+    def __unicode__(self):
+        return self.subject
+        
 class ABTest(models.Model):
-    message = models.ForeignKey(Message)
-    test_message = models.ForeignKey(Message)
+    message = models.ForeignKey(Message, related_name="message")
+    test_message = models.ForeignKey(Message, related_name="test_message")
     test_percentage = models.PositiveIntegerField()
-    is_enabled = models.BooleanField(required=False, default=True)
+    is_enabled = models.BooleanField(default=True)
     
-    def message(self):
+    def random_message(self):
         if random.randint(0, 100) > self.test_percentage:
             return self.message
-        else
+        else:
             return self.test_message
+            
+    def __unicode__(self):
+        return "%s [test: %s]" % (self.message, self.test_message)
             
 class RecipientMessage(models.Model):
     message = models.ForeignKey(Message)
     recipient = models.EmailField()
-    token = models.CharField(max_length=30)
-    opens = models.PositiveIntegerField(default=0)
+    token = models.CharField(max_length=30, editable=False)
+    opens = models.PositiveIntegerField(default=0, editable=False)
     
 class MessageLink(models.Model):
     recipient_message = models.ForeignKey(RecipientMessage)
     link = models.URLField(verify_exists=False)
-    token = models.CharField(max_length=30)
-    clicks = models.PositiveIntegerField(default=0)
+    token = models.CharField(max_length=30, editable=False)
+    clicks = models.PositiveIntegerField(default=0, editable=False)
     
 class Queue(models.Model):
     message = models.ForeignKey(Message)
@@ -88,9 +101,10 @@ class StreamManager(models.Manager):
         for stream in self.filter(slug=slug):
             message = stream.ab_test.message()
             send_time = message.send_time(start, end)
-            # TODO: if send_time is now, send instead of enqueue
-            enqueued.append(Queue.objects.create(message=message, content_object=content_object, 
-                send_time=send_time))
+            if send_time:
+                # TODO: if send_time is now, send instead of enqueue
+                enqueued.append(Queue.objects.create(message=message, content_object=content_object, 
+                    send_time=send_time))
         return enqueued
         
     def upqueue(slug, content_object, start, end):

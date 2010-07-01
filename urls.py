@@ -12,6 +12,7 @@ from groups import admin as groups_admin
 from tagging import admin as tagging_admin
 from events import admin as event_admin
 from django.contrib.flatpages import admin as flatpages_admin
+from messaging import admin as messaging_admin
 
 # Unregister some models within some apps from the admin
 from django.contrib import admin
