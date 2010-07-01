@@ -86,6 +86,9 @@ class Message(models.Model):
     def __unicode__(self):
         return self.subject
         
+    def __unicode__(self):
+        return self.subject
+        
 class ABTest(models.Model):
     message = models.ForeignKey(Message, related_name="message")
     test_message = models.ForeignKey(Message, related_name="test_message")
