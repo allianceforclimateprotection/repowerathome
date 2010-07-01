@@ -142,7 +142,7 @@ COMMENTS_ALLOW_PROFANITIES = True
 
 THUMBNAIL_EXTENSION = 'png'
 
-MYSQLDUPLICATE_EXCLUDE = ("django_site", "geo_location",)
+MYSQLDUPLICATE_EXCLUDE = ("django_site",)
 
 # Date defaults
 DATETIME_FORMAT = "F j, Y, P"

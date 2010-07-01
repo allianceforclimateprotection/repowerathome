@@ -1,24 +1,59 @@
-from suds.sax.element import Element
 from suds.client import Client
 from suds.client import WebFault
 import logging
 
 # Set up some logging
 logging.basicConfig(level=logging.INFO)
-# logging.getLogger('suds.client').setLevel(logging.DEBUG)
+logging.getLogger('suds.client').setLevel(logging.DEBUG)
 
 # Set up the client
 client = Client("https://secure.securevan.com/Services/V3/PersonService.asmx?WSDL")
 header = client.factory.create("Header")
-header.APIKey = "417B32A3-E59B-429F-BD6A-3E5D6246B945X"
+header.APIKey = "417B32A3-E59B-429F-BD6A-3E5D6246B945"
 header.DatabaseMode = "MyVoterFile"
 client.set_options(soapheaders=header)
 
+msg = """<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Header>
+    <Header xmlns="https://api.securevan.com/Services/V3/">
+      <APIKey>417B32A3-E59B-429F-BD6A-3E5D6246B945</APIKey>
+      <DatabaseMode>MyVoterFile</DatabaseMode>
+    </Header>
+  </soap:Header>
+  <soap:Body>
+    <ApplyActivistCode xmlns="https://api.securevan.com/Services/V3/">
+      <PersonID>325143</PersonID>
+      <PersonIDType>VANID</PersonIDType>
+      <ActivistCodeID>4134268</ActivistCodeID>
+    </ApplyActivistCode>
+  </soap:Body>
+</soap:Envelope>
+"""
+
 try:
-    result = client.service.HelloAuthWorld("hello world...")
+    # result = client.service.HelloAuthWorld("hello world...")
+    
+    # Get the participant 
+    candidate = client.factory.create("Person")
+    candidate.Email = "jimmysmith@gmail.com"
+    match = client.service.MatchPerson(candidate, "MatchOnly")
+    print match
+    
+    # Apply a code (Gun owner: 4133156)
+    result = client.service.ApplyActivistCode(match.PersonID, match.PersonIDType, "4133156")
     print result
+    
+    # print client.service.ApplyActivistCode(__inject={'msg':msg})
+    sections = client.factory.create("GetMethodOptions")
+    sections.ReturnSections = "SurveyQuestionResponse"
+    print client.service.GetPerson(match.PersonID, match.PersonIDType, sections)
+    
 except WebFault, e:
     print e
+
+
+
 
 # Service Def for reference
 """
