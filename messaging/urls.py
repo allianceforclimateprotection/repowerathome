@@ -1,3 +1,6 @@
 from django.conf.urls.defaults import *
 
-# place app url patterns here
+urlpatterns = patterns("messaging.views",
+    # TODO: Make these underscores instead of hyphens
+    url(r"^(?P<token>.{30}).png$", "open", name="message_open"),
+)
