@@ -1,9 +1,21 @@
 import datetime
+import hashlib
 import random
+import re
 
+from django import template
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
 from django.db import models
+
+def make_token():
+    return hashlib.sha1("%s_%s" % (random.random(), datetime.now())).hexdigest()[:30]
+    
+def extract_unique_links(content):
+    return set([m.group[0] for m in 
+        re.finditer("http://%s/.*" % Site.objects.get_current().domain, content)])
 
 class Message(models.Model):
     DELTA_TYPES = (
@@ -47,8 +59,29 @@ class Message(models.Model):
                 content_object))
         return getattr(content_object, self.recipient_function)()
         
-    def send(self):
-        pass
+    def send(self, content_object):
+        for recipient in self.recipients(content_object):
+            # for each recipient, create a Recipient message to keep track of opens
+            recipient_message = RecipientMessage.objects.create(message=self, recipient=recipient, 
+                token=make_token())
+            context = template.Context({"content_object": content_object, "recipient": recipient, 
+                "domain": Site.objects.get_current().domain})
+            # render the body template with the given, template
+            body = template.Template(self.body).render(context)
+            for link in extract_unique_links(body):
+                # for each unique link in the body, create a Message link to track the clicks
+                ml = MessageLink.objects.create(recipient_message=recipient_message, 
+                    link=link, token=make_token())
+                # in the body, replace the original link with a tokenized link
+                body = body.replace(ml.link, "%s/%s/" % (ml.link, ml.token))
+            open_link = '<img src="%s"></img>' % reverse("messaging_open", args=[recipient_message.token])
+            # insert an open tracking image into the body
+            body += open_link
+            msg = EmailMessage(self.subject, body, None, [recipient])
+            msg.content_subtype = "html"
+            msg.send()
+            self.sends += 1 # after the message is sent, increment the sends count
+            self.save()
         
     def __unicode__(self):
         return self.subject
