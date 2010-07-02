@@ -104,13 +104,13 @@ class ABTest(models.Model):
 class RecipientMessage(models.Model):
     message = models.ForeignKey(Message)
     recipient = models.EmailField()
-    token = models.CharField(max_length=30, editable=False)
+    token = models.CharField(max_length=30, editable=False, unique=True, db_index=True)
     opens = models.PositiveIntegerField(default=0, editable=False)
     
 class MessageLink(models.Model):
     recipient_message = models.ForeignKey(RecipientMessage)
     link = models.URLField(verify_exists=False)
-    token = models.CharField(max_length=30, editable=False)
+    token = models.CharField(max_length=30, editable=False, unique=True, db_index=True)
     clicks = models.PositiveIntegerField(default=0, editable=False)
     
 class Queue(models.Model):
