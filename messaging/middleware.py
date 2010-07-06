@@ -1,6 +1,7 @@
 import re
 
 from django.http import HttpResponseRedirect
+from django.utils.http import urlquote
 
 from models import MessageLink
 
