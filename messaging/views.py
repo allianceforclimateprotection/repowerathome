@@ -1,7 +1,13 @@
 from django.http import HttpResponse
 from django.template import loader, Context
 
+from utils import hex_to_byte
+
 from models import RecipientMessage
+
+ONE_PX_BY_ONE_PX_HEX_STRING = "47 49 46 38 37 61 01 00 01 00 80 00 00 ff ff ff 00 02 00 2c 00 \
+    00 00 00 01 00 01 00 00 02 02 44 01 00 3b"
+ONE_PX_BY_ONE_PX_BYTE_STRING = hex_to_byte(ONE_PX_BY_ONE_PX_HEX_STRING)
 
 def open(request, token):
     try:
@@ -12,6 +18,5 @@ def open(request, token):
         # TODO: an invalid token was passed back, we should track this in some log
         pass
     response = HttpResponse(mimetype="image/gif")
-    t = loader.get_template("messaging/open_tracker.gif")
-    response.write(t.render(Context({})))
+    response.write(ONE_PX_BY_ONE_PX_BYTE_STRING)
     return response
