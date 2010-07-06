@@ -113,12 +113,23 @@ class MessageLink(models.Model):
     token = models.CharField(max_length=30, editable=False, unique=True, db_index=True)
     clicks = models.PositiveIntegerField(default=0, editable=False)
     
+class QueueManager(models.Manager):
+    def send_ready_messages():
+        now = datetime.now()
+        for queued_message in self.filter(send_time__lte=now):
+            queued_message.send()
+            queued_message.delete()
+    
 class Queue(models.Model):
     message = models.ForeignKey(Message)
     content_type = models.ForeignKey(ContentType, verbose_name="content type", related_name="%(class)s")
     object_pk = models.PositiveIntegerField("object ID")
     content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
-    send_time = models.DateTimeField()
+    send_time = models.DateTimeField(db_index=True)
+    objects = QueueManager()
+    
+    def send(self):
+        return self.message.send(self.content_object)
     
 class StreamManager(models.Manager):
     def _queued_messages(slug, content_object):
