@@ -7,15 +7,17 @@ from django import template
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
+from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
 
 def make_token():
-    return hashlib.sha1("%s_%s" % (random.random(), datetime.now())).hexdigest()[:30]
+    return hashlib.sha1("%s_%s" % (random.random(), datetime.datetime.now())).hexdigest()[:30]
     
+LINK_PATTERN = None
 def extract_unique_links(content):
-    return set([m.group[0] for m in 
-        re.finditer("http://%s/.*" % Site.objects.get_current().domain, content)])
+    LINK_PATTERN = LINK_PATTERN or re.compile(r"https?://%s/.*" % Site.objects.get_current().domain)
+    return set([m.group(0) for m in LINK_PATTERN.finditer(content)])
 
 class Message(models.Model):
     DELTA_TYPES = (
@@ -64,8 +66,9 @@ class Message(models.Model):
             # for each recipient, create a Recipient message to keep track of opens
             recipient_message = RecipientMessage.objects.create(message=self, recipient=recipient, 
                 token=make_token())
+            domain = Site.objects.get_current().domain
             context = template.Context({"content_object": content_object, "recipient": recipient, 
-                "domain": Site.objects.get_current().domain})
+                "domain": domain})
             # render the body template with the given, template
             body = template.Template(self.body).render(context)
             for link in extract_unique_links(body):
@@ -73,8 +76,8 @@ class Message(models.Model):
                 ml = MessageLink.objects.create(recipient_message=recipient_message, 
                     link=link, token=make_token())
                 # in the body, replace the original link with a tokenized link
-                body = body.replace(ml.link, "%s/%s/" % (ml.link, ml.token))
-            open_link = '<img src="%s"></img>' % reverse("messaging_open", args=[recipient_message.token])
+                body = body.replace(ml.link, "%s%s/" % (ml.link, ml.token))
+            open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", args=[recipient_message.token]))
             # insert an open tracking image into the body
             body += open_link
             msg = EmailMessage(self.subject, body, None, [recipient])
@@ -114,8 +117,8 @@ class MessageLink(models.Model):
     clicks = models.PositiveIntegerField(default=0, editable=False)
     
 class QueueManager(models.Manager):
-    def send_ready_messages():
-        now = datetime.now()
+    def send_ready_messages(self):
+        now = datetime.datetime.now()
         for queued_message in self.filter(send_time__lte=now):
             queued_message.send()
             queued_message.delete()
@@ -132,7 +135,7 @@ class Queue(models.Model):
         return self.message.send(self.content_object)
     
 class StreamManager(models.Manager):
-    def _queued_messages(slug, content_object):
+    def _queued_messages(self, slug, content_object):
         potential_messages = []
         for stream in self.filter(slug=slug):
             potential_messages.append(stream.ab_test.message)
@@ -140,10 +143,10 @@ class StreamManager(models.Manager):
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
             
-    def enqueue(slug, content_object, start, end):
+    def enqueue(self, slug, content_object, start, end):
         enqueued = []
         for stream in self.filter(slug=slug):
-            message = stream.ab_test.message()
+            message = stream.ab_test.random_message()
             send_time = message.send_time(start, end)
             if send_time:
                 # TODO: if send_time is now, send instead of enqueue
@@ -151,7 +154,7 @@ class StreamManager(models.Manager):
                     send_time=send_time))
         return enqueued
         
-    def upqueue(slug, content_object, start, end):
+    def upqueue(self, slug, content_object, start, end):
         upqueued = self._queued_messages(slug, content_object)
         for message in upqueued:
             message.send_time = message.send_time(start, end)
@@ -159,7 +162,7 @@ class StreamManager(models.Manager):
             message.save()
         return upqueued
         
-    def dequeue(slug, content_object):
+    def dequeue(self, slug, content_object):
         dequeued = self._queued_messages(slug, content_object)
         dequeued.delete()
         return dequeued
@@ -168,6 +171,9 @@ class Stream(models.Model):
     slug = models.SlugField(db_index=True)
     ab_test = models.ForeignKey(ABTest)
     objects = StreamManager()
+    
+    def __unicode__(self):
+        return "%s - %s" % (self.slug, self.ab_test)
     
     class Meta:
         unique_together = ("slug", "ab_test",)

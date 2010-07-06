@@ -80,6 +80,7 @@ urlpatterns += patterns('',
     url(r'^actions/', include('actions.urls')),
     url(r'^records/', include('records.urls')),
     url(r'^events/', include('events.urls')),
+    url(r'^messaging/', include('messaging.urls')),
     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}, name='sitemap'),
 )
 
