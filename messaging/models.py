@@ -1,5 +1,4 @@
 import datetime
-import hashlib
 import random
 import re
 
@@ -9,23 +8,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
-from django.core.validators import URLValidator
 from django.db import models
 
 from utils import make_token
-
-URL_REGEX = re.compile(
-    r'https?://' # http:// or https://
-    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|' #domain...
-    r'localhost|' #localhost...
-    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-    r'(?::\d+)?' # optional port
-    r'(?:/?|[/?]\S+)+', re.IGNORECASE)
     
-URL_REGEX = re.compile(r'\b(https?|ftp|file)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]', re.IGNORECASE)
-
-# def make_token():
-#     return hashlib.sha1("%s_%s" % (random.random(), datetime.datetime.now())).hexdigest()[:30]
+URL_REGEX = re.compile(r"\b(https?|ftp|file)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
 
 class Message(models.Model):
     DELTA_TYPES = (
@@ -84,14 +71,13 @@ class Message(models.Model):
                 "domain": domain})
             # render the body template with the given, template
             body = template.Template(self.body).render(context)
-            replacements = []
-            links = [m.group() for m in URL_REGEX.finditer(body)]
-            for link in links:
+            for link in [m.group() for m in URL_REGEX.finditer(body)]:
                 # for each unique link in the body, create a Message link to track the clicks
                 ml = MessageLink.objects.create(recipient_message=recipient_message, 
                     link=link, token=make_token())
-                replacement = "http://%s%s" % (domain, reverse("message_click", args=[ml.token]))
-                body = body.replace(link, replacement, 1)
+                tracker = "http://%s%s" % (domain, reverse("message_click", args=[ml.token]))
+                # replace the original link with traking URL
+                body = body.replace(link, tracker, 1)
             open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", args=[recipient_message.token]))
             # insert an open tracking image into the body
             body += open_link
