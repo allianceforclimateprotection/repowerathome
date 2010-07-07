@@ -147,7 +147,7 @@
                 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
             })();
         </script>
-        {% ifnotequal request.META.HTTP_X_FORWARDED_FOR "157.130.44.166" %}      
+        {% ifnotequal request.META.HTTP_X_FORWARDED_FOR "157.130.44.166" %}
         {# Do not use clicktale for traffic coming from inside ACP #}
             <!-- ClickTale Bottom part -->
             <div id="ClickTaleDiv" style="display: none;"></div>

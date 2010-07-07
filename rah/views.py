@@ -332,6 +332,9 @@ def house_party(request):
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))
 
+def ga_opt_out(request):
+    return render_to_response('rah/ga_opt_out.html', {}, context_instance=RequestContext(request))
+
 def comment_message(sender, comment, request, **kwargs):
     messages.add_message(request, messages.SUCCESS, 'Thanks for the comment.')
 comments.signals.comment_was_posted.connect(comment_message)
