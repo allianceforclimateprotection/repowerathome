@@ -2,13 +2,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
     <head>
         {% load dated_static %}
-        <title>{% block title %}Repower at Home | Save energy at home and organize your community{% endblock %}</title>
+        <title>{% block title %}Save energy at home and organize your community{% endblock %} | Repower at Home</title>
         <meta name="google-site-verification" content="LKUJZqwKMnEGjg_dQNKL-2eLLK3yvftU0RKv7SuymGQ" />
         <meta name="msvalidate.01" content="DC928E84A1569AF4933A7DB431C08DB4" />
         <meta name="y_key" content="9d9c6c76735e5a92"/>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+        <meta http-equiv="content-language" content="en-us">
+        <meta name="geo.position" content="38.896231;-77.024158"/>
+        <meta name="geo.country" content="US"/>
+        <meta name="geo.region" content="US-DC"/>
+        <meta name="geo.placename" content="Alliance for Climate Protection"/>
+        <meta name="ICBM" content="38.896231, -77.024158"/>
         <meta name="keywords" content="{% block meta_keywords %}energy efficiency, home energy, climate change, repower at home, alliance for climage protection{% endblock %}" />
-        <meta name="description" content="{% block meta_desc %}By October 10th, we can take action to keep 1 million pounds of dirty coal from polluting our air and our communities. You earn points by completing actions. Every point you earn means one less pound of coal needs to be burned.{% endblock %}" />
+        <meta name="description" content="{% block meta_desc %}We can take action to keep millions of pounds of dirty coal from polluting our communities. Every point you earn means one less pound of coal needs to be burned.{% endblock %}" />
+        <meta name="DC.title" content="Repower at Home" /> 
+        <meta name="DC.creator" content="Alliance for Climate Protection" /> 
+        <meta name="DC.subject" content="energy efficiency; home energy; climate change; repower at home; alliance for climage protection" /> 
+        <meta name="DC.description" content="We can take action to keep millions of pounds of dirty coal from polluting our communities. Every point you earn means one less pound of coal needs to be burned." /> 
+        <meta name="DC.format" content="text/html; charset=utf-8" />
+        <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" /> 
+        <link rel="alternate" type="application/atom+xml"  href="{% url blog_feed %}" title="Repower at Home Blog" />
         <link rel="shortcut icon" href="{% dated_static 'images/theme/favicon.ico' %}"/>
         {% if debug %}
             <link rel="stylesheet" href="{% dated_static 'css/style.css' %}" type="text/css" media="screen" charset="utf-8"/>
@@ -28,7 +41,6 @@
         var WRInitTime=(new Date()).getTime();
         </script>
         <!-- ClickTale end of Top part -->
-        <div id="loading" class="warning">Loading...</div>
         <div id="header_container">
             <div id="header_bg">
                 <div id="header" class="container_12">

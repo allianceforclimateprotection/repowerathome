@@ -4,7 +4,7 @@
 {% block title %}{{profile_user.get_full_name}}'s profile{% endblock %}
 {% block extralinks %}
     <link rel="alternate" type="application/atom+xml"  href="{% url user_activity_feed profile.user.id %}" title="Repower at Home User Activity" />
-    {# TODO: Add a noindex meta tag here #}
+    {# TODO: Add a noindex meta tag here if profile is private #}
 {% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
