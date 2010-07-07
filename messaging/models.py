@@ -33,7 +33,8 @@ class Message(models.Model):
     def send_time(self, start, end):
         """
         Note that if an 'after start' or 'before end' send time is created, and it falls
-        outside of the start, end range.  This function will return None
+        outside of the start, end range.  This function will return None, meaning the message
+        should not be sent
         """
         if start.__class__ == datetime.date:
             start = datetime.datetime.combine(start, datetime.time.min)
@@ -152,21 +153,31 @@ class StreamManager(models.Manager):
             
     def enqueue(self, slug, content_object, start, end):
         enqueued = []
+        now = datetime.datetime.now()
         for stream in self.filter(slug=slug):
+            if not stream.ab_test.is_enabled:
+                continue
             message = stream.ab_test.random_message()
             send_time = message.send_time(start, end)
             if send_time:
-                # TODO: if send_time is now, send instead of enqueue
-                enqueued.append(Queue.objects.create(message=message, content_object=content_object, 
-                    send_time=send_time))
+                if send_time <= now:
+                    message.send(content_object)
+                else:
+                    enqueued.append(Queue.objects.create(message=message,
+                        content_object=content_object, send_time=send_time))
         return enqueued
         
     def upqueue(self, slug, content_object, start, end):
         upqueued = self._queued_messages(slug, content_object)
+        now = datetime.datetime.now()
         for message in upqueued:
-            message.send_time = message.send_time(start, end)
-            # TODO: if send_time is now or in the past, should we still send
-            message.save()
+            send_time = message.send_time(start, end)
+            if send_time <= now:
+                message.send(content_object)
+                message.delete()
+            else:
+                message.send_time = send_time
+                message.save()
         return upqueued
         
     def dequeue(self, slug, content_object):
