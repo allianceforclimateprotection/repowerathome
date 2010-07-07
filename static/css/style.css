@@ -41,7 +41,7 @@ Elements Elements Elements Elements Elements Elements Elements Elements Elements
 body {
     font: 14px/18px Helvetica, Arial, sans-serif;
     color: #333; 
-    background-color: #b0d8f2; }
+    background-color: #92C139; }
 a { color: #388ca0; text-decoration: none; }
 a:hover { text-decoration:underline; }
 a:active { color: #6EC3D1; text-decoration:underline; }
@@ -170,7 +170,7 @@ Messages Messages Messages Messages Messages Messages Messages Messages Messages
 /* ---------------------------------------------------------------------------------------------------------------------
 Content Content Content Content Content Content Content Content Content Content Content Content Content Content Content 
 --------------------------------------------------------------------------------------------------------------------- */
-#content_container{width:100%; position:relative;}
+#content_container{width:100%; position:relative; background-color:#b0d8f2;}
 #content{position:relative;}
 #content_bg {background: transparent url(../images/theme/0000000004_content_bg.jpg) no-repeat top center;}
 #content {
@@ -258,11 +258,11 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 #footer_container{
     width:100%; 
     position:relative;
-	height:286px;
+	height:324px;
     background: #92c139 url(../images/theme/0000000004_footer.png) no-repeat top center; }
 #footer{position:relative;}
 #footer_copy a {color:#333; text-decoration:underline;}
-#footer_copy {margin-right:100px; text-align:center; padding-top:250px;}
+#footer_copy {margin-right:100px; text-align:center; padding-top:243px;}
 
 
 /* ---------------------------------------------------------------------------------------------------------------------

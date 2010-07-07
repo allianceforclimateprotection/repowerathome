@@ -93,12 +93,30 @@
         <div id="footer_container">
             <div id="footer">
                 <p id="footer_copy" class="smaller">
-                    Copyright &copy; <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> 
-                    2010. All Rights Reserved. 
+                    <a href="http://www.facebook.com/pages/Repower-at-Home/135501849796509">
+                        <img src="{% dated_static 'images/theme/social_icons/24/facebook.png' %}" alt="Facebook icon" 
+                             title="Find us on Facebook" width="24" height="24"/>
+                    </a>
+                    <a href="http://twitter.com/repowerathome">
+                        <img src="{% dated_static 'images/theme/social_icons/24/twitter.png' %}" alt="Twitter icon" 
+                             title="Follow us on Twitter" width="24" height="24"/>
+                    </a>
+                    <a href="http://www.youtube.com/repowerhome">
+                        <img src="{% dated_static 'images/theme/social_icons/24/youtube.png' %}" alt="YouTube icon" 
+                             title="Watch us on YouTube" width="24" height="24"/>
+                    </a>
+                    <a href="{% url blog_feed %}">
+                        <img src="{% dated_static 'images/theme/social_icons/24/feed.png' %}" alt="Feed icon" 
+                             title="Subscribe to our blog" width="24" height="24"/>
+                    </a>
+                    <br/>
                     <a href="{% url rah.views.feedback %}" class="feedback_link" rel="nofollow">Feedback</a> | 
                     <a href="/terms/" rel="nofollow">Terms of Use</a> | 
                     <a href="/privacy/" rel="nofollow">Privacy Policy</a> |
                     <a href="/about/">About Us</a>
+                    <br/>
+                    Copyright &copy; <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> 
+                    2010. All Rights Reserved.
                 </p>
             </div>
         </div>
