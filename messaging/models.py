@@ -9,15 +9,23 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
+from django.core.validators import URLValidator
 from django.db import models
 
-def make_token():
-    return hashlib.sha1("%s_%s" % (random.random(), datetime.datetime.now())).hexdigest()[:30]
+from utils import make_token
+
+URL_REGEX = re.compile(
+    r'https?://' # http:// or https://
+    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|' #domain...
+    r'localhost|' #localhost...
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+    r'(?::\d+)?' # optional port
+    r'(?:/?|[/?]\S+)+', re.IGNORECASE)
     
-LINK_PATTERN = None
-def extract_unique_links(content):
-    LINK_PATTERN = LINK_PATTERN or re.compile(r"https?://%s/.*" % Site.objects.get_current().domain)
-    return set([m.group(0) for m in LINK_PATTERN.finditer(content)])
+URL_REGEX = re.compile(r'\b(https?|ftp|file)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]', re.IGNORECASE)
+
+# def make_token():
+#     return hashlib.sha1("%s_%s" % (random.random(), datetime.datetime.now())).hexdigest()[:30]
 
 class Message(models.Model):
     DELTA_TYPES = (
@@ -39,6 +47,10 @@ class Message(models.Model):
         Note that if an 'after start' or 'before end' send time is created, and it falls
         outside of the start, end range.  This function will return None
         """
+        if start.__class__ == datetime.date:
+            start = datetime.datetime.combine(start, datetime.time.min)
+        if end.__class__ == datetime.date:
+            end = datetime.datetime.combine(end, datetime.time.max)
         if self.delta_type == "timeline_scale":
             timeline = end - start
             delta = (timeline * self.delta_value) / 100
@@ -59,7 +71,8 @@ class Message(models.Model):
         if not hasattr(content_object, self.recipient_function):
             raise NotImplementedError("%s does not exist for %s" % (self.recipient_function, 
                 content_object))
-        return getattr(content_object, self.recipient_function)()
+        recipients = getattr(content_object, self.recipient_function)()
+        return recipients if hasattr(recipients, "__iter__") else [recipients]
         
     def send(self, content_object):
         for recipient in self.recipients(content_object):
@@ -71,12 +84,14 @@ class Message(models.Model):
                 "domain": domain})
             # render the body template with the given, template
             body = template.Template(self.body).render(context)
-            for link in extract_unique_links(body):
+            replacements = []
+            links = [m.group() for m in URL_REGEX.finditer(body)]
+            for link in links:
                 # for each unique link in the body, create a Message link to track the clicks
                 ml = MessageLink.objects.create(recipient_message=recipient_message, 
                     link=link, token=make_token())
-                # in the body, replace the original link with a tokenized link
-                body = body.replace(ml.link, "%s%s/" % (ml.link, ml.token))
+                replacement = "http://%s%s" % (domain, reverse("message_click", args=[ml.token]))
+                body = body.replace(link, replacement, 1)
             open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", args=[recipient_message.token]))
             # insert an open tracking image into the body
             body += open_link
@@ -91,12 +106,12 @@ class Message(models.Model):
         
 class ABTest(models.Model):
     message = models.ForeignKey(Message, related_name="message")
-    test_message = models.ForeignKey(Message, related_name="test_message")
+    test_message = models.ForeignKey(Message, related_name="test_message", null=True, blank=True)
     test_percentage = models.PositiveIntegerField()
     is_enabled = models.BooleanField(default=True)
     
     def random_message(self):
-        if random.randint(0, 100) > self.test_percentage:
+        if not self.test_message or random.randint(0, 100) > self.test_percentage:
             return self.message
         else:
             return self.test_message
