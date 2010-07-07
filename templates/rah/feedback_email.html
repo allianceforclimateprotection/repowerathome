@@ -1,4 +1,4 @@
-<b>User: </b>{% if request.user.is_authenticated %}{{ request.user }}{% else %}Anonymous{% endif %}<br/>
+<b>User: </b>{% if request.user.is_authenticated %}{{ request.user.get_full_name }}{% else %}Anonymous{% endif %}<br/>
 <b>URL: </b>{{feedback.url}} <br/>
 <b>Beta Group: </b>{{feedback.beta_group}} <br/>
 <h3>Comment</h3>
