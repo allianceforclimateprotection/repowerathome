@@ -22,6 +22,7 @@ class Message(models.Model):
         ("timeline_scale", "Send at X percent complete"),
     )
     
+    name = models.CharField(max_length=50)
     subject = models.CharField(max_length=100)
     body = models.TextField()
     sends = models.PositiveIntegerField(default=0, editable=False)
@@ -86,14 +87,19 @@ class Message(models.Model):
             msg.send()
             self.sends += 1 # after the message is sent, increment the sends count
             self.save()
+            
+    def unique_opens(self):
+        opens = RecipientMessage.objects.filter(message=self, opens__gt=0).aggregate(
+            models.Count("opens"))["opens__count"]
+        return opens if opens else 0
         
     def __unicode__(self):
-        return self.subject
+        return self.name
         
 class ABTest(models.Model):
     message = models.ForeignKey(Message, related_name="message")
     test_message = models.ForeignKey(Message, related_name="test_message", null=True, blank=True)
-    test_percentage = models.PositiveIntegerField()
+    test_percentage = models.PositiveIntegerField(default=0)
     is_enabled = models.BooleanField(default=True)
     
     def random_message(self):
@@ -103,7 +109,7 @@ class ABTest(models.Model):
             return self.test_message
             
     def __unicode__(self):
-        return "%s [test: %s]" % (self.message, self.test_message)
+        return "%s [test: %s @ %s%%]" % (self.message, self.test_message, self.test_percentage)
             
 class RecipientMessage(models.Model):
     message = models.ForeignKey(Message)
