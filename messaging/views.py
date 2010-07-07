@@ -6,9 +6,12 @@ from utils import hex_to_byte
 
 from models import RecipientMessage, MessageLink
 
-ONE_PX_BY_ONE_PX_HEX_STRING = "47 49 46 38 37 61 01 00 01 00 80 00 00 ff ff ff 00 02 00 2c 00 \
-    00 00 00 01 00 01 00 00 02 02 44 01 00 3b"
-ONE_PX_BY_ONE_PX_BYTE_STRING = hex_to_byte(ONE_PX_BY_ONE_PX_HEX_STRING)
+IMAGE_HEX_STRING = "47 49 46 38 37 61 01 00 01 00 \
+                    80 00 00 ff ff ff 00 02 00 2c \
+                    00 00 00 00 01 00 01 00 00 02 \
+                    02 44 01 00 3b"
+IMAGE_RESPONSE = HttpResponse(mimetype="image/gif")
+IMAGE_RESPONSE.write(hex_to_byte(ONE_PX_BY_ONE_PX_HEX_STRING))
 
 def open(request, token):
     try:
@@ -18,9 +21,7 @@ def open(request, token):
     except RecipientMessage.DoesNotExist:
         # TODO: an invalid token was passed back, we should track this in some log
         pass
-    response = HttpResponse(mimetype="image/gif")
-    response.write(ONE_PX_BY_ONE_PX_BYTE_STRING)
-    return response
+    return IMAGE_RESPONSE
     
 def click(request, token):
     message_link = get_object_or_404(MessageLink, token=token)
