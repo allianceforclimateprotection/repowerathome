@@ -184,7 +184,7 @@ Header Header Header Header Header Header Header Header Header Header Header Hea
 #header_container{
     width:100%; 
     position:relative;
-    background: url(../images/theme/0000000004_header_container.png) repeat-x top center; }
+    background: #b0d8f2 url(../images/theme/0000000004_header_container.png) repeat-x top center; }
 #header_bg{
     height:116px;
     width:100%;

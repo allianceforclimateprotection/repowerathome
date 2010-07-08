@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://opengraphprotocol.org/schema/" lang="en" xml:lang="en">
     <head>
         {% load dated_static %}
         <title>{% block title %}Save energy at home and organize your community{% endblock %} | Repower at Home</title>
@@ -13,6 +13,7 @@
         <meta name="geo.region" content="US-DC"/>
         <meta name="geo.placename" content="Alliance for Climate Protection"/>
         <meta name="ICBM" content="38.896231, -77.024158"/>
+        <meta property="og:site_name" content="Repower at Home"/>
         <meta name="keywords" content="{% block meta_keywords %}energy efficiency, home energy, climate change, repower at home, alliance for climage protection{% endblock %}" />
         <meta name="description" content="{% block meta_desc %}We can take action to keep millions of pounds of dirty coal from polluting our communities. Every point you earn means one less pound of coal needs to be burned.{% endblock %}" />
         <meta name="DC.title" content="Repower at Home" /> 
@@ -33,7 +34,7 @@
             _gaq.push(['_setAccount', 'UA-11623269-1']);
             _gaq.push(['_trackPageview']);
         </script>
-        {% block extralinks %}{% endblock %}
+        {% block extrahead %}{% endblock %}
     </head>
     <body>
         <!-- ClickTale Top part -->

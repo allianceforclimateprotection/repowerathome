@@ -30,6 +30,9 @@ class VanDemo(unittest.TestCase):
         match = self.client.service.MatchPerson(candidate, "MatchOnly")
         self.assertEqual(match.MatchResultStatus, "Matched")
     
+    def test_change_name(self):
+        person = self.client.service.GetPerson(self.known_vanid, "VANID")
+    
     def test_create_person_with_email(self):
         random_email = "test.person.%s@example.org" % random.randint(1000,1000000000)
         candidate = self.client.factory.create("Person")
@@ -73,7 +76,9 @@ class VanDemo(unittest.TestCase):
     
 
 if __name__ == '__main__':
-    unittest.main()
+    suite = unittest.TestLoader().loadTestsFromTestCase(VanDemo)
+    unittest.TextTestRunner().run(suite)
+    # unittest.main()
 
 
 
