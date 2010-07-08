@@ -88,10 +88,9 @@ class Message(models.Model):
             msg = EmailMessage(self.subject, body, None, [recipient])
             msg.content_subtype = "html"
             msg.send()
-            print msg
-            print msg.message()
             self.sends += 1 # after the message is sent, increment the sends count
             self.save()
+            Sent.objects.create(message=self, recipient=recipient, email=msg.message())
             
     def unique_opens(self):
         opens = RecipientMessage.objects.filter(message=self, opens__gt=0).aggregate(
@@ -122,7 +121,7 @@ class QueueManager(models.Manager):
         now = datetime.datetime.now()
         for queued_message in self.filter(send_time__lte=now):
             queued_message.send()
-            # queued_message.delete()
+            queued_message.delete()
     
 class Queue(models.Model):
     message = models.ForeignKey(Message)
