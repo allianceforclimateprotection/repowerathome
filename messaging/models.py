@@ -25,10 +25,10 @@ class Message(models.Model):
     name = models.CharField(max_length=50)
     subject = models.CharField(max_length=100)
     body = models.TextField()
-    sends = models.PositiveIntegerField(default=0, editable=False)
+    sends = models.PositiveIntegerField(default=0)
     delta_type = models.CharField(max_length=20, choices=DELTA_TYPES)
     delta_value = models.PositiveIntegerField()
-    recipient_function = models.CharField( max_length=100)
+    recipient_function = models.CharField(max_length=100)
     
     def send_time(self, start, end):
         """
@@ -96,21 +96,6 @@ class Message(models.Model):
         
     def __unicode__(self):
         return self.name
-        
-class ABTest(models.Model):
-    message = models.ForeignKey(Message, related_name="message")
-    test_message = models.ForeignKey(Message, related_name="test_message", null=True, blank=True)
-    test_percentage = models.PositiveIntegerField(default=0)
-    is_enabled = models.BooleanField(default=True)
-    
-    def random_message(self):
-        if not self.test_message or random.randint(0, 100) > self.test_percentage:
-            return self.message
-        else:
-            return self.test_message
-            
-    def __unicode__(self):
-        return "%s [test: %s @ %s%%]" % (self.message, self.test_message, self.test_percentage)
             
 class RecipientMessage(models.Model):
     message = models.ForeignKey(Message)
@@ -142,22 +127,24 @@ class Queue(models.Model):
     def send(self):
         return self.message.send(self.content_object)
     
-class StreamManager(models.Manager):
-    def _queued_messages(self, slug, content_object):
+class Stream(models.Model):
+    slug = models.SlugField(db_index=True, unique=True)
+    
+    def _queued_messages(self, content_object):
         potential_messages = []
-        for stream in self.filter(slug=slug):
-            potential_messages.append(stream.ab_test.message)
-            potential_messages.append(stream.ab_test.test_message)
+        for ab_test in ABTest.objects.filter(stream=self):
+            potential_messages.append(ab_test.message)
+            potential_messages.append(ab_test.test_message)
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
             
-    def enqueue(self, slug, content_object, start, end):
+    def enqueue(self, content_object, start, end):
         enqueued = []
         now = datetime.datetime.now()
-        for stream in self.filter(slug=slug):
-            if not stream.ab_test.is_enabled:
+        for ab_test in ABTest.objects.filter(stream=self):
+            if not ab_test.is_enabled:
                 continue
-            message = stream.ab_test.random_message()
+            message = ab_test.random_message()
             send_time = message.send_time(start, end)
             if send_time:
                 if send_time <= now:
@@ -167,8 +154,8 @@ class StreamManager(models.Manager):
                         content_object=content_object, send_time=send_time))
         return enqueued
         
-    def upqueue(self, slug, content_object, start, end):
-        upqueued = self._queued_messages(slug, content_object)
+    def upqueue(self, content_object, start, end):
+        upqueued = self._queued_messages(content_object)
         now = datetime.datetime.now()
         for message in upqueued:
             send_time = message.send_time(start, end)
@@ -180,18 +167,38 @@ class StreamManager(models.Manager):
                 message.save()
         return upqueued
         
-    def dequeue(self, slug, content_object):
-        dequeued = self._queued_messages(slug, content_object)
+    def dequeue(self, content_object):
+        dequeued = self._queued_messages(content_object)
         dequeued.delete()
         return dequeued
     
-class Stream(models.Model):
-    slug = models.SlugField(db_index=True)
-    ab_test = models.ForeignKey(ABTest)
-    objects = StreamManager()
-    
     def __unicode__(self):
-        return "%s - %s" % (self.slug, self.ab_test)
+        return self.slug
+        
+class ABTest(models.Model):
+    message = models.ForeignKey(Message, related_name="message")
+    test_message = models.ForeignKey(Message, related_name="test_message", null=True, blank=True)
+    test_percentage = models.PositiveIntegerField(default=0)
+    is_enabled = models.BooleanField(default=True)
+    stream = models.ForeignKey(Stream)
+
+    def random_message(self):
+        if not self.test_message or random.randint(0, 100) > self.test_percentage:
+            return self.message
+        else:
+            return self.test_message
+            
+    def control_sends(self):
+        return self.message.sends
     
-    class Meta:
-        unique_together = ("slug", "ab_test",)
+    def control_opens(self):
+        return self.message.unique_opens()
+        
+    def test_sends(self):
+        return self.test_message.sends
+        
+    def test_opens(self):
+        return self.test_message.unique_opens()
+
+    def __unicode__(self):
+        return "%s [test: %s @ %s%%]" % (self.message, self.test_message, self.test_percentage)
