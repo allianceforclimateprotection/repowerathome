@@ -29,6 +29,8 @@ class Message(models.Model):
     delta_type = models.CharField(max_length=20, choices=DELTA_TYPES)
     delta_value = models.PositiveIntegerField()
     recipient_function = models.CharField(max_length=100)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
     def send_time(self, start, end):
         """
@@ -86,6 +88,8 @@ class Message(models.Model):
             msg = EmailMessage(self.subject, body, None, [recipient])
             msg.content_subtype = "html"
             msg.send()
+            print msg
+            print msg.message()
             self.sends += 1 # after the message is sent, increment the sends count
             self.save()
             
@@ -102,19 +106,23 @@ class RecipientMessage(models.Model):
     recipient = models.EmailField()
     token = models.CharField(max_length=30, editable=False, unique=True, db_index=True)
     opens = models.PositiveIntegerField(default=0, editable=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
 class MessageLink(models.Model):
     recipient_message = models.ForeignKey(RecipientMessage)
     link = models.URLField(verify_exists=False)
     token = models.CharField(max_length=30, editable=False, unique=True, db_index=True)
     clicks = models.PositiveIntegerField(default=0, editable=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
 class QueueManager(models.Manager):
     def send_ready_messages(self):
         now = datetime.datetime.now()
         for queued_message in self.filter(send_time__lte=now):
             queued_message.send()
-            queued_message.delete()
+            # queued_message.delete()
     
 class Queue(models.Model):
     message = models.ForeignKey(Message)
@@ -122,6 +130,8 @@ class Queue(models.Model):
     object_pk = models.PositiveIntegerField("object ID")
     content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
     send_time = models.DateTimeField(db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     objects = QueueManager()
     
     def send(self):
@@ -129,6 +139,8 @@ class Queue(models.Model):
     
 class Stream(models.Model):
     slug = models.SlugField(db_index=True, unique=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
     def _queued_messages(self, content_object):
         potential_messages = []
@@ -181,6 +193,8 @@ class ABTest(models.Model):
     test_percentage = models.PositiveIntegerField(default=0)
     is_enabled = models.BooleanField(default=True)
     stream = models.ForeignKey(Stream)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def random_message(self):
         if not self.test_message or random.randint(0, 100) > self.test_percentage:
@@ -202,3 +216,10 @@ class ABTest(models.Model):
 
     def __unicode__(self):
         return "%s [test: %s @ %s%%]" % (self.message, self.test_message, self.test_percentage)
+        
+class Sent(models.Model):
+    message = models.ForeignKey(Message)
+    recipient = models.CharField(max_length=100)
+    email = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
