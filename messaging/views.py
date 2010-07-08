@@ -11,7 +11,7 @@ IMAGE_HEX_STRING = "47 49 46 38 37 61 01 00 01 00 \
                     00 00 00 00 01 00 01 00 00 02 \
                     02 44 01 00 3b"
 IMAGE_RESPONSE = HttpResponse(mimetype="image/gif")
-IMAGE_RESPONSE.write(hex_to_byte(ONE_PX_BY_ONE_PX_HEX_STRING))
+IMAGE_RESPONSE.write(hex_to_byte(IMAGE_HEX_STRING))
 
 def open(request, token):
     try:
