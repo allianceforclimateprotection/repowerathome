@@ -1,0 +1,29 @@
+{% extends "rah/base.html" %}
+{% block title %}Google Analytics Opt Out{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    Google Analytics Opt Out
+{% endblock %}
+{% block right_content %}
+<div class="grid_6 alpha">
+    <div class="box_two_top"></div>
+    <div class="box_two_middle">
+        <h1>Opt out of Google Analytics</h1>
+        <p>
+            Click the button below to opt out of our Google Analytics tracking. A cookie will be set for this browser
+            only. You need to opt out with every browser you don't want tracked. If you delete your cookies, tracking
+            will resume.
+        </p>
+        <button id="opt_out_button">Opt Out</button>
+    </div>
+    <div class="box_two_bottom"></div>
+</div>
+{% endblock %}
+{% block extrajs %}
+    <script type="text/javascript" charset="utf-8">
+        $("#opt_out_button").click(function(){
+            _gaq.push(['_setVar', 'ga_opt_out']);
+            alert("Opt out successful!");
+        });
+    </script>
+{% endblock %}
