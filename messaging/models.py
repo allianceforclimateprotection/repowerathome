@@ -80,7 +80,7 @@ class Message(models.Model):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
     
-    def send(self, content_object):
+    def send(self, content_object): # TODO: create unit tests for Message.send()
         for email, user_object in self.recipients(content_object):
             # for each recipient, create a Recipient message to keep track of opens
             recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
@@ -164,7 +164,7 @@ class Stream(models.Model):
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
     
-    def enqueue(self, content_object, start, end):
+    def enqueue(self, content_object, start, end, send_expired=True):
         enqueued = []
         now = datetime.datetime.now()
         for ab_test in ABTest.objects.filter(stream=self):
@@ -174,25 +174,16 @@ class Stream(models.Model):
             send_time = message.send_time(start, end)
             if send_time:
                 if send_time <= now:
-                    message.send(content_object)
+                    if send_expired:
+                        message.send(content_object)
                 else:
                     enqueued.append(Queue.objects.create(message=message,
                         content_object=content_object, send_time=send_time))
         return enqueued
     
     def upqueue(self, content_object, start, end):
-        upqueued = self._queued_messages(content_object)
-        now = datetime.datetime.now()
-        for queued_message in upqueued:
-            message = queued_message.message
-            send_time = message.send_time(start, end)
-            if send_time <= now:
-                queued_message.send()
-                queued_message.delete()
-            else:
-                queued_message.send_time = send_time
-                queued_message.save()
-        return upqueued
+        self.dequeue(content_object=content_object)
+        return self.enqueue(content_object=content_object, start=start, end=end, send_expired=False)
     
     def dequeue(self, content_object):
         return self._queued_messages(content_object).delete()
