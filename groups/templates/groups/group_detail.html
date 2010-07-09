@@ -5,7 +5,7 @@
 {% load thumbnail %}
 
 {% block title %}{{group.name}}{% endblock %}
-{% block extralinks %}
+{% block extrahead %}
     {% if group.slug %}
         <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower at Home Team Activity" />
     {% endif %}
@@ -75,7 +75,7 @@
         <h2>Team Activity
             {% if group.slug %}
                 <a class="atom_link" href="{% url group_activity_feed group.slug %}">
-                    <img src="{% dated_static 'images/theme/rss.png' %}" alt="atom feed" />
+                    <img src="{% dated_static 'images/theme/social_icons/16/feed.png' %}" alt="atom feed" width="16" height="16"/>
                 </a>
             {% endif %}
         </h2>

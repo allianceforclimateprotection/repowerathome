@@ -57,6 +57,7 @@ urlpatterns = patterns('rah.views',
     url(r'^houseparty/$', 'house_party', name='house_party'),
     url(r'^feedback/$', 'feedback', name='feedback'),
     url(r'^search/$', 'search', name='search'),
+    url(r'^user/ga-opt-out/$', 'ga_opt_out', name='ga_opt_out'),
     url(r'user/(?P<user_id>\d+)/feed/$', UserActivityFeed(), name='user_activity_feed'),
 )
 

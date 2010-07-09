@@ -1,6 +1,9 @@
 {% extends "actions/base.html" %}
 {% load comments %}
 {% block meta_desc %}{{action.name}}: {{action.teaser}}{% endblock %}
+{% block extrahead %}
+    <meta property="og:image" content="http://repowerathome.com{{ action.get_detail_illustration }}" />
+{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
     <a href="{% url action_show %}">Actions</a> &rsaquo;
@@ -8,6 +11,7 @@
 {% endblock %}
 {% block title %}{{action.name}}{% endblock %}
 {% block right_content %}
+    
     <div class="box_three_top"></div>
     <div class="box_three_middle">
         {% if action.has_illustration %}
@@ -64,6 +68,7 @@
                     {% endif %}
                 </ul>
             {% endif %}
+            <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=standard&amp;show_faces=false&amp;width=189&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:189px; height:35px;" allowTransparency="true"></iframe>
             </div>
             <div class="box_one_bottom"></div>
         </div>
