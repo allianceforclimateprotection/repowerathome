@@ -1,0 +1,16 @@
+[
+    {"pk": 1, "model": "messaging.stream", "fields": {"slug": "test"}},
+    {"pk": 1, "model": "messaging.message", "fields": {"body": "test message", "delta_value": 24, "sends": 0, "delta_type": "after_start", "recipient_function": "creator", "subject": "after start"}}, 
+    {"pk": 2, "model": "messaging.message", "fields": {"body": "test message", "delta_value": 72, "sends": 0, "delta_type": "before_end", "recipient_function": "attendees", "subject": "before end"}}, 
+    {"pk": 3, "model": "messaging.message", "fields": {"body": "test message", "delta_value": 168, "sends": 0, "delta_type": "after_end", "recipient_function": "host_email", "subject": "after end"}}, 
+    {"pk": 4, "model": "messaging.message", "fields": {"body": "test message", "delta_value": 50, "sends": 0, "delta_type": "timeline_scale", "recipient_function": "emails", "subject": "timeline scale"}}, 
+    {"pk": 1, "model": "messaging.abtest", "fields": {"is_enabled": true, "stream": 1, "test_percentage": 100, "message": 1, "test_message": 2}}, 
+    {"pk": 2, "model": "messaging.abtest", "fields": {"is_enabled": true, "stream": 1, "test_percentage": 0, "message": 3, "test_message": 4}}, 
+    {"pk": 3, "model": "messaging.abtest", "fields": {"is_enabled": true, "stream": 1, "test_percentage": 50, "message": 1, "test_message": 3}},
+    {"pk": 1, "model": "messaging.user", "fields": {"email": "joe@email.com"}},
+    {"pk": 2, "model": "messaging.user", "fields": {"email": "matt@email.com"}},
+    {"pk": 3, "model": "messaging.user", "fields": {"email": "larry@email.com"}},
+    {"pk": 1, "model": "messaging.event", "fields": {"creator": 1}},
+    {"pk": 1, "model": "messaging.event_guests", "fields": {"event": 1, "user": 2}},
+    {"pk": 2, "model": "messaging.event_guests", "fields": {"event": 1, "user": 3}}
+]
