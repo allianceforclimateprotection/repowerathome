@@ -5,7 +5,7 @@ from django.core import mail
 from django.test import TestCase
 from django.test.client import Client
 
-from messaging.models import Message, Stream, Queue
+from messaging.models import Message, Stream, Queue, ABTest
 
 from models import User, Event
 
@@ -136,4 +136,24 @@ class StreamTest(TestCase):
         self.stream.dequeue(self.event)
         self.failUnlessEqual(Queue.objects.all().count(), 0)
         
-        
+class ABTestTest(TestCase):
+    fixtures = ["test_messaging.json"]
+    
+    def setUp(self):
+        self.ab_test = ABTest.objects.get(pk=4)
+        self.after_start = Message.objects.get(subject="after start")
+        self.before_end = Message.objects.get(subject="before end")
+    
+    def test_random_message(self):
+        control_count = 0
+        test_count = 0
+        for index in range(0, 10000):
+            message = self.ab_test.random_message()
+            if message == self.after_start:
+                control_count += 1
+            elif message == self.before_end:
+                test_count += 1
+        message = "This unit test has some randomness to it, and might fail from time to time. \
+            Try running again."
+        self.failUnless(abs(control_count-7500)/7500 < 0.1, message)
+        self.failUnless(abs(test_count-2500)/2500 < 0.1, message)
