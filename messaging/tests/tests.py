@@ -1,10 +1,11 @@
 import datetime
 
 from django.core.urlresolvers import reverse
+from django.core import mail
 from django.test import TestCase
 from django.test.client import Client
 
-from messaging.models import Message
+from messaging.models import Message, Stream, Queue
 
 from models import User, Event
 
@@ -81,5 +82,58 @@ class MessageRecipientTest(TestCase):
         recipients = before_end.recipients(self.event)
         self.failUnlessEqual(recipients, [("joe@email.com", self.joe), 
             ("matt@email.com", self.matt), ("larry@email.com", self.larry)])
+            
+class StreamTest(TestCase):
+    fixtures = ["test_messaging.json"]
+    
+    def setUp(self):
+        self.stream = Stream.objects.get(slug="test")
+        self.event = Event.objects.get(pk=1)
+        self.before_end = Message.objects.get(subject="before end")
+        self.after_end = Message.objects.get(subject="after end")
+    
+    def test_enqueue(self):
+        start = datetime.datetime.now()
+        end = start + datetime.timedelta(days=7)
+        self.failUnlessEqual(Queue.objects.all().count(), 0)
+        queued = self.stream.enqueue(self.event, start, end)
+        self.failUnlessEqual(Queue.objects.all().count(), 2)
+        email = mail.outbox.pop()
+        self.failUnlessEqual(email.to, ["joe@email.com"])
+        self.failUnlessEqual(email.subject, "now")
+        self.failUnlessEqual(len(queued), 2)
+        
+        self.failUnlessEqual(queued[0].message, self.before_end)
+        self.failUnlessEqual(queued[0].content_object, self.event)
+        self.failUnlessEqual(queued[0].send_time, end - datetime.timedelta(days=3))
+        
+        self.failUnlessEqual(queued[1].message, self.after_end)
+        self.failUnlessEqual(queued[1].content_object, self.event)
+        self.failUnlessEqual(queued[1].send_time, end + datetime.timedelta(days=7))
+        
+    def test_upqueue(self):
+        self.test_enqueue()
+        
+        start = datetime.datetime.now()
+        end = start + datetime.timedelta(days=14)
+        self.failUnlessEqual(Queue.objects.all().count(), 2)
+        queued = self.stream.upqueue(self.event, start, end)
+        self.failUnlessEqual(Queue.objects.all().count(), 2)
+        self.failUnlessEqual(len(queued), 2)
+        
+        self.failUnlessEqual(queued[0].message, self.before_end)
+        self.failUnlessEqual(queued[0].content_object, self.event)
+        self.failUnlessEqual(queued[0].send_time, end - datetime.timedelta(days=3))
+        
+        self.failUnlessEqual(queued[1].message, self.after_end)
+        self.failUnlessEqual(queued[1].content_object, self.event)
+        self.failUnlessEqual(queued[1].send_time, end + datetime.timedelta(days=7))
+        
+    def test_dequeue(self):
+        self.test_enqueue()
+        
+        self.failUnlessEqual(Queue.objects.all().count(), 2)
+        self.stream.dequeue(self.event)
+        self.failUnlessEqual(Queue.objects.all().count(), 0)
         
         

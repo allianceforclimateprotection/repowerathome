@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from utils import make_token
-    
+
 URL_REGEX = re.compile(r"\b(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
 
 class Message(models.Model):
@@ -58,7 +58,7 @@ class Message(models.Model):
             elif self.delta_type == "after_end":
                 return end + delta
         raise NotImplementedError("unknown delta type: %s" % self.delta_type)
-        
+    
     def recipients(self, content_object):
         """
         The function that is invoked to gather the recipients can return one of four things.
@@ -72,18 +72,18 @@ class Message(models.Model):
         If the object isn't defined this will be set to None.
         """
         if not hasattr(content_object, self.recipient_function):
-            raise NotImplementedError("%s does not exist for %s" % (self.recipient_function, 
+            raise NotImplementedError("%s does not exist for %s" % (self.recipient_function,
                 content_object))
         func_or_attr = getattr(content_object, self.recipient_function)
         recipients = func_or_attr() if inspect.ismethod(func_or_attr) else func_or_attr
         if not hasattr(recipients, "__iter__"):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
-        
+    
     def send(self, content_object):
         for email, user_object in self.recipients(content_object):
             # for each recipient, create a Recipient message to keep track of opens
-            recipient_message = RecipientMessage.objects.create(message=self, recipient=email, 
+            recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
                 token=make_token())
             domain = Site.objects.get_current().domain
             context = template.Context({"content_object": content_object, "domain": domain,
@@ -92,7 +92,7 @@ class Message(models.Model):
             body = template.Template(self.body).render(context)
             for link in [m.group() for m in URL_REGEX.finditer(body)]:
                 # for each unique link in the body, create a Message link to track the clicks
-                ml = MessageLink.objects.create(recipient_message=recipient_message, 
+                ml = MessageLink.objects.create(recipient_message=recipient_message,
                     link=link, token=make_token())
                 tracker = "http://%s%s" % (domain, reverse("message_click", args=[ml.token]))
                 # replace the original link with traking URL
@@ -106,15 +106,15 @@ class Message(models.Model):
             self.sends += 1 # after the message is sent, increment the sends count
             self.save()
             Sent.objects.create(message=self, recipient=email, email=msg.message())
-            
+    
     def unique_opens(self):
         opens = RecipientMessage.objects.filter(message=self, opens__gt=0).aggregate(
             models.Count("opens"))["opens__count"]
         return opens if opens else 0
-        
+    
     def __unicode__(self):
         return self.name
-            
+
 class RecipientMessage(models.Model):
     message = models.ForeignKey(Message)
     recipient = models.EmailField()
@@ -122,7 +122,7 @@ class RecipientMessage(models.Model):
     opens = models.PositiveIntegerField(default=0, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
+
 class MessageLink(models.Model):
     recipient_message = models.ForeignKey(RecipientMessage)
     link = models.URLField(verify_exists=False)
@@ -130,14 +130,14 @@ class MessageLink(models.Model):
     clicks = models.PositiveIntegerField(default=0, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
+
 class QueueManager(models.Manager):
     def send_ready_messages(self):
         now = datetime.datetime.now()
         for queued_message in self.filter(send_time__lte=now):
             queued_message.send()
             queued_message.delete()
-    
+
 class Queue(models.Model):
     message = models.ForeignKey(Message)
     content_type = models.ForeignKey(ContentType, verbose_name="content type", related_name="%(class)s")
@@ -150,7 +150,7 @@ class Queue(models.Model):
     
     def send(self):
         return self.message.send(self.content_object)
-    
+
 class Stream(models.Model):
     slug = models.SlugField(db_index=True, unique=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -163,7 +163,7 @@ class Stream(models.Model):
             potential_messages.append(ab_test.test_message)
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
-            
+    
     def enqueue(self, content_object, start, end):
         enqueued = []
         now = datetime.datetime.now()
@@ -179,28 +179,27 @@ class Stream(models.Model):
                     enqueued.append(Queue.objects.create(message=message,
                         content_object=content_object, send_time=send_time))
         return enqueued
-        
+    
     def upqueue(self, content_object, start, end):
         upqueued = self._queued_messages(content_object)
         now = datetime.datetime.now()
-        for message in upqueued:
+        for queued_message in upqueued:
+            message = queued_message.message
             send_time = message.send_time(start, end)
             if send_time <= now:
-                message.send(content_object)
-                message.delete()
+                queued_message.send()
+                queued_message.delete()
             else:
-                message.send_time = send_time
-                message.save()
+                queued_message.send_time = send_time
+                queued_message.save()
         return upqueued
-        
+    
     def dequeue(self, content_object):
-        dequeued = self._queued_messages(content_object)
-        dequeued.delete()
-        return dequeued
+        return self._queued_messages(content_object).delete()
     
     def __unicode__(self):
         return self.slug
-        
+
 class ABTest(models.Model):
     message = models.ForeignKey(Message, related_name="message")
     test_message = models.ForeignKey(Message, related_name="test_message", null=True, blank=True)
@@ -209,28 +208,28 @@ class ABTest(models.Model):
     stream = models.ForeignKey(Stream)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
+    
     def random_message(self):
         if not self.test_message or random.randint(0, 100) > self.test_percentage:
             return self.message
         else:
             return self.test_message
-            
+    
     def control_sends(self):
         return self.message.sends
     
     def control_opens(self):
         return self.message.unique_opens()
-        
+    
     def test_sends(self):
         return self.test_message.sends
-        
+    
     def test_opens(self):
         return self.test_message.unique_opens()
-
+    
     def __unicode__(self):
         return "%s [test: %s @ %s%%]" % (self.message, self.test_message, self.test_percentage)
-        
+
 class Sent(models.Model):
     message = models.ForeignKey(Message)
     recipient = models.CharField(max_length=100)
