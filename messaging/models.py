@@ -1,4 +1,5 @@
 import datetime
+import inspect
 import random
 import re
 
@@ -12,7 +13,7 @@ from django.db import models
 
 from utils import make_token
     
-URL_REGEX = re.compile(r"\b(https?|ftp|file)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
+URL_REGEX = re.compile(r"\b(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
 
 class Message(models.Model):
     DELTA_TYPES = (
@@ -59,20 +60,34 @@ class Message(models.Model):
         raise NotImplementedError("unknown delta type: %s" % self.delta_type)
         
     def recipients(self, content_object):
+        """
+        The function that is invoked to gather the recipients can return one of four things.
+            1. email address
+            2. object (with attribute 'email')
+            3. list of email addresses
+            4. list of objects (such that each object as the 'email' attribute)
+        
+        Regardless of what the invoked function returns, this function is responsible for returning
+        a 2-tuple, where the first value is the email address and the second value is the object.
+        If the object isn't defined this will be set to None.
+        """
         if not hasattr(content_object, self.recipient_function):
             raise NotImplementedError("%s does not exist for %s" % (self.recipient_function, 
                 content_object))
-        recipients = getattr(content_object, self.recipient_function)()
-        return recipients if hasattr(recipients, "__iter__") else [recipients]
+        func_or_attr = getattr(content_object, self.recipient_function)
+        recipients = func_or_attr() if inspect.ismethod(func_or_attr) else func_or_attr
+        if not hasattr(recipients, "__iter__"):
+            recipients = [recipients]
+        return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
         
     def send(self, content_object):
-        for recipient in self.recipients(content_object):
+        for email, user_object in self.recipients(content_object):
             # for each recipient, create a Recipient message to keep track of opens
-            recipient_message = RecipientMessage.objects.create(message=self, recipient=recipient, 
+            recipient_message = RecipientMessage.objects.create(message=self, recipient=email, 
                 token=make_token())
             domain = Site.objects.get_current().domain
-            context = template.Context({"content_object": content_object, "recipient": recipient, 
-                "domain": domain})
+            context = template.Context({"content_object": content_object, "domain": domain,
+                "recipient": user_object if user_object else email })
             # render the body template with the given, template
             body = template.Template(self.body).render(context)
             for link in [m.group() for m in URL_REGEX.finditer(body)]:
@@ -85,12 +100,12 @@ class Message(models.Model):
             open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", args=[recipient_message.token]))
             # insert an open tracking image into the body
             body += open_link
-            msg = EmailMessage(self.subject, body, None, [recipient])
+            msg = EmailMessage(self.subject, body, None, [email])
             msg.content_subtype = "html"
             msg.send()
             self.sends += 1 # after the message is sent, increment the sends count
             self.save()
-            Sent.objects.create(message=self, recipient=recipient, email=msg.message())
+            Sent.objects.create(message=self, recipient=email, email=msg.message())
             
     def unique_opens(self):
         opens = RecipientMessage.objects.filter(message=self, opens__gt=0).aggregate(
