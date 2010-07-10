@@ -109,6 +109,7 @@ a.button:hover { color: white; }
     margin-left: 5px;
     top: -4px;
 }
+.form_row li { margin-left: 15px; }
 .form_row[class~="error"] { background: transparent; }
 .form_row input.error, 
 .form_row[class~="error"] input,
@@ -548,6 +549,9 @@ ul.plain_list {margin-left: 0px; padding-left: 0px; list-style: none;}
 .icon_rate_1 {background: url(../images/theme/0000000004_sprite_minor_col.png) -60px -302px;  width:13px; height:17px; display:inline-block;}
 .icon_rate_0 {background: url(../images/theme/0000000004_sprite_minor_col.png) -81px -302px;  width:13px; height:17px; display:inline-block;}
 .icon_flag {background: url(../images/theme/0000000004_sprite_minor_col.png) -101px -302px;  width:14px; height:17px; display:inline-block;}
+
+.selector { font-size: 12px; }
+#team_selectors { margin-left: 15px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid  

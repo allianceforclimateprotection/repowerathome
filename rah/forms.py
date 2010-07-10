@@ -231,8 +231,9 @@ class PasswordChangeForm(auth_forms.PasswordChangeForm):
 PasswordChangeForm.base_fields.keyOrder = ['old_password', 'new_password1', 'new_password2']
 
 class GroupNotificationsForm(forms.Form):
-    global_group_notifications = forms.BooleanField(required=False, initial=True)
-    individual_group_notifications = forms.ModelMultipleChoiceField(required=False, queryset=None, widget=forms.CheckboxSelectMultiple)
+    individual_group_notifications = forms.ModelMultipleChoiceField(required=False, queryset=None, 
+        widget=forms.CheckboxSelectMultiple, help_text="By selecting a team, you have elected to \
+        recieve emails for each thread posted to the discussion board.", label="Team email notifications")
     
     def __init__(self, user, *args, **kwargs):
         from groups.models import Group
@@ -242,18 +243,13 @@ class GroupNotificationsForm(forms.Form):
         self.fields["individual_group_notifications"].queryset = self.groups
         self.not_blacklisted = [g.pk for g in Group.objects.groups_not_blacklisted_by_user(user)]
         self.fields["individual_group_notifications"].initial = self.not_blacklisted
-        self.fields["global_group_notifications"].initial = self.groups.count() == len(self.not_blacklisted)
-        
+                
     def save(self):
         from groups.models import DiscussionBlacklist
-        global_group_notifications = self.cleaned_data["global_group_notifications"]
         individual_group_notifications = self.cleaned_data["individual_group_notifications"]
-        if global_group_notifications:
-            DiscussionBlacklist.objects.filter(user=self.user).delete()
-        else:
-            for group in self.groups:
-                if not group in individual_group_notifications and group.pk in self.not_blacklisted:
-                    DiscussionBlacklist.objects.create(user=self.user, group=group)
-                if group in individual_group_notifications and group.pk not in self.not_blacklisted:
-                    DiscussionBlacklist.objects.get(user=self.user, group=group).delete()
+        for group in self.groups:
+            if not group in individual_group_notifications and group.pk in self.not_blacklisted:
+                DiscussionBlacklist.objects.create(user=self.user, group=group)
+            if group in individual_group_notifications and group.pk not in self.not_blacklisted:
+                DiscussionBlacklist.objects.get(user=self.user, group=group).delete()
         

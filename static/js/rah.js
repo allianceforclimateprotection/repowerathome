@@ -195,21 +195,12 @@ var rah = {
                     zipcode: { remote: "We couldn't locate this zipcode" }
                 }
             });
-            var global_group_notifications = $("#id_global_group_notifications");
-            global_group_notifications.change(function() {
-                rah.page_profile_edit.toggle_group_notifications(this);
+            $(".selector").click(function(){
+                var checked = $(this).hasClass("select_all");
+                $("input[type='checkbox']", $("#group_notifications_form")).attr("checked", checked);
+                return false;
             });
-            rah.page_profile_edit.toggle_group_notifications(global_group_notifications);
-        },
-        toggle_group_notifications: function(toggle_switch) {
-            var global_on = $(toggle_switch).attr("checked");
-            $("#group_notifications_form ul").each(function() {
-                if(global_on) {
-                    $(this).parent().hide();
-                } else {
-                    $(this).parent().show();
-                }
-            });
+            $("#team_selectors").removeClass("hidden");
         }
     },
     
