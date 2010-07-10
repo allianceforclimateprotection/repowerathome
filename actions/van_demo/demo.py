@@ -17,11 +17,11 @@ class VanDemo(unittest.TestCase):
         self.client = Client("https://secure.securevan.com/Services/V3/PersonService.asmx?WSDL")
         header = self.client.factory.create("Header")
         header.APIKey = "417B32A3-E59B-429F-BD6A-3E5D6246B945"
-        header.DatabaseMode = "MyVoterFile"
+        header.DatabaseMode = "MyCampaign"
         self.client.set_options(soapheaders=header)
         
         # Some variables for tests
-        self.known_vanid = 325143
+        self.known_vanid = 100007616
         self.activist_code_gun_control = 4133156
     
     def test_match_person(self):
@@ -30,8 +30,27 @@ class VanDemo(unittest.TestCase):
         match = self.client.service.MatchPerson(candidate, "MatchOnly")
         self.assertEqual(match.MatchResultStatus, "Matched")
     
-    def test_change_name(self):
+    def test_change_salutation(self):
         person = self.client.service.GetPerson(self.known_vanid, "VANID")
+        new_salutation = "James%s" % random.randint(1,1000000)
+        person.Salutation = new_salutation
+        match = self.client.service.MatchPerson(person, "MatchAndStore")
+        self.assertEqual(match.MatchResultStatus, "Matched")
+        
+        # Refetch the person and verify
+        person = self.client.service.GetPerson(self.known_vanid, "VANID")
+        self.assertEqual(person.Salutation, new_salutation)
+
+    def test_change_first_name(self):
+        person = self.client.service.GetPerson(self.known_vanid, "VANID")
+        new_first_name = "James%s" % random.randint(1,1000000)
+        person.FirstName = new_first_name
+        match = self.client.service.MatchPerson(person, "MatchAndStore")
+        self.assertEqual(match.MatchResultStatus, "Matched")
+
+        # Refetch the person and verify
+        person = self.client.service.GetPerson(self.known_vanid, "VANID")
+        self.assertEqual(person.FirstName, new_first_name)
     
     def test_create_person_with_email(self):
         random_email = "test.person.%s@example.org" % random.randint(1000,1000000000)
@@ -76,7 +95,8 @@ class VanDemo(unittest.TestCase):
     
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(VanDemo)
+    suite = unittest.TestSuite()
+    suite.addTest(VanDemo('test_change_first_name'))
     unittest.TextTestRunner().run(suite)
     # unittest.main()
 
