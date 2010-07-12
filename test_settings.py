@@ -39,6 +39,8 @@ INSTALLED_APPS = (
     'notification',
     'actions',
     'events',
+    'messaging',
+    'messaging.tests',
 )
 
 DEBUG_TOOLBAR_CONFIG = {

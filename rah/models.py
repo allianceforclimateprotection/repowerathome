@@ -1,4 +1,7 @@
-import json, hashlib, re
+import json
+import hashlib
+import re
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -54,6 +57,10 @@ class Profile(models.Model):
 
     def _email_hash(self):
         return (hashlib.md5(self.user.email.lower()).hexdigest())
+        
+    def potential_points(self):
+        return UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False, 
+            is_completed=0).aggregate(models.Sum("action__points"))["action__points__sum"]
 
 """
 SIGNALS!
