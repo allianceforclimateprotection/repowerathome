@@ -15,16 +15,19 @@ class Command(NoArgsCommand):
         records = Record.objects.filter(activity=activity, void=False)
         update_count = 0
         for record in records:
-            content_object = record.content_objects.all()
-            if len(content_object) <> 1:
-                continue
+            try:
+                content_object = record.content_objects.all()
+                if len(content_object) <> 1:
+                    continue
             
-            action = content_object[0].content_object
+                action = content_object[0].content_object
             
-            if record.points <> action.points:                
-                record.points = action.points
-                record.save()
-                update_count += 1
+                if record.points <> action.points:                
+                    record.points = action.points
+                    record.save()
+                    update_count += 1
+            except Exception, e:
+                print "Error trying to update %s. Error: %s" % (record, e)
             
             if update_count > 0 and update_count % 10 == 0:
                 print "%s..." % update_count 
