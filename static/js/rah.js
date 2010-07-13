@@ -91,6 +91,23 @@ var rah = {
         }
     },
     
+    mod_facebook_connect: {
+        init: function() {
+            FB.Event.subscribe('auth.sessionChange', rah.mod_facebook_connect.response);
+            $("#facebook_login").click(function() {
+                FB.login(rah.mod_facebook_connect.response, {perms: 'email,publish_stream,offline_access'});
+                return false;
+            });
+        },
+        response: function(response) {
+            if (response.session) {
+                window.location = "/facebook/login/";
+            } else {
+                window.location = "/logout/";
+            }
+        }
+    },
+    
     /**
     * setup all of the overset inputs
     **/
@@ -117,6 +134,7 @@ var rah = {
     **/
     page_register: {
         init: function(){
+            rah.mod_facebook_connect.init();
             $("#registration_form").validate({
                 rules: {
                     zipcode:        { required: false, remote: { url: "/validate/", type: "post" } },
@@ -138,6 +156,7 @@ var rah = {
     **/
     page_login: {
         init: function(){
+            rah.mod_facebook_connect.init();
             $("#login_form").validate({
                 rules: {
                     email:      { required: true, email: true },

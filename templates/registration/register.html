@@ -17,7 +17,10 @@
                 </p>
                 <p>
                     <b>Join the challenge using the form to the right so we can count your savings toward our goal.</b>
-                </p>                
+                </p>
+                <p>
+                    <fb:login-button id="facebook_login"></fb:login-button>
+                </p>
             </div>
             <div style="width:300px; float:left;">
                 <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
@@ -47,7 +50,7 @@
                         <input type="password" name="password2" id="id_password2" />
                     </div>
                     <p>
-                        <input type="submit" value="Join" id="register_submit" style="font-size:18px;"/> 
+                        <input type="submit" value="Join" id="register_submit" style="font-size:18px;"/>
                         <span class="smaller">
                             Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
                         </span>
@@ -56,9 +59,15 @@
                     {% csrf_token %}
                 </form>
             </div>
-
         </div>
         <div class="box_three_bottom"></div>
     </div>
+    <div id="fb-root"></div>
 {% endblock %}
 {% block js %}page_register{% endblock %}
+{% block extrajs %}
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+    <script>
+        FB.init({appId: '{{ FACEBOOK_APPID }}', status: true, cookie: true, xfbml: true});
+    </script>
+{% endblock %}

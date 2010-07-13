@@ -43,6 +43,8 @@ class Profile(models.Model):
     about = models.CharField(null=True, blank=True, max_length=255)
     is_profile_private = models.BooleanField(default=0)
     twitter_access_token = models.CharField(null=True, max_length=255, blank=True)
+    facebook_access_token = models.CharField(null=True, max_length=255, blank=True)
+    facebook_connect_only = models.BooleanField(default=False)
     total_points = models.IntegerField(default=0)
     
     def __unicode__(self):

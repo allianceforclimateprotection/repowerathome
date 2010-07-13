@@ -9,7 +9,7 @@ class EmailBackend(ModelBackend):
         except User.DoesNotExist:
             return None
             
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, username=None, password=None, is_facebook_connect=False):
         #If username is an email address, then try to pull it up
         if email_re.search(username):
             try:
@@ -22,5 +22,8 @@ class EmailBackend(ModelBackend):
                 user = User.objects.get(username=username)
             except User.DoesNotExist:
                 return None
-        if user.check_password(password):
+        if is_facebook_connect or \
+            (user.check_password(password) and not user.get_profile().facebook_connect_only):
+            # Either the user is loging in via facebook, or they are loging in with a password
+            # if the later make sure the user has not been created to allow only facebook logins
             return user
