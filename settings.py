@@ -108,6 +108,7 @@ INSTALLED_APPS = (
     'events',
     'migrations',
     'messaging',
+    'facebook_app',
 )
 
 FIXTURE_DIR = ('fixtures',)

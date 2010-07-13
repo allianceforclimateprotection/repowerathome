@@ -54,7 +54,7 @@
                     </div>
                     <p>
                         <input type="submit" value="Join the Challenge" id="register_submit"/> or
-                        <fb:login-button></fb:login-button>
+                        <fb:login-button id="facebook_login"></fb:login-button>
                     </p>
                     <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
                     {% csrf_token %}
@@ -66,6 +66,7 @@
         </div>
         <div class="box_three_bottom"></div>
     </div>
+    <div id="fb-root"></div>
 {% endblock %}
 {% block js %}page_register{% endblock %}
 {% block extrajs %}
