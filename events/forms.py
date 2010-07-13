@@ -236,7 +236,7 @@ class RsvpForm(forms.ModelForm):
         model = Guest
         fields = ("rsvp_status", "comments", "token",)
         widgets = {
-            "comments": forms.Textarea(attrs={"cols": "17"})
+            "comments": forms.Textarea(attrs={"cols": "17", "rows": "3"})
         }
     
     def clean_token(self):

@@ -1,11 +1,11 @@
 <form id="rsvp_form" action="{% url event-rsvp event.id %}" method="post">
     {{ rsvp_form.errors }}
     {{ rsvp_form.rsvp_status }}
-    <p>
-        {{ rsvp_form.comments.label }}
+    <div class="form_row">
+        <label for="id_last_name">{{ rsvp_form.comments.label }}</label>
         {{ rsvp_form.comments }}
-    </p>
-    <p>{{ rsvp_form.token }}</p>
+    </div>
+    <div>{{ rsvp_form.token }}</div>
     {% csrf_token %}
-    <input type="submit" value="Submit" />
+    <input type="submit" value="Submit" style="width:100%"/>
 </form>

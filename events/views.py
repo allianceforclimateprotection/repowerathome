@@ -48,7 +48,7 @@ def detail(request, event_id, token=None):
     if event.has_manager_privileges(request.user):
         template = "events/_detail.html" if request.is_ajax() else "events/detail.html"
     else:
-        rsvp_form = RsvpForm(instance=guest, initial={"token": token})
+        rsvp_form = RsvpForm(instance=guest, initial={"token": token, "rsvp_status": "A"})
         template = "events/rsvp.html"
     return render_to_response(template, locals(), context_instance=RequestContext(request))
 
