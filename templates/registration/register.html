@@ -26,39 +26,35 @@
                         <label for="id_first_name">First name</label>
                         <input type="text" name="first_name" id="id_first_name" />
                     </div>
-
+                    
                     <div class="form_row overset ">
                         <label for="id_last_name">Last name</label>
                         <input id="id_last_name" type="text" name="last_name" maxlength="30" />
-
                     </div>
-
+                    
                     <div class="form_row overset ">
                         <label for="email_register">Email</label>
                         <input type="text" id="email_register" name="email" />
-
                     </div>
 
                     <div class="form_row overset ">
                         <label for="id_password1">Password</label>
                         <input type="password" name="password1" id="id_password1" />
-
-
                     </div>
 
                     <div class="form_row overset ">
                         <label for="id_password2">Confirm Password</label>
                         <input type="password" name="password2" id="id_password2" />
-
-
                     </div>
-                    <p><input type="submit" value="Join the Challenge" id="register_submit"/></p>
-                    <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
+                    <p>
+                        <input type="submit" value="Join" id="register_submit" style="font-size:18px;"/> 
+                        <span class="smaller">
+                            Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
+                        </span>
+                    </p>
+                    <div><input type="hidden" name="next" value="{{ next|escape }}" /></div>
                     {% csrf_token %}
                 </form>
-                <p class="smaller">
-                    Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
-                </p>
             </div>
 
         </div>

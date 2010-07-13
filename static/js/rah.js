@@ -29,7 +29,7 @@ var rah = {
             $("button, input:submit, a.button, input.button").button();
             $(".buttonset").buttonset();
             $(".datepicker").datepicker();
-            rah.mod_overset.init();
+            // rah.mod_overset.init();
             
             // setup tabs
             $(".tabs").tabs();
