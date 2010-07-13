@@ -146,6 +146,8 @@ def rsvp_confirm(request, event_id):
     form = RsvpConfirmForm(instance=guest, data=(request.POST or None))
     if form.is_valid():
         guest = form.save(request)
+        if guest.user:
+            return redirect(event)
         return redirect("event-rsvp-account", event_id=event.id)
     return render_to_response("events/rsvp_confirm.html", locals(), context_instance=RequestContext(request))
 
