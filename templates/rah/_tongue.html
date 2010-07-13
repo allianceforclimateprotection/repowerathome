@@ -36,6 +36,9 @@
         {% endwith %}
     
     {% else %}
+        <h3>Need an account?</h3>
+        <p>With an account you can track your progress and join teams!</p>
+        <p><a href="{% url register %}" class="button">Sign Up</a></p>
         <h3>Log in</h3>
         <form action="{% ifnotequal request.META.SERVER_PORT '8000' %}https://{{request.META.SERVER_NAME}}{%endifnotequal%}{% url login %}" method="post" id="login_form" autocomplete="off">
             <div class="form_row overset"> 
@@ -46,15 +49,14 @@
                 <label for="id_password">Password</label> 
                 <input type="password" name="password" id="id_password" /> 
             </div>
-            <p>
-                <input type="submit" value="Log In" id="tongue_login_form_submit"/> <a href="{% url password_reset %}">Recover password</a>
-            </p>
+            <div>
+                <input type="submit" value="Log In" id="tongue_login_form_submit"/><br/>
+                <a href="{% url password_reset %}">Recover password</a>
+            </div>
             {% csrf_token %}
-            <p><input type="hidden" name="next" value="{{ request.path|escape }}" /></p>
+            <div><input type="hidden" name="next" value="{{ request.path|escape }}" /></div>
         </form>
-        <h3>Need an account?</h3>
-        <p>With an account you can track your progress and join teams!</p>
-        <a href="{% url register %}" class="button">Sign Up</a>
+        <br/>
     {% endif %}
     
     
