@@ -22,7 +22,8 @@ class VanDemo(unittest.TestCase):
         
         # Some variables for tests
         self.known_vanid = 100007616
-        self.activist_code_gun_control = 4133156
+        self.activist_code_gun_control = 4150253
+        self.activist_code_animal = 4133156
     
     def test_match_person(self):
         candidate = self.client.factory.create("Person")
@@ -92,18 +93,22 @@ class VanDemo(unittest.TestCase):
         opts.ReturnSections = "ActivistCode"
         person = self.client.service.GetPerson(self.known_vanid, "VANID", opts)
         self.assertEqual(len(person.ActivistCodes), 0)
-    
+        
 
 if __name__ == '__main__':
+    # Specify a specific test to run here
+    test_to_run = 'test_create_person_with_email'
     suite = unittest.TestSuite()
-    suite.addTest(VanDemo('test_change_first_name'))
+    suite.addTest(VanDemo(test_to_run))
     unittest.TextTestRunner().run(suite)
+    
+    # Uncomment this line and comment the above line to run all the tests. 
     # unittest.main()
 
 
 
 """
-Service Def for reference
+Service Def for PersonService
 -------------------------
 
 Methods (6):
