@@ -1,13 +1,29 @@
+{% if event.event_type.description %}
 <div>
     <h3>Description</h3>
     <p>{{ event.event_type.description }}</p>
-</div>
+</div>    
+{% endif %}
 {% if event.details %}
     <div>
         <h3>Details</h3>
         <p>{{ event.details }}</p>
     </div>
 {% endif %}
+<div>
+    <h3>When</h3>
+    <p>{{ event.when|date:"LONG_DATE_FORMAT" }} at {{ event.start|time }}</p>
+</div>
+<div>
+    <h3>Where</h3>
+    <p>
+        {% if event.place_name %}<span>{{ event.place_name }}</span><br />{% endif %}
+        <span id="event_address">{{ event.where }}</span><br />
+        <span id="event_location">{{ event.location }}</span>
+    </p>
+    <div id="event_map"></div>
+    <br/>
+</div>
 <div>
     <h3>Hosts</h3>
     <p>
@@ -23,25 +39,22 @@
         {% endfor %}
     </p>
 </div>
-<div>
-    <h3>How Many</h3>
-    <p>
-        Were invited: {{ event.invited }}<br />
-        Are confirmed: {{ event.confirmed_guests }}<br />
-        Are not sure: {{ event.maybe_attending_count }}<br />
-        Can't make it: {{ event.not_attending_count }}<br />
-    </p>
-</div>
-<div>
-    <h3>When</h3>
-    <p>{{ event.when|date:"LONG_DATE_FORMAT" }} at {{ event.start|time }}</p>
-</div>
-<div>
-    <h3>Where</h3>
-    <p>
-        {% if event.place_name %}<span>{{ event.place_name }}</span><br />{% endif %}
-        <span id="event_address">{{ event.where }}</span><br />
-        <span id="event_location">{{ event.location }}</span>
-    </p>
-    <div id="event_map"></div>
-</div>
+{% if event.invited %}
+    <div>
+        <h3>Invitations</h3>
+        <p>
+            {% if event.confirmed_guests %}
+                {{ event.confirmed_guests }} confirmed<br />
+            {% endif %}
+            {% if event.maybe_attending_count %}
+                {{ event.maybe_attending_count }} maybe{{ event.maybe_attending_count|pluralize }}<br />
+            {% endif %}
+            {% if event.not_attending_count %}
+                {{ event.not_attending_count }} can't attend <br />
+            {% endif %}
+            {% if event.outstanding_invitations %}
+                {{ event.outstanding_invitations }} outstanding invitation{{ event.outstanding_invitations|pluralize }}
+            {% endif %}
+        </p>
+    </div>
+{% endif %}
