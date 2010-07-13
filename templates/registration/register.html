@@ -2,29 +2,67 @@
 {% block tongue %}{% endblock tongue %}
 {% block title %}Register for Repower at Home{% endblock %}
 {% block breadcrumbs %}
- <div class="prefix_3">
-    <a href="{% url index %}">Home</a> &rsaquo;
-    Register
-</div>
+
 {% endblock %}
 {% block right_content %}
-    <div class="prefix_3">
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
-                <h1>Create an account</h1>
-                {% with register_form as form %}
-                    {% include "rah/_overset_form.html" %}
-                {% endwith %}
-                <p><input type="submit" value="Register" id="register_submit"/></p>
-                <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
-                {% csrf_token %}
-            </form>
-            <p>
-                Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
-            </p>
+    <div class="prefix_2">
+        <div class="box_three_top"></div>
+        <div class="box_three_middle">
+            <div style="width:308px; float:left; padding-right:24px">
+                <h1>Join the Coal Challenge</h1>
+                <h3>Help solve the climate crisis from the ground up.</h3>
+                <p>
+                    Join the Repower at Home Coal Challenge today and see the many simple way to conserve energy in your
+                    home. Start saving money on your energy bills and keep 1,000,000 lbs of dirty coal out of our air.
+                </p>
+                <p>
+                    <b>Join the challenge using the form to the right so we can count your savings toward our goal.</b>
+                </p>                
+            </div>
+            <div style="width:300px; float:left;">
+                <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
+
+                    <div class="form_row overset ">
+                        <label for="id_first_name">First name</label>
+                        <input type="text" name="first_name" id="id_first_name" />
+                    </div>
+
+                    <div class="form_row overset ">
+                        <label for="id_last_name">Last name</label>
+                        <input id="id_last_name" type="text" name="last_name" maxlength="30" />
+
+                    </div>
+
+                    <div class="form_row overset ">
+                        <label for="email_register">Email</label>
+                        <input type="text" id="email_register" name="email" />
+
+                    </div>
+
+                    <div class="form_row overset ">
+                        <label for="id_password1">Password</label>
+                        <input type="password" name="password1" id="id_password1" />
+
+
+                    </div>
+
+                    <div class="form_row overset ">
+                        <label for="id_password2">Confirm Password</label>
+                        <input type="password" name="password2" id="id_password2" />
+
+
+                    </div>
+                    <p><input type="submit" value="Join the Challenge" id="register_submit"/></p>
+                    <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
+                    {% csrf_token %}
+                </form>
+                <p class="smaller">
+                    Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
+                </p>
+            </div>
+
         </div>
-        <div class="box_two_bottom"></div>
+        <div class="box_three_bottom"></div>
     </div>
 {% endblock %}
 {% block js %}page_register{% endblock %}
