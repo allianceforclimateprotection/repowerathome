@@ -10,6 +10,7 @@ import tagging
 from events.models import Commitment
 from records.models import Record
 from dated_static.templatetags.dated_static import dated_static
+from messaging.models import Stream
 
 class ActionManager(models.Manager):
     
@@ -79,6 +80,7 @@ class Action(models.Model):
         uap.is_completed = True
         uap.save()
         if not was_completed:
+            Stream.objects.get(slug="commitment").dequeue(uap)
             Record.objects.create_record(user, "action_complete", self)
             
     def undo_for_user(self, user):
@@ -88,6 +90,8 @@ class Action(models.Model):
             uap.is_completed = False
             uap.save()
             if was_completed:
+                if uap.date_committed:
+                    Stream.objects.get(slug="commitment").upqueue(uap, uap.created, uap.date_committed)
                 Record.objects.void_record(user, "action_complete", self)
         except UserActionProgress.DoesNotExist:
             return False
@@ -99,13 +103,17 @@ class Action(models.Model):
         try:
             uap = UserActionProgress.objects.get(user=user, action=self)
         except UserActionProgress.DoesNotExist:
-            uap = UserActionProgress(user=user, action=self)    
+            uap = UserActionProgress(user=user, action=self)
         was_committed = uap.date_committed <> None
         uap.date_committed = date
         uap.save()
         
-        if not was_committed:
+        if was_committed:
+            Stream.objects.get(slug="commitment").upqueue(uap, uap.created, uap.date_committed)
+        else:
+            Stream.objects.get(slug="commitment").enqueue(uap, uap.updated, uap.date_committed)
             Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
+        return uap
             
     def cancel_for_user(self, user):
         try:
@@ -114,6 +122,7 @@ class Action(models.Model):
             uap.date_committed = None
             uap.save()
             if was_committed:
+                Stream.objects.get(slug="commitment").dequeue(uap)
                 Record.objects.void_record(user, "action_commitment", self)
         except UserActionProgress.DoesNotExist:
             return False
@@ -165,6 +174,13 @@ class UserActionProgress(models.Model):
     
     class Meta:
         unique_together = ("user", "action",)
+        
+    def other_commitments(self):
+        return UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False, 
+            is_completed=0).exclude(pk=self.pk).order_by("date_committed")
+        
+    def email(self):
+        return self.user.email
     
     def __unicode__(self):
         return u"%s is working on %s" % (self.user, self.action)

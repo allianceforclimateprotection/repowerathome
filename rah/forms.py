@@ -231,7 +231,7 @@ class PasswordChangeForm(auth_forms.PasswordChangeForm):
 PasswordChangeForm.base_fields.keyOrder = ['old_password', 'new_password1', 'new_password2']
 
 class GroupNotificationsForm(forms.Form):
-    individual_group_notifications = forms.ModelMultipleChoiceField(required=False, queryset=None, 
+    notifications = forms.ModelMultipleChoiceField(required=False, queryset=None, 
         widget=forms.CheckboxSelectMultiple, help_text="By selecting a team, you have elected to \
         recieve emails for each thread posted to the discussion board.", label="Team email notifications")
     
@@ -240,16 +240,16 @@ class GroupNotificationsForm(forms.Form):
         super(GroupNotificationsForm, self).__init__(*args, **kwargs)
         self.user = user
         self.groups = Group.objects.filter(users=user, is_geo_group=False)
-        self.fields["individual_group_notifications"].queryset = self.groups
+        self.fields["notifications"].queryset = self.groups
         self.not_blacklisted = [g.pk for g in Group.objects.groups_not_blacklisted_by_user(user)]
-        self.fields["individual_group_notifications"].initial = self.not_blacklisted
+        self.fields["notifications"].initial = self.not_blacklisted
                 
     def save(self):
         from groups.models import DiscussionBlacklist
-        individual_group_notifications = self.cleaned_data["individual_group_notifications"]
+        notifications = self.cleaned_data["notifications"]
         for group in self.groups:
-            if not group in individual_group_notifications and group.pk in self.not_blacklisted:
+            if not group in notifications and group.pk in self.not_blacklisted:
                 DiscussionBlacklist.objects.create(user=self.user, group=group)
-            if group in individual_group_notifications and group.pk not in self.not_blacklisted:
+            if group in notifications and group.pk not in self.not_blacklisted:
                 DiscussionBlacklist.objects.get(user=self.user, group=group).delete()
         
