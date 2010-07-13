@@ -93,7 +93,6 @@ var rah = {
     
     mod_facebook_connect: {
         init: function() {
-            FB.init({appId: '134358823264293', status: true, cookie: true, xfbml: true});
             FB.Event.subscribe('auth.sessionChange', rah.mod_facebook_connect.response);
             $("#facebook_login").click(function() {
                 FB.login(rah.mod_facebook_connect.response, {perms: 'email,publish_stream,offline_access'});

@@ -13,7 +13,7 @@ from rah.models import Profile
 
 def login(request):
     facebook_user = facebook.get_user_from_cookie(request.COOKIES, 
-        settings.FACEBOOK_ID, settings.FACEBOOK_SECRET)
+        settings.FACEBOOK_APPID, settings.FACEBOOK_SECRET)
     if facebook_user:
         access_token = facebook_user["access_token"]
         graph = facebook.GraphAPI(access_token)
