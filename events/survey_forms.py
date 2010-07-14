@@ -12,6 +12,17 @@ class ActionChoiceField(forms.ChoiceField):
         super(ActionChoiceField, self).__init__(*args, **kwargs)
         self.action = Action.objects.get(slug=action_slug)
         
+class ActionBooleanField(forms.BooleanField):
+    def __init__(self, action_slug, *args, **kwargs):
+        super(ActionBooleanField, self).__init__(*args, **kwargs)
+        self.action = Action.objects.get(slug=action_slug)
+        
+    def get_prep_value(self, value):
+        return value == "C"
+        
+    def to_python(self, value):
+        return "C" if value else ""
+        
 class SurveyForm(forms.ModelForm):
     class Meta:
         model = Survey
@@ -55,10 +66,11 @@ class EnergyMeetingCommitmentCard(SurveyForm):
     join_team = forms.BooleanField(required=False, label="Join a team")
     
 class VolunteerInterestForm(SurveyForm):
-    phone = forms.BooleanField(required=False, label="Received phone call")
-    flyer = forms.BooleanField(required=False, label="Saw flyer")
-    email = forms.BooleanField(required=False, label="Received email")
-    mouth = forms.BooleanField(required=False, label="Word of mouth")
+
+    eliminate_vampire = ActionBooleanField(action_slug="eliminate-standby-vampire-power",
+        required=False)
+    program_thermostat = ActionBooleanField(action_slug="programmable-thermostat",
+        required=False)
     
     school = forms.BooleanField(required=False)
     workplace = forms.BooleanField(required=False)
