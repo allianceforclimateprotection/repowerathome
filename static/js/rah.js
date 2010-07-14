@@ -85,6 +85,7 @@ var rah = {
                 return false;
             });
             rah.mod_messages.init();
+            rah.mod_facebook_connect.init();
             rah.mod_ajax_setup.init();
             rah.mod_validate_setup.init();
             rah.mod_chart_dialog.init();
@@ -130,7 +131,6 @@ var rah = {
     **/
     page_register: {
         init: function(){
-            rah.mod_facebook_connect.init();
             $("#registration_form").validate({
                 rules: {
                     zipcode:        { required: false, remote: { url: "/validate/", type: "post" } },
@@ -152,7 +152,6 @@ var rah = {
     **/
     page_login: {
         init: function(){
-            rah.mod_facebook_connect.init();
             $("#login_form").validate({
                 rules: {
                     email:      { required: true, email: true },

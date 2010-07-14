@@ -62,12 +62,5 @@
         </div>
         <div class="box_three_bottom"></div>
     </div>
-    <div id="fb-root"></div>
 {% endblock %}
 {% block js %}page_register{% endblock %}
-{% block extrajs %}
-    <script src="http://connect.facebook.net/en_US/all.js"></script>
-    <script>
-        FB.init({appId: '{{ FACEBOOK_APPID }}', status: true, cookie: true, xfbml: true});
-    </script>
-{% endblock %}

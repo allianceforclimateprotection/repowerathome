@@ -127,6 +127,7 @@
         <div id="message_box">
             {% include '_messages.html' %}
         </div>
+        <div id="fb-root"></div>
         <script type="text/javascript" charset="utf-8">
             var rah_name = "{% block js %}{% endblock %}";
             var media_url = "{{ MEDIA_URL }}"; // contains trailing slash
@@ -137,6 +138,10 @@
         {% else %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/js_libs_min.js' %}"></script>
         {% endif %}
+        <script src="http://connect.facebook.net/en_US/all.js"></script>
+        <script>
+            FB.init({appId: '{{ FACEBOOK_APPID }}', status: true, cookie: true, xfbml: true});
+        </script>
         {% block extrajs %}{% endblock %}
         {% if debug %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/rah.js' %}"></script>
