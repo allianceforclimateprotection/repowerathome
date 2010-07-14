@@ -16,7 +16,12 @@
         <br class="clear" />
         {% if profile.user == request.user %}
             <div id="tongue_links">
-                <a href="{% url rah.views.profile_edit request.user.id %}">Edit your profile</a> &ndash; <a href="{% url logout %}">Logout</a>
+                <a href="{% url rah.views.profile_edit request.user.id %}">Edit your profile</a> 
+                {% if profile.facebook_access_token %}
+                    <fb:login-button id="facebook_login" autologoutlink="true"></fb:login-button>
+                {% else %}
+                    &ndash; <a href="{% url logout %}">Logout</a>
+                {% endif %}
             </div>
         {% endif %}
         <div id="tongue_points">

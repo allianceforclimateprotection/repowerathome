@@ -99,7 +99,7 @@ var rah = {
             if (response.session) {
                 window.location = "/facebook/login/";
             } else {
-                // window.location = "/logout/";
+                window.location = "/logout/";
             }
         }
     },
