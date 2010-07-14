@@ -63,8 +63,12 @@
 <div class="grid_3 omega">
     <div class="box_one_top"></div>
     <div class="box_one_middle">
-        <img src="{{ profile.get_gravatar_url_large }}" alt="user gravatar"/>
-        <p class="smaller right">Avatar provided by <a href="http://www.gravatar.com/">Gravatar</a></p>
+        {% with profile.profile_picture_large as picture %}
+            <img src="{{ picture }}" alt="user gravatar" width="189" />
+            {% if "www.gravatar.com" in picture %}
+                <p class="smaller right">Avatar provided by <a href="http://www.gravatar.com/">Gravatar</a></p>
+            {% endif %}
+        {% endwith %}
         <b>Points: </b>{{ profile.total_points }}<br/>
         {% if profile.location %}
             <b>From: </b> {{ profile.location }}<br/>

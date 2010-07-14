@@ -1,5 +1,6 @@
-import json
+import facebook
 import hashlib
+import json
 import re
 
 from django.db import models
@@ -9,6 +10,7 @@ from geo.models import Location
 from records.models import Record
 from twitter_app import utils as twitter_app
 from actions.models import UserActionProgress
+from facebook_app.models import facebook_profile
 
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -50,11 +52,16 @@ class Profile(models.Model):
     def __unicode__(self):
         return u'%s' % (self.user.email)
 
-    def get_gravatar_url(self, default_icon='identicon'):
+    def profile_picture(self, default_icon='identicon'):
+        facebook_picture = facebook_profile(self.user)
+        if facebook_picture:
+            return facebook_picture
         return 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=52' % (self._email_hash(), default_icon)
     
-    def get_gravatar_url_large(self, default_icon='identicon'):
-        # TODO: Write unit test for get_gravatar_url_large
+    def profile_picture_large(self, default_icon='identicon'):
+        facebook_picture = facebook_profile(self.user, "large")
+        if facebook_picture:
+            return facebook_picture
         return 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=189' % (self._email_hash(), default_icon)
 
     def _email_hash(self):
