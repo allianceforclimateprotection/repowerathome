@@ -23,7 +23,7 @@ var rah = {
     base: {
         init: function(){
             // Setup TypeKit
-            try{Typekit.load();}catch(e){}
+            WebFont.load({typekit: {id: 'vbg1eri'}});
             
             // setup buttons
             $("button, input:submit, a.button, input.button").button();
