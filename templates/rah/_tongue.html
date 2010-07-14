@@ -49,10 +49,13 @@
                 <label for="id_password">Password</label> 
                 <input type="password" name="password" id="id_password" /> 
             </div>
-            <div>
-                <input type="submit" value="Log In" id="tongue_login_form_submit"/><br/>
+            <p>
+                <input type="submit" value="Log In" id="tongue_login_form_submit"/>
                 <a href="{% url password_reset %}">Recover password</a>
-            </div>
+            </p>
+            <p>
+                <fb:login-button id="facebook_login" perms="email,publish_stream,offline_access">Log in with Facebook</fb:login-button>
+            </p>
             {% csrf_token %}
             <div><input type="hidden" name="next" value="{{ request.path|escape }}" /></div>
         </form>
