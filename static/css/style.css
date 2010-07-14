@@ -84,7 +84,9 @@ Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Fo
 input, select, textarea {
     font-family: "superclarendon-1", "superclarendon-2", serif;
     font-weight: 700;
+    visibility: hidden;
     font-style: normal; }
+.wf-active input, .wf-active select, .wf-active textarea {visibility: visible;}
 form ul { margin-left: 0px; padding-left: 0px; list-style: none;}
 form input[type="checkbox"] { width: 15px; }
 a.button:hover { color: white; }
@@ -133,15 +135,6 @@ a.button:hover { color: white; }
     position: static;
     background-color: transparent; }
 .overset { position: relative;}
-.overset label.inside {
-    font-family: "superclarendon-1", "superclarendon-2", serif;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 16px;
-    position: absolute;
-    color: #C1C1C1;
-    top: 31px;
-    left: 11px;}
 .overset_form_message[class~="error"] {
     color: #DE6060;
     background-color: transparent;

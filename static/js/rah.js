@@ -29,7 +29,6 @@ var rah = {
             $("button, input:submit, a.button, input.button").button();
             $(".buttonset").buttonset();
             $(".datepicker").datepicker();
-            // rah.mod_overset.init();
             
             // setup tabs
             $(".tabs").tabs();
@@ -102,27 +101,6 @@ var rah = {
             } else {
                 // window.location = "/logout/";
             }
-        }
-    },
-    
-    /**
-    * setup all of the overset inputs
-    **/
-    mod_overset: {
-        init: function(container){
-            if(!container) { container = $("body"); }
-            $(".overset input, .overset textarea", container).blur(function(){
-               var field = $(this);
-               var label = field.prev("label");
-               if(field.val() == "") {
-                   label.addClass("inside");
-               } else {
-                   label.removeClass("inside");
-               }
-            }).blur();
-            $(".overset input, .overset textarea", container).focus(function(){
-               $(this).prev("label").removeClass("inside");
-            });
         }
     },
     
@@ -794,7 +772,6 @@ var rah = {
             guests_add_container.load(guests_add_link.attr("href"), function() {
                 $(".tabs", guests_add_container).tabs();
                 $("button, input:submit, a.button, input.button", guests_add_container).button();
-                rah.mod_overset.init(guests_add_container);
                 rah.page_guest_add.init();
                 guests_add_container.dialog({ 
                     autoOpen: false,
