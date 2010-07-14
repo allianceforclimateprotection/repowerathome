@@ -1,12 +1,6 @@
 {% extends "rah/base.html" %}
 {% block tongue %}{% endblock tongue %}
 {% block title %}Log in to Repower at Home{% endblock %}
-{% block breadcrumbs %}
- <div class="prefix_3">
-    <a href="{% url index %}">Home</a> &rsaquo;
-    Log in
-</div>
-{% endblock %}
 {% block right_content %}
     <div class="prefix_3">
         <div class="box_two_top"></div>
@@ -23,7 +17,7 @@
                 {% csrf_token %}
                 <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
             </form>
-            <p>
+            <p class="smaller">
                 Don't have an account? <a href="{% url rah.views.register %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Sign up</a><br/>
                 <a href="{% url password_reset %}">Recover password</a>
             </p>
