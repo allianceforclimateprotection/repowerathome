@@ -94,16 +94,12 @@ var rah = {
     mod_facebook_connect: {
         init: function() {
             FB.Event.subscribe('auth.sessionChange', rah.mod_facebook_connect.response);
-            $("#facebook_login").click(function() {
-                FB.login(rah.mod_facebook_connect.response, {perms: 'email,publish_stream,offline_access'});
-                return false;
-            });
         },
         response: function(response) {
             if (response.session) {
                 window.location = "/facebook/login/";
             } else {
-                window.location = "/logout/";
+                // window.location = "/logout/";
             }
         }
     },

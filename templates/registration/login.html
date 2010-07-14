@@ -18,7 +18,7 @@
                 {% endwith %}
                 <p>
                     <input type="submit" value="Log in" /> or
-                    <fb:login-button id="facebook_login"></fb:login-button>
+                    <fb:login-button id="facebook_login" perms="email,publish_stream,offline_access"></fb:login-button>
                 </p>
                 {% csrf_token %}
                 <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
