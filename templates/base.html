@@ -78,11 +78,11 @@
                 <div id="content">
                     <div class="container_12">
                         {% block content %}
+                            {% block tongue %}
                             <div class="grid_3 alpha">
-                                {% block tongue %}
-                                    {% include "rah/_tongue.html" %}
-                                {% endblock tongue %}
+                                {% include "rah/_tongue.html" %}
                             </div>
+                            {% endblock tongue %}
                             <div class="grid_9 omega">
                                 <div id="breadcrumbs">{% block breadcrumbs %}{% endblock breadcrumbs %}</div>
                                 {% block right_content %}{% endblock right_content %}
@@ -95,7 +95,7 @@
         </div>
         <div id="footer_container">
             <div id="footer">
-                <p id="footer_copy" class="smaller">
+                <p class="smaller" id="footer_copy">
                     <a href="http://www.facebook.com/pages/Repower-at-Home/135501849796509">
                         <img src="{% dated_static 'images/theme/social_icons/24/facebook.png' %}" alt="Facebook icon" 
                              title="Find us on Facebook" width="24" height="24"/>

@@ -259,8 +259,8 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 	height:324px;
     background: #92c139 url(../images/theme/0000000004_footer.png) no-repeat top center; }
 #footer{position:relative;}
-#footer_copy a {color:#333; text-decoration:underline;}
 #footer_copy {margin-right:100px; text-align:center; padding-top:243px;}
+#footer_copy a {color:#333;}
 
 
 /* ---------------------------------------------------------------------------------------------------------------------
