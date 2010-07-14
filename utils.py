@@ -4,8 +4,6 @@ import random
 import re
 import time
 
-from django.utils.http import int_to_base36
-
 def local_join(x):
     return os.path.join(os.path.dirname(__file__), x)
 
@@ -43,6 +41,7 @@ def hex_to_byte(hex_str):
     return ''.join(bytes)
     
 def make_token():
+    from django.utils.http import int_to_base36
     datestamp = (date.today() - date(2001,1,1)).days
     # timestamp is number of days since 2001-1-1.  Converted to
     # base 36, this gives us a 3 digit string until about 2121
