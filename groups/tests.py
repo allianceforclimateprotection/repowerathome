@@ -727,7 +727,7 @@ class GroupMembershipRequestViewTest(object):
         response = self.client.get(self.url, follow=True)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
         message = iter(response.context["messages"]).next()
-        self.failUnless("error" in message.tags)
+        self.failUnless("info" in message.tags)
 
 class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
     def __init__(self, *args, **kwargs):
