@@ -95,8 +95,10 @@ def group_membership_request(request, group_id, user_id, action):
             membership_request.delete()
             if __send_response_email(request, group, user, False):
                 messages.success(request, "%s has been denied access to the team" % user.get_full_name())
+    elif GroupUsers.objects.filter(group=group, user=user).exists():
+        messages.info(request, "%s has already been added to this team" % user.get_full_name())
     else:
-        messages.error(request, "%s has not requested to join this team" % user.get_full_name())
+        messages.info(request, "%s has already been denied access to this team" % user.get_full_name())
     return redirect("group_detail", group_slug=group.slug)
     
 def __send_response_email(request, group, user, approved):
