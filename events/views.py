@@ -16,6 +16,7 @@ from django.views.decorators.http import require_POST
 
 from utils import forbidden
 from rah.forms import HousePartyForm
+from rah.signals import logged_in
 from invite.models import Invitation, make_token
 from records.models import Record
 
@@ -160,6 +161,7 @@ def rsvp_account(request, event_id):
         guest = form.save(request)
         user = auth.authenticate(username=guest.email, password=form.cleaned_data["password1"])
         auth.login(request, user)
+        logged_in.send(sender=None, request=request, user=user, is_new_user=True)
         return redirect(event)
     return render_to_response("events/rsvp_account.html", locals(), context_instance=RequestContext(request))
     

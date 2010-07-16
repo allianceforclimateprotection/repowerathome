@@ -33,6 +33,7 @@ from groups.models import Group
 from events.models import Event
 
 from decorators import save_queued_POST
+from signals import logged_in
 
 @csrf_protect
 def index(request):
@@ -112,6 +113,7 @@ def register(request):
             new_user = form.save()
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             auth.login(request, user)
+            logged_in.send(sender=None, request=request, user=user, is_new_user=True)
             save_queued_POST(request)
             
             # Apply changes from commitment card.
@@ -186,6 +188,7 @@ def login(request, template_name='registration/login.html',
             if len(changes):
                 messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes))
             auth.login(request, user)
+            logged_in.send(sender=None, request=request, user=user, is_new_user=False)
             save_queued_POST(request)
             messages.add_message(request, GA_TRACK_PAGEVIEW, '/login/success')
             

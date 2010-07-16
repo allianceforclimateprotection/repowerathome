@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template import loader, Context
 
 from rah.models import Profile
+from rah.signals import logged_in
 
 def login(request):
     facebook_user = facebook.get_user_from_cookie(request.COOKIES, 
@@ -38,6 +39,7 @@ def login(request):
                 profile.save()
             user = auth.authenticate(username=profile.user.email, is_facebook_connect=True)
             auth.login(request, user)
+            logged_in.send(sender=None, request=request, user=user, is_new_user="username" in locals())
             return redirect(next or "index")
     messages.error("Facebook login credentials could not be verified, please try again.")
     return redirect(next or "login")    
