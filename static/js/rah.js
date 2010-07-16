@@ -97,7 +97,7 @@ var rah = {
         },
         response: function(response) {
             if (response.session) {
-                window.location = "/facebook/login/";
+                window.location = "/facebook/login/?next=" + window.location;
             } else {
                 window.location = "/logout/";
             }

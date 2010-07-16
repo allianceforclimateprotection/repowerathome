@@ -14,6 +14,7 @@ from rah.models import Profile
 def login(request):
     facebook_user = facebook.get_user_from_cookie(request.COOKIES, 
         settings.FACEBOOK_APPID, settings.FACEBOOK_SECRET)
+    next = request.GET.get("next", None)
     if facebook_user:
         access_token = facebook_user["access_token"]
         graph = facebook.GraphAPI(access_token)
@@ -37,6 +38,6 @@ def login(request):
                 profile.save()
             user = auth.authenticate(username=profile.user.email, is_facebook_connect=True)
             auth.login(request, user)
-            return redirect("index")
+            return redirect(next or "index")
     messages.error("Facebook login credentials could not be verified, please try again.")
-    return redirect("login")    
+    return redirect(next or "login")    
