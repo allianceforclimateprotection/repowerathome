@@ -15,6 +15,8 @@ from django.template import Context, loader
 from rah.models import Profile, Feedback
 from geo.models import Location
 
+from fields import Honeypot
+
 class DefaultRahForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(DefaultRahForm, self).__init__(label_suffix="", *args, **kwargs)
@@ -28,10 +30,11 @@ class RegistrationForm(DefaultRahForm):
     zipcode = forms.CharField(max_length=10, required=False, help_text="Leave blank if not a US resident")
     password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    honeypot = Honeypot()
     
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "email", )
+        fields = ("first_name", "last_name", "email",)
 
     def clean(self):
         self.instance.username = hashlib.md5(self.cleaned_data.get("email", "")).hexdigest()[:30] 

@@ -52,7 +52,10 @@
                             Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
                         </span>
                     </p>
-                    <div><input type="hidden" name="next" value="{{ next|escape }}" /></div>
+                    <div>
+                        {{ register_form.honeypot }}
+                        <input type="hidden" name="next" value="{{ next|escape }}" />
+                    </div>
                     {% csrf_token %}
                 </form>
             </div>
