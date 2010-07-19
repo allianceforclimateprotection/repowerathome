@@ -125,8 +125,11 @@ def _default_action_vars(action, user):
         useractionprogress__is_completed=1).order_by("-useractionprogress__updated")[:5]
     noshow_users_completed = action.users_completed - users_completed.count()
     users_committed = User.objects.filter(useractionprogress__action=action, 
-        useractionprogress__date_committed__isnull=False).order_by("-useractionprogress__updated")[:5]
-    noshow_users_committed = action.users_committed - users_committed.count()
+        useractionprogress__date_committed__isnull=False,
+        useractionprogress__is_completed=0).order_by("-useractionprogress__updated")
+    total_users_committed = users_committed.count()
+    users_committed = users_committed[:5]
+    noshow_users_committed = total_users_committed - users_committed.count()
     progress = None
     if user.is_authenticated():
         try:

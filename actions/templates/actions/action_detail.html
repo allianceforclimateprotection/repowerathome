@@ -60,7 +60,7 @@
                     {% endif %}
                 </ul>
             {% endif %}
-            <span class='total_users'>{{ action.users_committed }}</span> pe{{ action.users_committed|pluralize:"rson has,ople have" }} committed to this action.<br/>
+            <span class='total_users'>{{ total_users_committed }}</span> pe{{ total_users_committed|pluralize:"rson has,ople have" }} committed to this action.<br/>
             {% if action.users_committed %}
                 <ul class="plain_list">
                     {% for user in users_committed %}
