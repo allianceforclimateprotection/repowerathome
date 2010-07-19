@@ -3,22 +3,20 @@ import logging
 import locale
 
 from django.conf import settings
-from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.contrib import auth
+from django.contrib import auth, messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.comments.views import comments
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail, EmailMessage
+from django.db.models import Sum
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader, Context
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.decorators.cache import cache_page
-from django.forms.formsets import formset_factory
-from django.contrib import messages
-from django.contrib.sites.models import Site
-from django.db.models import Sum
 
 from basic.blog.models import Post
 from tagging.models import Tag
@@ -125,12 +123,6 @@ def register(request):
             messages.success(request, 'Thanks for registering.')
             messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
             
-            # Temp code. Send an email to Jon when people register
-            try:
-                send_mail("New RAH User: %s" % user.email, "http://repowerathome.com/user/%s" % user.id, None, ["jon.lesser@climateprotect.org"], fail_silently=True)
-            except Exception, e:
-                pass
-                        
             # Light security check -- make sure redirect_to isn't garbage.
             if not redirect_to or ' ' in redirect_to:
                 redirect_to = settings.LOGIN_REDIRECT_URL
@@ -337,3 +329,16 @@ comments.signals.comment_was_posted.connect(comment_message)
 def forbidden(request, message="You do not have permissions."):
     from django.http import HttpResponseForbidden
     return HttpResponseForbidden(loader.render_to_string('403.html', { 'message':message, }, RequestContext(request)))
+    
+def send_registration_emails(sender, request, user, is_new_user, **kwargs):
+    if is_new_user:
+        domain = Site.objects.get_current().domain
+        template = loader.get_template("rah/registration_email.html")
+        context = {"user": user, "domain": domain,}
+        msg = EmailMessage("Registration", template.render(Context(context)), None, [user.email])
+        msg.content_subtype = "html"
+        msg.send()
+    
+        send_mail("New RAH User: %s" % user.email, "http://%s/%s" % (domain, user.get_absolute_url()), 
+            None, ["newaccounts@repowerathome.com"], fail_silently=True)
+logged_in.connect(send_registration_emails)

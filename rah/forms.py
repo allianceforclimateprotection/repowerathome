@@ -6,7 +6,6 @@ from django import forms
 from django.contrib import auth
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.forms import ValidationError
 from django.core.mail import send_mail, EmailMessage
 from django.core.urlresolvers import resolve, Resolver404
@@ -68,14 +67,6 @@ class RegistrationForm(DefaultRahForm):
             self.cleaned_data["location"] = Location.objects.get(zipcode=data)
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
-            
-    def save(self, *args, **kwargs):
-        template = loader.get_template("rah/registration_email.html")
-        context = {"user": self.instance, "domain": Site.objects.get_current().domain,}
-        msg = EmailMessage("Registration", template.render(Context(context)), None, [self.instance.email])
-        msg.content_subtype = "html"
-        msg.send()
-        return super(RegistrationForm, self).save(*args, **kwargs)
 
 class AuthenticationForm(forms.Form):
    """
