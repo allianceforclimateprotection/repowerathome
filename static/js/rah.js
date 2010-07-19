@@ -97,7 +97,9 @@ var rah = {
         },
         response: function(response) {
             if (response.session) {
-                window.location = "/facebook/login/";
+                next_elem = $("input[type='hidden'][name='next']")
+                next = next_elem ? next_elem.val() : window.location
+                window.location = "/facebook/login/?next=" + next;
             } else {
                 window.location = "/logout/";
             }
