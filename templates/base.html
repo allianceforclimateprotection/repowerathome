@@ -9,8 +9,8 @@
         <meta name="msvalidate.01" content="DC928E84A1569AF4933A7DB431C08DB4" />
         <meta name="y_key" content="9d9c6c76735e5a92"/>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-        <meta http-equiv="content-language" content="en-us">
-        <meta name="geo.position" content="38.896231;-77.024158"/>
+        <meta http-equiv="content-language" content="en-us" />
+        <meta name="geo.position" content="38.896231;-77.024158" />
         <meta name="geo.country" content="US"/>
         <meta name="geo.region" content="US-DC"/>
         <meta name="geo.placename" content="Alliance for Climate Protection"/>
@@ -138,8 +138,8 @@
         {% else %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/js_libs_min.js' %}"></script>
         {% endif %}
-        <script src="http://connect.facebook.net/en_US/all.js"></script>
-        <script>
+        <script  type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
+        <script type="text/javascript">
             FB.init({appId: '{{ FACEBOOK_APPID }}', status: true, cookie: true, xfbml: true});
         </script>
         {% block extrajs %}{% endblock %}
