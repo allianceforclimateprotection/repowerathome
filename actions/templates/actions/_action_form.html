@@ -5,7 +5,10 @@
                 {% with action_commit_form as form %}
                     {% include "rah/_overset_form.html" %}
                 {% endwith %}
-                <p><input type="submit" class="commit_trigger" value="{{ commit_title }}" /></p>
+                <p>
+                    <input type="submit" class="commit_trigger tooltip" value="{{ commit_title }}"
+                        title="Make a commitment to do this action in the future." />
+                </p>
                 {% csrf_token %}
             </form>
         {% else %}
@@ -26,7 +29,10 @@
                 action="{% url action_cancel action.slug %}">{% csrf_token %}</form>
         {% endif %}
         <form class="action_complete_form" method="post" action="{% url action_complete action.slug %}">
-            <p><input type="submit" value="{{ complete_title }}" /></p>
+            <p>
+                <input type="submit" class="tooltip" value="{{ complete_title }}" 
+                    title="Claim your points if you’re already doing, or just completed, this action"/>
+            </p>
             {% csrf_token %}
         </form>
     {% else %}

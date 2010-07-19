@@ -255,6 +255,27 @@ var rah = {
                     console.error(err);
                 }
             }
+            $(".action_forms .tooltip").qtip({
+                position: {
+                    corner: {
+                        target: 'bottomMiddle',
+                        tooltip: 'topMiddle'
+                    }
+                },
+                style: {
+                    name: 'green',
+                    tip: 'topMiddle',
+                    background: '#E3EC9F',
+                    color: '#00AAD8',
+                    border: {
+                        width: 3,
+                        radius: 2,
+                        color: '#92C139'
+                    }
+                },
+                show: 'mouseover',
+                hide: 'mouseout'
+            });
         }
     },
     
