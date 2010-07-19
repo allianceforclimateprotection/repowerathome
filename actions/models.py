@@ -2,8 +2,9 @@ import os
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.db import models
+from django.contrib import messages
 from django.contrib.auth.models import User
+from django.db import models
 
 import tagging
 
@@ -11,6 +12,7 @@ from events.models import Commitment
 from records.models import Record
 from dated_static.templatetags.dated_static import dated_static
 from messaging.models import Stream
+from rah.signals import logged_in
 
 class ActionManager(models.Manager):
     
@@ -230,3 +232,9 @@ def update_action_aggregates(sender, instance, **kwargs):
     instance.action.users_committed = UserActionProgress.objects.filter(action=instance.action, date_committed__isnull=False).count()
     instance.action.save()
 models.signals.post_save.connect(update_action_aggregates, sender=UserActionProgress)
+
+def apply_changes_from_commitment_cards(sender, request, user, is_new_user, **kwargs):
+    changes = Action.objects.process_commitment_card(user, new_user=is_new_user)
+    if len(changes):
+        messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes))
+logged_in.connect(apply_changes_from_commitment_cards)

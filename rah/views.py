@@ -112,14 +112,9 @@ def register(request):
         if form.is_valid():
             new_user = form.save()
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
-            auth.login(request, user)
             logged_in.send(sender=None, request=request, user=user, is_new_user=True)
+            auth.login(request, user)
             save_queued_POST(request)
-            
-            # Apply changes from commitment card.
-            changes = Action.objects.process_commitment_card(user, new_user=True)
-            if len(changes):
-                messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes))
             
             # Add the location to profile if the user registered with one
             if "location" in form.cleaned_data:
@@ -184,11 +179,8 @@ def login(request, template_name='registration/login.html',
             
             # Okay, security checks complete. Log the user in.
             user = form.get_user()
-            changes = Action.objects.process_commitment_card(user)
-            if len(changes):
-                messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes))
-            auth.login(request, user)
             logged_in.send(sender=None, request=request, user=user, is_new_user=False)
+            auth.login(request, user)
             save_queued_POST(request)
             messages.add_message(request, GA_TRACK_PAGEVIEW, '/login/success')
             
