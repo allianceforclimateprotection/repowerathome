@@ -235,6 +235,7 @@ models.signals.post_save.connect(update_action_aggregates, sender=UserActionProg
 
 def apply_changes_from_commitment_cards(sender, request, user, is_new_user, **kwargs):
     changes = Action.objects.process_commitment_card(user, new_user=is_new_user)
-    if len(changes):
-        messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes))
+    if changes:
+        messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes), 
+            extra_tags="sticky")
 logged_in.connect(apply_changes_from_commitment_cards)
