@@ -43,6 +43,7 @@ class Event(models.Model):
     class Meta:
         permissions = (
             ("host_any_event_type", "Can host any event type"),
+            ("view_any_event", "Can view host details for any event"),
         )
     
     def __unicode__(self):
@@ -61,7 +62,8 @@ class Event(models.Model):
     def has_manager_privileges(self, user):
         if not user.is_authenticated():
             return False
-        return Guest.objects.filter(event=self, user=user, is_host=True).exists()
+        return user.has_perm("events.view_any_event") or \
+            Guest.objects.filter(event=self, user=user, is_host=True).exists()
             
     def is_guest(self, request):
         user = request.user

@@ -1,6 +1,6 @@
 import datetime
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.core.urlresolvers import reverse
@@ -17,7 +17,7 @@ class EventTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_events.json",]
     
     def setUp(self):
-        self.creator = User.objects.get(username="eric")
+        self.creator = User.objects.get(username="eric", )
         self.event_type = EventType.objects.get(name="Energy Meeting")
         self.ashaway = Location.objects.get(zipcode="02804")
         self.event = Event.objects.get(pk=1)
@@ -33,6 +33,11 @@ class EventTest(TestCase):
         guest.is_host = True
         guest.save()
         self.failUnlessEqual(self.event.has_manager_privileges(hacker), True)
+        
+    def test_user_with_perms_has_manager_privileges(self):
+        permission = Permission.objects.get_by_natural_key("view_any_event", "events", "event")
+        self.creator.user_permissions.add(permission)
+        self.failUnlessEqual(self.event.has_manager_privileges(self.creator), True)
         
     def test_start_datetime(self):
         self.failUnlessEqual(self.event.start_datetime(), datetime.datetime(2050, 8, 14, 6, 0))
@@ -351,6 +356,46 @@ class EventDetailViewTest(TestCase):
         self.failUnlessEqual(event.duration, 90)
         self.failUnlessEqual(event.details, "You can park on the street.  My apartment is on the second floor.")
         self.failUnlessEqual(event.is_private, True)
+        
+    def test_has_view_any_permission(self):
+        self.event.is_private = True
+        self.event.save()
+        permission = Permission.objects.get_by_natural_key("view_any_event", "events", "event")
+        self.user.user_permissions.add(permission)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.event_show_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/detail.html")
+        event = response.context["event"]
+        self.failUnlessEqual(event.event_type, self.event_type)
+        self.failUnlessEqual(event.where, "123 Garden Street")
+        self.failUnlessEqual(event.location.name, "Ashaway")
+        self.failUnlessEqual(event.location.st, "RI")
+        self.failUnlessEqual(event.location.zipcode, "02804")
+        self.failUnlessEqual(event.when, datetime.date(2050, 8, 14))
+        self.failUnlessEqual(event.start, datetime.time(6, 0))
+        self.failUnlessEqual(event.duration, 90)
+        self.failUnlessEqual(event.details, "You can park on the street.  My apartment is on the second floor.")
+        self.failUnlessEqual(event.is_private, True)
+        
+    def test_host_can_view_details(self):
+        self.event.save() # trigger the event that will make the creator a guest
+        creator = self.event.creator
+        creator.set_password("test")
+        creator.save()
+        self.client.login(username="eric", password="test")
+        response = self.client.get(self.event_show_url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/detail.html")
+        event = response.context["event"]
+        self.failUnlessEqual(event.event_type, self.event_type)
+        self.failUnlessEqual(event.where, "123 Garden Street")
+        self.failUnlessEqual(event.location.name, "Ashaway")
+        self.failUnlessEqual(event.location.st, "RI")
+        self.failUnlessEqual(event.location.zipcode, "02804")
+        self.failUnlessEqual(event.when, datetime.date(2050, 8, 14))
+        self.failUnlessEqual(event.start, datetime.time(6, 0))
+        self.failUnlessEqual(event.duration, 90)
+        self.failUnlessEqual(event.details, "You can park on the street.  My apartment is on the second floor.")
+        self.failUnlessEqual(event.is_private, False)
         
 class EventEditViewTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_events.json"]
