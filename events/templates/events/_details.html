@@ -19,7 +19,8 @@
     <p>
         {% if event.place_name %}<span>{{ event.place_name }}</span><br />{% endif %}
         <span id="event_address">{{ event.where }}</span><br />
-        <span id="event_location">{{ event.location }}</span>
+        <span id="event_location">{{ event.location }} {{ event.location.zipcode }}</span>
+        
     </p>
     <div id="event_map"></div>
     <br/>
