@@ -120,6 +120,10 @@ class Group(models.Model):
     disc_post_perm = models.IntegerField(choices=DISC_POST_PERM, default=0, null=True,  verbose_name="Who can post discussions?")
     member_count = models.IntegerField(default=0)
     
+    class Meta:
+        verbose_name = "team"
+        verbose_name_plural = "teams"
+    
     def is_joinable(self):
         return not self.is_geo_group
     
