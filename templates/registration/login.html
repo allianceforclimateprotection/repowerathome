@@ -12,7 +12,11 @@
                 {% endwith %}
                 <p>
                     <input type="submit" value="Log in" /> or
-                    <fb:login-button id="facebook_login" perms="email,publish_stream,offline_access"></fb:login-button>
+                    <div class="fb_button" id="fb-login">
+                        <a href="#" class="fb_button fb_button_medium">
+                            <span id="fb_login_text" class="fb_button_text">Login in with Facebook</span>
+                        </a>
+                    </div>
                 </p>
                 {% csrf_token %}
                 <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>

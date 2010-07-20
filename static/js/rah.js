@@ -93,15 +93,16 @@ var rah = {
     
     mod_facebook_connect: {
         init: function() {
-            FB.Event.subscribe('auth.sessionChange', rah.mod_facebook_connect.response);
+            $("#fb-login").click(function(){
+                FB.login(rah.mod_facebook_connect.response, 
+                {perms:"email,publish_stream,offline_access"});
+            });
         },
         response: function(response) {
             if (response.session) {
                 next_elem = $("input[type='hidden'][name='next']")
                 next = next_elem ? next_elem.val() : window.location
                 window.location = "/facebook/login/?next=" + next;
-            } else {
-                window.location = "/logout/";
             }
         }
     },
@@ -196,6 +197,15 @@ var rah = {
                 return false;
             });
             $("#team_selectors").removeClass("hidden");
+            $("#link_with_facebook").click(function() {
+                FB.login(function(response) {
+                  if (response.session) {
+                    alert('logged in');
+                  } else {
+                    // user cancelled login
+                  }
+                }, {perms:'email,publish_stream,offline_access'});
+            });
         }
     },
     
