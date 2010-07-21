@@ -120,9 +120,6 @@ def register(request):
                 profile.location = form.cleaned_data["location"]
                 profile.save()
             
-            messages.success(request, 'Thanks for registering.')
-            messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
-            
             # Light security check -- make sure redirect_to isn't garbage.
             if not redirect_to or ' ' in redirect_to:
                 redirect_to = settings.LOGIN_REDIRECT_URL
@@ -342,3 +339,9 @@ def send_registration_emails(sender, request, user, is_new_user, **kwargs):
         send_mail("New RAH User: %s" % user.email, "http://%s/%s" % (domain, user.get_absolute_url()), 
             None, ["newaccounts@repowerathome.com"], fail_silently=True)
 logged_in.connect(send_registration_emails)
+
+def track_registration(sender, request, user, is_new_user, **kwargs):
+    if is_new_user:
+        messages.success(request, 'Thanks for registering.')
+        messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
+logged_in.connect(track_registration)
