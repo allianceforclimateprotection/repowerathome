@@ -2,8 +2,8 @@ import facebook
 import hashlib
 
 from django.conf import settings
-from django.contrib import auth
-from django.contrib import messages
+from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.admin.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -42,4 +42,17 @@ def login(request):
             auth.login(request, user)
             return redirect(next or "index")
     messages.error("Facebook login credentials could not be verified, please try again.")
-    return redirect(next or "login")    
+    return redirect(next or "login")
+
+@login_required
+def authorize(request):
+    facebook_user = facebook.get_user_from_cookie(request.COOKIES, 
+        settings.FACEBOOK_APPID, settings.FACEBOOK_SECRET)
+    next = request.GET.get("next", None)
+    if facebook_user:
+        profile = request.user.get_profile()
+        profile.facebook_access_token = facebook_user["access_token"]
+        profile.save()
+        return redirect(next or "profile_edit")
+    messages.error("Facebook authorization credentials could not be verified, please try again.")
+    return redirect(next or "profile_edit")
