@@ -1,5 +1,13 @@
 {% extends "events/base.html" %}
 
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url event-show %}">Events</a> &rsaquo;
+    <a href="{% url event-detail event.id %}">{{ event }}</a> &rsaquo;
+    <a href="{% url event-guests event.id %}">Guests</a> &rsaquo;
+    Add Guests
+{% endblock %}
+
 {% block right_content %}
     <div class="grid_6 alpha">
         <div class="box_three_top"></div>

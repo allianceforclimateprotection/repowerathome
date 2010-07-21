@@ -4,11 +4,13 @@ import re
 
 from django import forms
 from django.forms import formsets
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.template import Context, loader
+from django.utils.dateformat import format
 
 from geo.models import Location
 from invite.models import Invitation
@@ -327,3 +329,32 @@ class RsvpAccountForm(forms.ModelForm):
         guest = super(RsvpAccountForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
         return guest
+        
+class MessageForm(forms.Form):
+    note = forms.CharField(label="Personal Note", widget=forms.Textarea, 
+        help_text="Enter a brief note that will be included in your email")
+    guests = forms.ModelMultipleChoiceField(queryset=None, widget=forms.MultipleHiddenInput)
+    
+    def __init__(self, user, event, type, *args, **kwargs):
+        super(MessageForm, self).__init__(*args, **kwargs)
+        self.user = user
+        self.event = event
+        self.fields["guests"].queryset = event.guest_set.all()
+        date = format(self.event.when, settings.DATE_FORMAT)
+        if type == "reminder":
+            self.template = "events/reminder_email.html"
+            self.subject = "Remember %s on %s" % (self.event, date)
+        elif type == "announcement":
+            self.subject = "Update about %s on %s" % (self.event, date)
+            self.template = "events/announcement_email.html"
+        else:
+            raise AttributeError("Unknown message type: %s" % type)
+    
+    def save(self, *args, **kwargs):
+        for guest in self.cleaned_data["guests"]:
+            context = {"user": self.user, "guest": guest, "domain": Site.objects.get_current().domain, 
+                "note": self.cleaned_data["note"]}
+            msg = EmailMessage(self.subject, loader.render_to_string(self.template, context), None, [guest.email])
+            msg.content_subtype = "html"
+            msg.send()
+    

@@ -22,7 +22,7 @@ from records.models import Record
 
 from models import Event, Guest
 from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, GuestEditForm, \
-    RsvpForm, RsvpConfirmForm, RsvpAccountForm
+    RsvpForm, RsvpConfirmForm, RsvpAccountForm, MessageForm
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
 
 def show(request):
@@ -236,3 +236,16 @@ def spreadsheet(request, event_id):
         writer.writerow([g.name, g.email, g.phone, g.zipcode, g.status()] + answers)
     
     return response
+    
+@login_required
+@user_is_event_manager
+def message(request, event_id, type):
+    event = get_object_or_404(Event, id=event_id)
+    form = MessageForm(user=request.user, event=event, type=type, data=(request.POST or None),
+        initial={"guests": request.GET.get("guests", "").split(",")})
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Your message has been sent.")
+        return redirect("event-guests", event_id=event.id)
+    template = "events/message.html"
+    return render_to_response(template, locals(), context_instance=RequestContext(request))

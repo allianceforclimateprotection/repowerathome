@@ -1,9 +1,5 @@
-from django.contrib.sites.models import Site
-from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
-from django.db.models import Q, F
 from django.http import HttpResponseRedirect
-from django.template import Context, loader
 from django.utils.http import urlquote
 
 def attending(queryset):
@@ -19,18 +15,13 @@ def invitation_email(queryset):
     
 def announcement_email(queryset):
     event = queryset[0].event
-    _send_guest_emails(queryset, event, "%s Announcement" % event, "events/announcement_email.html")
+    guest_ids = ",".join([str(guest.id) for guest in queryset])
+    return HttpResponseRedirect(reverse("event-announcement", args=[event.id]) + "?guests=" + urlquote(guest_ids))
     
 def reminder_email(queryset):
     event = queryset[0].event
-    _send_guest_emails(queryset, event, "%s Reminder" % event, "events/reminder_email.html")
-    
-def _send_guest_emails(queryset, event, subject, template):
-    for guest in queryset:
-        context = {"user": event.creator, "guest": guest, "domain": Site.objects.get_current().domain}
-        msg = EmailMessage(subject, loader.render_to_string(template, context), None, [guest.email])
-        msg.content_subtype = "html"
-        msg.send()
+    guest_ids = ",".join([str(guest.id) for guest in queryset])
+    return HttpResponseRedirect(reverse("event-reminder", args=[event.id]) + "?guests=" + urlquote(guest_ids))
         
 def remove(queryset):
     queryset.delete()
@@ -39,5 +30,6 @@ def make_host(queryset):
     queryset.update(is_host=True)
     
 def unmake_host(queryset):
+    # from django.db.models import Q, F
     # queryset.filter(Q(user__isnull=True)|~Q(event__creator=F("user"))).update(is_host=False)
     queryset.update(is_host=False)

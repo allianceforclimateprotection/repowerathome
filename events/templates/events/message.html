@@ -1,0 +1,29 @@
+{% extends "events/base.html" %}
+
+{% block title %}{{ event }} Message{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url event-show %}">Events</a> &rsaquo;
+    <a href="{% url event-detail event.id %}">{{ event }}</a> &rsaquo;
+    <a href="{% url event-guests event.id %}">Guests</a> &rsaquo;
+    Message
+{% endblock %}
+{% block right_content %}
+    <div class="grid_6 alpha">
+        <div class="box_two_top"></div>
+        <div class="box_two_middle">
+            <h1>Message</h1>
+            <div class="form_row">
+                <label>Subject</label>
+                <h6>{{ form.subject }}</h6>
+            </div>
+            <form id="event_message_form" action="" method="post">
+                {% include "events/_form.html" %}
+                {% csrf_token %}
+                <input type="submit" value="Send" /> |
+                <a href="{% url event-guests event.id %}">cancel</a>
+            </form>
+        </div>
+        <div class="box_two_bottom"></div>
+    </div>
+{% endblock %}
