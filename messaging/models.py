@@ -16,20 +16,38 @@ from utils import make_token
 URL_REGEX = re.compile(r"\b(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
 
 class Message(models.Model):
-    DELTA_TYPES = (
+    TIMING_TYPES = (
         ("after_start", "Send X hours after start",),
         ("before_end", "Send X hours before end",),
         ("after_end", "Send X hours after end",),
         ("timeline_scale", "Send at X percent complete"),
     )
+    TIMING_CODES = [t[0] for t in TIMING_TYPES]
     
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True, db_index=True)
     subject = models.CharField(max_length=100)
     body = models.TextField()
     sends = models.PositiveIntegerField(default=0)
-    delta_type = models.CharField(max_length=20, choices=DELTA_TYPES)
-    delta_value = models.PositiveIntegerField()
+    message_timing = models.CharField(max_length=20, choices=TIMING_TYPES, help_text="This option\
+        is directly related to x_value. To determine the send time of a message, use this\
+        field to select HOW a send time is calculated. Then use x_value to determine the\
+        variable X in message timing. For example: if we choose 'Send X hours after start' and a\
+        x_value of 48. The message will be sent out 48 hours after the start. So in the\
+        case of a commitment stream, 48 hours after they make a commitment.")
+    x_value = models.PositiveIntegerField()
     recipient_function = models.CharField(max_length=100)
+    send_as_batch = models.BooleanField(default=False, help_text="If multiple messages of the\
+        same type are scheduled to be sent out at the same time, then just send one. Note: if you\
+        check this box, your messages must be written to reference multiple objects.  Be very\
+        careful when using this option in conjunction with AB Tests.")
+    batch_window = models.PositiveIntegerField(null=True, blank=True, help_text="Only applicable if a\
+        message is scheduled to be sent as a batch, but if set, all messages of this type will\
+        be batched together if their send time is calculated to be within X hours of one another.")
+    time_snap = models.TimeField(null=True, blank=True, help_text="Use this option to ensure a message\
+        is sent out at a particular time of day.  Once the send time is calculated, time_snap\
+        will reset the time value leaving the date intact. For example if the send time is\
+        calculated to July 15th, 2010 at 3:32pm and time_snap is set to 11:00am. The new send\
+        time will be July 15th, 2010 at 11:00am.")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
@@ -39,25 +57,30 @@ class Message(models.Model):
         outside of the start, end range.  This function will return None, meaning the message
         should not be sent
         """
+        if self.message_timing not in Message.TIMING_CODES:
+            raise NotImplementedError("unknown delta type: %s" % self.message_timing)
+            
         if start.__class__ == datetime.date:
             start = datetime.datetime.combine(start, datetime.time.min)
         if end.__class__ == datetime.date:
             end = datetime.datetime.combine(end, datetime.time.max)
-        if self.delta_type == "timeline_scale":
+        if self.message_timing == "timeline_scale":
             timeline = end - start
-            delta = (timeline * self.delta_value) / 100
-            return start + delta
+            delta = (timeline * self.x_value) / 100
+            send_time = start + delta
         else:
-            delta = datetime.timedelta(hours=self.delta_value)
-            if self.delta_type == "after_start":
+            delta = datetime.timedelta(hours=self.x_value)
+            if self.message_timing == "after_start":
                 send = start + delta
-                return send if send < end else None
-            elif self.delta_type == "before_end":
+                send_time = send if send < end else None
+            elif self.message_timing == "before_end":
                 send = end - delta
-                return send if send > start else None
-            elif self.delta_type == "after_end":
-                return end + delta
-        raise NotImplementedError("unknown delta type: %s" % self.delta_type)
+                send_time = send if send > start else None
+            elif self.message_timing == "after_end":
+                send_time = end + delta
+        if self.time_snap:
+            return send_time.replace(hour=self.time_snap.hour, minute=self.time_snap.minute)
+        return send_time
     
     def recipients(self, content_object):
         """
@@ -81,6 +104,7 @@ class Message(models.Model):
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
     
     def send(self, content_object): # TODO: create unit tests for Message.send()
+        sent = []
         for email, user_object in self.recipients(content_object):
             # for each recipient, create a Recipient message to keep track of opens
             recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
@@ -105,7 +129,8 @@ class Message(models.Model):
             msg.send()
             self.sends += 1 # after the message is sent, increment the sends count
             self.save()
-            Sent.objects.create(message=self, recipient=email, email=msg.message())
+            sent.append(Sent.objects.create(message=self, recipient=email, email=msg.message()))
+        return sent
     
     def unique_opens(self):
         opens = RecipientMessage.objects.filter(message=self, opens__gt=0).aggregate(
@@ -132,11 +157,24 @@ class MessageLink(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
 class QueueManager(models.Manager):
-    def send_ready_messages(self):
+    def send_ready_messages(self, process_minutes=None): # TODO: write unit tests
         now = datetime.datetime.now()
-        for queued_message in self.filter(send_time__lte=now):
-            queued_message.send()
+        messages = list(self.filter(send_time__lte=now).order_by("send_time"))
+        if process_minutes:
+            until = now + datetime.timedelta(minutes=process_for)
+        sent = []
+        while len(messages) > 0:
+            queued_message = messages.pop(0)
+            batchable_messages = queued_message.find_batchable_messages()
+            if batchable_messages:
+                # TODO: should regenerate message, will need to make ABTest/Message One To One first
+                messages = [m for m in messages if m not in batchable_messages]
+                batchable_messages.delete()
+            sent = sent + queued_message.send()
             queued_message.delete()
+            if process_minutes and until < datetime.datetime.now():
+                break
+        return sent
 
 class Queue(models.Model):
     message = models.ForeignKey(Message)
@@ -150,6 +188,18 @@ class Queue(models.Model):
     
     def send(self):
         return self.message.send(self.content_object)
+    
+    def find_batchable_messages(self):
+        if not self.message.send_as_batch:
+            return None
+        potential_messages = ABTest.objects.potential_messages(message=self.message)
+        delta_time = datetime.timedelta(hours=self.message.batch_window) if self.message.batch_window else 0
+        queued = Queue.objects.filter(message__in=potential_messages, content_type=self.content_type,
+            object_pk=self.object_pk, send_time__lte=self.send_time+delta_time).exclude(pk=self.pk)
+        return queued if queued else None
+            
+    def __unicode__(self):
+        return "%s" % (self.pk)
 
 class Stream(models.Model):
     slug = models.SlugField(db_index=True, unique=True)
@@ -157,10 +207,7 @@ class Stream(models.Model):
     updated = models.DateTimeField(auto_now=True)
     
     def _queued_messages(self, content_object):
-        potential_messages = []
-        for ab_test in ABTest.objects.filter(stream=self):
-            potential_messages.append(ab_test.message)
-            potential_messages.append(ab_test.test_message)
+        potential_messages = ABTest.objects.potential_messages(stream=self)
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
     
@@ -190,6 +237,19 @@ class Stream(models.Model):
     
     def __unicode__(self):
         return self.slug
+        
+class ABTestManager(models.Manager):
+    def potential_messages(self, message=None, stream=None):
+        query = self
+        if message:
+            query = query.filter(models.Q(message=message) | models.Q(test_message=message))
+        if stream:
+            query = query.filter(stream=stream)
+        potential_messages = []
+        for ab_test in query:
+            potential_messages.append(ab_test.message)
+            potential_messages.append(ab_test.test_message)
+        return list(set(potential_messages))
 
 class ABTest(models.Model):
     message = models.ForeignKey(Message, related_name="message")
@@ -199,6 +259,7 @@ class ABTest(models.Model):
     stream = models.ForeignKey(Stream)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    objects = ABTestManager()
     
     def random_message(self):
         if not self.test_message or random.randint(0, 100) > self.test_percentage:
@@ -227,3 +288,6 @@ class Sent(models.Model):
     email = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    
+    def __unicode__(self):
+        return "%s" % self.message

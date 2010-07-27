@@ -1,0 +1,26 @@
+[
+    {"pk": 1, "model": "messaging.user", "fields": {"email": "joe@email.com"}},
+    {"pk": 2, "model": "messaging.user", "fields": {"email": "matt@email.com"}},
+    {"pk": 3, "model": "messaging.user", "fields": {"email": "larry@email.com"}},
+    {"pk": 1, "model": "messaging.event", "fields": {"creator": 1}},
+    {"pk": 1, "model": "messaging.event_guests", "fields": {"event": 1, "user": 2}},
+    {"pk": 2, "model": "messaging.event_guests", "fields": {"event": 1, "user": 3}},
+    {"pk": 2, "model": "messaging.event", "fields": {"creator": 2}},
+    {"pk": 3, "model": "messaging.event_guests", "fields": {"event": 2, "user": 3}},
+    {"pk": 1, "model": "messaging.message", "fields": {"body": "normal message body", "updated": "2010-07-27 08:18:21", "batch_window": null, "name": "normal", "created": "2010-07-27 08:18:21", "sends": 0, "x_value": 48, "time_snap": null, "message_timing": "before_end", "recipient_function": "creator", "send_as_batch": false, "subject": "normal message"}}, 
+    {"pk": 2, "model": "messaging.message", "fields": {"body": "time snap message body", "updated": "2010-07-27 08:19:04", "batch_window": null, "name": "time snap", "created": "2010-07-27 08:19:04", "sends": 0, "x_value": 24, "time_snap": "09:00:00", "message_timing": "after_end", "recipient_function": "creator", "send_as_batch": false, "subject": "time snap message"}}, 
+    {"pk": 3, "model": "messaging.message", "fields": {"body": "batch message body", "updated": "2010-07-27 08:19:33", "batch_window": 24, "name": "batch", "created": "2010-07-27 08:19:33", "sends": 0, "x_value": 24, "time_snap": null, "message_timing": "after_start", "recipient_function": "creator", "send_as_batch": true, "subject": "batch message"}}, 
+    {"pk": 4, "model": "messaging.message", "fields": {"body": "test batch message body", "updated": "2010-07-27 08:23:20", "batch_window": 24, "name": "test batch", "created": "2010-07-27 08:23:20", "sends": 0, "x_value": 24, "time_snap": null, "message_timing": "after_start", "recipient_function": "creator", "send_as_batch": true, "subject": "test batch message"}}, 
+    {"pk": 1, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:21:21", "created": "2010-07-27 08:21:21", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2010-07-26 08:21:18", "message": 1}}, 
+    {"pk": 2, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:21:32", "created": "2010-07-27 08:21:32", "object_pk": 2, "content_type": ["messaging", "event"], "send_time": "2010-07-26 11:21:30", "message": 1}}, 
+    {"pk": 3, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:21:40", "created": "2010-07-27 08:21:40", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2010-07-26 12:21:39", "message": 1}}, 
+    {"pk": 4, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:21:51", "created": "2010-07-27 08:21:51", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2010-07-26 08:21:50", "message": 2}}, 
+    {"pk": 5, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:22:01", "created": "2010-07-27 08:22:01", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2010-07-26 08:21:59", "message": 3}}, 
+    {"pk": 6, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:22:11", "created": "2010-07-27 08:22:11", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2010-07-26 10:22:08", "message": 3}}, 
+    {"pk": 7, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:22:21", "created": "2010-07-27 08:22:21", "object_pk": 2, "content_type": ["messaging", "event"], "send_time": "2010-07-26 09:22:19", "message": 3}}, 
+    {"pk": 8, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:23:43", "created": "2010-07-27 08:23:43", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2010-07-26 16:23:42", "message": 4}}, 
+    {"pk": 9, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:23:43", "created": "2010-07-27 08:23:43", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2030-07-26 16:23:42", "message": 1}}, 
+    {"pk": 1, "model": "messaging.stream", "fields": {"updated": "2010-07-08 17:50:34", "slug": "test", "created": "2010-07-08 17:50:34"}}, 
+    {"pk": 1, "model": "messaging.abtest", "fields": {"is_enabled": true, "updated": "2010-07-27 08:25:27", "stream": 1, "created": "2010-07-27 08:25:27", "test_percentage": 1, "test_message": 4, "message": 3}}
+]
+    
