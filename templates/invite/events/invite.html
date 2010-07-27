@@ -1,6 +1,6 @@
 <p>
     Hi,<br />
-    {{ from_user.get_full_name }} wants you to attend the Repower at Home event: {{ invite.content_object }}.
+    {{ from_user.get_full_name }} wants you to attend a Repower at Home {{ invite.content_object.event_type }} in {{ invite.content_object.location }}.
 </p>
 <p>
     <a href="http://{{ domain }}{% url event-invite invite.content_object.id invite.token %}">
