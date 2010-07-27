@@ -203,6 +203,9 @@ class Queue(models.Model):
 
 class Stream(models.Model):
     slug = models.SlugField(db_index=True, unique=True)
+    label = models.CharField(max_length=50)
+    description = models.CharField(max_length=255, blank=True)
+    can_unsubscribe = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
