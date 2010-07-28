@@ -7,11 +7,10 @@ from models import Record
 
 class AskToShareForm(forms.Form):
     SOCIAL_NETWORKS = (
-        ("t", "Twitter",),
+        # ("t", "Twitter",),
         ("f", "Facebook",),
     )
     social_network = forms.ChoiceField(label="", choices=SOCIAL_NETWORKS, widget=forms.RadioSelect)
-    dont_ask = forms.BooleanField(required=False)
     
     def save(self, request, *args, **kwargs):
         network = self.cleaned_data["social_network"]

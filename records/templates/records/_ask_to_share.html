@@ -26,4 +26,8 @@
     <input type="submit" value="Share"></input> | 
     <a id="ask_to_share_cancel" href="{% url profile_edit request.user.id %}">no thanks</a>
     {% csrf_token %}
+    <br />
+    <div class="form_row smaller">
+        <a href="{% url records_dont_ask_again %}">please don't ask me this again</a>
+    </div>
 </form>

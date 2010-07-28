@@ -120,7 +120,8 @@ var rah = {
             $.get(url, function(data) {
                 var container = $("<div />");
                 container.html(data);
-                container.dialog({autoOpen: false, modal: true, height: 300, width: 400});
+                container.dialog({autoOpen: false, modal: true, height: 210, width: 400,
+                    title: "Would you like to share your activity?"});
                 $("input:submit, .button", container).button();
                 $(".buttonset", container).buttonset();
                 $("#ask_to_share").submit(function() {
@@ -140,6 +141,9 @@ var rah = {
                 $("#ask_to_share_cancel", container).click(function() {
                     container.dialog("close");
                     return false;
+                });
+                $("#id_dont_ask", container).click(function() {
+                    $(this).parents("form").submit();
                 });
                 container.dialog("open");
             });
