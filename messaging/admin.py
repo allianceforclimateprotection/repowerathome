@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from models import Message, ABTest, Stream, Queue
+from models import Message, ABTest, Stream
 
 class MessageAdmin(admin.ModelAdmin):
     list_display = ("__unicode__", "sends", "unique_opens")
@@ -18,4 +18,3 @@ class ABTestAdmin(admin.ModelAdmin):
 admin.site.register(Message, MessageAdmin)
 admin.site.register(ABTest, ABTestAdmin)
 admin.site.register(Stream)
-admin.site.register(Queue)
