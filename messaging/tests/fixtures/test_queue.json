@@ -1,4 +1,23 @@
 [
+    {
+        "pk": 3, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "larry", 
+            "first_name": "Larry", 
+            "last_name": "", 
+            "is_active": 1, 
+            "is_superuser": 0, 
+            "is_staff": 0, 
+            "last_login": "2010-02-03 17:30:46", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "", 
+            "email": "larry@email.com", 
+            "date_joined": "2010-02-03 17:30:46"
+        }
+    },
+    {"pk": 1, "model": "messaging.stream", "fields": {"updated": "2010-07-08 17:50:34", "slug": "test", "created": "2010-07-08 17:50:34"}}, 
     {"pk": 1, "model": "messaging.user", "fields": {"email": "joe@email.com"}},
     {"pk": 2, "model": "messaging.user", "fields": {"email": "matt@email.com"}},
     {"pk": 3, "model": "messaging.user", "fields": {"email": "larry@email.com"}},
@@ -7,8 +26,9 @@
     {"pk": 2, "model": "messaging.event_guests", "fields": {"event": 1, "user": 3}},
     {"pk": 2, "model": "messaging.event", "fields": {"creator": 2}},
     {"pk": 3, "model": "messaging.event_guests", "fields": {"event": 2, "user": 3}},
+    {"pk": 1, "model": "messaging.streamblacklist", "fields": {"stream": 1, "user": 3}},
     {"pk": 1, "model": "messaging.message", "fields": {"body": "normal message body", "updated": "2010-07-27 08:18:21", "batch_window": null, "name": "normal", "created": "2010-07-27 08:18:21", "sends": 0, "x_value": 48, "time_snap": null, "message_timing": "before_end", "recipient_function": "creator", "send_as_batch": false, "subject": "normal message"}}, 
-    {"pk": 2, "model": "messaging.message", "fields": {"body": "time snap message body", "updated": "2010-07-27 08:19:04", "batch_window": null, "name": "time snap", "created": "2010-07-27 08:19:04", "sends": 0, "x_value": 24, "time_snap": "09:00:00", "message_timing": "after_end", "recipient_function": "creator", "send_as_batch": false, "subject": "time snap message"}}, 
+    {"pk": 2, "model": "messaging.message", "fields": {"body": "time snap message body", "updated": "2010-07-27 08:19:04", "batch_window": null, "name": "time snap", "created": "2010-07-27 08:19:04", "sends": 0, "x_value": 24, "time_snap": "09:00:00", "message_timing": "after_end", "recipient_function": "guest_list", "send_as_batch": false, "subject": "time snap message"}}, 
     {"pk": 3, "model": "messaging.message", "fields": {"body": "batch message body", "updated": "2010-07-27 08:19:33", "batch_window": 24, "name": "batch", "created": "2010-07-27 08:19:33", "sends": 0, "x_value": 24, "time_snap": null, "message_timing": "after_start", "recipient_function": "creator", "send_as_batch": true, "subject": "batch message"}}, 
     {"pk": 4, "model": "messaging.message", "fields": {"body": "test batch message body", "updated": "2010-07-27 08:23:20", "batch_window": 24, "name": "test batch", "created": "2010-07-27 08:23:20", "sends": 0, "x_value": 24, "time_snap": null, "message_timing": "after_start", "recipient_function": "creator", "send_as_batch": true, "subject": "test batch message"}}, 
     {"pk": 1, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:21:21", "created": "2010-07-27 08:21:21", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2010-07-26 08:21:18", "message": 1}}, 
@@ -20,7 +40,8 @@
     {"pk": 7, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:22:21", "created": "2010-07-27 08:22:21", "object_pk": 2, "content_type": ["messaging", "event"], "send_time": "2010-07-26 09:22:19", "message": 3}}, 
     {"pk": 8, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:23:43", "created": "2010-07-27 08:23:43", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2010-07-26 16:23:42", "message": 4}}, 
     {"pk": 9, "model": "messaging.queue", "fields": {"updated": "2010-07-27 08:23:43", "created": "2010-07-27 08:23:43", "object_pk": 1, "content_type": ["messaging", "event"], "send_time": "2030-07-26 16:23:42", "message": 1}}, 
-    {"pk": 1, "model": "messaging.stream", "fields": {"updated": "2010-07-08 17:50:34", "slug": "test", "created": "2010-07-08 17:50:34"}}, 
-    {"pk": 1, "model": "messaging.abtest", "fields": {"is_enabled": true, "updated": "2010-07-27 08:25:27", "stream": 1, "created": "2010-07-27 08:25:27", "test_percentage": 1, "test_message": 4, "message": 3}}
+    {"pk": 1, "model": "messaging.abtest", "fields": {"is_enabled": true, "updated": "2010-07-27 08:25:27", "stream": 1, "created": "2010-07-27 08:25:27", "test_percentage": 1, "test_message": 4, "message": 3}},
+    {"pk": 2, "model": "messaging.abtest", "fields": {"is_enabled": true, "updated": "2010-07-27 08:25:27", "stream": 1, "created": "2010-07-27 08:25:27", "test_percentage": 0, "message": 1}},
+    {"pk": 3, "model": "messaging.abtest", "fields": {"is_enabled": true, "updated": "2010-07-27 08:25:27", "stream": 1, "created": "2010-07-27 08:25:27", "test_percentage": 0, "message": 2}}
 ]
     

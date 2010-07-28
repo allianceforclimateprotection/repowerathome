@@ -19,6 +19,9 @@ class Event(models.Model):
         
     def attendees(self):
         return [self.creator] + list(self.guests.all())
+        
+    def guest_list(self):
+        return list(self.guests.all())
     
     class Meta:
         app_label = "messaging"

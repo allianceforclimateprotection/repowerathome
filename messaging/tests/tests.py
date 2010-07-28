@@ -90,11 +90,30 @@ class MessageRecipientTest(TestCase):
         self.failUnlessEqual(recipients, [("joe@email.com", self.joe), 
             ("matt@email.com", self.matt), ("larry@email.com", self.larry)])
             
-class QueueTest(TestCase):
-    fixtures = ["test_queue.json"]
+class MessageTest(TestCase):
+    fixtures = ["test_messaging.json"]
     
     def setUp(self):
-        pass
+        self.after_start = Message.objects.get(name="after start")
+        self.before_end = Message.objects.get(name="before end")
+        self.after_end = Message.objects.get(name="after end")
+        self.timeline_scale = Message.objects.get(name="timeline scale")
+        self.now = Message.objects.get(name="now")
+        self.time_snap = Message.objects.get(name="time snap")
+        
+        self.test = Stream.objects.get(slug="test")
+        self.dummy = Stream.objects.get(slug="dummy")
+        
+    def test_related_streams(self):
+        self.failUnlessEqual(list(self.after_start.related_streams()), [self.test, self.dummy])
+        self.failUnlessEqual(list(self.before_end.related_streams()), [self.test, self.dummy])
+        self.failUnlessEqual(list(self.after_end.related_streams()), [self.test])
+        self.failUnlessEqual(list(self.timeline_scale.related_streams()), [])
+        self.failUnlessEqual(list(self.now.related_streams()), [self.test])
+        self.failUnlessEqual(list(self.time_snap.related_streams()), [])
+            
+class QueueTest(TestCase):
+    fixtures = ["test_queue.json"]
         
     def test_find_batchable_messages(self):
         self.normal = Queue.objects.get(pk=1)
@@ -126,7 +145,7 @@ class QueueTest(TestCase):
         self.failUnlessEqual(email.to, ["joe@email.com"])
         self.failUnlessEqual(email.subject, "batch message")
         email = mail.outbox.pop()
-        self.failUnlessEqual(email.to, ["joe@email.com"])
+        self.failUnlessEqual(email.to, ["matt@email.com"])
         self.failUnlessEqual(email.subject, "time snap message")
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, ["joe@email.com"])
@@ -137,7 +156,7 @@ class QueueTest(TestCase):
         self.failUnlessEqual(sent[0].message.subject, "normal message")
         self.failUnlessEqual(sent[0].recipient, "joe@email.com")
         self.failUnlessEqual(sent[1].message.subject, "time snap message")
-        self.failUnlessEqual(sent[1].recipient, "joe@email.com")
+        self.failUnlessEqual(sent[1].recipient, "matt@email.com")
         self.failUnlessEqual(sent[2].message.subject, "batch message")
         self.failUnlessEqual(sent[2].recipient, "joe@email.com")
         self.failUnlessEqual(sent[3].message.subject, "batch message")
@@ -199,6 +218,9 @@ class StreamTest(TestCase):
         self.failUnlessEqual(Queue.objects.all().count(), 2)
         self.stream.dequeue(self.event)
         self.failUnlessEqual(Queue.objects.all().count(), 0)
+        
+    def test_blacklisted_emails(self):
+        self.failUnlessEqual(self.stream.blacklisted_emails(), ["larry@email.com"])
         
 class ABTestTest(TestCase):
     fixtures = ["test_messaging.json"]

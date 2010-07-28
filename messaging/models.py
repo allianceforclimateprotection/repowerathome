@@ -105,7 +105,13 @@ class Message(models.Model):
     
     def send(self, content_object): # TODO: create unit tests for Message.send()
         sent = []
+        streams = self.related_streams()
+        blacklisted_emails = []
+        for stream in streams:
+            blacklisted_emails = blacklisted_emails + stream.blacklisted_emails()
         for email, user_object in self.recipients(content_object):
+            if email in blacklisted_emails:
+                continue # email has been blacklisted, don't send to this recipient
             # for each recipient, create a Recipient message to keep track of opens
             recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
                 token=make_token())
@@ -136,6 +142,9 @@ class Message(models.Model):
         opens = RecipientMessage.objects.filter(message=self, opens__gt=0).aggregate(
             models.Count("opens"))["opens__count"]
         return opens if opens else 0
+        
+    def related_streams(self):
+        return Stream.objects.filter(models.Q(abtest__message=self) | models.Q(abtest__test_message=self))
     
     def __unicode__(self):
         return self.name
@@ -157,11 +166,11 @@ class MessageLink(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
 class QueueManager(models.Manager):
-    def send_ready_messages(self, process_minutes=None): # TODO: write unit tests
+    def send_ready_messages(self, process_minutes=12):
         now = datetime.datetime.now()
         messages = list(self.filter(send_time__lte=now).order_by("send_time"))
         if process_minutes:
-            until = now + datetime.timedelta(minutes=process_for)
+            until = now + datetime.timedelta(minutes=process_minutes)
         sent = []
         while len(messages) > 0:
             queued_message = messages.pop(0)
@@ -173,6 +182,8 @@ class QueueManager(models.Manager):
             sent = sent + queued_message.send()
             queued_message.delete()
             if process_minutes and until < datetime.datetime.now():
+                print "WARNING: %s min time limit has been exceeded, %s message(s) are remaining" \
+                    % (process_minutes, len(messages))
                 break
         return sent
 
@@ -200,14 +211,21 @@ class Queue(models.Model):
             
     def __unicode__(self):
         return "%s" % (self.pk)
+        
+class StreamManager(models.Manager):
+    def streams_not_blacklisted_by_user(self, user):
+        return self.exclude(pk__in=user.blacklisted_set.all())
 
 class Stream(models.Model):
     slug = models.SlugField(db_index=True, unique=True)
     label = models.CharField(max_length=50)
     description = models.CharField(max_length=255, blank=True)
     can_unsubscribe = models.BooleanField(default=True)
+    blacklisted = models.ManyToManyField("auth.user", through="StreamBlacklist", 
+        related_name="blacklisted_set")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    objects = StreamManager()
     
     def _queued_messages(self, content_object):
         potential_messages = ABTest.objects.potential_messages(stream=self)
@@ -237,9 +255,12 @@ class Stream(models.Model):
     
     def dequeue(self, content_object):
         return self._queued_messages(content_object).delete()
+        
+    def blacklisted_emails(self):
+        return [u.email for u in self.blacklisted.all()]
     
     def __unicode__(self):
-        return self.slug
+        return self.label
         
 class ABTestManager(models.Manager):
     def potential_messages(self, message=None, stream=None):
@@ -294,3 +315,18 @@ class Sent(models.Model):
     
     def __unicode__(self):
         return "%s" % self.message
+        
+class StreamBlacklist(models.Model):
+    """
+    Any user listed in this table will not recieve emails for the stream they are linked to.
+    """
+    user = models.ForeignKey("auth.user")
+    stream = models.ForeignKey(Stream)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "stream",)
+
+    def __unicode__(self):
+        return u"%s will not recieve emails for %s streams" % (self.user, self.stream)
