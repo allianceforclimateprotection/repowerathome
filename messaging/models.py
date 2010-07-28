@@ -221,7 +221,7 @@ class Stream(models.Model):
     label = models.CharField(max_length=50)
     description = models.CharField(max_length=255, blank=True)
     can_unsubscribe = models.BooleanField(default=True)
-    blacklisted = models.ManyToManyField("auth.user", through="StreamBlacklist", 
+    blacklisted = models.ManyToManyField("auth.User", through="StreamBlacklist", 
         related_name="blacklisted_set")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -320,7 +320,7 @@ class StreamBlacklist(models.Model):
     """
     Any user listed in this table will not recieve emails for the stream they are linked to.
     """
-    user = models.ForeignKey("auth.user")
+    user = models.ForeignKey("auth.User")
     stream = models.ForeignKey(Stream)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
