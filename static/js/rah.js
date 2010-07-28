@@ -190,8 +190,9 @@ var rah = {
                 }
             });
             $(".selector").click(function(){
-                var checked = $(this).hasClass("select_all");
-                $("input[type='checkbox']", $("#group_notifications_form")).attr("checked", checked);
+                var selector = $(this);
+                var checked = selector.hasClass("select_all");
+                $("input[type='checkbox']", selector.parents(".form_row")).attr("checked", checked);
                 return false;
             });
             $("#team_selectors").removeClass("hidden");

@@ -29,6 +29,7 @@ from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
 from events.models import Event
+from messaging.forms import StreamNotificationsForm
 
 from decorators import save_queued_POST
 from signals import logged_in
@@ -224,6 +225,7 @@ def profile_edit(request, user_id):
     account_form = AccountForm(instance=request.user)
     profile_form = ProfileEditForm(instance=profile)
     group_notifications_form = GroupNotificationsForm(user=request.user)
+    stream_notifications_form = StreamNotificationsForm(user=request.user)
     
     if request.method == 'POST':
         if "edit_account" in request.POST:
@@ -234,11 +236,13 @@ def profile_edit(request, user_id):
                 account_form.save()
                 messages.add_message(request, messages.SUCCESS, 'Your profile has been updated.')
                 return redirect("profile_edit", user_id=request.user.id)
-        elif "edit_group_notifications" in request.POST:
+        elif "edit_notifications" in request.POST:
             group_notifications_form = GroupNotificationsForm(user=request.user, data=request.POST)
-            if group_notifications_form.is_valid():
+            stream_notifications_form = StreamNotificationsForm(user=request.user, data=request.POST)
+            if group_notifications_form.is_valid() and stream_notifications_form.is_valid():
                 group_notifications_form.save()
-                messages.add_message(request, messages.SUCCESS, 'Your group notifications have been updated.')
+                stream_notifications_form.save()
+                messages.add_message(request, messages.SUCCESS, 'Your notifications have been updated.')
                 return redirect("profile_edit", user_id=request.user.id)
         else:
             messages.error(request, 'No action specified.')
@@ -247,6 +251,7 @@ def profile_edit(request, user_id):
         'profile_form': profile_form,
         'account_form': account_form,
         'group_notification_form': group_notifications_form,
+        'stream_notification_form': stream_notifications_form,
         'profile': profile,
     }, context_instance=RequestContext(request))
 
