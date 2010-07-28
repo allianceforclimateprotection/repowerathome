@@ -81,9 +81,11 @@ class Action(models.Model):
         was_completed = uap.is_completed
         uap.is_completed = True
         uap.save()
+        record = None
         if not was_completed:
             Stream.objects.get(slug="commitment").dequeue(uap)
-            Record.objects.create_record(user, "action_complete", self)
+            record = Record.objects.create_record(user, "action_complete", self)
+        return (uap, record)
             
     def undo_for_user(self, user):
         try:
@@ -109,13 +111,13 @@ class Action(models.Model):
         was_committed = uap.date_committed <> None
         uap.date_committed = date
         uap.save()
-        
+        record = None
         if was_committed:
             Stream.objects.get(slug="commitment").upqueue(uap, uap.created, uap.date_committed)
         else:
             Stream.objects.get(slug="commitment").enqueue(uap, uap.updated, uap.date_committed)
-            Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
-        return uap
+            record = Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
+        return (uap, record)
             
     def cancel_for_user(self, user):
         try:
@@ -144,10 +146,10 @@ class Action(models.Model):
                                         AND actions_actionform.id = afd.action_form_id"""})
                                         
     def get_detail_illustration(self):
-        return dated_static("images/actions/%s/action_detail.jpg" % self.slug)
+        return dated_static("/static/images/actions/%s/action_detail.jpg" % self.slug)
 
     def get_nugget_illustration(self):
-        return dated_static("images/actions/%s/action_nugget.jpg" % self.slug)
+        return dated_static("/static/images/actions/%s/action_nugget.jpg" % self.slug)
     
     def has_illustration(self):
         path = "images/actions/%s/action_detail.jpg" % self.slug

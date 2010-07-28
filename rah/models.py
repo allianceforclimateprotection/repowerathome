@@ -49,6 +49,7 @@ class Profile(models.Model):
     facebook_access_token = models.CharField(null=True, max_length=255, blank=True)
     facebook_connect_only = models.BooleanField(default=False)
     facebook_share = models.BooleanField(default=False)
+    ask_to_share = models.BooleanField(default=True)
     total_points = models.IntegerField(default=0)
     
     def __unicode__(self):

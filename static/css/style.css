@@ -455,6 +455,8 @@ a.tag:hover { border:1px solid #c0c0c0; color: #c0c0c0; }
 Records Records Records Records Records Records Records Records Records Records Records Records Records Records Records 
 --------------------------------------------------------------------------------------------------------------------- */
 .activity_item { margin-bottom: 18px; }
+#ask_to_share .buttonset { margin-left: 15px; padding-bottom: 0; padding-left: 0; }
+#ask_to_share .buttonset li { list-style: none; font-size: 12px; float: left; margin: 0; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged 

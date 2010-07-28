@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_protect
 
 from tagging.models import Tag
 from records.models import Record
+from records.signals import record_created
 from rah.decorators import login_required_save_POST
 
 from models import Action, UserActionProgress, ActionForm, ActionFormData
@@ -52,7 +53,9 @@ def action_complete(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
     if request.method == "GET":
         return redirect("action_detail", action_slug=action.slug)
-    action.complete_for_user(request.user)
+    uap, record = action.complete_for_user(request.user)
+    if record:
+        record_created.send(sender=None, request=request, record=record)
     messages.success(request, "Nice work! We've updated your profile, so all your friends can see your progress (<a href='#' class='undo_trigger'>Undo</a>)")
     return redirect("action_detail", action_slug=action.slug)
     
@@ -76,7 +79,9 @@ def action_commit(request, action_slug):
     # TODO: There is weirdness here if you have already completed the action and try to commit again. 
     # This can happen when you are logged out, commit to an action you've already completes, are asked to log in, and are directed back to the action detail page.
     if action_commit_form.is_valid():
-        action_commit_form.save()
+        uap, record = action_commit_form.save()
+        if record:
+            record_created.send(sender=None, request=request, record=record)
         messages.success(request, "Thanks for making a commitment.")
         return redirect("action_detail", action_slug=action.slug)
     default_vars = _default_action_vars(action, request.user)

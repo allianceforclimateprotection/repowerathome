@@ -1,3 +1,3 @@
 [
-    {"pk": 1, "model": "messaging.stream", "fields": {"updated": "2010-07-08 17:50:34", "slug": "commitment", "created": "2010-07-08 17:50:34"}}
+    {"pk": 1, "model": "messaging.stream", "fields": {"updated": "2010-07-08 17:50:34", "slug": "commitment", "label": "Committing to an action", "created": "2010-07-08 17:50:34"}}
 ]

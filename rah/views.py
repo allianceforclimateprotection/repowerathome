@@ -34,6 +34,15 @@ from messaging.forms import StreamNotificationsForm
 from decorators import save_queued_POST
 from signals import logged_in
 
+def _coal_challenge_stats():
+    locale.setlocale(locale.LC_ALL, "en_US")
+    total_people = locale.format('%d', User.objects.all().count(), True)
+    total_actions = locale.format('%d', Record.objects.filter(void=False, activity=1).count(), 
+        True)
+    total_points = locale.format('%d', Profile.objects.all().aggregate(
+        Sum('total_points'))['total_points__sum'], True)
+    return locals()
+
 @csrf_protect
 def index(request):
     """
@@ -41,42 +50,31 @@ def index(request):
     """
     # If the user is not logged in, show them the logged out homepage and bail
     if not request.user.is_authenticated():
-        return logged_out_home(request);
+        return logged_out_home(request)
     
+    total_points = request.user.get_profile().total_points
     recommended, committed, completed = Action.objects.actions_by_status(request.user)[1:4]
-    twitter_form = TwitterStatusForm(initial={
+    twitter_status_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
     })
+    featured_actions = Action.objects.filter(id__in=[18,23]).order_by("-id")
+    commitment_list = UserActionProgress.objects.commitments_for_user(request.user)
+    my_groups = Group.objects.filter(users=request.user, is_geo_group=False)
+    my_events = Event.objects.filter(guest__user=request.user)
+    records = Record.objects.user_records(request.user, 10)
     
-    # Set this location so that we can format ints with commas
-    locale.setlocale(locale.LC_ALL, "en_US")
-    
-    return render_to_response('rah/home_logged_in.html', {
-        'total_points': request.user.get_profile().total_points,
-        'committed': committed,
-        'completed': completed,
-        'featured_actions': Action.objects.filter(id__in=[18,23]).order_by("-id"),
-        'twitter_status_form': twitter_form,
-        'commitment_list': UserActionProgress.objects.commitments_for_user(request.user),
-        'my_groups': Group.objects.filter(users=request.user, is_geo_group=False),
-        'my_events': Event.objects.filter(guest__user=request.user),
-        'records': Record.objects.user_records(request.user, 10),
-        'total_people' : locale.format('%d', User.objects.all().count(), True),
-        'total_actions' : locale.format('%d', Record.objects.filter(void=False, activity=1).count(), True),
-        'total_points' : locale.format('%d', Profile.objects.all().aggregate(Sum('total_points'))['total_points__sum'], True),
-    }, context_instance=RequestContext(request))
+    vars = _coal_challenge_stats()
+    vars.update(locals())
+    return render_to_response('rah/home_logged_in.html', vars, context_instance=RequestContext(request))
 
 def logged_out_home(request):
     blog_posts = Post.objects.filter(status=2)[:3]
     pop_actions = Action.objects.get_popular(count=3)
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:3]
     
-    # Get totals for we sign. Definialty want to cache this.
-    locale.setlocale(locale.LC_ALL, "en_US")
-    total_people = locale.format('%d', User.objects.all().count(), True)
-    total_actions = locale.format('%d', Record.objects.filter(void=False, activity=1).count(), True)
-    total_points = locale.format('%d', Profile.objects.all().aggregate(Sum('total_points'))['total_points__sum'], True)
-    return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))
+    vars = _coal_challenge_stats()
+    vars.update(locals())
+    return render_to_response("rah/home_logged_out.html", vars, context_instance=RequestContext(request))
 
 @cache_page(60 * 60)
 def user_list(request):

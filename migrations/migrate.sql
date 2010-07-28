@@ -23,3 +23,6 @@ ALTER TABLE rah_profile ADD twitter_share TINYINT(1) DEFAULT 0 AFTER twitter_acc
 
 -- Add a new column, to indicate whether or not a user would like to share their activity on facebook
 ALTER TABLE rah_profile ADD facebook_share TINYINT(1) DEFAULT 0 AFTER facebook_connect_only;
+
+-- Add a new column, to indicate whether or not we should ask the user to share their activity stream
+ALTER TABLE rah_profile ADD ask_to_share TINYINT(1) DEFAULT 1 AFTER facebook_share;

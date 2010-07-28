@@ -23,22 +23,21 @@ def login(request):
         email = facebook_user["email"]
         if graph:
             try:
-                profile = Profile.objects.get(facebook_access_token=access_token)
-            except Profile.DoesNotExist:
-                try:
-                    user = User.objects.get(email=email)
-                except User.DoesNotExist:
-                    username = hashlib.md5(email).hexdigest()[:30] 
-                    user = User.objects.create_user(username, email, "")
-                    user.first_name = facebook_user["first_name"]
-                    user.last_name = facebook_user["last_name"]
-                    user.save()
-                profile = user.get_profile()
-                profile.facebook_access_token = access_token
-                profile.facebook_connect_only = "username" in locals()
-                profile.save()
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                username = hashlib.md5(email).hexdigest()[:30] 
+                user = User.objects.create_user(username, email, "")
+                user.first_name = facebook_user["first_name"]
+                user.last_name = facebook_user["last_name"]
+                user.save()
+            is_new_user = "username" in locals()
+            profile = user.get_profile()
+            profile.facebook_access_token = access_token
+            if is_new_user:
+                profile.facebook_connect_only = True
+            profile.save()
             user = auth.authenticate(username=profile.user.email, is_facebook_connect=True)
-            logged_in.send(sender=None, request=request, user=user, is_new_user="username" in locals())
+            logged_in.send(sender=None, request=request, user=user, is_new_user=is_new_user)
             auth.login(request, user)
             return redirect(next or "index")
     messages.error("Facebook login credentials could not be verified, please try again.")
@@ -53,6 +52,33 @@ def authorize(request):
         profile = request.user.get_profile()
         profile.facebook_access_token = facebook_user["access_token"]
         profile.save()
-        return redirect(next or "profile_edit")
+        messages.success(request, "Your Facebook account is now linked with Repower at Home")
+        return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)
     messages.error("Facebook authorization credentials could not be verified, please try again.")
-    return redirect(next or "profile_edit")
+    return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)
+    
+@login_required
+def unauthorize(request):
+    profile = request.user.get_profile()
+    profile.facebook_access_token = None
+    profile.facebook_share = False
+    profile.save()
+    messages.success(request, "Your Facebook account has been unlinked with Repower at Home")
+    next = request.GET.get("next", None)
+    return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)
+    
+@login_required
+def sharing(request, is_enabled):
+    profile = request.user.get_profile()
+    if profile.facebook_access_token:
+        profile.facebook_share = is_enabled
+        profile.save()
+        if is_enabled:
+            messages.success(request, "Your activity stream will now be shared on Facebook")
+        else:
+            messages.success(request, "Your activity stream will no longer be shared on Facebook")
+    else:
+        messages.error(request, "You must link your Facebook account first")
+    next = request.GET.get("next", None)
+    return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)
+    

@@ -115,6 +115,37 @@ var rah = {
         }
     },
     
+    mod_ask_to_share: {
+        init: function(url) {
+            $.get(url, function(data) {
+                var container = $("<div />");
+                container.html(data);
+                container.dialog({autoOpen: false, modal: true, height: 300, width: 400});
+                $("input:submit, .button", container).button();
+                $(".buttonset", container).buttonset();
+                $("#ask_to_share").submit(function() {
+                    var form = $(this);
+                    $.ajax({
+                        url: form.attr("action"),
+                        type: form.attr("method"),
+                        data: form.serialize(),
+                        // success: function(data) {
+                        //     rah.mod_messages.init(data);
+                        // },
+                        dataType: "script"
+                    });
+                    container.dialog("close");
+                    return false;
+                });
+                $("#ask_to_share_cancel", container).click(function() {
+                    container.dialog("close");
+                    return false;
+                });
+                container.dialog("open");
+            });
+        }
+    },
+    
     /**
     * Registration page
     **/
@@ -345,7 +376,7 @@ var rah = {
                     return false;
                 });
                 $(".slayer_help").button("destroy");
-                $("#vampire_worksheet .tooltip").each(function(){
+                $("#vampire_worksheet a.tooltip").each(function(){
                     var link = $(this);
                     var location = link.attr("href");
                     link.qtip({
