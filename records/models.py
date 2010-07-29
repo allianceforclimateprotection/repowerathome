@@ -226,4 +226,4 @@ def publish_to_social_networks(sender, request, record, **kwargs):
             pass
     elif profile.ask_to_share:
         request.session[ASK_TO_SHARE_TOKEN] = True
-record_created.connect(publish_to_social_networks)
+# record_created.connect(publish_to_social_networks)
