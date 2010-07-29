@@ -103,12 +103,10 @@ class Message(models.Model):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
     
-    def send(self, content_object): # TODO: create unit tests for Message.send()
+    def send(self, content_object, blacklisted_emails=None): # TODO: create unit tests for Message.send()
         sent = []
-        streams = self.related_streams()
-        blacklisted_emails = []
-        for stream in streams:
-            blacklisted_emails = blacklisted_emails + stream.blacklisted_emails()
+        if not blacklisted_emails:
+            blacklisted_emails = []
         for email, user_object in self.recipients(content_object):
             if email in blacklisted_emails:
                 continue # email has been blacklisted, don't send to this recipient
@@ -145,6 +143,17 @@ class Message(models.Model):
         
     def related_streams(self):
         return Stream.objects.filter(models.Q(abtest__message=self) | models.Q(abtest__test_message=self))
+        
+    def blacklisted_emails(self):
+        """
+        For a given message, collect all of the streams this message is related to, then
+        build a list of all emails (derieved from users) that have indicated they do not wish
+        to recieve emails.
+        """
+        blacklisted_emails = []
+        for stream in self.related_streams():
+            blacklisted_emails = blacklisted_emails + stream.blacklisted_emails()
+        return blacklisted_emails
     
     def __unicode__(self):
         return self.name
@@ -198,7 +207,8 @@ class Queue(models.Model):
     objects = QueueManager()
     
     def send(self):
-        return self.message.send(self.content_object)
+        return self.message.send(content_object=self.content_object, 
+            blacklisted_emails=self.message.blacklisted_emails())
     
     def find_batchable_messages(self):
         if not self.message.send_as_batch:
