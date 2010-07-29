@@ -83,7 +83,7 @@ class Action(models.Model):
         uap.save()
         record = None
         if not was_completed:
-            Stream.objects.get(slug="commitment").dequeue(uap)
+            Stream.objects.get(slug="commitment").dequeue(user)
             record = Record.objects.create_record(user, "action_complete", self)
         return (uap, record)
             
@@ -95,7 +95,7 @@ class Action(models.Model):
             uap.save()
             if was_completed:
                 if uap.date_committed:
-                    Stream.objects.get(slug="commitment").upqueue(uap, uap.created, uap.date_committed)
+                    Stream.objects.get(slug="commitment").upqueue(user, uap.created, uap.date_committed)
                 Record.objects.void_record(user, "action_complete", self)
         except UserActionProgress.DoesNotExist:
             return False
@@ -113,9 +113,9 @@ class Action(models.Model):
         uap.save()
         record = None
         if was_committed:
-            Stream.objects.get(slug="commitment").upqueue(uap, uap.created, uap.date_committed)
+            Stream.objects.get(slug="commitment").upqueue(user, uap.created, uap.date_committed)
         else:
-            Stream.objects.get(slug="commitment").enqueue(uap, uap.updated, uap.date_committed)
+            Stream.objects.get(slug="commitment").enqueue(user, uap.updated, uap.date_committed)
             record = Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
         return (uap, record)
             
@@ -126,7 +126,7 @@ class Action(models.Model):
             uap.date_committed = None
             uap.save()
             if was_committed:
-                Stream.objects.get(slug="commitment").dequeue(uap)
+                Stream.objects.get(slug="commitment").dequeue(user)
                 Record.objects.void_record(user, "action_commitment", self)
         except UserActionProgress.DoesNotExist:
             return False
