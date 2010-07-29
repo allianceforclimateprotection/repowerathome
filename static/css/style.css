@@ -140,6 +140,11 @@ a.button:hover { color: white; }
     background-color: transparent;
     width: 320px;}
 
+/*The registration page is special*/
+#registration_form .form_row {width:270px;}
+#registration_form .form_row_float {float:left; width:123px;}
+#registration_form .form_row_float_left_field {margin-right:24px;}
+
 /* ---------------------------------------------------------------------------------------------------------------------
 Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages 
 --------------------------------------------------------------------------------------------------------------------- */

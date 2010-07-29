@@ -5,46 +5,74 @@
     <div class="prefix_2">
         <div class="box_three_top"></div>
         <div class="box_three_middle">
-            <div style="width:308px; float:left; padding-right:24px">
-                <h1>Join the Coal Challenge</h1>
-                <h3>Help solve the climate crisis from the ground up.</h3>
+            {# {% if request.COOKIES.sessionid.0 in '01234567' %} #}
+            {#     In the A Group ({{request.COOKIES.sessionid.0}}) #}
+            {# {% else %} #}
+            {#     In the B Group ({{request.COOKIES.sessionid.0}}) #}
+            {# {% endif %} #}
+
+            {# <h1 class="center">Join the Coal Challenge</h1> #}
+            <p class="center">
+            <object width="675" height="404"><param name="movie" value="http://www.youtube.com/v/cbDNupks3Kg&amp;hl=en_US&amp;fs=1?rel=0&amp;hd=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/cbDNupks3Kg&amp;hl=en_US&amp;fs=1?rel=0&amp;hd=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="675" height="404"></embed></object>
+            
+            {# <object width="480" height="295"><param name="movie" value="http://www.youtube.com/v/cbDNupks3Kg&amp;hl=en_US&amp;fs=1?rel=0&amp;hd=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/cbDNupks3Kg&amp;hl=en_US&amp;fs=1?rel=0&amp;hd=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="295"></embed></object> #}
+            </p>
+            {# <br class="clear" /> #}
+            <div style="width:360px; float:left; padding-right:15px; margin-right:15px; border-right:1px solid #ccc">
+                <h1>Join the Challenge</h1>
+                {# <p> #}
+                {# <object width="360" height="227"><param name="movie" value="http://www.youtube.com/v/cbDNupks3Kg&amp;hl=en_US&amp;fs=1?rel=0&amp;hd=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/cbDNupks3Kg&amp;hl=en_US&amp;fs=1?rel=0&amp;hd=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="360" height="227"></embed></object> #}
+                {# </p> #}
+                <h3>Solve the climate crisis from the ground up.</h3>
                 <p>
-                    Join the Repower at Home Coal Challenge today and see the many simple way to conserve energy in your
-                    home. Start saving money on your energy bills and keep 1,000,000 lbs of dirty coal out of our air.
+                    Join the Repower at Home Coal Challenge today and see the many simple ways to conserve energy in
+                    your home. Start saving money on your energy bills and join our grassroots effort to keep the
+                    equivalent of 1,000,000 pounds of dirty coal out of our air by October 10.
                 </p>
                 <p>
-                    <b>Join the challenge using the form to the right so we can count your savings toward our goal.</b>
+                    <b>
+                        Join the Challenge using the form to the right or the Facebook button below so we can count your
+                        savings toward our goal.
+                    </b>
                 </p>
                 <p>
                     <fb:login-button id="facebook_login" perms="email,publish_stream,offline_access">Join with Facebook</fb:login-button>
                 </p>
             </div>
-            <div style="width:300px; float:left;">
+            <div style="width:270px; float:left;">
+                {# <p> #}
+                {#     <object width="308" height="198"><param name="movie" value="http://www.youtube.com/v/cbDNupks3Kg&amp;hl=en_US&amp;fs=1?rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/cbDNupks3Kg&amp;hl=en_US&amp;fs=1?rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="308" height="198"></embed></object> #}
+                {# </p> #}
                 <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
-
-                    <div class="form_row overset ">
+                    <div class="form_row overset form_row_float form_row_float_left_field">
                         <label for="id_first_name">First name</label>
                         <input type="text" name="first_name" id="id_first_name" />
                     </div>
                     
-                    <div class="form_row overset ">
+                    <div class="form_row overset form_row_float">
                         <label for="id_last_name">Last name</label>
                         <input id="id_last_name" type="text" name="last_name" maxlength="30" />
                     </div>
-                    
+                    <br class="clear"/>
+                    <div class="form_row overset form_row_float form_row_float_left_field">
+                        <label for="id_password1">Password</label>
+                        <input type="password" name="password1" id="id_password1" />
+                    </div>
+
+                    <div class="form_row overset form_row_float">
+                        <label for="id_password2">Confirm Password</label>
+                        <input type="password" name="password2" id="id_password2" />
+                    </div>
+                    <br class="clear"/>
                     <div class="form_row overset ">
                         <label for="email_register">Email</label>
                         <input type="text" id="email_register" name="email" />
                     </div>
 
                     <div class="form_row overset ">
-                        <label for="id_password1">Password</label>
-                        <input type="password" name="password1" id="id_password1" />
-                    </div>
-
-                    <div class="form_row overset ">
-                        <label for="id_password2">Confirm Password</label>
-                        <input type="password" name="password2" id="id_password2" />
+                        <label for="id_zipcode">Zipcode (US residents only)</label>
+                        <input id="id_zipcode" type="text" name="zipcode" maxlength="10" />
+                        {# <div class="help_text"></div> #}
                     </div>
                     <p>
                         <input type="submit" value="Join" id="register_submit" style="font-size:18px;"/>
