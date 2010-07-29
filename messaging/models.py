@@ -11,7 +11,7 @@ from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from utils import make_token
+from utils import hash_val
 
 URL_REGEX = re.compile(r"\b(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
 
@@ -112,16 +112,16 @@ class Message(models.Model):
                 continue # email has been blacklisted, don't send to this recipient
             # for each recipient, create a Recipient message to keep track of opens
             recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
-                token=make_token())
+                token=hash_val([email, datetime.datetime.now()]))
             domain = Site.objects.get_current().domain
             context = template.Context({"content_object": content_object, "domain": domain,
                 "recipient": user_object if user_object else email })
             # render the body template with the given, template
             body = template.Template(self.body).render(context)
-            for link in [m.group() for m in URL_REGEX.finditer(body)]:
+            for index, link in enumerate([m.group() for m in URL_REGEX.finditer(body)]):
                 # for each unique link in the body, create a Message link to track the clicks
                 ml = MessageLink.objects.create(recipient_message=recipient_message,
-                    link=link, token=make_token())
+                    link=link, token=hash_val([index, datetime.datetime.now()]))
                 tracker = "http://%s%s" % (domain, reverse("message_click", args=[ml.token]))
                 # replace the original link with traking URL
                 body = body.replace(link, tracker, 1)
@@ -161,7 +161,7 @@ class Message(models.Model):
 class RecipientMessage(models.Model):
     message = models.ForeignKey(Message)
     recipient = models.EmailField()
-    token = models.CharField(max_length=30, editable=False, unique=True, db_index=True)
+    token = models.CharField(max_length=40, editable=False, unique=True, db_index=True)
     opens = models.PositiveIntegerField(default=0, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -169,7 +169,7 @@ class RecipientMessage(models.Model):
 class MessageLink(models.Model):
     recipient_message = models.ForeignKey(RecipientMessage)
     link = models.URLField(verify_exists=False)
-    token = models.CharField(max_length=30, editable=False, unique=True, db_index=True)
+    token = models.CharField(max_length=40, editable=False, unique=True, db_index=True)
     clicks = models.PositiveIntegerField(default=0, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

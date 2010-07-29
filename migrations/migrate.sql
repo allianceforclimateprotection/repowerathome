@@ -15,3 +15,7 @@ ALTER TABLE messaging_stream ADD label VARCHAR(50) AFTER slug;
 ALTER TABLE messaging_stream ADD description VARCHAR(255) AFTER label;
 
 ALTER TABLE messaging_stream ADD can_unsubscribe TINYINT(1) AFTER description;
+
+ALTER TABLE messaging_recipientmessage CHANGE token token VARCHAR(40);
+
+ALTER TABLE messaging_messagelink CHANGE token token VARCHAR(40);

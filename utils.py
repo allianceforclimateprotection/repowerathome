@@ -39,21 +39,3 @@ def hex_to_byte(hex_str):
     for i in range(0, len(hex_str), 2):
         bytes.append(chr(int(hex_str[i:i+2], 16)))
     return ''.join(bytes)
-    
-def make_token():
-    from django.utils.http import int_to_base36
-    datestamp = (date.today() - date(2001,1,1)).days
-    # timestamp is number of days since 2001-1-1.  Converted to
-    # base 36, this gives us a 3 digit string until about 2121
-    ds_b36 = int_to_base36(datestamp)
-    
-    now = datetime.now()
-    timestamp = (3600000000*now.hour + 60000000*now.minute + 1000000*now.second + now.microsecond)
-    ts_b36 = int_to_base36(timestamp)
-
-    # We limit the hash to 20 chars to keep URL short
-    from django.conf import settings
-    from django.utils.hashcompat import sha_constructor
-    hash = sha_constructor(settings.SECRET_KEY + unicode(random.random()) + 
-                           unicode(datestamp)).hexdigest()[::2]
-    return "%s%s%s" % (ds_b36, ts_b36, hash)
