@@ -22,8 +22,10 @@ var rah = {
     **/
     base: {
         init: function(){
-            // Setup TypeKit
-            WebFont.load({typekit: {id: 'vbg1eri'}});
+            // Setup TypeKit for non IE browsers
+            if (!$.browser.msie) {
+                WebFont.load({typekit: {id: 'vbg1eri'}});
+            }
             
             // setup buttons
             $("button, input:submit, a.button, input.button").button();
