@@ -140,11 +140,6 @@ a.button:hover { color: white; }
     background-color: transparent;
     width: 320px;}
 
-/*The registration page is special*/
-#registration_form .form_row {width:270px;}
-#registration_form .form_row_float {float:left; width:123px;}
-#registration_form .form_row_float_left_field {margin-right:24px;}
-
 /* ---------------------------------------------------------------------------------------------------------------------
 Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages 
 --------------------------------------------------------------------------------------------------------------------- */
@@ -281,6 +276,17 @@ Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage
 #home_page_header p{text-shadow: #FFF 1px 1px 1px;}
 #home_page_header h3, #home_page_header h1 {text-shadow: #FFF 2px 2px 1px;}
 #home_page_header h1 { padding-top:-18px; font-size:34px;}
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Register Register Register Register Register Register Register Register Register Register Register Register Register 
+--------------------------------------------------------------------------------------------------------------------- */
+#registration_left_col {width:360px; float:left; padding-right:15px; margin-right:15px; border-right:1px solid #ccc}
+#registration_right_col {width:270px; float:left;}
+
+#registration_form .form_row {width:270px;}
+#registration_form .form_row_float {float:left; width:123px;}
+#registration_form .form_row_float_left_field {margin-right:24px;}
+
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue Tongue 
