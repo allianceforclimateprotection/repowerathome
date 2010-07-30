@@ -190,22 +190,22 @@ class MessageLink(models.Model):
 class QueueManager(models.Manager):
     def send_ready_messages(self, process_minutes=12):
         now = datetime.datetime.now()
-        messages = list(self.filter(send_time__lte=now).order_by("send_time"))
         if process_minutes:
             until = now + datetime.timedelta(minutes=process_minutes)
         sent = []
-        while len(messages) > 0:
-            queued_message = messages.pop(0)
+        deleted_pk = []
+        for queued_message in self.filter(send_time__lte=now).order_by("send_time"):
+            if queued_message.pk in deleted_pk:
+                continue # previous batchable message has been sent, and this one has now been deleted
             batchable_messages = queued_message.find_batchable_messages()
             if batchable_messages:
                 # TODO: should regenerate message, will need to make ABTest/Message One To One first
-                messages = [m for m in messages if m not in batchable_messages]
+                deleted_pk = deleted_pk + [bm.pk for bm in batchable_messages]
                 batchable_messages.delete()
             sent = sent + queued_message.send()
             queued_message.delete()
             if process_minutes and until < datetime.datetime.now():
-                print "WARNING: %s min time limit has been exceeded, %s message(s) are remaining" \
-                    % (process_minutes, len(messages))
+                print "WARNING: %s min time limit has been exceeded" % process_minutes
                 break
         return sent
 
