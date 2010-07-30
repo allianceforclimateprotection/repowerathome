@@ -1,15 +1,22 @@
-import base64, time
+from datetime import datetime, timedelta
+import base64
+import re
+import time
+
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.template import RequestContext, loader
-from datetime import datetime, timedelta
 from django.contrib.auth.models import User
+
+ASK_TO_SHARE_TOKEN = "records.ask_to_share"
 
 try:
     import cPickle as pickle
 except:
     import pickle
+    
+from signals import record_created
 
 class ChartPoint(object):
     """docstring for ChartPoint"""
@@ -155,6 +162,17 @@ class Record(models.Model):
         content_object = self.content_objects.all()
         if content_object: content_object = content_object[0].content_object
         return loader.render_to_string(template_file, {"record": self, "content_object":content_object}, context_instance=RequestContext(request))
+        
+    def render_for_social(self, request):
+        if self.is_batched:
+            template_file = "records/social/%s_batch.txt" % self.activity.slug
+        else:
+            template_file = "records/social/%s.txt" % self.activity.slug
+        content_object = self.content_objects.all()
+        if content_object: content_object = content_object[0].content_object
+        message = loader.render_to_string(template_file, {"record": self, 
+            "content_object":content_object}, context_instance=RequestContext(request))
+        return re.sub("\s+", " ", message)
 
     def get_absolute_url(self):
         content_objects = self.content_objects.all()
@@ -190,3 +208,22 @@ def update_profile_points(sender, instance, **kwargs):
     profile.save()
     
 models.signals.post_save.connect(update_profile_points, sender=Record)
+
+def publish_to_social_networks(sender, request, record, **kwargs):
+    from django.contrib.sites.models import Site
+    from django.utils.html import strip_tags
+    from facebook_app.models import publish_message
+    
+    profile = request.user.get_profile()
+    if profile.facebook_share or profile.twitter_share:
+        message = record.render_for_social(request)
+        message = message.encode("utf-8")
+        link = "http://%s%s" % (Site.objects.get_current().domain, record.get_absolute_url())
+        if profile.facebook_share:
+            pass
+            # publish_message(request.user, message, link)
+        if profile.twitter_share:
+            pass
+    elif profile.ask_to_share:
+        request.session[ASK_TO_SHARE_TOKEN] = True
+# record_created.connect(publish_to_social_networks)

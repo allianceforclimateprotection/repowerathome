@@ -151,6 +151,10 @@
         {% else %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/rah_min.js' %}"></script>
         {% endif %}
+        {% if ask_to_share %}
+            <script type="text/javascript">rah.mod_ask_to_share.init("{% url records_ask_to_share %}");</script>
+            <div id="ask_to_share_container"></div>
+        {% endif %}
         <script type="text/javascript">
             (function() {
                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;

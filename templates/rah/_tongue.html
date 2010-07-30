@@ -17,11 +17,7 @@
         {% if profile.user == request.user %}
             <div id="tongue_links">
                 <a href="{% url rah.views.profile_edit request.user.id %}">Edit your profile</a> 
-                {% if profile.facebook_access_token %}
-                    <fb:login-button id="facebook_login" autologoutlink="true"></fb:login-button>
-                {% else %}
-                    &ndash; <a href="{% url logout %}">Logout</a>
-                {% endif %}
+                &ndash; <a href="{% url logout %}">Logout</a>
             </div>
         {% endif %}
         <div id="tongue_points">
@@ -56,7 +52,11 @@
                 <a href="{% url password_reset %}">Recover password</a>
             </p>
             <p>
-                <fb:login-button id="facebook_login" perms="email,publish_stream,offline_access">Log in with Facebook</fb:login-button>
+                <div class="fb_button" id="fb-login">
+                    <a href="#" class="fb_button fb_button_medium">
+                        <span id="fb_login_text" class="fb_button_text">Login in with Facebook</span>
+                    </a>
+                </div>
             </p>
             {% csrf_token %}
             <div><input type="hidden" name="next" value="{{ request.path|escape }}" /></div>

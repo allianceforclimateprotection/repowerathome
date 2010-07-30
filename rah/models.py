@@ -45,8 +45,11 @@ class Profile(models.Model):
     about = models.CharField(null=True, blank=True, max_length=255)
     is_profile_private = models.BooleanField(default=0)
     twitter_access_token = models.CharField(null=True, max_length=255, blank=True)
+    twitter_share = models.BooleanField(default=False)
     facebook_access_token = models.CharField(null=True, max_length=255, blank=True)
     facebook_connect_only = models.BooleanField(default=False)
+    facebook_share = models.BooleanField(default=False)
+    ask_to_share = models.BooleanField(default=True)
     total_points = models.IntegerField(default=0)
     
     def __unicode__(self):
@@ -70,6 +73,29 @@ class Profile(models.Model):
     def potential_points(self):
         return UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False, 
             is_completed=0).aggregate(models.Sum("action__points"))["action__points__sum"]
+            
+    def actions_committed_to_yestarday(self):
+        yestarday = datetime.date.today() - datetime.timedelta(days=1)
+        start = datetime.datetime.combine(yestarday, datetime.time.min)
+        end = datetime.datetime.combine(yestarday, datetime.time.max)
+        return Action.objects.filter(useractionprogress__user=self.user, 
+            useractionprogress__updated__gte=start, useractionprogress__updated__lte=end)
+        
+    def actions_committed_before_yestarday(self):
+        yestarday = datetime.date.today() - datetime.timedelta(days=1)
+        start = datetime.datetime.combine(yestarday, datetime.time.min)
+        return Action.objects.filter(useractionprogress__user=self.user, 
+            useractionprogress__updated__lt=start)
+        
+    def commitments_due_in_a_week(self):
+        return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
+        
+    def commitments_due_today(self):
+        return self._commitment_due_on(datetime.date.today())
+            
+    def _commitment_due_on(self, due_date):
+        return Action.objects.filter(useractionprogress__user=self.user, 
+            useractionprogress__date_committed=due_date)
 
 """
 SIGNALS!

@@ -69,6 +69,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.contrib.messages.context_processors.messages',
     'facebook_app.context_processors.facebook_appid',
+    'records.context_processors.ask_to_share',
 )
 
 TEMPLATE_DIRS = (

@@ -252,4 +252,3 @@ class ABTestTest(TestCase):
     def test_potential_message_by_message(self):
         messages = ABTest.objects.potential_messages(message=self.after_start)
         self.failUnlessEqual(messages, [self.after_start, self.before_end])
-        

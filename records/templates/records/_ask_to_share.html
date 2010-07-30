@@ -1,0 +1,33 @@
+{% load dated_static %}
+
+<form id="ask_to_share" action="{% url records_ask_to_share %}" method="post">
+    <div class="form_row">
+        <label>Select a network to share your activity on</label>
+        <ul class="buttonset">
+            {% for id, label in form.social_network.field.choices %}
+                <li>
+                    <input value="{{ id }}" type="radio" name="{{ form.social_network.name }}" 
+                        id="id_{{ form.social_network.name }}{{ forloop.counter0 }}"
+                        {% if id == field.data %}checked="checked"{% endif %} />
+                    <label for="id_{{ form.social_network.name }}{{ forloop.counter0 }}">
+                        {% if label == "Twitter" %}
+                            <img src="{% dated_static 'images/theme/social_icons/24/twitter.png' %}"
+                                width="24" height="24"/>
+                        {% else %}
+                            <img src="{% dated_static 'images/theme/social_icons/24/facebook.png' %}"
+                                width="24" height="24"/>
+                        {% endif %}
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <br class="clear" />
+    <input type="submit" value="Share"></input> | 
+    <a id="ask_to_share_cancel" href="{% url profile_edit request.user.id %}">no thanks</a>
+    {% csrf_token %}
+    <br />
+    <div class="form_row smaller">
+        <a href="{% url records_dont_ask_again %}">please don't ask me this again</a>
+    </div>
+</form>

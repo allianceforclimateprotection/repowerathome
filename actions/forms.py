@@ -16,7 +16,7 @@ class ActionCommitForm(BaseActionForm):
         widget=forms.DateInput(attrs={"class": "date_commit_field"}))
         
     def save(self):
-        self.action.commit_for_user(self.user, self.cleaned_data["date_committed"])
+        return self.action.commit_for_user(self.user, self.cleaned_data["date_committed"])
         
 class ActionAdminForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), 

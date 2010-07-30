@@ -1,11 +1,14 @@
 {% extends "rah/base.html" %}
 
+{% load dated_static %}
+
 {% block right_content %}
     <h1>Edit your Profile</h1>
     <div id="profile_edit_tabs" class="tabs">
         <ul>
             <li><a href="#account_tab">Account</a></li>
             <li><a href="#notifications_tab">Notifications</a></li>
+            {# <li><a href="#social_networks_tab">Social Networks</a></li> #}
         </ul>
         <div id="account_tab">
             <p>
@@ -14,11 +17,6 @@
                 {% endif %}
                 {% if not profile.facebook_connect_only %}
                     <a href="{% url password_change %}">Change your password</a><br/>
-                {% endif %}
-                {% if profile.twitter_access_token %}
-                    Your account is linked with twitter (<a href="{% url twitter_oauth_unauth %}">unlink</a>)
-                {% else %}
-                    <a id="link_with_twitter" href="{% url twitter_oauth_auth %}">Link your account with twitter</a>
                 {% endif %}
             </p>
             <form id="profile_edit_form" action="" method="post" autocomplete="false">
@@ -79,6 +77,42 @@
                 {% csrf_token %}
             </form>
         </div>
+        {# <div id="social_networks_tab"> #}
+        {#     <div class="form_row"> #}
+        {#         <label>Link your accounts with Repower at Home</label> #}
+        {#         <ul> #}
+        {#             <li> #}
+        {#                 <img src="{% dated_static 'images/theme/social_icons/24/twitter.png' %}" alt="Twitter icon"  #}
+        {#                      title="Twitter" width="24" height="24"/> #}
+        {#                 {% if profile.twitter_access_token %} #}
+        {#                     <a class="" href="{% url twitter_oauth_unauth %}">Unlink Twitter</a> #}
+        {#                 {% else %} #}
+        {#                     <a id="link_with_twitter" class="" href="{% url twitter_oauth_auth %}">Link Twitter</a> #}
+        {#                 {% endif %} #}
+        {#             </li> #}
+        {#             <li> #}
+        {#                 <img src="{% dated_static 'images/theme/social_icons/24/facebook.png' %}" alt="Facebook icon"  #}
+        {#                      title="Facebook" width="24" height="24"/> #}
+        {#                 {% if profile.facebook_connect_only %} #}
+        {#                     You can not unlink your facebook account, since you are currently logged in with facebook #}
+        {#                 {% else %} #}
+        {#                     {% if profile.facebook_access_token %} #}
+        {#                         <a class="" href="{% url facebook_unauthorize %}">Unlink Facebook</a> #}
+        {#                     {% else %} #}
+        {#                         <a id="link_with_facebook" class="" href="{% url facebook_authorize %}">Link Facebook</a> #}
+        {#                     {% endif %} #}
+        {#                 {% endif %} #}
+        {#                 {% if profile.facebook_access_token %} #}
+        {#                     {% if profile.facebook_share %} #}
+        {#                         | <a href="{% url facebook_disable_sharing %}">Don't Share</a> #}
+        {#                     {% else %} #}
+        {#                         | <a href="{% url facebook_enable_sharing %}">Share</a> #}
+        {#                     {% endif %} #}
+        {#                 {% endif %} #}
+        {#             </li> #}
+        {#         </ul> #}
+        {#     </div> #}
+        {# </div> #}
     </div>
 {% endblock %}
 
