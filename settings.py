@@ -144,6 +144,8 @@ GZIP_CONTENT_TYPES = (
 
 COMMENTS_ALLOW_PROFANITIES = True
 
+IGNORABLE_404_ENDS = ('.google-analytics.com/ga.js/', '/b.js/')
+
 THUMBNAIL_EXTENSION = 'png'
 
 MYSQLDUPLICATE_EXCLUDE = ("django_site",)
