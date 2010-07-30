@@ -39,7 +39,7 @@ def _coal_challenge_stats():
     total_people = locale.format('%d', User.objects.all().count(), True)
     total_actions = locale.format('%d', Record.objects.filter(void=False, activity=1).count(), 
         True)
-    total_points = locale.format('%d', Profile.objects.all().aggregate(
+    total_coal = locale.format('%d', Profile.objects.all().aggregate(
         Sum('total_points'))['total_points__sum'], True)
     return locals()
 
