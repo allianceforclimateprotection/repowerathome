@@ -85,7 +85,8 @@ class Message(models.Model):
             elif self.message_timing == "after_end":
                 send_time = end + delta
         if self.time_snap:
-            return send_time.replace(hour=self.time_snap.hour, minute=self.time_snap.minute)
+            return send_time.replace(hour=self.time_snap.hour, minute=self.time_snap.minute, 
+                second=self.time_snap.second)
         return send_time
     
     def recipients(self, content_object):
@@ -231,7 +232,7 @@ class Queue(models.Model):
         if not self.message.send_as_batch:
             return None
         potential_messages = ABTest.objects.potential_messages(message=self.message)
-        delta_time = datetime.timedelta(hours=self.message.batch_window) if self.message.batch_window else 0
+        delta_time = datetime.timedelta(hours=self.message.batch_window) if self.message.batch_window else datetime.timedelta(0)
         queued = Queue.objects.filter(message__in=potential_messages, batch_content_type=self.batch_content_type,
             batch_object_pk=self.batch_object_pk, send_time__lte=self.send_time+delta_time).exclude(pk=self.pk)
         return queued if queued else None

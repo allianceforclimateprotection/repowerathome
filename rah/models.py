@@ -1,3 +1,4 @@
+import datetime
 import facebook
 import hashlib
 import json
@@ -82,12 +83,14 @@ class Profile(models.Model):
         yestarday = datetime.date.today() - datetime.timedelta(days=1)
         start = datetime.datetime.combine(yestarday, datetime.time.min)
         end = datetime.datetime.combine(yestarday, datetime.time.max)
-        return UserActionProgress.objects.filter(user=self.user, updated__gte=start, updated__lte=end)
+        return UserActionProgress.objects.filter(user=self.user, updated__gte=start, 
+            updated__lte=end, date_committed__isnull=False, is_completed=0)
         
     def commitments_made_before_yestarday(self):
         yestarday = datetime.date.today() - datetime.timedelta(days=1)
         start = datetime.datetime.combine(yestarday, datetime.time.min)
-        return UserActionProgress.objects.filter(user=self.user, updated__lt=start)
+        return UserActionProgress.objects.filter(user=self.user, updated__lt=start,
+            date_committed__isnull=False, is_completed=0)
         
     def commitments_due_in_a_week(self):
         return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
@@ -96,7 +99,8 @@ class Profile(models.Model):
         return self._commitment_due_on(datetime.date.today())
             
     def _commitment_due_on(self, due_date):
-        return UserActionProgress.objects.filter(user=self.user, date_committed=due_date)
+        return UserActionProgress.objects.filter(user=self.user, date_committed=due_date,
+            is_completed=0)
 
 """
 SIGNALS!
