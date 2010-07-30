@@ -91,6 +91,16 @@ class Profile(models.Model):
         start = datetime.datetime.combine(yestarday, datetime.time.min)
         return UserActionProgress.objects.filter(user=self.user, updated__lt=start,
             date_committed__isnull=False, is_completed=0)
+            
+    def commitments_made_last_24_hours(self):
+        yestarday = datetime.datetime.today() - datetime.timedelta(days=1)
+        return UserActionProgress.objects.filter(user=self.user, updated__gte=yestarday,
+            date_committed__isnull=False, is_completed=0)
+            
+    def commitments_made_more_than_24_hours(self):
+        yestarday = datetime.datetime.today() - datetime.timedelta(days=1)
+        return UserActionProgress.objects.filter(user=self.user, updated__lt=yestarday,
+            date_committed__isnull=False, is_completed=0)
         
     def commitments_due_in_a_week(self):
         return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
