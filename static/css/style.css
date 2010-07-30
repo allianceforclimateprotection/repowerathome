@@ -46,7 +46,7 @@ a { color: #388ca0; text-decoration: none; }
 a:hover { text-decoration:underline; }
 a:active { color: #6EC3D1; text-decoration:underline; }
 h1, h1 a {
-    font-family:"superclarendon-1", "superclarendon-2", serif;
+    font-family:"superclarendon-1", "superclarendon-2", Tahoma, sans-serif;
     font-weight:700;
     font-style: normal;
     visibility: hidden;
@@ -82,7 +82,7 @@ ul{
 Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms 
 --------------------------------------------------------------------------------------------------------------------- */
 input, select, textarea {
-    font-family: "superclarendon-1", "superclarendon-2", serif;
+    font-family:"superclarendon-1", "superclarendon-2", Tahoma, sans-serif;
     font-weight: 700;
     visibility: hidden;
     font-style: normal; }
@@ -196,7 +196,7 @@ Header Header Header Header Header Header Header Header Header Header Header Hea
 #header_logo { position:absolute; left: 352px; top:9px; }
 #header #cse_search_box_form{ position:absolute; right:0px; top:15px; }
 #cse_search_box_form label.inside{
-    font-family: "superclarendon-1", "superclarendon-2", serif;
+    font-family:"superclarendon-1", "superclarendon-2", Tahoma, sans-serif;
     font-weight: 700;
     font-style: normal;
     color: #C1C1C1;
@@ -969,7 +969,7 @@ JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI
 /* Button
 ----------------------------------*/
 .ui-button { 
-    font-family:"superclarendon-1", "superclarendon-2", serif !important;
+    font-family:"superclarendon-1", "superclarendon-2", Tahoma, sans-serif !important;
     font-weight:700;
     font-size: 14px;
     font-style: normal;

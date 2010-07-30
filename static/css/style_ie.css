@@ -1,0 +1,2 @@
+/* Show things otherwise hidden for typekit on other browsers */
+input, select, textarea, h1, h1 a, .ui-button, #cse_search_box_form label.inside, .button {visibility:visible !important;}

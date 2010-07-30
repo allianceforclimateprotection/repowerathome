@@ -31,6 +31,9 @@
         {% else %}
             <link rel="stylesheet" href="{% dated_static 'css/style_min.css' %}" type="text/css" media="screen" charset="utf-8"/>
         {% endif %}
+        <!--[if IE]>
+        	<link rel="stylesheet" type="text/css" href="{% dated_static 'css/style_ie.css' %}" media="screen" charset="utf-8"/>
+        <![endif]-->
         <script type="text/javascript">
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', 'UA-11623269-1']);
