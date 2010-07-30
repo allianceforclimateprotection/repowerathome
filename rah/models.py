@@ -74,18 +74,20 @@ class Profile(models.Model):
         return UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False, 
             is_completed=0).aggregate(models.Sum("action__points"))["action__points__sum"]
             
-    def actions_committed_to_yestarday(self):
+    def number_of_committed_actions(self):
+        return UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False,
+            is_completed=0).count()
+            
+    def commitments_made_yestarday(self):
         yestarday = datetime.date.today() - datetime.timedelta(days=1)
         start = datetime.datetime.combine(yestarday, datetime.time.min)
         end = datetime.datetime.combine(yestarday, datetime.time.max)
-        return Action.objects.filter(useractionprogress__user=self.user, 
-            useractionprogress__updated__gte=start, useractionprogress__updated__lte=end)
+        return UserActionProgress.objects.filter(user=self.user, updated__gte=start, updated__lte=end)
         
-    def actions_committed_before_yestarday(self):
+    def commitments_made_before_yestarday(self):
         yestarday = datetime.date.today() - datetime.timedelta(days=1)
         start = datetime.datetime.combine(yestarday, datetime.time.min)
-        return Action.objects.filter(useractionprogress__user=self.user, 
-            useractionprogress__updated__lt=start)
+        return UserActionProgress.objects.filter(user=self.user, updated__lt=start)
         
     def commitments_due_in_a_week(self):
         return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
@@ -94,8 +96,7 @@ class Profile(models.Model):
         return self._commitment_due_on(datetime.date.today())
             
     def _commitment_due_on(self, due_date):
-        return Action.objects.filter(useractionprogress__user=self.user, 
-            useractionprogress__date_committed=due_date)
+        return UserActionProgress.objects.filter(user=self.user, date_committed=due_date)
 
 """
 SIGNALS!
