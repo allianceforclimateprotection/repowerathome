@@ -35,11 +35,17 @@ class Message(models.Model):
         x_value of 48. The message will be sent out 48 hours after the start. So in the\
         case of a commitment stream, 48 hours after they make a commitment.")
     x_value = models.PositiveIntegerField()
-    recipient_function = models.CharField(max_length=100)
+    recipient_function = models.CharField(max_length=100, help_text="This is an attribute or function\
+        of the content object that defines a recipient or list of recipeients.  Note: recipients\
+        can be classified as email addresses or objects that contain an 'email' attribute (e.g.\
+        auth.User or events.Guest)")
     send_as_batch = models.BooleanField(default=False, help_text="If multiple messages of the\
         same type are scheduled to be sent out at the same time, then just send one. Note: if you\
         check this box, your messages must be written to reference multiple objects.  Be very\
         careful when using this option in conjunction with AB Tests.")
+    # batch_function = models.CharField(max_length=100, help_text="This is an attribute or function\
+    #     of the content object that defines a value all like messages should match on. If this field\
+    #     is not defined, then the messages will match on the content object itself.")
     batch_window = models.PositiveIntegerField(null=True, blank=True, help_text="Only applicable if a\
         message is scheduled to be sent as a batch, but if set, all messages of this type will\
         be batched together if their send time is calculated to be within X hours of one another.")
@@ -102,6 +108,13 @@ class Message(models.Model):
         if not hasattr(recipients, "__iter__"):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
+        
+    # def batch_type(self, content_object):
+    #     if not hasattr(content_object, self.batch_function):
+    #         raise NotImplementedError("%s does not exist for %s" % (self.batch_function,
+    #             content_object))
+    #     func_or_attr = getattr(content_object, self.batch_function)
+    #     return func_or_attr() if inspect.ismethod(func_or_attr) else func_or_attr
     
     def send(self, content_object, blacklisted_emails=None): # TODO: create unit tests for Message.send()
         sent = []
@@ -177,22 +190,22 @@ class MessageLink(models.Model):
 class QueueManager(models.Manager):
     def send_ready_messages(self, process_minutes=12):
         now = datetime.datetime.now()
-        messages = list(self.filter(send_time__lte=now).order_by("send_time"))
         if process_minutes:
             until = now + datetime.timedelta(minutes=process_minutes)
         sent = []
-        while len(messages) > 0:
-            queued_message = messages.pop(0)
+        deleted_pk = []
+        for queued_message in self.filter(send_time__lte=now).order_by("send_time"):
+            if queued_message.pk in deleted_pk:
+                continue # previous batchable message has been sent, and this one has now been deleted
             batchable_messages = queued_message.find_batchable_messages()
             if batchable_messages:
                 # TODO: should regenerate message, will need to make ABTest/Message One To One first
-                messages = [m for m in messages if m not in batchable_messages]
+                deleted_pk = deleted_pk + [bm.pk for bm in batchable_messages]
                 batchable_messages.delete()
             sent = sent + queued_message.send()
             queued_message.delete()
             if process_minutes and until < datetime.datetime.now():
-                print "WARNING: %s min time limit has been exceeded, %s message(s) are remaining" \
-                    % (process_minutes, len(messages))
+                print "WARNING: %s min time limit has been exceeded" % process_minutes
                 break
         return sent
 
@@ -201,6 +214,10 @@ class Queue(models.Model):
     content_type = models.ForeignKey(ContentType, verbose_name="content type", related_name="%(class)s")
     object_pk = models.PositiveIntegerField("object ID")
     content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
+    batch_content_type = models.ForeignKey(ContentType, verbose_name="batch content type", 
+        related_name="%(class)s_batch", null=True)
+    batch_object_pk = models.PositiveIntegerField("batch object ID", null=True)
+    batch_content_object = generic.GenericForeignKey(ct_field="batch_content_type", fk_field="batch_object_pk")
     send_time = models.DateTimeField(db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -215,8 +232,8 @@ class Queue(models.Model):
             return None
         potential_messages = ABTest.objects.potential_messages(message=self.message)
         delta_time = datetime.timedelta(hours=self.message.batch_window) if self.message.batch_window else 0
-        queued = Queue.objects.filter(message__in=potential_messages, content_type=self.content_type,
-            object_pk=self.object_pk, send_time__lte=self.send_time+delta_time).exclude(pk=self.pk)
+        queued = Queue.objects.filter(message__in=potential_messages, batch_content_type=self.batch_content_type,
+            batch_object_pk=self.batch_object_pk, send_time__lte=self.send_time+delta_time).exclude(pk=self.pk)
         return queued if queued else None
             
     def __unicode__(self):
@@ -242,7 +259,7 @@ class Stream(models.Model):
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
     
-    def enqueue(self, content_object, start, end, send_expired=True):
+    def enqueue(self, content_object, start, end, batch_content_object=None, send_expired=True):
         enqueued = []
         now = datetime.datetime.now()
         for ab_test in ABTest.objects.filter(stream=self):
@@ -255,13 +272,19 @@ class Stream(models.Model):
                     if send_expired:
                         message.send(content_object)
                 else:
-                    enqueued.append(Queue.objects.create(message=message,
-                        content_object=content_object, send_time=send_time))
+                    if batch_content_object:
+                        enqueued.append(Queue.objects.create(message=message,
+                            content_object=content_object, send_time=send_time, 
+                            batch_content_object=batch_content_object))
+                    else:
+                        enqueued.append(Queue.objects.create(message=message,
+                            content_object=content_object, send_time=send_time))
         return enqueued
     
-    def upqueue(self, content_object, start, end):
+    def upqueue(self, content_object, start, end, batch_content_object=None):
         self.dequeue(content_object=content_object)
-        return self.enqueue(content_object=content_object, start=start, end=end, send_expired=False)
+        return self.enqueue(content_object=content_object, start=start, end=end, 
+            batch_content_object=batch_content_object, send_expired=False)
     
     def dequeue(self, content_object):
         return self._queued_messages(content_object).delete()
