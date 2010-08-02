@@ -526,12 +526,9 @@ var rah = {
                 $('#message_box').hide().append(html).slideDown();
             }
             $(".messages:not(.sticky)").each(function() {
-                var elem = $(this).parents("ul");
-                setTimeout(function() {
-                    elem.slideUp(400, function(){ elem.remove(); });
-                }, 5000);
+                $(this).delay(5000).slideUp(400, function(){ $(this).remove(); })
             });
-            $("#message_box .dismiss").live("click", function(){ $(this).parents("ul").slideUp(); });
+            $("#message_box .dismiss").live("click", function(){ $(this).parents("li").slideUp(); });
         }
     },
     
