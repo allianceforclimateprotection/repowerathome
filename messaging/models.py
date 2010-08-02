@@ -84,7 +84,7 @@ class Message(models.Model):
                 send_time = send if send > start else None
             elif self.message_timing == "after_end":
                 send_time = end + delta
-        if self.time_snap:
+        if send_time and self.time_snap:
             return send_time.replace(hour=self.time_snap.hour, minute=self.time_snap.minute, 
                 second=self.time_snap.second)
         return send_time
