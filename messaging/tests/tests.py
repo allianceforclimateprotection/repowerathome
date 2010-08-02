@@ -59,6 +59,17 @@ class MessageSendTimeTest(TestCase):
         
         self.failUnlessEqual(time_snap.send_time(start, end), datetime.datetime(2010, 7, 2, 11, 15))
         
+    def test_send_with_duration_minimum(self):
+        start = datetime.datetime(2010, 7, 1, 18, 00)
+        end = datetime.datetime(2010, 7, 4, 18, 00)
+        minimum_duration = Message.objects.get(name="minimum duration")
+        
+        self.failUnlessEqual(minimum_duration.send_time(start, end), None)
+        
+        minimum_duration.minimum_duration = 24
+        self.failUnlessEqual(minimum_duration.send_time(start, end), datetime.datetime(2010, 7, 3, 18, 00))
+        
+        
 class MessageRecipientTest(TestCase):
     fixtures = ["test_messaging.json"]
     
