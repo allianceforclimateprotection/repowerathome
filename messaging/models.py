@@ -68,14 +68,15 @@ class Message(models.Model):
         if self.message_timing not in Message.TIMING_CODES:
             raise NotImplementedError("unknown delta type: %s" % self.message_timing)
         
-        if self.minimum_duration and end-start < datetime.timedelta(hours=self.minimum_duration):
-            # There isn't enough time to send this message
-            return None
-        
         if start.__class__ == datetime.date:
             start = datetime.datetime.combine(start, datetime.time.min)
         if end.__class__ == datetime.date:
             end = datetime.datetime.combine(end, datetime.time.max)
+            
+        if self.minimum_duration and end-start < datetime.timedelta(hours=self.minimum_duration):
+            # There isn't enough time to send this message
+            return None
+                
         if self.message_timing == "timeline_scale":
             timeline = end - start
             delta = (timeline * self.x_value) / 100
