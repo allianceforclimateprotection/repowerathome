@@ -43,9 +43,6 @@ class Message(models.Model):
         same type are scheduled to be sent out at the same time, then just send one. Note: if you\
         check this box, your messages must be written to reference multiple objects.  Be very\
         careful when using this option in conjunction with AB Tests.")
-    # batch_function = models.CharField(max_length=100, help_text="This is an attribute or function\
-    #     of the content object that defines a value all like messages should match on. If this field\
-    #     is not defined, then the messages will match on the content object itself.")
     batch_window = models.PositiveIntegerField(null=True, blank=True, help_text="Only applicable if a\
         message is scheduled to be sent as a batch, but if set, all messages of this type will\
         be batched together if their send time is calculated to be within X hours of one another.")
@@ -54,6 +51,11 @@ class Message(models.Model):
         will reset the time value leaving the date intact. For example if the send time is\
         calculated to July 15th, 2010 at 3:32pm and time_snap is set to 11:00am. The new send\
         time will be July 15th, 2010 at 11:00am.")
+    minimum_duration = models.PositiveIntegerField(null=True, blank=True, help_text="If set, this\
+        message will only be sent out if the number of hours between the start of the stream and\
+        then end of the stream is greater than this number. For example, if this number is set to\
+        72 hours and a user makes a commitment for tomorrow. This message will not be set because\
+        the duration of the stream is only 24 hours.", verbose_name="Minimum duration")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
@@ -65,7 +67,11 @@ class Message(models.Model):
         """
         if self.message_timing not in Message.TIMING_CODES:
             raise NotImplementedError("unknown delta type: %s" % self.message_timing)
-            
+        
+        if self.minimum_duration and end-start < datetime.timedelta(hours=self.minimum_duration):
+            # There isn't enough time to send this message
+            return None
+        
         if start.__class__ == datetime.date:
             start = datetime.datetime.combine(start, datetime.time.min)
         if end.__class__ == datetime.date:
@@ -109,13 +115,6 @@ class Message(models.Model):
         if not hasattr(recipients, "__iter__"):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
-        
-    # def batch_type(self, content_object):
-    #     if not hasattr(content_object, self.batch_function):
-    #         raise NotImplementedError("%s does not exist for %s" % (self.batch_function,
-    #             content_object))
-    #     func_or_attr = getattr(content_object, self.batch_function)
-    #     return func_or_attr() if inspect.ismethod(func_or_attr) else func_or_attr
     
     def send(self, content_object, blacklisted_emails=None): # TODO: create unit tests for Message.send()
         sent = []

@@ -32,3 +32,5 @@ ALTER TABLE rah_profile ADD ask_to_share TINYINT(1) DEFAULT 1 AFTER facebook_sha
 ALTER TABLE messaging_queue ADD batch_content_type_id int(11) AFTER object_pk;
 
 ALTER TABLE messaging_queue ADD batch_object_pk int(10) UNSIGNED AFTER batch_content_type_id;
+
+ALTER TABLE messaging_message ADD minimum_duration INT(10) DEFAULT NULL AFTER time_snap;
