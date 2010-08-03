@@ -51,6 +51,7 @@ class InviteForm(forms.ModelForm):
             self.instance.token = make_token()
             invite = super(InviteForm, self).save(*args, **kwargs)
             ct = self.instance.content_type
+            # OPTIMIZE: convert invitation sending to use message stream
             template_list = ["invite/invite.html",]
             if ct:
                 template_list = [

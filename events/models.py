@@ -275,6 +275,7 @@ models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 
 rsvp_recieved = Signal(providing_args=["guest"])
 def notification_on_rsvp(sender, guest, **kwargs):
+    # OPTIMIZE: convert notification_on_rsvp to use message stream
     if guest.rsvp_status and guest.notify_on_rsvp:
         creator = guest.event.creator
         context = {"user": creator, "guest": guest, "domain": Site.objects.get_current().domain}
