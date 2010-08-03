@@ -11,6 +11,14 @@ class AskToShareForm(forms.Form):
         ("f", "Facebook",),
     )
     social_network = forms.ChoiceField(label="", choices=SOCIAL_NETWORKS, widget=forms.RadioSelect)
+    has_twitter_access = forms.BooleanField(widget=forms.HiddenInput, required=False)
+    has_facebook_access = forms.BooleanField(widget=forms.HiddenInput, required=False)
+    
+    def __init__(self, request, *args, **kwargs):
+        super(AskToShareForm, self).__init__(*args, **kwargs)
+        profile = request.user.get_profile()
+        self.fields["has_twitter_access"].initial = bool(profile.twitter_access_token)
+        self.fields["has_facebook_access"].initial = bool(profile.facebook_access_token)
     
     def save(self, request, *args, **kwargs):
         network = self.cleaned_data["social_network"]

@@ -81,4 +81,3 @@ def sharing(request, is_enabled):
         messages.error(request, "You must link your Facebook account first")
     next = request.GET.get("next", None)
     return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)
-    

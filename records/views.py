@@ -1,5 +1,6 @@
 import json
 
+from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -23,14 +24,16 @@ def chart(request, user_id):
     
 @login_required
 def ask_to_share(request):
-    form = AskToShareForm(request.POST or None)
+    form = AskToShareForm(request=request, data=(request.POST or None))
     if form.is_valid():
         is_shared = form.save(request=request)
-        messages.success(request, "Your activity is now being shared")
+        message_html = False
+        if is_shared:
+            messages.success(request, "Your activity is now being shared")
+        else:
+            messages.error(request, "There was a problem linking your accounts")
         if request.is_ajax():
-            response = loader.render_to_string("records/sharing_response.js", locals(), 
-                RequestContext(request))
-            return HttpResponse(response, mimetype="text/javascript")
+            return render_to_response("_messages.html", {}, RequestContext(request))
         return redirect("profile_edit", user_id=request.user.id)
     template = "records/_ask_to_share.html" if request.is_ajax() else "records/ask_to_share.html"
     return render_to_response(template, locals(), RequestContext(request))

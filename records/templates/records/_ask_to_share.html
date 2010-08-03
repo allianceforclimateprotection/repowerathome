@@ -3,6 +3,9 @@
 <form id="ask_to_share" action="{% url records_ask_to_share %}" method="post">
     <div class="form_row">
         <label>Select a network to share your activity on</label>
+        {% for error in form.social_network.errors %}
+            <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+        {% endfor %}
         <ul class="buttonset">
             {% for id, label in form.social_network.field.choices %}
                 <li>
@@ -22,8 +25,12 @@
             {% endfor %}
         </ul>
     </div>
+    <div>
+        {{ form.has_twitter_access }}
+        {{ form.has_facebook_access }}
+    </div>
     <br class="clear" />
-    <input type="submit" value="Share"></input> | 
+    <input type="submit" value="Share" /> | 
     <a id="ask_to_share_cancel" href="{% url profile_edit request.user.id %}">no thanks</a>
     {% csrf_token %}
     <br />

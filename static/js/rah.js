@@ -120,34 +120,57 @@ var rah = {
     mod_ask_to_share: {
         init: function(url) {
             $.get(url, function(data) {
-                var container = $("<div />");
-                container.html(data);
-                container.dialog({autoOpen: false, modal: true, height: 210, width: 400,
-                    title: "Would you like to share your activity?"});
-                $("input:submit, .button", container).button();
-                $(".buttonset", container).buttonset();
-                $("#ask_to_share").submit(function() {
-                    var form = $(this);
-                    $.ajax({
-                        url: form.attr("action"),
-                        type: form.attr("method"),
-                        data: form.serialize(),
-                        // success: function(data) {
-                        //     rah.mod_messages.init(data);
-                        // },
-                        dataType: "script"
-                    });
-                    container.dialog("close");
-                    return false;
-                });
-                $("#ask_to_share_cancel", container).click(function() {
-                    container.dialog("close");
-                    return false;
-                });
-                $("#id_dont_ask", container).click(function() {
-                    $(this).parents("form").submit();
-                });
-                container.dialog("open");
+                rah.mod_ask_to_share.build_dialog(data);
+            });
+        },
+        build_dialog: function(data) {
+            var container = $("<div />");
+            container.html(data);
+            container.dialog({autoOpen: false, modal: true, height: 210, width: 400,
+                title: "Would you like to share your activity?"});
+            $("input:submit, .button", container).button();
+            $(".buttonset", container).buttonset();
+            $("#ask_to_share").submit(function() {
+                var form = $(this);
+                var network = $("input[@name='social_network']:checked", form).val();
+                if(network == "f" && !($("#id_has_facebook_access", form).val() == "True")) {
+                    FB.login(function(response) {
+                        if (response.session) {
+                            $.get("/facebook/authorize/", function(data) {
+                                rah.mod_ask_to_share.share(form);
+                            });   
+                        }
+                    }, {perms:"email,publish_stream,offline_access"});
+                } else if (network == "t" && !($("#id_has_twitter_access", form).val() == "True")){
+                    // authorize with tiwtter
+                } else {
+                    rah.mod_ask_to_share.share(form);
+                }
+                container.dialog("close");
+                return false;
+            });
+            $("#ask_to_share_cancel", container).click(function() {
+                container.dialog("close");
+                return false;
+            });
+            $("#id_dont_ask", container).click(function() {
+                $(this).parents("form").submit();
+            });
+            container.dialog("open");
+        },
+        share: function(form) {
+            $.ajax({
+                url: form.attr("action"),
+                type: form.attr("method"),
+                data: form.serialize(),
+                success: function(data) {
+                    if(data.indexOf('class="messages"') >= 0){
+                        rah.mod_messages.init(data);
+                    } else {
+                        rah.mod_ask_to_share.build_dialog(data);
+                    }
+                },
+                dataType: "html"
             });
         }
     },

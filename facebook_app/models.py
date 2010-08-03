@@ -12,6 +12,7 @@ def _get_graph(user):
         except facebook.GraphAPIError:
             # token is invalid, delete it
             profile.facebook_access_token = None
+            profile.facebook_share = False
             profile.save()
     return None
 

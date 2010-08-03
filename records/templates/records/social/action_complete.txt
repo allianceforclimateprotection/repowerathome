@@ -1,2 +1,2 @@
-I just completed the action, {{ content_object.name }}, on {{ record.created|date }}
+I just completed the action, {{ content_object.name|safe }}, on {{ record.created|date }}
 {% if record.points %} for {{ record.points }} points{% endif %}
