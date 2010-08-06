@@ -27,7 +27,7 @@ STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI"
 
 def _durations():
     durations = []
-    hours = range(1,3)
+    hours = range(1,4)
     for hour in hours:
         for minute in [0,15,30,45]:
             durations.append(("%s" % (hour*60+minute), "%sh %0.2dm" % (hour, minute)))
