@@ -68,6 +68,7 @@ def group_join(request, group_id):
         template = loader.get_template("groups/group_join_request.html")
         context = { "user": request.user, "group": group, "domain": Site.objects.get_current().domain, }
         manager_emails = [user_dict["email"] for user_dict in User.objects.filter(group=group, groupusers__is_manager=True).values("email")]
+        # OPTIMIZE: convert group_join to use message stream
         try:
             msg = EmailMessage("Team Join Request", template.render(Context(context)), None, manager_emails)
             msg.content_subtype = "html"
@@ -104,6 +105,7 @@ def group_membership_request(request, group_id, user_id, action):
 def __send_response_email(request, group, user, approved):
     template = loader.get_template("groups/group_membership_response.html")
     context = { "approved": approved, "group": group, "domain": Site.objects.get_current().domain, "user": user, }
+    # OPTIMIZE: convert __send_response_email (group approval) to use message stream
     msg = EmailMessage("Team Membership Response", template.render(Context(context)), None, [user.email])
     msg.content_subtype = "html"
     try:

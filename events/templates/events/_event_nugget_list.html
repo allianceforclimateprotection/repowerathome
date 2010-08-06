@@ -3,7 +3,7 @@
         <li>
             <a href="{{ event.get_absolute_url }}">{{ event }}</a><br />
             <span class="smaller">{{ event.when|date }} @ {{ event.start|time }}</span>
-            <br/><br/>
+            <br/>
         </li>
     {% endfor %}
 </ul>

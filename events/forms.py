@@ -321,6 +321,7 @@ class RsvpAccountForm(forms.ModelForm):
         user.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
         user.save()
         self.instance.user = user
+        # OPTIMIZE: convert post RSVP registration emails to use message stream (PS, shouldn't this be fired by a signal?)
         template = loader.get_template("rah/registration_email.html")
         context = {"user": user, "domain": Site.objects.get_current().domain,}
         msg = EmailMessage("Registration", template.render(Context(context)), None, [user.email])
@@ -349,7 +350,7 @@ class MessageForm(forms.Form):
             self.template = "events/announcement_email.html"
         else:
             raise AttributeError("Unknown message type: %s" % type)
-    
+    # OPTIMIZE: convert event reminders and announcements to use message stream
     def save(self, *args, **kwargs):
         for guest in self.cleaned_data["guests"]:
             context = {"user": self.user, "guest": guest, "domain": Site.objects.get_current().domain, 

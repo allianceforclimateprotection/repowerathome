@@ -340,7 +340,8 @@ def update_group_member_count(sender, instance, **kwargs):
     group = Group.objects.get(pk=instance.group.id)
     group.member_count = GroupUsers.objects.filter(group=group).count()
     group.save()
-    
+
+# OPTIMIZE: convert alert_users_of_discussion to use message stream 
 def alert_users_of_discussion(sender, instance, **kwargs):
     if instance.is_public and not instance.is_removed and not instance.reply_count:
         template = "groups/group_disc_email.html"

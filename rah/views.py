@@ -332,6 +332,7 @@ def forbidden(request, message="You do not have permissions."):
     
 def send_registration_emails(sender, request, user, is_new_user, **kwargs):
     if is_new_user:
+        # OPTIMIZE: convert send_registration_emails to use message stream
         domain = Site.objects.get_current().domain
         template = loader.get_template("rah/registration_email.html")
         context = {"user": user, "domain": domain,}
