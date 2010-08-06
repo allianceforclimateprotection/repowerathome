@@ -135,7 +135,7 @@ MESSAGE_TAGS = {
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 AWS_BUCKET_NAME = 'rahstatic'
-FILTER_LIST = ['.DS_Store', '.svn', '.hg', '.git', 'Thumbs.db', 'minify']
+FILTER_LIST = ['.DS_Store', '.svn', '.hg', '.git', 'Thumbs.db', 'minify', 'group_images', '.psd', '.eps']
 GZIP_CONTENT_TYPES = (
     'text/css',
     'application/javascript',
