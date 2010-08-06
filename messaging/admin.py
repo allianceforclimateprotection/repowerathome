@@ -3,7 +3,7 @@ from django.contrib import admin
 from models import Message, ABTest, Stream
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ("__unicode__", "sends", "unique_opens")
+    list_display = ("__unicode__", "sends", "unique_opens", "click_thrus")
     readonly_fields = ("sends", "recipient_function")
     fieldsets = (
         (None, {"fields": ("name", "subject", "body", "sends", "recipient_function",)}),

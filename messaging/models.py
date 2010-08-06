@@ -151,9 +151,10 @@ class Message(models.Model):
         return sent
     
     def unique_opens(self):
-        opens = RecipientMessage.objects.filter(message=self, opens__gt=0).aggregate(
-            models.Count("opens"))["opens__count"]
-        return opens if opens else 0
+        return RecipientMessage.objects.filter(message=self, opens__gt=0).count()
+        
+    def click_thrus(self):
+        return RecipientMessage.objects.distinct().filter(message=self, messagelink__clicks__gt=0).count()
         
     def related_streams(self):
         return Stream.objects.filter(models.Q(abtest__message=self) | models.Q(abtest__test_message=self))
