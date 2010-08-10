@@ -22,14 +22,19 @@ Requirements:
             "production": {
                 "server": "admin@server.com"
                 "DATABASE": "production",
+                "HOST": "mysqlserver@server.com",
                 "USER": "root",
                 "PASSWORD": ";qewrgcas;lkdf"
             }
         }
     
-    Notice by default a database can not be setup TO BE replaced, if the database needs to be 
-    replaceable, you must set the "CAN_REPLACE" property to True.  Also if a server name is not
-    provided it assumes that the databased is stored locally.
+    Notice by default a database can not be replaced, if the database needs to be replaceable, 
+    you must set the "CAN_REPLACE" property to True.  Also if a server name is not provided it 
+    assumes that the databased is stored locally.
+    
+    Also the "HOST" property is optional in cases where the database is located on the server you
+    are connecting to.  But if for instance you need to ssh into a server that is communicating 
+    with a mysql database on another server, you will need to provide "HOST".
     
 Usage:
     To execute the this module you can run something like the following:
@@ -50,10 +55,12 @@ class ServerAlias(object):
     the assumption that any server you need to connect to via SSH can be done so with your 
     existing SSH keys.
     """
-    def __init__(self, name, server=None, database=None, user=None, password=None, can_replace=False):
+    def __init__(self, name, server=None, database=None, user=None, password=None, 
+        can_replace=False, host="127.0.0.1"):
         self.name = name
         self.server = server
         self.database = database
+        self.host = host
         self.user = user
         self.password = password
         self.can_replace = can_replace
@@ -69,7 +76,7 @@ class ServerAlias(object):
         include a list of tables to be excluded.
         """
         command = self._connect_to_server()
-        command += "mysqldump -u %s -p'%s' %s " % (self.user, self.password, self.database)
+        command += "mysqldump -h %s -u %s -p'%s' %s " % (self.host, self.user, self.password, self.database)
         if exclude:
             command += " ".join(self.get_tables(exclude))
         return command
@@ -81,7 +88,7 @@ class ServerAlias(object):
         a list of tables to be excluded.
         """
         command = self._connect_to_server()
-        command += "mysql -u %s -p'%s' %s" % (self.user, self.password, self.database)
+        command += "mysql -h %s -u %s -p'%s' %s" % (self.host, self.user, self.password, self.database)
         return command
         
     def backup_data(self):
