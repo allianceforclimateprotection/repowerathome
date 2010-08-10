@@ -105,7 +105,6 @@ INSTALLED_APPS = (
     'flagged',
     'invite',
     'dated_static',
-    'notification',
     'actions',
     'events',
     'migrations',
