@@ -11,5 +11,6 @@ pisa==3.0.33
 python-memcached==1.45
 pycrypto==2.2
 reportlab==2.4
+sorl-thumbnail==3.2.5
 wsgiref==0.1.2
 yolk==0.4.1
