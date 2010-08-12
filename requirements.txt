@@ -3,7 +3,7 @@ Django==1.2.1
 Fabric==0.9.1
 MySQL-python==1.2.3
 PIL==1.1.7
-django-extensions==0.5
+-e git+http://github.com/django-extensions/django-extensions.git@1610e1e59124071e1d01#egg=django_extensions
 django-tagging==0.3.1
 -e git+http://github.com/facebook/python-sdk.git#egg=facebook
 html5lib==0.90
