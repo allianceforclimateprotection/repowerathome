@@ -146,6 +146,8 @@ THUMBNAIL_EXTENSION = 'png'
 
 MYSQLDUPLICATE_EXCLUDE = ("django_site",)
 
+POSTMARK_SENDER = 'noreply@repowerathome.com'
+
 # Date defaults
 DATETIME_FORMAT = "F j, Y, P"
 DATE_FORMAT = "F j, Y"
