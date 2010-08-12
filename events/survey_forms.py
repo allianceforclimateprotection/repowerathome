@@ -66,6 +66,26 @@ class EnergyMeetingCommitmentCard(SurveyForm):
         required=False, label="Have an energy audit")
     host_event = forms.BooleanField(required=False, label="Host an event")
     join_team = forms.BooleanField(required=False, label="Join a team")
+    
+class ApartmentEnergyMeetingCommitmentCard(SurveyForm):
+    CHOICES = (
+        ("D", "I've Done this"),
+        ("C", "I pledge to do this"),
+    )
+    eliminate_vampire = ActionChoiceField(action_slug="eliminate-standby-vampire-power",
+        choices=CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
+        required=False, label="Eliminate vampire power")
+    program_thermostat = ActionChoiceField(action_slug="programmable-thermostat",
+        choices=CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
+        required=False, label="Program your thermostat")
+    replace_light_bulbs = ActionChoiceField(action_slug="replace-your-incandescent-light-bulbs-with-cfls",
+        choices=CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
+        required=False, label="Replace light bulbs with CFLs")
+    cold_wash = ActionChoiceField(action_slug="wash-clothes-cold-water",
+        choices=CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
+        required=False, label="Use the cold wash cycle")
+    host_event = forms.BooleanField(required=False, label="Host an event")
+    join_team = forms.BooleanField(required=False, label="Join a team")
 
 class PilotEnergyMeetingCommitmentCard(SurveyForm):
     CHOICES = (
@@ -143,7 +163,6 @@ class PilotEnergyMeetingCommitmentCard(SurveyForm):
         required=False, label="Dial down your thermostat")     
     
 class VolunteerInterestForm(SurveyForm):
-
     eliminate_vampire = ActionBooleanField(action_slug="eliminate-standby-vampire-power",
         required=False)
     program_thermostat = ActionBooleanField(action_slug="programmable-thermostat",
