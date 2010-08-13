@@ -36,7 +36,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'debug_toolbar',
     'dated_static',
-    'notification',
     'actions',
     'events',
     'messaging',

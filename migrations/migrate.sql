@@ -1,36 +1,5 @@
-ALTER TABLE messaging_message ADD send_as_batch TINYINT(1) AFTER recipient_function;
+INSERT INTO `events_eventtype` (`id`, `name`, `teaser`, `created`, `updated`, `description`) 
+VALUES (5, "Apartment Energy Meeting", "", NOW(), NOW(), "Our energy choices at home have a huge impact on our health, our environment, and our pocketbooks.   At the energy meeting, we will explore ways to improve our community by using less energy at home.  We’ll learn about simple actions that tackle the main sources of home energy waste, and we’ll also brainstorm ways we can grow our impact by getting others involved in repowering their homes.");
 
-ALTER TABLE messaging_message ADD batch_window INT(1) AFTER send_as_batch;
-
-ALTER TABLE messaging_message ADD time_snap TIME DEFAULT NULL AFTER batch_window;
-
-ALTER TABLE messaging_message CHANGE delta_type message_timing VARCHAR(20);
-
-ALTER TABLE messaging_message CHANGE delta_value x_value INT(10);
-
-ALTER TABLE messaging_stream ADD label VARCHAR(50) AFTER slug;
-
-ALTER TABLE messaging_stream ADD description VARCHAR(255) AFTER label;
-
-ALTER TABLE messaging_stream ADD can_unsubscribe TINYINT(1) AFTER description;
-
-ALTER TABLE messaging_recipientmessage CHANGE token token VARCHAR(40);
-
-ALTER TABLE messaging_messagelink CHANGE token token VARCHAR(40);
-
--- Add a new column, to indicate whether or not a user would like to share their activity on twitter
-ALTER TABLE rah_profile ADD twitter_share TINYINT(1) DEFAULT 0 AFTER twitter_access_token;
-
--- Add a new column, to indicate whether or not a user would like to share their activity on facebook
-ALTER TABLE rah_profile ADD facebook_share TINYINT(1) DEFAULT 0 AFTER facebook_connect_only;
-
--- Add a new column, to indicate whether or not we should ask the user to share their activity stream
-ALTER TABLE rah_profile ADD ask_to_share TINYINT(1) DEFAULT 1 AFTER facebook_share;
-
--- ALTER TABLE messaging_message ADD batch_function VARCHAR(100) AFTER send_as_batch;
-
-ALTER TABLE messaging_queue ADD batch_content_type_id int(11) AFTER object_pk;
-
-ALTER TABLE messaging_queue ADD batch_object_pk int(10) UNSIGNED AFTER batch_content_type_id;
-
-ALTER TABLE messaging_message ADD minimum_duration INT(10) DEFAULT NULL AFTER time_snap;
+INSERT INTO `events_survey` (`id`, `name`, `event_type_id`, `form_name`, `template_name`, `is_active`, `created`, `updated`)
+VALUES (4, "Apartment Energy Meeting Commitment Card", 5, "ApartmentEnergyMeetingCommitmentCard", "events/_energy_commitment_card.html", 1, NOW(), NOW())

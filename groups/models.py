@@ -12,7 +12,6 @@ from records.models import Record
 from rah.models import Profile
 from actions.models import Action
 from invite.models import Invitation, Rsvp
-from notification import models as notification
    
 class GroupManager(models.Manager):
     def groups_with_memberships(self, user, limit=None):

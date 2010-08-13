@@ -84,23 +84,23 @@ class Profile(models.Model):
         start = datetime.datetime.combine(yestarday, datetime.time.min)
         end = datetime.datetime.combine(yestarday, datetime.time.max)
         return UserActionProgress.objects.filter(user=self.user, updated__gte=start, 
-            updated__lte=end, date_committed__isnull=False, is_completed=0)
+            updated__lte=end, date_committed__isnull=False, is_completed=0).order_by("-date_committed")
         
     def commitments_made_before_yestarday(self):
         yestarday = datetime.date.today() - datetime.timedelta(days=1)
         start = datetime.datetime.combine(yestarday, datetime.time.min)
         return UserActionProgress.objects.filter(user=self.user, updated__lt=start,
-            date_committed__isnull=False, is_completed=0)
+            date_committed__isnull=False, is_completed=0).order_by("-date_committed")
             
     def commitments_made_last_24_hours(self):
         yestarday = datetime.datetime.today() - datetime.timedelta(days=1)
         return UserActionProgress.objects.filter(user=self.user, updated__gte=yestarday,
-            date_committed__isnull=False, is_completed=0)
+            date_committed__isnull=False, is_completed=0).order_by("-date_committed")
             
     def commitments_made_more_than_24_hours(self):
         yestarday = datetime.datetime.today() - datetime.timedelta(days=1)
         return UserActionProgress.objects.filter(user=self.user, updated__lt=yestarday,
-            date_committed__isnull=False, is_completed=0)
+            date_committed__isnull=False, is_completed=0).order_by("-date_committed")
         
     def commitments_due_in_a_week(self):
         return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
@@ -110,7 +110,7 @@ class Profile(models.Model):
             
     def _commitment_due_on(self, due_date):
         return UserActionProgress.objects.filter(user=self.user, date_committed=due_date,
-            is_completed=0)
+            is_completed=0).order_by("-date_committed")
 
 """
 SIGNALS!
