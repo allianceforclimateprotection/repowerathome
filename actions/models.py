@@ -149,10 +149,10 @@ class Action(models.Model):
                                         AND actions_actionform.id = afd.action_form_id"""})
                                         
     def get_detail_illustration(self):
-        return dated_static("/static/images/actions/%s/action_detail.jpg" % self.slug)
+        return dated_static("images/actions/%s/action_detail.jpg" % self.slug)
 
     def get_nugget_illustration(self):
-        return dated_static("/static/images/actions/%s/action_nugget.jpg" % self.slug)
+        return dated_static("images/actions/%s/action_nugget.jpg" % self.slug)
     
     def has_illustration(self):
         path = "images/actions/%s/action_detail.jpg" % self.slug
