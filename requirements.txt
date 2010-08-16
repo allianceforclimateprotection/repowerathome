@@ -5,6 +5,7 @@ MySQL-python==1.2.3
 PIL==1.1.7
 boto==2.0b1
 django-tagging==0.3.1
+easy-thumbnails==1.0-alpha-8
 -e git+http://github.com/django-extensions/django-extensions.git@1610e1e59124071e1d01#egg=django_extensions
 -e hg+http://code.welldev.org/django-storages/@3602d345b998#egg=django-storages
 -e git+http://github.com/facebook/python-sdk.git#egg=facebook
@@ -13,6 +14,5 @@ pisa==3.0.33
 python-memcached==1.45
 pycrypto==2.2
 reportlab==2.4
-sorl-thumbnail==3.2.5
 wsgiref==0.1.2
 yolk==0.4.1
