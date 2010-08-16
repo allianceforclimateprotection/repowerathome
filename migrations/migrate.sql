@@ -3,3 +3,6 @@ VALUES (5, "Apartment Energy Meeting", "", NOW(), NOW(), "Our energy choices at 
 
 INSERT INTO `events_survey` (`id`, `name`, `event_type_id`, `form_name`, `template_name`, `is_active`, `created`, `updated`)
 VALUES (4, "Apartment Energy Meeting Commitment Card", 5, "ApartmentEnergyMeetingCommitmentCard", "events/_energy_commitment_card.html", 1, NOW(), NOW())
+
+UPDATE groups_group SET image = "images/theme/default_group.png"
+WHERE is_geo_group = 0 AND image = ""

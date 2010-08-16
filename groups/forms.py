@@ -1,4 +1,6 @@
+import datetime
 import os
+
 from django import forms
 from django.core.files.storage import default_storage
 from django.core.urlresolvers import resolve, reverse
@@ -58,7 +60,8 @@ class GroupForm(forms.ModelForm):
     def save(self):
         group = super(GroupForm, self).save()
         if group.image:
-            image_name = "%s.%s" % (group.pk, GroupForm.IMAGE_FORMATS[self.image_format])
+            timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            image_name = "%s_%s.%s" % (group.pk, timestamp, GroupForm.IMAGE_FORMATS[self.image_format])
             original_file = group.image.file
             original_name = original_file.name
             group.image.save(image_name, original_file, save=True)
