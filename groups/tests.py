@@ -325,12 +325,6 @@ class GroupTest(TestCase):
         gu.save()
         self.failUnlessEqual(self.sabres.moderate_disc(self.user), False)
     
-    # TODO: This test makes no sense!
-    def test_is_member(self):
-        self.failUnlessEqual(self.yankees.safe_image(), "images/yankees.jpg")
-        self.failUnlessEqual(self.sabres.safe_image(), "images/theme/default_group.png")
-        self.failUnlessEqual(self.ny.safe_image(), "images/theme/geo_group.jpg")
-    
     def test_completed_actions_by_user(self):
         # GroupUsers.objects.create(group=self.yankees, user=self.user)
         # water_heater = Action.objects.get(name="Insulate your water heater")
