@@ -14,7 +14,7 @@ class DatedStaticNode(template.Node):
     def render(self, context):
         # figure out if we need to use https media url
         meta = context.get("request").META
-        if 'HTTP_X_URL_SCHEME' in meta and meta['HTTP_X_URL_SCHEME'] == 'https' and settings.get("MEDIA_URL_HTTPS"):
+        if 'HTTP_X_URL_SCHEME' in meta and meta['HTTP_X_URL_SCHEME'] == 'https' and settings.MEDIA_URL_HTTPS:
             media_url = settings.MEDIA_URL_HTTPS
         else:
             media_url = settings.MEDIA_URL
