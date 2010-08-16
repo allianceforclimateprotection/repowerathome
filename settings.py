@@ -102,7 +102,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'groups',
     'search_widget',
-    'sorl.thumbnail',
     'flagged',
     'invite',
     'dated_static',
@@ -111,6 +110,7 @@ INSTALLED_APPS = (
     'migrations',
     'messaging',
     'facebook_app',
+    'thumbnails',
 )
 
 FIXTURE_DIR = ('fixtures',)
@@ -143,9 +143,12 @@ COMMENTS_ALLOW_PROFANITIES = True
 
 IGNORABLE_404_ENDS = ('.google-analytics.com/ga.js/', '/b.js/')
 
-THUMBNAIL_EXTENSION = 'png'
+THUMBMNAIL_PROCESSORS = (
+    'thumbnails.processors.SmartCrop',
+)
+THUMBNAIL_EXTENSION = '.png'
 
-MYSQLDUPLICATE_EXCLUDE = ("django_site",)
+MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue", "geo_location")
 
 POSTMARK_SENDER = 'noreply@repowerathome.com'
 

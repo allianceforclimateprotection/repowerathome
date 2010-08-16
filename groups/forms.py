@@ -1,10 +1,14 @@
 import os
 from django import forms
+from django.core.files.storage import default_storage
 from django.core.urlresolvers import resolve, reverse
 from django.contrib.auth.models import User
+
 from PIL.Image import open as pil_open
-from geo.models import Location
 from utils import hash_val
+
+from geo.models import Location
+
 from models import Group, GroupUsers, Discussion
 
 class GroupForm(forms.ModelForm):
@@ -55,9 +59,10 @@ class GroupForm(forms.ModelForm):
         group = super(GroupForm, self).save()
         if group.image:
             image_name = "%s.%s" % (group.pk, GroupForm.IMAGE_FORMATS[self.image_format])
-            original = group.image.file
-            group.image.save(image_name, original, save=True)
-            os.remove(original.name)
+            original_file = group.image.file
+            original_name = original_file.name
+            group.image.save(image_name, original_file, save=True)
+            default_storage.delete(original_name)
         return group
         
 class MembershipForm(forms.Form):

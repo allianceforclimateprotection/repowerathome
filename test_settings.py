@@ -30,7 +30,6 @@ INSTALLED_APPS = (
     'search_widget',
     'search_widget.tests',
     'groups',
-    'sorl.thumbnail',
     'flagged',
     'flagged.tests',
     'django_extensions',
@@ -40,6 +39,7 @@ INSTALLED_APPS = (
     'events',
     'messaging',
     'messaging.tests',
+    'thumbnails',
 )
 
 DEBUG_TOOLBAR_CONFIG = {

@@ -12,6 +12,7 @@ from records.models import Record
 from rah.models import Profile
 from actions.models import Action
 from invite.models import Invitation, Rsvp
+from thumbnails.fields import ImageAndThumbsField
    
 class GroupManager(models.Manager):
     def groups_with_memberships(self, user, limit=None):
@@ -102,7 +103,7 @@ class Group(models.Model):
     name = models.CharField(max_length=255, blank=True)
     slug = models.CharField(max_length=255, unique=True, db_index=True)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to="group_images", null=True)
+    image = ImageAndThumbsField(upload_to="group_images", null=True, default="images/theme/default_group.png")
     is_featured = models.BooleanField(default=False)
     membership_type = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default="O", null=True)
     is_geo_group = models.BooleanField(default=False)
@@ -122,6 +123,7 @@ class Group(models.Model):
     class Meta:
         verbose_name = "team"
         verbose_name_plural = "teams"
+        
     
     def is_joinable(self):
         return not self.is_geo_group
@@ -132,11 +134,6 @@ class Group(models.Model):
     def is_member(self, user):
         return user.is_authenticated() and \
             GroupUsers.objects.filter(group=self, user=user).exists()
-        
-    def safe_image(self):
-        if self.is_geo_group:
-            return self.image if self.image else "images/theme/geo_group.jpg"
-        return self.image if self.image else "images/theme/default_group.png"
         
     def completed_actions_by_user(self, limit=None):
         """
