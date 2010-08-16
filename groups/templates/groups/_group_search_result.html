@@ -1,6 +1,4 @@
-{% load thumbnail %}
-
-<img class="group_image" src="{% thumbnail object.safe_image 30x30 crop='smart' %}" alt="group image" height="30" width="30" />
+<img class="group_image" src="{% thumbnail object.image.thumbnail_30x30smartcrop %}" alt="group image" height="30" width="30" />
 <div class="group_details">
     <h6><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></h6>
     {% for parent in object.parents %}
