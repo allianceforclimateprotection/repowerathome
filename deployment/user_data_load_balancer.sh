@@ -3,6 +3,10 @@
 set -e -x
 export DEBIAN_FRONTEND=noninteractive
 
+# Copy nginx sites over
+cp /udata/etc/nginx/sites-available/* /etc/nginx/sites-available/
+cp /udata/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+
 # Copy SSL keys and certs into the proper locations
 cp /udata/etc/ssl/repowerathome.key /etc/ssl/repowerathome.key
 cp /udata/etc/ssl/private/repowerathome.csr /etc/ssl/private/repowerathome.csr

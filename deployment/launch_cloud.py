@@ -18,7 +18,7 @@ class CloudMaker(object):
             },
             "app_servers": {
                 "ami": "ami-7689631f",
-                "instance_type": "m1.small",
+                "instance_type": "c1.medium",
                 "user_data_script": "user_data_app_server.sh",
                 "number": 1,
                 "git_tag": "",
@@ -34,9 +34,9 @@ class CloudMaker(object):
                 "user": "rah_db_user",
                 "name": "rah"
             },
-            "udata": "snap-f4f9449f",
+            "udata": "snap-facc7391",
             "zone": "us-east-1b",
-            "s3_bucket": ""
+            "s3_bucket": "staging.static.repowerathome.com"
         }
         # Connections
         self.ec2_conn = boto.connect_ec2()
@@ -50,8 +50,8 @@ class CloudMaker(object):
         self.lb_udata = None
         self.app_udata = []
         # Generated DB params
-        self.db_pass = ''.join([choice(string.ascii_letters + string.digits) for i in range(32)])
-        self.db_id = ''.join([choice(string.letters + string.digits) for i in range(8)])
+        self.db_pass = ''.join([choice(string.ascii_letters + string.digits) for i in range(36)])
+        self.db_id = 'a' + ''.join([choice(string.letters + string.digits) for i in range(8)])
         # S3 info
         self.s3_bucket = None
         self.s3_bucket_url = None
