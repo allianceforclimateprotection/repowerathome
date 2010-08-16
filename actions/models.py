@@ -10,7 +10,7 @@ import tagging
 
 from events.models import Commitment
 from records.models import Record
-from dated_static.templatetags.dated_static import dated_static
+from dated_static.templatetags.dated_static import timestamp_file
 from messaging.models import Stream
 from rah.signals import logged_in
 
@@ -149,10 +149,10 @@ class Action(models.Model):
                                         AND actions_actionform.id = afd.action_form_id"""})
                                         
     def get_detail_illustration(self):
-        return dated_static("images/actions/%s/action_detail.jpg" % self.slug)
+        return timestamp_file("images/actions/%s/action_detail.jpg" % self.slug)
 
     def get_nugget_illustration(self):
-        return dated_static("images/actions/%s/action_nugget.jpg" % self.slug)
+        return timestamp_file("images/actions/%s/action_nugget.jpg" % self.slug)
     
     def has_illustration(self):
         path = "images/actions/%s/action_detail.jpg" % self.slug
