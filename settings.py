@@ -144,7 +144,7 @@ IGNORABLE_404_ENDS = ('.google-analytics.com/ga.js/', '/b.js/')
 
 THUMBNAIL_EXTENSION = 'png'
 
-MYSQLDUPLICATE_EXCLUDE = ("django_site",)
+MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue", "geo_location")
 
 POSTMARK_SENDER = 'noreply@repowerathome.com'
 
