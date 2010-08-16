@@ -1,9 +1,9 @@
-{% load thumbnail %}
+
 <ul class="group_list plain_list">
     {% for group in groups %}
         <li>
             <a href="{{ group.get_absolute_url }}" class="group_list_thumb">
-                <img src="{% thumbnail group.safe_image 45x38 crop='smart' %}" alt="group image" height="38" width="45" />
+                <img src="{{ MEDIA_URL }}{{ group.image.thumbnail_38x45_detail }}" alt="group image" height="38" width="45" />
             </a>
             <div>
                 <a href="{{ group.get_absolute_url }}">{{ group.name }}</a>
