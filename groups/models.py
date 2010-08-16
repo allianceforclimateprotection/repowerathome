@@ -7,7 +7,6 @@ from django.db import models
 from django.template import loader
 from django.template.defaultfilters import slugify
 
-from imagekit.models import ImageModel
 from geo.models import Location
 from records.models import Record
 from rah.models import Profile
