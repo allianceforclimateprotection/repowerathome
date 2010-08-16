@@ -8,15 +8,22 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db import models
 from django.db.models.fields.files import ImageFieldFile
+from django.utils.importlib import import_module
 
 from PIL import Image
 
-from processors import Resize, Detail, Sharpen, SmartCrop
+from processors import Resize
+
+def load_processor(path):
+    i = path.rfind('.')
+    module, attr = path[:i], path[i+1:]
+    return getattr(import_module(module), attr)
 
 class ImageAndThumbsFile(ImageFieldFile):
     PROCESSORS = getattr(settings, "THUMBMNAIL_PROCESSORS", None)
+    PROCESSORS = [load_processor(proc) for proc in PROCESSORS]
     if not PROCESSORS:
-        PROCESSORS = [Resize, Detail, Sharpen, SmartCrop]
+        PROCESSORS = [Resize]
     
     def __init__(self, *args, **kwargs):
         super(ImageAndThumbsFile, self).__init__(*args, **kwargs)
@@ -52,7 +59,7 @@ class ImageAndThumbsFile(ImageFieldFile):
             for proc in ImageAndThumbsFile.PROCESSORS:
                 matcher = proc.key_expression().match(option)
                 if matcher:
-                    proc.process(thumbnail, matcher)
+                    thumbnail = proc.process(thumbnail, matcher)
                     break
         codec = os.path.splitext(thumbnail_name)[1][1:].lower()
         if codec == "png":
