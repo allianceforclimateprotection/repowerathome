@@ -142,7 +142,7 @@ var rah = {
                         }
                     }, {perms:"email,publish_stream,offline_access"});
                 } else if (network == "t" && !($("#id_has_twitter_access", form).val() == "True")){
-                    // authorize with tiwtter
+                    // authorize with twitter
                 } else {
                     rah.mod_ask_to_share.share(form);
                 }
@@ -164,7 +164,7 @@ var rah = {
                 type: form.attr("method"),
                 data: form.serialize(),
                 success: function(data) {
-                    if(data.indexOf('class="messages"') >= 0){
+                    if($(".messages", data).size() > 0){
                         rah.mod_messages.init(data);
                     } else {
                         rah.mod_ask_to_share.build_dialog(data);
@@ -548,15 +548,22 @@ var rah = {
             if(html) { 
                 $('#message_box').hide().append(html).slideDown();
             }
-            $(".messages:not(.sticky)").each(function() {
-                $(this).delay(5000).slideUp(400, function(){ $(this).remove(); })
+            $(".messages .dismiss").live("click", function(){ 
+                $(this).parents(".messages").slideUp(400, function(){
+                    $(this).remove();
+                });
             });
-            $("#message_box .dismiss").live("click", function(){ $(this).parents("li").slideUp(); });
+            $(".messages:not(.sticky)").each(function() {
+                var elem = $(this);
+                setTimeout(function() {
+                    elem.slideUp(400, function(){ elem.remove(); });
+                }, 5000);
+            });
         }
     },
     
     page_password_change: {
-        init: function(){            
+        init: function() {
             // Validate the password form
             $("#password_change_form").validate({
                 rules: {
