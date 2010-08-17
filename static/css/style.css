@@ -534,6 +534,13 @@ Events Events Events Events Events Events Events Events Events Events Events Eve
 #event_guests_table .guest_comment { display: inline-table; }
 #rsvp_form .form_row {width:168px;}
 
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Profile Profile Profile Profile Profile Profile Profile Profile Profile Profile Profile Profile Profile Profile Profile 
+--------------------------------------------------------------------------------------------------------------------- */
+#profile_edit_tabs{ height:100%; overflow:auto; }
+#profile_edit_tabs #social_networks_tab .floater { float:left; margin-right:12px; }
+
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 --------------------------------------------------------------------------------------------------------------------- */

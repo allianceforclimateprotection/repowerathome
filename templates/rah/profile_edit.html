@@ -78,40 +78,47 @@
             </form>
         </div>
         <div id="social_networks_tab">
-            <div class="form_row">
-                <label>Link your accounts with Repower at Home</label>
-                <ul>
-                    <li>
-                        <img src="{% dated_static 'images/theme/social_icons/24/twitter.png' %}" alt="Twitter icon" 
-                             title="Twitter" width="24" height="24"/>
-                        {% if profile.twitter_access_token %}
-                            <a class="" href="{% url twitter_oauth_unauth %}">Unlink Twitter</a>
-                        {% else %}
-                            <a id="link_with_twitter" class="" href="{% url twitter_oauth_auth %}">Link Twitter</a>
+            <p>
+                Share the good times by linking to your online networks. After you link up, you can publish you Repower
+                at Home activity to your Facebook or Twitter steams.
+            </p>
+            <ul class="plain_list">
+                <li>
+                    <img src="{% dated_static 'images/theme/social_icons/48/facebook.png' %}" alt="Facebook icon" 
+                         title="Facebook" width="48" height="48" class="floater"/>
+                    <p class="floater" style="margin-right:48px">
+                        <b>Facebook</b><br/>
+                        {% if profile.facebook_access_token %}
+                            {% if profile.facebook_share %}
+                                <a href="{% url facebook_disable_sharing %}">Disable automatic sharing</a>
+                            {% else %}
+                                <a href="{% url facebook_enable_sharing %}">Enable automatic sharing</a>
+                            {% endif %}
                         {% endif %}
-                    </li>
-                    <li>
-                        <img src="{% dated_static 'images/theme/social_icons/24/facebook.png' %}" alt="Facebook icon" 
-                             title="Facebook" width="24" height="24"/>
                         {% if profile.facebook_connect_only %}
                             You can not unlink your facebook account, since you are currently logged in with facebook
                         {% else %}
                             {% if profile.facebook_access_token %}
-                                <a class="" href="{% url facebook_unauthorize %}">Unlink Facebook</a>
+                                <br/><a class="" href="{% url facebook_unauthorize %}">Unlink your Facebook account</a>
                             {% else %}
-                                <a id="link_with_facebook" class="" href="{% url facebook_authorize %}">Link Facebook</a>
+                                <a id="link_with_facebook" class="" href="{% url facebook_authorize %}">Link your Facebook account</a>
                             {% endif %}
                         {% endif %}
-                        {% if profile.facebook_access_token %}
-                            {% if profile.facebook_share %}
-                                | <a href="{% url facebook_disable_sharing %}">Don't Share</a>
-                            {% else %}
-                                | <a href="{% url facebook_enable_sharing %}">Share</a>
-                            {% endif %}
+                    </p>
+                </li>
+                <li>
+                    <img src="{% dated_static 'images/theme/social_icons/48/twitter.png' %}" alt="Twitter icon" 
+                         title="Twitter" width="48" height="48" class="floater"/>
+                    <p class="floater">
+                        <b>Twitter</b><br/>
+                        {% if profile.twitter_access_token %}
+                            <a class="" href="{% url twitter_oauth_unauth %}">Unlink your Twitter account</a>
+                        {% else %}
+                            <a id="link_with_twitter" class="" href="{% url twitter_oauth_auth %}">Link your Twitter account</a>
                         {% endif %}
-                    </li>
-                </ul>
-            </div>
+                    </p>
+                </li>
+            </ul>
         </div>
     </div>
 {% endblock %}

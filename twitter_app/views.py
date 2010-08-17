@@ -17,7 +17,8 @@ def unauth(request):
     request.user.get_profile().twitter_access_token = None
     request.user.get_profile().save()
     messages.success(request, "We have unlinked your account with twitter.")
-    return redirect('profile_edit', request.user.id)
+    next = reverse('profile_edit', kwargs={'user_id': request.user.id}) + "#social_networks_tab"
+    return redirect(next)
 
 @login_required
 def auth(request):
@@ -40,12 +41,12 @@ def return_(request):
             profile.twitter_access_token = access_token.to_string()
             profile.save()
             messages.success(request, "Your account is now linked with twitter.")
-            return redirect(request.session.pop("twitter_next"))
+            return redirect(request.session.pop("twitter_next") + "#social_networks_tab")
         else:
             messages.error(request, "Your tokens to not match.")
     else:
         messages.error(request, "You are missing a token.")
-    return redirect(request.session.pop("twitter_next"))
+    return redirect(request.session.pop("twitter_next") + "#social_networks_tab")
 
 @login_required
 @require_POST

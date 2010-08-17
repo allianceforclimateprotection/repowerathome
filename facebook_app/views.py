@@ -1,6 +1,7 @@
 import facebook
 import hashlib
 
+from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -47,7 +48,10 @@ def login(request):
 def authorize(request):
     facebook_user = facebook.get_user_from_cookie(request.COOKIES, 
         settings.FACEBOOK_APPID, settings.FACEBOOK_SECRET)
-    next = request.GET.get("next", None)
+    next = request.GET.get("next", "")
+    profile_edit_link = reverse('profile_edit', kwargs={'user_id': request.user.id})
+    if profile_edit_link in next:
+        next = profile_edit_link + "#social_networks_tab"
     if facebook_user:
         profile = request.user.get_profile()
         profile.facebook_access_token = facebook_user["access_token"]
@@ -65,7 +69,7 @@ def unauthorize(request):
     profile.save()
     messages.success(request, "Your Facebook account has been unlinked with Repower at Home")
     next = request.GET.get("next", None)
-    return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)
+    return redirect(next) if next else redirect(reverse('profile_edit', kwargs={'user_id': request.user.id}) + "#social_networks_tab")
     
 @login_required
 def sharing(request, is_enabled):
@@ -79,5 +83,8 @@ def sharing(request, is_enabled):
             messages.success(request, "Your activity stream will no longer be shared on Facebook")
     else:
         messages.error(request, "You must link your Facebook account first")
-    next = request.GET.get("next", None)
+    next = request.GET.get("next", "")
+    if not next:
+        next = reverse('profile_edit', kwargs={'user_id': request.user.id}) + "#social_networks_tab"
+    
     return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)
