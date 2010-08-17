@@ -1,4 +1,5 @@
 from __future__ import with_statement
+import base64
 import re
 import urllib2
 
@@ -11,13 +12,11 @@ env.key_filename = "/Users/buckley/.ssh/acp-ec2-pk.pem"
 env.roledefs = {
     "web": ["prod1.repowerathome.com", "prod2.repowerathome.com"],
     "loadbalancer": ["loadbalancer.repowerathome.com"],
-    "media": ["rahstatic.s3.amazonaws.com"],
-    "database": ["database.repowerathome.com"],
     "development": ["dev.repowerathome.com"],
     "staging": ["staging.repowerathome.com"],
 }
 
-env.deploy_to = "$HOME/webapp"
+env.deploy_to = "/home/%(user)s/webapp" % env
 env.parent = "origin"
 env.branch = "master"
 env.revision = "HEAD"
@@ -29,10 +28,13 @@ def staging():
     env.hosts = env.roledefs["staging"]
 def prod():
     env.hosts = env.roledefs["web"]
-def dummy():
-    env.hosts = ["ec2-184-73-53-153.compute-1.amazonaws.com"]
 deployments = [dev, staging, prod, dummy]
 
+def _determine_environment():
+    for key,value in env.roledefs.items():
+        if value == env.hosts:
+            return key
+    return None
 
 def test():
     "Run all tests"
@@ -47,16 +49,13 @@ def clean():
         run("cd %(deploy_to)s && find . -name '*.pyc' -depth -exec rm {} \;" % env)
     else:
         local("find . -name '*.pyc' -depth -exec rm {} \;")
-        
+
+@roles("loadbalancer")
 def enable_maintenance_page():
     "Turns on the maintenance page"
-    require("deploy_to", provided_by=deployments)
-    run("cd %(deploy_to)s/static && cp maintenance.html.disabled maintenance.html" % env)
-    
-def install_requirements():
-    "Using pip install all of the requirements defined"
-    require("deploy_to", provided_by=deployments)
-    sudo("cd %(deploy_to)s/../requirements && pip install -r %(deploy_to)s/requirements.txt" % env)
+    sudo("rm /etc/nginx/sites-enabled/rah")
+    sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
+    sudo("/etc/init.d/nginx reload")
     
 def reset():
     "Set the workspace to the desired revision"
@@ -73,6 +72,11 @@ def checkout():
     "Checkout the revision you would like to deploy"
     require("deploy_to", provided_by=deployments)
     run("cd %(deploy_to)s && git checkout %(revision)s" % env)
+
+def install_requirements():
+    "Using pip install all of the requirements defined"
+    require("deploy_to", provided_by=deployments)
+    sudo("cd %(deploy_to)s/../requirements && pip install -r %(deploy_to)s/requirements.txt" % env)
     
 @runs_once
 def minify():
@@ -84,7 +88,7 @@ def minify():
 def s3sync():
     "Sync static data with our s3 bucket"
     require("deploy_to", provided_by=deployments)
-    run("cd %(deploy_to)s && python manage.py sync_media_s3 --gzip --force" % env)
+    run("cd %(deploy_to)s && python manage.py sync_media_s3 --gzip --force --expires" % env)
     
 @runs_once
 def backupdb():
@@ -107,11 +111,13 @@ def syncdb():
 def restart_apache():
     "Reboot Apache2 server."
     sudo("/etc/init.d/apache2 restart")
-    
+
+@roles("loadbalancer")
 def disable_maintenance_page():
     "Turns off the maintenance page"
-    require("deploy_to", provided_by=deployments)
-    run("cd %(deploy_to)s/static && rm maintenance.html" % env)
+    sudo("rm /etc/nginx/sites-enabled/maintenance")
+    sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
+    sudo("/etc/init.d/nginx reload")
     
 @runs_once
 def notify_codebase():
@@ -122,43 +128,41 @@ def notify_codebase():
     repository = match.group(4)
     username = local("git config codebase.username").strip()
     api_key = local("git config codebase.apikey").strip()
+    commit_hash = local("git show-ref %(revision)s | cut -d ' ' -f 1" % env).strip()
     
     xml = []
     xml.append("<deployment>")
     xml.append("<servers>%s</servers>" % ",".join(env.hosts))
-    xml.append("<revision>%(revision)s</revision>" % env)
-    xml.append("<environment>%(deploy_to)s</environment>" % env)
-    xml.append("<branch>%(branch)s</branch>" % env)
+    xml.append("<revision>%s</revision>" % commit_hash)
+    environment = _determine_environment()
+    if environment:
+        xml.append("<environment>%s</environment>" % environment)
+    xml.append("<branch>%(branch)s:%(revision)s</branch>" % env)
     xml.append("</deployment>")
-    
-    headers = {"Content-Type": "application/xml", "Accept": "application/xml"}
-    auth_handler = urllib2.HTTPBasicAuthHandler()
-    auth_handler.add_password(realm="Codebase",
-                              uri="http://%s/" % domain,
-                              user=username,
-                              passwd=api_key)
-    opener = urllib2.build_opener(auth_handler)
-    # ...and install it globally so it can be used with urlopen.
-    urllib2.install_opener(opener)
-    request = urllib2.Request("http://%s/%s/%s/deployments" % (domain, project, repository), 
-        "".join(xml), headers)
+
+    url = "https://%s/%s/%s/deployments" % (domain, project, repository)
+    headers = {"Content-type": "application/xml", "Accept": "application/xml", 
+        "Authorization": "Basic %s" % base64.b64encode("%s:%s" % (username, api_key))}
+    request = urllib2.Request(url, "".join(xml), headers)
+    response = urllib2.urlopen(request).read()
 
 def deploy(revision=None, sync_media=True):
     "Deploy code to server"
     if revision: env.revision = revision
     require("deploy_to", provided_by=deployments)
-    # enable_maintenance_page()
-    install_requirements()
+    enable_maintenance_page()
     reset()
     pull()
     checkout()
+    install_requirements()
     minify()
-    if bool(sync_media) and sync_media.upper() != "FALSE":
+    if bool(sync_media) and str(sync_media).upper() != "FALSE":
         s3sync()
     #backupdb()
     migratedb()
     syncdb()
     restart_apache()
-    # disable_maintenance_page()
+    disable_maintenance_page()
     notify_codebase()
-    print("\e[32m(branch)s:%(revision)s has been deployed to %(hosts)s\e[0m" % env)
+    print("%(branch)s:%(revision)s has been deployed to %(hosts)s" % env)
+        
