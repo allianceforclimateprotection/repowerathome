@@ -17,11 +17,10 @@ class CloudMaker(object):
                 "user_data_script": "user_data_load_balancer.sh"
             },
             "app_servers": {
-                "ami": "ami-7689631f",
+                "ami": "ami-60957f09",
                 "instance_type": "c1.medium",
                 "user_data_script": "user_data_app_server.sh",
                 "number": 1,
-                "git_tag": "",
                 "twit_key": "haEAyyAy4WQZe6o8JScIlA",
                 "twit_secret": "Sx7i5kTzkdnatjGGLqL9G8u93yTmzZE6ZkckIQ",
                 "fb_appid": "132085630163980",
@@ -34,7 +33,7 @@ class CloudMaker(object):
                 "user": "rah_db_user",
                 "name": "rah"
             },
-            "udata": "snap-facc7391",
+            "udata": "snap-6a9f1e01",
             "zone": "us-east-1b",
             "s3_bucket": "staging.static.repowerathome.com"
         }
@@ -159,7 +158,7 @@ class CloudMaker(object):
         elif self.s3_bucket.name == "staging.static.repowerathome.com":
             self.s3_bucket_url = "http://staging.static.repowerathome.com"
         else:
-            self.s3_bucket_url = "http://s3.amazonaws.com/%s" % self.s3_bucket.name
+            self.s3_bucket_url = "http://s3.amazonaws.com/%s/" % self.s3_bucket.name
         
     def run_commands(self):        
         # Create a list of app server IPs to pass to a command
