@@ -51,7 +51,20 @@ class Sharpen(Processor):
         except ValueError:
             pass
         return image
-            
+        
+class Colorspace(Processor):
+    """
+    Note this processor has a dependency on the easy-thumbnails library
+    """
+    @classmethod
+    def key_expression(cls):
+        return re.compile("^colorspace$", re.IGNORECASE)
+        
+    @classmethod
+    def process(cls, image, matcher):
+        from easy_thumbnails.processors import colorspace
+        return colorspace(image)
+    
 class SmartCrop(Processor):
     """
     Note this processor has a dependancy on the easy-thumbnails library
