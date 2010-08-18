@@ -8,6 +8,7 @@ from fabric.contrib.console import confirm
 
 env.user = "ubuntu"
 env.key_filename = "/Users/buckley/.ssh/acp-ec2-pk.pem"
+env.disable_known_hosts = True
 
 env.roledefs = {
     "web": ["prod1.repowerathome.com", "prod2.repowerathome.com"],
@@ -22,13 +23,15 @@ env.branch = "master"
 env.revision = "HEAD"
 env.repository = "git@codebasehq-deploy:rah/rah/rah.git"
 
+SHOW_MAINTENANCE_PAGE = False
 def dev():
     env.hosts = env.roledefs["development"]
 def staging():
     env.hosts = env.roledefs["staging"]
 def prod():
     env.hosts = env.roledefs["web"]
-deployments = [dev, staging, prod, dummy]
+    SHOW_MAINTENANCE_PAGE = True
+deployments = [dev, staging, prod]
 
 def _determine_environment():
     for key,value in env.roledefs.items():
@@ -53,41 +56,42 @@ def clean():
 @roles("loadbalancer")
 def enable_maintenance_page():
     "Turns on the maintenance page"
-    sudo("rm /etc/nginx/sites-enabled/rah")
-    sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
-    sudo("/etc/init.d/nginx reload")
+    if SHOW_MAINTENANCE_PAGE:
+        sudo("rm /etc/nginx/sites-enabled/rah")
+        sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
+        sudo("/etc/init.d/nginx reload")
     
 def reset():
     "Set the workspace to the desired revision"
-    require("deploy_to", provided_by=deployments)
+    require("hosts", provided_by=deployments)
     with cd("%(deploy_to)s" % env):
         run("git checkout master && git reset --hard HEAD")
     
 def pull():
     "Updates the application with new code"
-    require("deploy_to", provided_by=deployments)
+    require("hosts", provided_by=deployments)
     run("cd %(deploy_to)s && git pull --ff-only %(parent)s %(branch)s" % env)
     
 def checkout():
     "Checkout the revision you would like to deploy"
-    require("deploy_to", provided_by=deployments)
+    require("hosts", provided_by=deployments)
     run("cd %(deploy_to)s && git checkout %(revision)s" % env)
 
 def install_requirements():
     "Using pip install all of the requirements defined"
-    require("deploy_to", provided_by=deployments)
+    require("hosts", provided_by=deployments)
     sudo("cd %(deploy_to)s/../requirements && pip install -r %(deploy_to)s/requirements.txt" % env)
     
 @runs_once
 def minify():
     "Minify the js and css files"
-    require("deploy_to", provided_by=deployments)
+    require("hosts", provided_by=deployments)
     run("cd %(deploy_to)s/static/minify && ./minify.sh" % env)
     
 @runs_once
 def s3sync():
     "Sync static data with our s3 bucket"
-    require("deploy_to", provided_by=deployments)
+    require("hosts", provided_by=deployments)
     run("cd %(deploy_to)s && python manage.py sync_media_s3 --gzip --force --expires" % env)
     
 @runs_once
@@ -98,30 +102,34 @@ def backupdb():
 @runs_once
 def migratedb():
     "Migrate the database"
-    require("deploy_to", provided_by=deployments)
+    require("hosts", provided_by=deployments)
     if confirm("Would you like to migrate the database?"):
         run("cd %(deploy_to)s && python manage.py migrate" % env)
     
 @runs_once
 def syncdb():
     "Sync the database with any new models"
-    require("deploy_to", provided_by=deployments)
-    run("cd %(deploy_to)s && python manage.py syncdb" % env) # can this handle stdin over ssh
+    require("hosts", provided_by=deployments)
+    if confirm("This script can not handle interactive shells, are you sure you want to run syncdb?"):
+        run("cd %(deploy_to)s && python manage.py syncdb" % env)
     
 def restart_apache():
     "Reboot Apache2 server."
+    require("hosts", provided_by=deployments)
     sudo("/etc/init.d/apache2 restart")
 
 @roles("loadbalancer")
 def disable_maintenance_page():
     "Turns off the maintenance page"
-    sudo("rm /etc/nginx/sites-enabled/maintenance")
-    sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
-    sudo("/etc/init.d/nginx reload")
+    if SHOW_MAINTENANCE_PAGE:
+        sudo("rm /etc/nginx/sites-enabled/maintenance")
+        sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
+        sudo("/etc/init.d/nginx reload")
     
 @runs_once
 def notify_codebase():
     "Notify codebase that a new revision has been deployed"
+    require("hosts", provided_by=deployments)
     match = re.search("git\@(codebasehq-deploy):(.*)\/(.*)\/(.*)\.git", env.repository)
     domain = "%s.codebasehq.com" % match.group(2)
     project = match.group(3)
