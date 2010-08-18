@@ -14,7 +14,7 @@ env.roledefs = {
     "web": ["prod1.repowerathome.com", "prod2.repowerathome.com"],
     "loadbalancer": ["loadbalancer.repowerathome.com"],
     "development": ["dev.repowerathome.com"],
-    "staging": ["staging.repowerathome.com"],
+    "staging": ["ec2-184-73-22-211.compute-1.amazonaws.com"],
 }
 
 env.deploy_to = "/home/%(user)s/webapp" % env
