@@ -9,6 +9,7 @@ easy-thumbnails==1.0-alpha-8
 -e git+http://github.com/django-extensions/django-extensions.git#egg=django_extensions
 -e hg+http://code.welldev.org/django-storages/@3602d345b998#egg=django-storages
 -e git+http://github.com/facebook/python-sdk.git#egg=facebook
+-e git+http://github.com/themartorana/python-postmark.git#egg=python-postmark
 html5lib==0.90
 pisa==3.0.33
 python-memcached==1.45
