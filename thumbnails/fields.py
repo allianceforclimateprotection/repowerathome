@@ -12,6 +12,7 @@ from django.utils.importlib import import_module
 
 from PIL import Image
 
+from models import Thumbnail
 from processors import Resize
 
 def load_processor(path):
@@ -34,11 +35,12 @@ class ImageAndThumbsFile(ImageFieldFile):
         except AttributeError:
             if name.startswith("thumbnail"):
                 thumbnail_name = self._generate_thumbnail_name(name)
-                if default_storage.exists(thumbnail_name):
-                    return thumbnail_name
-                options = [opt for opt in name.split("_")[1:] if opt]
-                thumbnail = self._process_options(options, thumbnail_name)
-                thumbnail_name = default_storage.save(thumbnail_name, thumbnail)
+                if not Thumbnail.objects.filter(raw=self.name, thumbnail=thumbnail_name).exists():
+                    if not default_storage.exists(thumbnail_name):
+                        options = [opt for opt in name.split("_")[1:] if opt]
+                        thumbnail = self._process_options(options, thumbnail_name)
+                        thumbnail_name = default_storage.save(thumbnail_name, thumbnail)
+                    Thumbnail.objects.create(raw=self.name, thumbnail=thumbnail_name)
                 return thumbnail_name
             raise
         
@@ -69,16 +71,12 @@ class ImageAndThumbsFile(ImageFieldFile):
         return ContentFile(thumbnail.tostring(codec, thumbnail.mode))
         
     def save(self, *args, **kwargs):
-        retval = super(ImageAndThumbsFile, self).save(*args, **kwargs)
-        directory = os.path.dirname(self.name)
-        basename = os.path.basename(self.name)
-        filename, extension = os.path.splitext(basename)
-        images = default_storage.listdir(directory)[1]
-        for image in images:
-            if image.startswith("%s__thumbnail" % filename):
-                # delete all existing thumbnails
-                default_storage.delete("%s/%s" % (directory, image))
-        return retval
+        images = Thumbnail.objects.thumbnails_for(raw=self.name)
+        if images:
+            for image in images:
+                default_storage.delete(image)
+            images.delete()
+        return super(ImageAndThumbsFile, self).save(*args, **kwargs)
         
 class ImageAndThumbsField(models.ImageField):
     """
