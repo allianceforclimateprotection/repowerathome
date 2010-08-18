@@ -144,6 +144,7 @@ COMMENTS_ALLOW_PROFANITIES = True
 IGNORABLE_404_ENDS = ('.google-analytics.com/ga.js/', '/b.js/')
 
 THUMBMNAIL_PROCESSORS = (
+    'thumbnails.processors.Colorspace',
     'thumbnails.processors.SmartCrop',
 )
 THUMBNAIL_EXTENSION = '.png'

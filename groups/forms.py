@@ -59,7 +59,7 @@ class GroupForm(forms.ModelForm):
         
     def save(self):
         group = super(GroupForm, self).save()
-        if group.image:
+        if self.cleaned_data["image"]:
             timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             image_name = "%s_%s.%s" % (group.pk, timestamp, GroupForm.IMAGE_FORMATS[self.image_format])
             original_file = group.image.file
