@@ -86,7 +86,7 @@ urlpatterns += patterns('',
 )
 
 if settings.DEBUG:
-    urlpatterns += patterns('lib.static',
+    urlpatterns += patterns('django.views.static',
         url(r'^static/(?P<path>.*)$', 'serve', {'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
     )
         
