@@ -130,7 +130,8 @@ class Message(models.Model):
             domain = Site.objects.get_current().domain
             context = template.Context({"content_object": content_object, "domain": domain,
                 "recipient": user_object if user_object else email })
-            # render the body template with the given, template
+            # render the body and subject template with the given, template
+            subject = template.Template(self.subject).render(context)
             body = template.Template(self.body).render(context)
             for index, link in enumerate([m.group() for m in URL_REGEX.finditer(body)]):
                 # for each unique link in the body, create a Message link to track the clicks
@@ -142,7 +143,7 @@ class Message(models.Model):
             open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", args=[recipient_message.token]))
             # insert an open tracking image into the body
             body += open_link
-            msg = EmailMessage(self.subject, body, None, [email])
+            msg = EmailMessage(subject, body, None, [email])
             msg.content_subtype = "html"
             msg.send()
             self.sends += 1 # after the message is sent, increment the sends count
