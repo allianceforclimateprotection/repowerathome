@@ -69,7 +69,6 @@ class MessageSendTimeTest(TestCase):
         minimum_duration.minimum_duration = 24
         self.failUnlessEqual(minimum_duration.send_time(start, end), datetime.datetime(2010, 7, 3, 18, 00))
         
-        
 class MessageRecipientTest(TestCase):
     fixtures = ["test_messaging.json"]
     
@@ -100,6 +99,11 @@ class MessageRecipientTest(TestCase):
         recipients = before_end.recipients(self.event)
         self.failUnlessEqual(recipients, [("joe@email.com", self.joe), 
             ("matt@email.com", self.matt), ("larry@email.com", self.larry)])
+            
+    def test_lambda(self):
+        lambda_recipient = Message.objects.get(name="lambda recipient")
+        recipients = lambda_recipient.recipients(self.event)
+        self.failUnlessEqual(recipients, [("test@gmail.com", None), ("test@yahoo.com", None)])
             
 class MessageTest(TestCase):
     fixtures = ["test_messaging.json"]

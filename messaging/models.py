@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
+from django.core.validators import validate_email
 from django.db import models
 
 from utils import hash_val
@@ -107,12 +108,20 @@ class Message(models.Model):
         Regardless of what the invoked function returns, this function is responsible for returning
         a 2-tuple, where the first value is the email address and the second value is the object.
         If the object isn't defined this will be set to None.
+        
+        Optionally we can also define the recipient_function to be a lambda with one argument, 
+        the content object.  For example you could define a function like the following:
+            labmda x: x.email
         """
         if not hasattr(content_object, self.recipient_function):
-            raise NotImplementedError("%s does not exist for %s" % (self.recipient_function,
-                content_object))
-        func_or_attr = getattr(content_object, self.recipient_function)
-        recipients = func_or_attr() if inspect.ismethod(func_or_attr) else func_or_attr
+            # the content object does not provide this function, test to see if its a lambda
+            if not self.recipient_function.lower().startswith("lambda"):
+                raise NotImplementedError("%s does not exist for %s" % (self.recipient_function,
+                    content_object))
+            recipients = eval(self.recipient_function)(content_object)
+        else:
+            func_or_attr = getattr(content_object, self.recipient_function)
+            recipients = func_or_attr() if inspect.ismethod(func_or_attr) else func_or_attr
         if not hasattr(recipients, "__iter__"):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]

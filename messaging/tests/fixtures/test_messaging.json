@@ -8,6 +8,7 @@
     {"pk": 5, "model": "messaging.message", "fields": {"body": "test message", "x_value": 0, "sends": 0, "message_timing": "after_start", "recipient_function": "creator", "subject": "now", "name": "now"}}, 
     {"pk": 6, "model": "messaging.message", "fields": {"body": "test message", "x_value": 24, "sends": 0, "message_timing": "after_start", "recipient_function": "creator", "subject": "time snap", "time_snap": "11:15:00", "name": "time snap"}},
     {"pk": 7, "model": "messaging.message", "fields": {"body": "test message", "x_value": 48, "sends": 0, "message_timing": "after_start", "recipient_function": "creator", "subject": "minimum duration", "minimum_duration": "120", "name": "minimum duration"}},
+    {"pk": 8, "model": "messaging.message", "fields": {"body": "test message", "x_value": 48, "sends": 0, "message_timing": "after_start", "recipient_function": "lambda x: ['test@gmail.com', 'test@yahoo.com']", "subject": "minimum duration", "minimum_duration": "120", "name": "lambda recipient"}},
     {"pk": 1, "model": "messaging.abtest", "fields": {"is_enabled": true, "stream": 1000, "test_percentage": 100, "message": 1, "test_message": 2}}, 
     {"pk": 2, "model": "messaging.abtest", "fields": {"is_enabled": true, "stream": 1000, "test_percentage": 0, "message": 5}}, 
     {"pk": 3, "model": "messaging.abtest", "fields": {"is_enabled": true, "stream": 1000, "test_percentage": 50, "message": 3, "test_message": 3}},
