@@ -5,7 +5,6 @@ import tempfile
 
 from django.conf import settings
 from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 from django.db import models
 from django.db.models.fields.files import ImageFieldFile
 from django.utils.importlib import import_module
@@ -36,16 +35,16 @@ class ImageAndThumbsFile(ImageFieldFile):
             if name.startswith("thumbnail"):
                 thumbnail_name = self._generate_thumbnail_name(name)
                 if not Thumbnail.objects.filter(raw=self.name, thumbnail=thumbnail_name).exists():
-                    if not default_storage.exists(thumbnail_name):
+                    if not self.storage.exists(thumbnail_name):
                         options = [opt for opt in name.split("_")[1:] if opt]
                         thumbnail = self._process_options(options, thumbnail_name)
-                        thumbnail_name = default_storage.save(thumbnail_name, thumbnail)
+                        thumbnail_name = self.storage.save(thumbnail_name, thumbnail)
                     Thumbnail.objects.create(raw=self.name, thumbnail=thumbnail_name)
                 return thumbnail_name
             raise
         
     def _open_file(self, name):
-        return ImageFieldFile(default_storage.open(name, ImageAndThumbsField(), name))
+        return ImageFieldFile(self.storage.open(name, ImageAndThumbsField(), name))
         
     def _generate_thumbnail_name(self, attribute_name):
         directory = os.path.dirname(self.name)
@@ -55,7 +54,7 @@ class ImageAndThumbsFile(ImageFieldFile):
         return "%s/%s__%s%s" % (directory, filename, attribute_name, extension)
         
     def _process_options(self, options, thumbnail_name):
-        copy = ContentFile(default_storage.open(self.name).read())
+        copy = ContentFile(self.storage.open(self.name).read())
         thumbnail = Image.open(copy)
         for option in options:
             for proc in ImageAndThumbsFile.PROCESSORS:
@@ -74,7 +73,7 @@ class ImageAndThumbsFile(ImageFieldFile):
         images = Thumbnail.objects.thumbnails_for(raw=self.name)
         if images:
             for image in images:
-                default_storage.delete(image)
+                self.storage.delete(image)
             images.delete()
         return super(ImageAndThumbsFile, self).save(*args, **kwargs)
         
