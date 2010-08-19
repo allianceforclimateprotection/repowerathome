@@ -126,10 +126,10 @@ var rah = {
         build_dialog: function(data) {
             var container = $("<div />");
             container.html(data);
-            container.dialog({autoOpen: false, modal: true, height: 210, width: 400,
-                title: "Would you like to share your activity?"});
-            $("input:submit, .button", container).button();
-            $(".buttonset", container).buttonset();
+            container.dialog({autoOpen: false, modal: true, height: 294, width: 386,
+                title: "Repower at Home &hearts; Facebook"});
+            $("input:submit, .button, button", container).button();
+            // $(".buttonset", container).buttonset();
             $("#ask_to_share").submit(function() {
                 var form = $(this);
                 var network = $("input[@name='social_network']:checked", form).val();

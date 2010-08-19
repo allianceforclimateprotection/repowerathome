@@ -1,40 +1,45 @@
 {% load dated_static %}
 
 <form id="ask_to_share" action="{% url records_ask_to_share %}" method="post">
-    <div class="form_row">
-        <label>Select a network to share your activity on</label>
-        {% for error in form.social_network.errors %}
-            <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
-        {% endfor %}
-        <ul class="buttonset">
-            {% for id, label in form.social_network.field.choices %}
-                <li>
-                    <input value="{{ id }}" type="radio" name="{{ form.social_network.name }}" 
-                        id="id_{{ form.social_network.name }}{{ forloop.counter0 }}"
-                        {% if id == field.data %}checked="checked"{% endif %} />
-                    <label for="id_{{ form.social_network.name }}{{ forloop.counter0 }}">
-                        {% if label == "Twitter" %}
-                            <img src="{% dated_static 'images/theme/social_icons/24/twitter.png' %}"
-                                width="24" height="24"/>
-                        {% else %}
-                            <img src="{% dated_static 'images/theme/social_icons/24/facebook.png' %}"
-                                width="24" height="24"/>
-                        {% endif %}
-                    </label>
-                </li>
-            {% endfor %}
-        </ul>
+    <br/>
+    <div class="center">
+        <img src="{% dated_static 'images/theme/we_fb.jpg' %}" width="218" height="80"/>
     </div>
+    <p>
+        Share your actions with your friends on Facebook! Repower at Home can publish updates directly to you facebook
+        stream.
+    </p>
+    {% for error in form.social_network.errors %}
+        <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+    {% endfor %}
+    <input type="hidden" value="f" name="social_network" id="id_social_network0" />
+    {# <label>Select a network to share your activity on</label> #}
+    {# <ul class="buttonset" class="plain_list"> #}
+    {#     {% for id, label in form.social_network.field.choices %} #}
+    {#         <li> #}
+    {#             <input value="{{ id }}" type="radio" name="{{ form.social_network.name }}"  #}
+    {#                 id="id_{{ form.social_network.name }}{{ forloop.counter0 }}" #}
+    {#                 {% if id == field.data %}checked="checked"{% endif %} /> #}
+    {#             <label for="id_{{ form.social_network.name }}{{ forloop.counter0 }}"> #}
+    {#                 {% if label == "Twitter" %} #}
+    {#                     <img src="{% dated_static 'images/theme/social_icons/24/twitter.png' %}" #}
+    {#                         width="24" height="24"/> #}
+    {#                 {% else %} #}
+    {#                     <img src="{% dated_static 'images/theme/social_icons/24/facebook.png' %}" #}
+    {#                         width="24" height="24"/> #}
+    {#                 {% endif %} #}
+    {#             </label> #}
+    {#         </li> #}
+    {#     {% endfor %} #}
+    {# </ul> #}
     <div>
         {{ form.has_twitter_access }}
         {{ form.has_facebook_access }}
     </div>
-    <br class="clear" />
-    <input type="submit" value="Share" /> | 
-    <a id="ask_to_share_cancel" href="{% url profile_edit request.user.id %}">no thanks</a>
+    <button type="submit">Enable Facebook Sharing</button>
+    <a id="ask_to_share_cancel" class="button" href="{% url profile_edit request.user.id %}">Not now</a>
+    <p class="center">
+        <a href="{% url records_dont_ask_again %}" class="smaller">Stop asking me this!</a>
+    </p>
     {% csrf_token %}
-    <br />
-    <div class="form_row smaller">
-        <a href="{% url records_dont_ask_again %}">please don't ask me this again</a>
-    </div>
 </form>
