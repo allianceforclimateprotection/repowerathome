@@ -7,7 +7,7 @@ from fabric.api import *
 from fabric.contrib.console import confirm
 
 env.user = "ubuntu"
-env.key_filename = "/Users/buckley/.ssh/acp-ec2-pk.pem"
+# env.key_filename = "/Users/buckley/.ssh/acp-ec2-pk.pem"
 env.disable_known_hosts = True
 
 env.roledefs = {
