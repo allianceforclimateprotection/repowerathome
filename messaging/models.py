@@ -60,7 +60,7 @@ class Message(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
-    def send_time(self, start, end):
+    def send_time(self, start, end=None):
         """
         Note that if an 'after start' or 'before end' send time is created, and it falls
         outside of the start, end range.  This function will return None, meaning the message
@@ -68,6 +68,9 @@ class Message(models.Model):
         """
         if self.message_timing not in Message.TIMING_CODES:
             raise NotImplementedError("unknown delta type: %s" % self.message_timing)
+            
+        if not end:
+            end = start
         
         if start.__class__ == datetime.date:
             start = datetime.datetime.combine(start, datetime.time.min)
@@ -86,10 +89,10 @@ class Message(models.Model):
             delta = datetime.timedelta(hours=self.x_value)
             if self.message_timing == "after_start":
                 send = start + delta
-                send_time = send if send < end else None
+                send_time = send if send <= end else None
             elif self.message_timing == "before_end":
                 send = end - delta
-                send_time = send if send > start else None
+                send_time = send if send >= start else None
             elif self.message_timing == "after_end":
                 send_time = end + delta
         if send_time and self.time_snap:
@@ -271,7 +274,7 @@ class Stream(models.Model):
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
     
-    def enqueue(self, content_object, start, end, batch_content_object=None, send_expired=True):
+    def enqueue(self, content_object, start, end=None, batch_content_object=None, send_expired=True):
         enqueued = []
         now = datetime.datetime.now()
         for ab_test in ABTest.objects.filter(stream=self):
@@ -293,7 +296,7 @@ class Stream(models.Model):
                             content_object=content_object, send_time=send_time))
         return enqueued
     
-    def upqueue(self, content_object, start, end, batch_content_object=None):
+    def upqueue(self, content_object, start, end=None, batch_content_object=None):
         self.dequeue(content_object=content_object)
         return self.enqueue(content_object=content_object, start=start, end=end, 
             batch_content_object=batch_content_object, send_expired=False)
