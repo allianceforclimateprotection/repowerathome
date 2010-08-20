@@ -132,8 +132,7 @@ var rah = {
             // $(".buttonset", container).buttonset();
             $("#ask_to_share").submit(function() {
                 var form = $(this);
-                var network = $("input[@name='social_network']:checked", form).val();
-                if(network == "f" && !($("#id_has_facebook_access", form).val() == "True")) {
+                if(!($("#id_has_facebook_access", form).val() == "True")) {
                     FB.login(function(response) {
                         if (response.session) {
                             $.get("/facebook/authorize/", function(data) {
@@ -141,8 +140,6 @@ var rah = {
                             });   
                         }
                     }, {perms:"email,publish_stream,offline_access"});
-                } else if (network == "t" && !($("#id_has_twitter_access", form).val() == "True")){
-                    // authorize with twitter
                 } else {
                     rah.mod_ask_to_share.share(form);
                 }
