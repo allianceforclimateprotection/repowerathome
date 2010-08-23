@@ -55,6 +55,8 @@ def clean():
 @roles("loadbalancer")
 def enable_maintenance_page():
     "Turns on the maintenance page"
+    import pdb
+    pdb.set_trace()
     if SHOW_MAINTENANCE_PAGE:
         sudo("rm /etc/nginx/sites-enabled/rah")
         sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
@@ -74,7 +76,7 @@ def pull():
 def checkout():
     "Checkout the revision you would like to deploy"
     require("hosts", provided_by=deployments)
-    run("cd %(deploy_to)s && git checkout %(revision)s" % env)
+    run("cd %(deploy_to)s && git checkout -f %(revision)s" % env)
 
 def install_requirements():
     "Using pip install all of the requirements defined"
