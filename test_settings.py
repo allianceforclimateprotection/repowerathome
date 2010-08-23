@@ -16,6 +16,8 @@ INSTALLED_APPS = (
     'django.contrib.comments',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.sitemaps',
+    'django.contrib.flatpages',
     'rah',
     'rateable',
     'rateable.tests',
