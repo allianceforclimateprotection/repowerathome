@@ -194,6 +194,9 @@ class Group(models.Model):
         return user.is_authenticated() and \
             self.is_joinable() and \
             GroupUsers.objects.filter(user=user, group=self, is_manager=True).exists()
+            
+    def managers(self, user):
+        return User.objects.filter(group=self, groupusers__is_manager=True)
         
     def parents(self):
         parents = []

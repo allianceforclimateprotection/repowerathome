@@ -10,7 +10,7 @@ class GroupAdmin(admin.ModelAdmin):
         return qs.filter(is_geo_group=False)
     
     def managers(self, obj):
-        return ", ".join([u.user.get_full_name() for u in GroupUsers.objects.filter(group=obj, is_manager=True)])
+        return ", ".join([u.user.get_full_name() for u in obj.managers()])
     managers.short_description = "Managers"
     
     def committed_actions(self, obj):
