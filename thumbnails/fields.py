@@ -70,10 +70,11 @@ class ImageAndThumbsFile(ImageFieldFile):
         return ContentFile(thumbnail.tostring(codec, thumbnail.mode))
         
     def save(self, *args, **kwargs):
-        images = Thumbnail.objects.thumbnails_for(raw=self.name)
+        images = Thumbnail.objects.filter(raw=self.name)
         if images:
             for image in images:
-                self.storage.delete(image)
+                if self.image.raw != self.field.default:
+                    self.storage.delete(image.thumbnail)
             images.delete()
         return super(ImageAndThumbsFile, self).save(*args, **kwargs)
         

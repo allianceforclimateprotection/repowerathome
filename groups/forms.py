@@ -59,13 +59,14 @@ class GroupForm(forms.ModelForm):
         
     def save(self):
         group = super(GroupForm, self).save()
-        if self.cleaned_data["image"]:
+        current_image = self.cleaned_data["image"]
+        if current_image and current_image != group.image.field.default:
             timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             image_name = "%s_%s.%s" % (group.pk, timestamp, GroupForm.IMAGE_FORMATS[self.image_format])
             original_file = group.image.file
             original_name = original_file.name
             group.image.save(image_name, original_file, save=True)
-            default_storage.delete(original_name)
+            group.image.storage.delete(original_name)
         return group
         
 class MembershipForm(forms.Form):
