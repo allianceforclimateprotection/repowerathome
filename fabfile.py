@@ -10,8 +10,8 @@ env.user = "ubuntu"
 env.disable_known_hosts = True
 
 env.roledefs = {
-    "web": ["prod1.repowerathome.com", "prod2.repowerathome.com"],
-    "loadbalancer": ["loadbalancer.repowerathome.com"],
+    "application": ["ec2-184-73-22-211.compute-1.amazonaws.com"],
+    "loadbalancer": ["repowerathome.com"],
     "development": ["dev.repowerathome.com"],
     "staging": ["ec2-184-73-22-211.compute-1.amazonaws.com"],
 }
@@ -28,7 +28,7 @@ def dev():
 def staging():
     env.hosts = env.roledefs["staging"]
 def prod():
-    env.hosts = env.roledefs["web"]
+    env.hosts = env.roledefs["application"]
     SHOW_MAINTENANCE_PAGE = True
 deployments = [dev, staging, prod]
 
