@@ -5,12 +5,12 @@ from django import forms
 from django.core.files.storage import default_storage
 from django.core.urlresolvers import resolve, reverse
 from django.contrib.auth.models import User
+from django.contrib.flatpages.models import FlatPage
 
 from PIL.Image import open as pil_open
 from utils import hash_val
 
 from geo.models import Location
-
 from models import Group, GroupUsers, Discussion
 
 class GroupForm(forms.ModelForm):
@@ -26,7 +26,7 @@ class GroupForm(forms.ModelForm):
         "in", "ks", "ky", "la", "ma", "md", "me", "mi", "mn", "mo", "ms", "mt", "nc", "nd", "ne", 
         "nh", "nj", "nm", "nv", "ny", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", 
         "va", "vt", "wa", "wi", "wv", "wy"]
-    group_name_blacklist = ["user", "users", "admin", "about", "event", "terms", "privacy"]
+    group_name_blacklist = ["user", "users", "admin", "event", "team"]
     
     class Meta:
         model = Group
@@ -50,11 +50,18 @@ class GroupForm(forms.ModelForm):
         data = self.cleaned_data["slug"]
         if data in GroupForm.states or any([data.startswith("%s-" % state) for state in GroupForm.states]):
             raise forms.ValidationError("Team addresses can not begin with a state name.")
+        
+        # Make sure the name is not in the blacklist or a resolvable URL
         try:
             if data in GroupForm.group_name_blacklist or resolve(reverse("group_detail", args=[data]))[0].__name__ != "group_detail":
-                raise forms.ValidationError("This Team address is not allowed.")
+                raise forms.ValidationError("This team address is not available.")
         except:
-            raise forms.ValidationError("This Team address is not allowed.")
+            raise forms.ValidationError("This team address is not available.")
+        
+        # Make sure there isn't a flatpage with this slug
+        if FlatPage.objects.filter(url="/%s/" % data):
+            raise forms.ValidationError("This team address is not available.")
+        
         return data
         
     def save(self):
