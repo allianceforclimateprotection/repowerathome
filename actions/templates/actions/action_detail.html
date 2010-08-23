@@ -2,7 +2,7 @@
 {% load comments %}
 {% block meta_desc %}{{action.name}}: {{action.teaser}}{% endblock %}
 {% block extrahead %}
-    <meta property="og:image" content="http://repowerathome.com{{ action.get_detail_illustration }}" />
+    <meta property="og:image" content="{{ action.get_detail_illustration }}" />
     <meta property="og:type" content="activity" />
     <meta property="og:title" content="{{action.name}}" />
     <meta property="og:description" content="{{action.teaser}}" />
