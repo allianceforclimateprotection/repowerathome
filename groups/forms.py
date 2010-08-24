@@ -61,7 +61,6 @@ class GroupForm(forms.ModelForm):
         # Make sure there isn't a flatpage with this slug
         if FlatPage.objects.filter(url="/%s/" % data):
             raise forms.ValidationError("This team address is not available.")
-        
         return data
         
     def save(self):
