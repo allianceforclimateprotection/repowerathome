@@ -42,6 +42,9 @@ from groups.feeds import GroupActivityFeed
 # Import some custom forms to pass into the auth app urls
 from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
 
+from rah.export_action import admin_list_export
+admin.site.add_action(admin_list_export, 'Export to CSV')
+
 urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
     url(r'^register/$', 'register', name='register'),
@@ -67,7 +70,6 @@ urlpatterns += patterns('',
     url(r'^password_reset/$', 'django.contrib.auth.views.password_reset', { 'post_reset_redirect': '/password_reset_done/' }, name='password_reset'),
     url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', { 'post_reset_redirect': '/reset/done/', 'set_password_form': SetPasswordForm }, name='password_reset_confirm'),
     url(r'^', include('django.contrib.auth.urls')),
-    url(r'^admin/(?P<app_label>[\d\w]+)/(?P<model_name>[\d\w]+)/csv/', 'rah.csv_view.admin_list_export'),
     url(r'^admin/(.*)', admin.site.root, name='admin_root'),
     url(r'^blog/', include('basic.blog.urls')),
     url(r'^blog/feed/$', BlogPostsFeed(), name='blog_feed'),

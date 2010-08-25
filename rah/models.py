@@ -33,37 +33,53 @@ class Feedback(DefaultModel):
         return u'%s...' % (self.comment[:15])
         
 class ProfileManager(models.Manager):
-    def user_activity(self, users=None):
+    def user_engagement(self, users=None):
         from django.db import connection, transaction
 
         actions = Action.objects.all()
         action_cases = [
             """
             CASE
-                WHEN `%s_uap`.is_completed = 1 THEN 'Done'
-                WHEN `%s_uap`.date_committed IS NOT NULL THEN CONCAT('Due on ', `%s_uap`.date_committed)
+                WHEN `%s_uap`.is_completed = 1 AND `%s_uap`.date_committed IS NOT NULL THEN "completed"
+                WHEN `%s_uap`.is_completed = 1 THEN "already done"
+                WHEN `%s_uap`.date_committed IS NOT NULL THEN "committed"
             END AS '%s'
-            """ % (a.slug, a.slug, a.slug, a.name) for a in actions]
+            """ % (a.slug, a.slug, a.slug, a.slug, a.name.lower()) for a in actions]
         action_joins = [
             """
             LEFT JOIN actions_useractionprogress `%s_uap` ON `%s_uap`.action_id = %s AND `%s_uap`.user_id = u.id
             """ % (a.slug, a.slug, a.id, a.slug) for a in actions]
-        users_filter = "WHERE u.id IN (%s)" % ",".join([u.pk for u in users]) if users else ""
+        users_filter = "WHERE u.id IN (%s)" % ",".join([str(u.pk) for u in users]) if users else ""
             
         query = """
-            SELECT u.first_name AS 'First name', u.last_name AS 'Last name', u.email AS Email,
-                l.name AS City, l.st AS State, l.zipcode AS Zipcode,
-                %s
+            SELECT u.first_name AS "first name", u.last_name AS "last name", u.email,
+                l.name AS city, l.st AS state, l.zipcode AS "zip code",
+                %s,
+                CASE
+                    WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id AND gu.is_manager = 1) = 1 THEN "yes"
+                END AS "team manager",
+                CASE
+                    WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id) = 1 THEN "yes"
+                END AS "team member",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g WHERE u.id = g.user_id AND g.is_host = 1) = 1 THEN "yes"
+                END AS "event host",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g WHERE u.id = g.user_id) = 1 THEN "yes"
+                END AS "event guest"
             FROM auth_user u
             JOIN rah_profile p ON u.id = p.user_id
             LEFT JOIN geo_location l ON p.location_id = l.id
-            %s %s
+            %s
+            %s
             ORDER BY u.id
             """ % (", ".join(action_cases), " ".join(action_joins), users_filter)
-            
         cursor = connection.cursor()
         cursor.execute(query)
-        return cursor.fetchall()
+        header_row = tuple([d[0] for d in cursor.description])
+        queryset = [header_row] + list(cursor.fetchall())
+        cursor.close()
+        return queryset
 
 class Profile(models.Model):
     """Profile"""
