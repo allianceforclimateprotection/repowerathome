@@ -78,7 +78,10 @@ def group_membership_request(request, group_id, user_id, action):
     user = get_object_or_404(User, id=user_id)
     if not group.is_user_manager(request.user):
         return forbidden(request)
-    membership_request = MembershipRequests.objects.filter(group=group, user=user)
+    try:
+        membership_request = MembershipRequests.objects.get(group=group, user=user)
+    except MembershipRequests.DoesNotExist:
+        membership_request = None
     if membership_request:
         if action == "approve":
             GroupUsers.objects.create(group=group, user=user, is_manager=False)

@@ -612,6 +612,8 @@ class GroupLeaveViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
 
 class GroupJoinViewTest(TestCase):
+    fixtures = ["team_membership.json"]
+    
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
@@ -673,9 +675,9 @@ class GroupJoinViewTest(TestCase):
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
         self.failUnless(MembershipRequests.objects.filter(user=self.user, group=self.group).exists())
-        # email = mail.outbox.pop()
-        # self.failUnlessEqual(email.to, [manager.email])
-        # self.failUnlessEqual(email.subject, "Team Join Request")
+        email = mail.outbox.pop()
+        self.failUnlessEqual(email.to, [manager.email])
+        self.failUnlessEqual(email.subject, "Team Join Request")
 
 class GroupMembershipRequestViewTest(object):
     def setUp(self):
@@ -724,6 +726,8 @@ class GroupMembershipRequestViewTest(object):
         self.failUnless("info" in message.tags)
 
 class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
+    fixtures = ["team_membership.json"]
+    
     def __init__(self, *args, **kwargs):
         self.url_name = "group_approve"
         super(TestCase, self).__init__(*args, **kwargs)
@@ -738,13 +742,15 @@ class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(MembershipRequests.objects.filter(user=self.requester, group=self.group).exists(), False)
         self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), True)
-        # email = mail.outbox.pop()
-        # self.failUnlessEqual(email.to, [self.requester.email])
-        # self.failUnlessEqual(email.subject, "Team Membership Response")
-        # self.failUnless("approved your access" in email.body)
+        email = mail.outbox.pop()
+        self.failUnlessEqual(email.to, [self.requester.email])
+        self.failUnlessEqual(email.subject, "Team Membership Response")
+        self.failUnless("approved your access" in email.body)
         
 
 class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
+    fixtures = ["team_membership.json"]
+    
     def __init__(self, *args, **kwargs):
         self.url_name = "group_deny"
         super(TestCase, self).__init__(*args, **kwargs)
@@ -759,10 +765,10 @@ class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
         self.failUnless("success" in message.tags)
         self.failUnlessEqual(MembershipRequests.objects.filter(user=self.requester, group=self.group).exists(), False)
         self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), False)
-        # email = mail.outbox.pop()
-        # self.failUnlessEqual(email.to, [self.requester.email])
-        # self.failUnlessEqual(email.subject, "Team Membership Response")
-        # self.failUnless("turned down" in email.body)
+        email = mail.outbox.pop()
+        self.failUnlessEqual(email.to, [self.requester.email])
+        self.failUnlessEqual(email.subject, "Team Membership Response")
+        self.failUnless("turned down" in email.body)
 
 class GroupDetailViewTest(TestCase):
     def setUp(self):

@@ -195,7 +195,7 @@ class Group(models.Model):
             self.is_joinable() and \
             GroupUsers.objects.filter(user=user, group=self, is_manager=True).exists()
             
-    def managers(self, user):
+    def managers(self):
         return User.objects.filter(group=self, groupusers__is_manager=True)
         
     def parents(self):
