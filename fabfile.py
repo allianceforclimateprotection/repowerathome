@@ -22,14 +22,12 @@ env.branch = "master"
 env.revision = "HEAD"
 env.repository = "git@codebasehq-deploy:rah/rah/rah.git"
 
-SHOW_MAINTENANCE_PAGE = False
 def dev():
     env.hosts = env.roledefs["development"]
 def staging():
     env.hosts = env.roledefs["staging"]
 def prod():
     env.hosts = env.roledefs["application"]
-    SHOW_MAINTENANCE_PAGE = True
 deployments = [dev, staging, prod]
 
 def _determine_environment():
@@ -55,9 +53,7 @@ def clean():
 @roles("loadbalancer")
 def enable_maintenance_page():
     "Turns on the maintenance page"
-    import pdb
-    pdb.set_trace()
-    if SHOW_MAINTENANCE_PAGE:
+    if _determine_environment() == "application":
         sudo("rm /etc/nginx/sites-enabled/rah")
         sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
         sudo("/etc/init.d/nginx reload")
@@ -122,7 +118,7 @@ def restart_apache():
 @roles("loadbalancer")
 def disable_maintenance_page():
     "Turns off the maintenance page"
-    if SHOW_MAINTENANCE_PAGE:
+    if _determine_environment() == "application"
         sudo("rm /etc/nginx/sites-enabled/maintenance")
         sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
         sudo("/etc/init.d/nginx reload")
