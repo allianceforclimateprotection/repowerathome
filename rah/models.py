@@ -52,7 +52,7 @@ class ProfileManager(models.Manager):
         users_filter = "WHERE u.id IN (%s)" % ",".join([str(u.pk) for u in users]) if users else ""
             
         query = """
-            SELECT u.first_name AS "first name", u.last_name AS "last name", u.email,
+            SELECT u.id, u.first_name AS "first name", u.last_name AS "last name", u.email,
                 l.name AS city, l.st AS state, l.zipcode AS "zip code",
                 %s,
                 CASE

@@ -15,9 +15,9 @@ def user_engagement(modeladmin, request, queryset):
     
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=user_engagement.csv'
-    writer = csv.writer(response)
+    writer = csv.writer(response, dialect='excel')
     for row in user_queryset:
-        writer.writerow(row)
+        writer.writerow(['="%s"' % s if s else s for s in row])
     return response
 user_engagement.short_description = "Export user engagement to CSV"
 
