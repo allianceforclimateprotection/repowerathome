@@ -12,6 +12,14 @@ from models import User, Event
 class MessageSendTimeTest(TestCase):
     fixtures = ["test_messaging.json"]
     
+    def test_send_immediately(self):
+        send_immediately = Message.objects.get(name="send immediately")
+        before = datetime.datetime.now()
+        send_time = send_immediately.send_time(start=datetime.datetime.now())
+        after = datetime.datetime.now()
+        self.failUnless(before <= send_time)
+        self.failUnless(send_time <= after)
+    
     def test_send_after_start(self):
         start = datetime.datetime(2010, 7, 1, 18, 00)
         end = datetime.datetime(2010, 7, 8, 18, 00)

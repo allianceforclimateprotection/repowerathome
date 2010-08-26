@@ -18,6 +18,7 @@ URL_REGEX = re.compile(r"\b(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~
 
 class Message(models.Model):
     TIMING_TYPES = (
+        ("send_immediately", "Send immediately"),
         ("after_start", "Send X hours after start",),
         ("before_end", "Send X hours before end",),
         ("after_end", "Send X hours after end",),
@@ -68,6 +69,9 @@ class Message(models.Model):
         """
         if self.message_timing not in Message.TIMING_CODES:
             raise NotImplementedError("unknown delta type: %s" % self.message_timing)
+            
+        if self.message_timing == "send_immediately":
+            return datetime.datetime.now()
             
         if not end:
             end = start
