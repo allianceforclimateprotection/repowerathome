@@ -1,8 +1,8 @@
 {% if event.event_type.description %}
-<div>
-    <h3>Description</h3>
-    <p>{{ event.event_type.description }}</p>
-</div>    
+    <div>
+        <h3>Description</h3>
+        <p>{{ event.event_type.description }}</p>
+    </div>
 {% endif %}
 {% if event.details %}
     <div>
@@ -20,7 +20,6 @@
         {% if event.place_name %}<span>{{ event.place_name }}</span><br />{% endif %}
         <span id="event_address">{{ event.where }}</span><br />
         <span id="event_location">{{ event.location }} {{ event.location.zipcode }}</span>
-        
     </p>
     <div id="event_map"></div>
     <br/>

@@ -1,6 +1,6 @@
 <ul id="event_manager_nav">
     {% url event-detail event.id as link %}
-    <li><a href="{% if link == request.path %}#{% else %}{{ link }}{% endif %}">Details</a></li>
+    <li><a href="{% if link == request.path or "invite" in request.path %}#{% else %}{{ link }}{% endif %}">Details</a></li>
     {% url event-guests event.id as link %}
     <li><a href="{% if link == request.path %}#{% else %}{{ link }}{% endif %}">Guest List</a></li>
     {% url event-commitments event.id as link %}
