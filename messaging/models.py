@@ -129,7 +129,7 @@ class Message(models.Model):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
     
-    def send(self, content_object, blacklisted_emails=None): # TODO: create unit tests for Message.send()
+    def send(self, content_object, blacklisted_emails=None, extra_params=None): # TODO: create unit tests for Message.send()
         sent = []
         if not blacklisted_emails:
             blacklisted_emails = []
@@ -140,8 +140,11 @@ class Message(models.Model):
             recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
                 token=hash_val([email, datetime.datetime.now()]))
             domain = Site.objects.get_current().domain
-            context = template.Context({"content_object": content_object, "domain": domain,
-                "recipient": user_object if user_object else email })
+            params = {"content_object": content_object, "domain": domain, 
+                "recipient": user_object if user_object else email }
+            if extra_params:
+                params.update(extra_params)
+            context = template.Context(params)
             # render the body and subject template with the given, template
             subject = template.Template(self.subject).render(context)
             body = template.Template(self.body).render(context)
@@ -274,7 +277,12 @@ class Stream(models.Model):
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
     
-    def enqueue(self, content_object, start, end=None, batch_content_object=None, send_expired=True):
+    def enqueue(self, content_object, start, end=None, batch_content_object=None, 
+        extra_params=None, send_expired=True):
+        """
+        Note that any extra parameters passed through are only available to messages that are
+        sent immediately, AKA messages not put into the Queue.
+        """
         enqueued = []
         now = datetime.datetime.now()
         for ab_test in ABTest.objects.filter(stream=self):
@@ -285,7 +293,9 @@ class Stream(models.Model):
             if send_time:
                 if send_time <= now:
                     if send_expired:
-                        message.send(content_object)
+                        message.send(content_object, 
+                            blacklisted_emails=message.blacklisted_emails(),
+                            extra_params=extra_params)
                 else:
                     if batch_content_object:
                         enqueued.append(Queue.objects.create(message=message,
@@ -296,10 +306,10 @@ class Stream(models.Model):
                             content_object=content_object, send_time=send_time))
         return enqueued
     
-    def upqueue(self, content_object, start, end=None, batch_content_object=None):
+    def upqueue(self, content_object, start, end=None, batch_content_object=None, extra_params=None):
         self.dequeue(content_object=content_object)
         return self.enqueue(content_object=content_object, start=start, end=end, 
-            batch_content_object=batch_content_object, send_expired=False)
+            batch_content_object=batch_content_object, extra_params=extra_params, send_expired=False)
     
     def dequeue(self, content_object):
         return self._queued_messages(content_object).delete()
