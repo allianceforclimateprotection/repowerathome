@@ -44,6 +44,8 @@ class InviteTagTest(TestCase):
             % post.pk in html)
         
 class InviteViewTest(TestCase):
+    fixtures = ["invite.json"]
+    
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")

@@ -624,7 +624,7 @@ class EventGuestsAddViewTest(TestCase):
         self.failUnlessEqual(jon.rsvp_status, "N")
         
 class EventGuestsInviteViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json"]
+    fixtures = ["test_geo_02804.json", "test_events.json", "invite.json"]
 
     def setUp(self):
         self.client = Client()

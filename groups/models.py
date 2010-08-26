@@ -341,7 +341,6 @@ def update_group_member_count(sender, instance, **kwargs):
     group.member_count = GroupUsers.objects.filter(group=group).count()
     group.save()
 
-# OPTIMIZE: convert alert_users_of_discussion to use message stream 
 def alert_users_of_discussion(sender, instance, **kwargs):
     if instance.is_public and not instance.is_removed and not instance.reply_count:
         Stream.objects.get(slug="team-discussion").enqueue(content_object=instance, start=instance.created)

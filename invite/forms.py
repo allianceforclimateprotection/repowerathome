@@ -7,6 +7,8 @@ from django.core.mail import EmailMessage
 from django.template import loader
 
 from utils import hash_val
+from messaging.models import Stream
+
 from models import Invitation, make_token
 from fields import MultiEmailField
 
@@ -51,18 +53,14 @@ class InviteForm(forms.ModelForm):
             self.instance.token = make_token()
             invite = super(InviteForm, self).save(*args, **kwargs)
             ct = self.instance.content_type
-            # OPTIMIZE: convert invitation sending to use message stream
-            template_list = ["invite/invite.html",]
+            stream = None
             if ct:
-                template_list = [
-                    "invite/%s/%s/invite.html" % (ct.model_class()._meta.app_label, ct.model_class()._meta.module_name),
-                    "invite/%s/invite.html" % ct.model_class()._meta.app_label,
-                ] + template_list
-            context = {"from_user": invite.user, "note": self.cleaned_data["note"], "invite": invite,
-                "domain": Site.objects.get_current().domain,}
-            msg = EmailMessage("Invitation from %s to Repower at Home" % invite.user.get_full_name(),
-                loader.render_to_string(template_list, context), None, [invite.email])
-            msg.content_subtype = "html"
-            msg.send()
+                try:
+                    stream = Stream.objects.get(slug="invite-%s" % ct.model_class()._meta.app_label)
+                except Stream.DoesNotExist:
+                    pass
+            stream = stream or Stream.objects.get(slug="invite")
+            stream.enqueue(content_object=invite, start=invite.created, 
+                extra_params={"note": self.cleaned_data["note"]})
             invites.append(Invitation.objects.get(pk=invite.pk))
         return invites
