@@ -288,14 +288,13 @@ class Stream(models.Model):
         sent immediately, AKA messages not put into the Queue.
         """
         enqueued = []
-        now = datetime.datetime.now()
         for ab_test in ABTest.objects.filter(stream=self):
             if not ab_test.is_enabled:
                 continue
             message = ab_test.random_message()
             send_time = message.send_time(start, end)
             if send_time:
-                if send_time <= now:
+                if send_time <= datetime.datetime.now():
                     if send_expired:
                         message.send(content_object, 
                             blacklisted_emails=message.blacklisted_emails(),

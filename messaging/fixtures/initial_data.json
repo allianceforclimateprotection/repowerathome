@@ -5,5 +5,7 @@
     {"pk": 4, "model": "messaging.stream", "fields": {"updated": "2010-08-23 11:49:34", "slug": "team-join-request", "label": "Request to join team", "created": "2010-08-23 11:49:34", "can_unsubscribe": 0}},
     {"pk": 5, "model": "messaging.stream", "fields": {"updated": "2010-08-23 11:49:34", "slug": "team-membership-approved", "label": "Team membership approved", "created": "2010-08-23 11:49:34", "can_unsubscribe": 0}},
     {"pk": 6, "model": "messaging.stream", "fields": {"updated": "2010-08-23 11:49:34", "slug": "team-membership-denied", "label": "Team membership denied", "created": "2010-08-23 11:49:34", "can_unsubscribe": 0}},
-    {"pk": 7, "model": "messaging.stream", "fields": {"updated": "2010-08-25 12:19:34", "slug": "event-rsvp-notification", "label": "Event RSVP notification", "created": "2010-08-25 12:19:34", "can_unsubscribe": 0}}
+    {"pk": 7, "model": "messaging.stream", "fields": {"updated": "2010-08-25 12:19:34", "slug": "event-rsvp-notification", "label": "Event RSVP notification", "created": "2010-08-25 12:19:34", "can_unsubscribe": 0}},
+    {"pk": 8, "model": "messaging.stream", "fields": {"updated": "2010-08-25 13:27:34", "slug": "event-reminder", "label": "Event reminder", "created": "2010-08-25 13:27:34", "can_unsubscribe": 0}},
+    {"pk": 9, "model": "messaging.stream", "fields": {"updated": "2010-08-25 13:27:34", "slug": "event-announcement", "label": "Event announcement", "created": "2010-08-25 13:27:34", "can_unsubscribe": 0}}
 ]

@@ -16,6 +16,7 @@ from geo.models import Location
 from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
+from messaging.models import Stream
 
 from models import EventType, Event, Guest, Survey, Commitment, rsvp_recieved
 from widgets import SelectTimeWidget, RadioRendererForTable
@@ -338,22 +339,19 @@ class MessageForm(forms.Form):
         super(MessageForm, self).__init__(*args, **kwargs)
         self.user = user
         self.event = event
+        self.type = type
         self.fields["guests"].queryset = event.guest_set.all()
-        date = format(self.event.when, settings.DATE_FORMAT)
-        if type == "reminder":
-            self.template = "events/reminder_email.html"
-            self.subject = "Remember %s on %s" % (self.event, date)
-        elif type == "announcement":
-            self.subject = "Update about %s on %s" % (self.event, date)
-            self.template = "events/announcement_email.html"
-        else:
-            raise AttributeError("Unknown message type: %s" % type)
-    # OPTIMIZE: convert event reminders and announcements to use message stream
+
     def save(self, *args, **kwargs):
-        for guest in self.cleaned_data["guests"]:
-            context = {"user": self.user, "guest": guest, "domain": Site.objects.get_current().domain, 
-                "note": self.cleaned_data["note"]}
-            msg = EmailMessage(self.subject, loader.render_to_string(self.template, context), None, [guest.email])
-            msg.content_subtype = "html"
-            msg.send()
+        extra_params={"author": self.user, "note": self.cleaned_data["note"]}
+        if self.type == "reminder":
+            for guest in self.cleaned_data["guests"]:
+                Stream.objects.get(slug="event-reminder").enqueue(content_object=guest, 
+                    start=datetime.datetime.now(), extra_params=extra_params)
+        elif self.type == "announcement":
+            for guest in self.cleaned_data["guests"]:
+                Stream.objects.get(slug="event-announcement").enqueue(content_object=guest,
+                    start=datetime.datetime.now(), extra_params=extra_params)
+        else:
+            raise AttributeError("Unknown message type: %s" % self.type)
     
