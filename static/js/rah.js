@@ -758,7 +758,7 @@ var rah = {
         init: function() {
             rah.mod_comment_form.init();
             rah.mod_event_tabs.init(0);
-            var address = $("#event_address").text()
+            var address = $("#event_address").text();
             var location = $("#event_location").text();
             geocoder = new google.maps.Geocoder();
             var myOptions = {

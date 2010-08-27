@@ -29,6 +29,7 @@ from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
 from events.models import Event
+from messaging.models import Stream
 from messaging.forms import StreamNotificationsForm
 
 from decorators import save_queued_POST
@@ -332,16 +333,7 @@ def forbidden(request, message="You do not have permissions."):
     
 def send_registration_emails(sender, request, user, is_new_user, **kwargs):
     if is_new_user:
-        # OPTIMIZE: convert send_registration_emails to use message stream
-        domain = Site.objects.get_current().domain
-        template = loader.get_template("rah/registration_email.html")
-        context = {"user": user, "domain": domain,}
-        msg = EmailMessage("Registration", template.render(Context(context)), None, [user.email])
-        msg.content_subtype = "html"
-        msg.send()
-    
-        send_mail("New RAH User: %s" % user.email, "http://%s/%s" % (domain, user.get_absolute_url()), 
-            None, ["newaccounts@repowerathome.com"], fail_silently=True)
+        Stream.objects.get(slug="registration").enqueue(content_object=user, start=user.date_joined)
 logged_in.connect(send_registration_emails)
 
 def track_registration(sender, request, user, is_new_user, **kwargs):

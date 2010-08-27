@@ -10,8 +10,8 @@ env.user = "ubuntu"
 env.disable_known_hosts = True
 
 env.roledefs = {
-    "web": ["prod1.repowerathome.com", "prod2.repowerathome.com"],
-    "loadbalancer": ["loadbalancer.repowerathome.com"],
+    "application": ["ec2-184-73-22-211.compute-1.amazonaws.com"],
+    "loadbalancer": ["repowerathome.com"],
     "development": ["dev.repowerathome.com"],
     "staging": ["ec2-184-73-22-211.compute-1.amazonaws.com"],
 }
@@ -22,14 +22,12 @@ env.branch = "master"
 env.revision = "HEAD"
 env.repository = "git@codebasehq-deploy:rah/rah/rah.git"
 
-SHOW_MAINTENANCE_PAGE = False
 def dev():
     env.hosts = env.roledefs["development"]
 def staging():
     env.hosts = env.roledefs["staging"]
 def prod():
-    env.hosts = env.roledefs["web"]
-    SHOW_MAINTENANCE_PAGE = True
+    env.hosts = env.roledefs["application"]
 deployments = [dev, staging, prod]
 
 def _determine_environment():
@@ -55,7 +53,7 @@ def clean():
 @roles("loadbalancer")
 def enable_maintenance_page():
     "Turns on the maintenance page"
-    if SHOW_MAINTENANCE_PAGE:
+    if _determine_environment() == "application":
         sudo("rm /etc/nginx/sites-enabled/rah")
         sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
         sudo("/etc/init.d/nginx reload")
@@ -74,7 +72,7 @@ def pull():
 def checkout():
     "Checkout the revision you would like to deploy"
     require("hosts", provided_by=deployments)
-    run("cd %(deploy_to)s && git checkout %(revision)s" % env)
+    run("cd %(deploy_to)s && git checkout -f %(revision)s" % env)
 
 def install_requirements():
     "Using pip install all of the requirements defined"
@@ -120,7 +118,7 @@ def restart_apache():
 @roles("loadbalancer")
 def disable_maintenance_page():
     "Turns off the maintenance page"
-    if SHOW_MAINTENANCE_PAGE:
+    if _determine_environment() == "application"
         sudo("rm /etc/nginx/sites-enabled/maintenance")
         sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
         sudo("/etc/init.d/nginx reload")

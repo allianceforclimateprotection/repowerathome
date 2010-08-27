@@ -16,6 +16,7 @@ from geo.models import Location
 from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
+from messaging.models import Stream
 
 from models import EventType, Event, Guest, Survey, Commitment, rsvp_recieved
 from widgets import SelectTimeWidget, RadioRendererForTable
@@ -315,18 +316,16 @@ class RsvpAccountForm(forms.ModelForm):
             raise forms.ValidationError("Zipcode is invalid")
     
     def save(self, request, *args, **kwargs):
+        from rah.signals import logged_in
         user = User(first_name=self.instance.first_name, last_name=self.instance.last_name,
             email=self.instance.email)
         user.username = hashlib.md5(self.instance.email).hexdigest()[:30]
         user.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
         user.save()
         self.instance.user = user
-        # OPTIMIZE: convert post RSVP registration emails to use message stream (PS, shouldn't this be fired by a signal?)
-        template = loader.get_template("rah/registration_email.html")
-        context = {"user": user, "domain": Site.objects.get_current().domain,}
-        msg = EmailMessage("Registration", template.render(Context(context)), None, [user.email])
-        msg.content_subtype = "html"
-        msg.send()
+        user = auth.authenticate(username=user.username, password=self.cleaned_data["password1"])
+        logged_in.send(sender=None, request=request, user=user, is_new_user=True)
+        auth.login(request, user)
         guest = super(RsvpAccountForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
         return guest
@@ -340,22 +339,19 @@ class MessageForm(forms.Form):
         super(MessageForm, self).__init__(*args, **kwargs)
         self.user = user
         self.event = event
+        self.type = type
         self.fields["guests"].queryset = event.guest_set.all()
-        date = format(self.event.when, settings.DATE_FORMAT)
-        if type == "reminder":
-            self.template = "events/reminder_email.html"
-            self.subject = "Remember %s on %s" % (self.event, date)
-        elif type == "announcement":
-            self.subject = "Update about %s on %s" % (self.event, date)
-            self.template = "events/announcement_email.html"
-        else:
-            raise AttributeError("Unknown message type: %s" % type)
-    # OPTIMIZE: convert event reminders and announcements to use message stream
+
     def save(self, *args, **kwargs):
-        for guest in self.cleaned_data["guests"]:
-            context = {"user": self.user, "guest": guest, "domain": Site.objects.get_current().domain, 
-                "note": self.cleaned_data["note"]}
-            msg = EmailMessage(self.subject, loader.render_to_string(self.template, context), None, [guest.email])
-            msg.content_subtype = "html"
-            msg.send()
+        extra_params={"author": self.user, "note": self.cleaned_data["note"]}
+        if self.type == "reminder":
+            for guest in self.cleaned_data["guests"]:
+                Stream.objects.get(slug="event-reminder").enqueue(content_object=guest, 
+                    start=datetime.datetime.now(), extra_params=extra_params)
+        elif self.type == "announcement":
+            for guest in self.cleaned_data["guests"]:
+                Stream.objects.get(slug="event-announcement").enqueue(content_object=guest,
+                    start=datetime.datetime.now(), extra_params=extra_params)
+        else:
+            raise AttributeError("Unknown message type: %s" % self.type)
     

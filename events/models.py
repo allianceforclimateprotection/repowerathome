@@ -10,6 +10,7 @@ from django.utils.dateformat import DateFormat
 
 from geo.models import Location
 from invite.models import Invitation
+from messaging.models import Stream
 
 class EventType(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -275,14 +276,8 @@ models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 
 rsvp_recieved = Signal(providing_args=["guest"])
 def notification_on_rsvp(sender, guest, **kwargs):
-    # OPTIMIZE: convert notification_on_rsvp to use message stream
     if guest.rsvp_status and guest.notify_on_rsvp:
-        creator = guest.event.creator
-        context = {"user": creator, "guest": guest, "domain": Site.objects.get_current().domain}
-        msg = EmailMessage("RSVP from %s to %s" % (guest, guest.event),
-            loader.render_to_string("events/rsvp_notify_email.html", context), None, [creator.email])
-        msg.content_subtype = "html"
-        msg.send()
+        Stream.objects.get(slug="event-rsvp-notification").enqueue(content_object=guest, start=guest.updated)
 rsvp_recieved.connect(notification_on_rsvp)
 
 def link_guest_to_user(sender, instance, **kwargs):

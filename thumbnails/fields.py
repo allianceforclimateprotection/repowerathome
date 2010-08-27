@@ -73,7 +73,7 @@ class ImageAndThumbsFile(ImageFieldFile):
         images = Thumbnail.objects.filter(raw=self.name)
         if images:
             for image in images:
-                if self.image.raw != self.field.default:
+                if image.raw != self.field.default:
                     self.storage.delete(image.thumbnail)
             images.delete()
         return super(ImageAndThumbsFile, self).save(*args, **kwargs)

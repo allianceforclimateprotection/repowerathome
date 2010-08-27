@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
+from django.core.validators import validate_email
 from django.db import models
 
 from utils import hash_val
@@ -17,6 +18,7 @@ URL_REGEX = re.compile(r"\b(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~
 
 class Message(models.Model):
     TIMING_TYPES = (
+        ("send_immediately", "Send immediately"),
         ("after_start", "Send X hours after start",),
         ("before_end", "Send X hours before end",),
         ("after_end", "Send X hours after end",),
@@ -59,7 +61,7 @@ class Message(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
-    def send_time(self, start, end):
+    def send_time(self, start, end=None):
         """
         Note that if an 'after start' or 'before end' send time is created, and it falls
         outside of the start, end range.  This function will return None, meaning the message
@@ -67,6 +69,12 @@ class Message(models.Model):
         """
         if self.message_timing not in Message.TIMING_CODES:
             raise NotImplementedError("unknown delta type: %s" % self.message_timing)
+            
+        if self.message_timing == "send_immediately":
+            return datetime.datetime.now()
+            
+        if not end:
+            end = start
         
         if start.__class__ == datetime.date:
             start = datetime.datetime.combine(start, datetime.time.min)
@@ -85,10 +93,10 @@ class Message(models.Model):
             delta = datetime.timedelta(hours=self.x_value)
             if self.message_timing == "after_start":
                 send = start + delta
-                send_time = send if send < end else None
+                send_time = send if send <= end else None
             elif self.message_timing == "before_end":
                 send = end - delta
-                send_time = send if send > start else None
+                send_time = send if send >= start else None
             elif self.message_timing == "after_end":
                 send_time = end + delta
         if send_time and self.time_snap:
@@ -107,17 +115,25 @@ class Message(models.Model):
         Regardless of what the invoked function returns, this function is responsible for returning
         a 2-tuple, where the first value is the email address and the second value is the object.
         If the object isn't defined this will be set to None.
+        
+        Optionally we can also define the recipient_function to be a lambda with one argument, 
+        the content object.  For example you could define a function like the following:
+            labmda x: x.email
         """
         if not hasattr(content_object, self.recipient_function):
-            raise NotImplementedError("%s does not exist for %s" % (self.recipient_function,
-                content_object))
-        func_or_attr = getattr(content_object, self.recipient_function)
-        recipients = func_or_attr() if inspect.ismethod(func_or_attr) else func_or_attr
+            # the content object does not provide this function, test to see if its a lambda
+            if not self.recipient_function.lower().startswith("lambda"):
+                raise NotImplementedError("%s does not exist for %s" % (self.recipient_function,
+                    content_object))
+            recipients = eval(self.recipient_function)(content_object)
+        else:
+            func_or_attr = getattr(content_object, self.recipient_function)
+            recipients = func_or_attr() if inspect.ismethod(func_or_attr) else func_or_attr
         if not hasattr(recipients, "__iter__"):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
     
-    def send(self, content_object, blacklisted_emails=None): # TODO: create unit tests for Message.send()
+    def send(self, content_object, blacklisted_emails=None, extra_params=None): # TODO: create unit tests for Message.send()
         sent = []
         if not blacklisted_emails:
             blacklisted_emails = []
@@ -128,9 +144,13 @@ class Message(models.Model):
             recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
                 token=hash_val([email, datetime.datetime.now()]))
             domain = Site.objects.get_current().domain
-            context = template.Context({"content_object": content_object, "domain": domain,
-                "recipient": user_object if user_object else email })
-            # render the body template with the given, template
+            params = {"content_object": content_object, "domain": domain, 
+                "recipient": user_object if user_object else email }
+            if extra_params:
+                params.update(extra_params)
+            context = template.Context(params)
+            # render the body and subject template with the given, template
+            subject = template.Template(self.subject).render(context)
             body = template.Template(self.body).render(context)
             for index, link in enumerate([m.group() for m in URL_REGEX.finditer(body)]):
                 # for each unique link in the body, create a Message link to track the clicks
@@ -142,7 +162,7 @@ class Message(models.Model):
             open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", args=[recipient_message.token]))
             # insert an open tracking image into the body
             body += open_link
-            msg = EmailMessage(self.subject, body, None, [email])
+            msg = EmailMessage(subject, body, None, [email])
             msg.content_subtype = "html"
             msg.send()
             self.sends += 1 # after the message is sent, increment the sends count
@@ -261,18 +281,24 @@ class Stream(models.Model):
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
     
-    def enqueue(self, content_object, start, end, batch_content_object=None, send_expired=True):
+    def enqueue(self, content_object, start, end=None, batch_content_object=None, 
+        extra_params=None, send_expired=True):
+        """
+        Note that any extra parameters passed through are only available to messages that are
+        sent immediately, AKA messages not put into the Queue.
+        """
         enqueued = []
-        now = datetime.datetime.now()
         for ab_test in ABTest.objects.filter(stream=self):
             if not ab_test.is_enabled:
                 continue
             message = ab_test.random_message()
             send_time = message.send_time(start, end)
             if send_time:
-                if send_time <= now:
+                if send_time <= datetime.datetime.now():
                     if send_expired:
-                        message.send(content_object)
+                        message.send(content_object, 
+                            blacklisted_emails=message.blacklisted_emails(),
+                            extra_params=extra_params)
                 else:
                     if batch_content_object:
                         enqueued.append(Queue.objects.create(message=message,
@@ -283,10 +309,10 @@ class Stream(models.Model):
                             content_object=content_object, send_time=send_time))
         return enqueued
     
-    def upqueue(self, content_object, start, end, batch_content_object=None):
+    def upqueue(self, content_object, start, end=None, batch_content_object=None, extra_params=None):
         self.dequeue(content_object=content_object)
         return self.enqueue(content_object=content_object, start=start, end=end, 
-            batch_content_object=batch_content_object, send_expired=False)
+            batch_content_object=batch_content_object, extra_params=extra_params, send_expired=False)
     
     def dequeue(self, content_object):
         return self._queued_messages(content_object).delete()

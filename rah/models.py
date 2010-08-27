@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from geo.models import Location
 from records.models import Record
 from twitter_app import utils as twitter_app
-from actions.models import UserActionProgress
+from actions.models import Action, UserActionProgress
 from facebook_app.models import facebook_profile
 
 class DefaultModel(models.Model):
@@ -31,6 +31,55 @@ class Feedback(DefaultModel):
 
     def __unicode__(self):
         return u'%s...' % (self.comment[:15])
+        
+class ProfileManager(models.Manager):
+    def user_engagement(self, users=None):
+        from django.db import connection, transaction
+
+        actions = Action.objects.all()
+        action_cases = [
+            """
+            CASE
+                WHEN `%s_uap`.is_completed = 1 AND `%s_uap`.date_committed IS NOT NULL THEN "completed"
+                WHEN `%s_uap`.is_completed = 1 THEN "already done"
+                WHEN `%s_uap`.date_committed IS NOT NULL THEN "committed"
+            END AS '%s'
+            """ % (a.slug, a.slug, a.slug, a.slug, a.name.lower()) for a in actions]
+        action_joins = [
+            """
+            LEFT JOIN actions_useractionprogress `%s_uap` ON `%s_uap`.action_id = %s AND `%s_uap`.user_id = u.id
+            """ % (a.slug, a.slug, a.id, a.slug) for a in actions]
+        users_filter = "WHERE u.id IN (%s)" % ",".join([str(u.pk) for u in users]) if users else ""
+            
+        query = """
+            SELECT u.id, u.first_name AS "first name", u.last_name AS "last name", u.email,
+                l.name AS city, l.st AS state, l.zipcode AS "zip code",
+                %s,
+                CASE
+                    WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id AND gu.is_manager = 1) = 1 THEN "yes"
+                END AS "team manager",
+                CASE
+                    WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id) = 1 THEN "yes"
+                END AS "team member",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g WHERE u.id = g.user_id AND g.is_host = 1) = 1 THEN "yes"
+                END AS "event host",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g WHERE u.id = g.user_id) = 1 THEN "yes"
+                END AS "event guest"
+            FROM auth_user u
+            JOIN rah_profile p ON u.id = p.user_id
+            LEFT JOIN geo_location l ON p.location_id = l.id
+            %s
+            %s
+            ORDER BY u.id
+            """ % (", ".join(action_cases), " ".join(action_joins), users_filter)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        header_row = tuple([d[0] for d in cursor.description])
+        queryset = [header_row] + list(cursor.fetchall())
+        cursor.close()
+        return queryset
 
 class Profile(models.Model):
     """Profile"""
@@ -52,6 +101,7 @@ class Profile(models.Model):
     facebook_share = models.BooleanField(default=False)
     ask_to_share = models.BooleanField(default=True)
     total_points = models.IntegerField(default=0)
+    objects = ProfileManager()
     
     def __unicode__(self):
         return u'%s' % (self.user.email)

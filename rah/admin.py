@@ -1,17 +1,32 @@
+import csv
+
 from django.contrib import admin
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponse
 
 from models import Profile
 from forms import ProfileEditForm
 from rateable.models import Rating
+
+def user_engagement(modeladmin, request, queryset):
+    user_queryset = Profile.objects.user_engagement(users=queryset)
+    
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=user_engagement.csv'
+    writer = csv.writer(response, dialect='excel')
+    for row in user_queryset:
+        writer.writerow(['="%s"' % s if s else s for s in row])
+    return response
+user_engagement.short_description = "Export user engagement to CSV"
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ("email", "first_name", "last_name", "location", "date_joined")
     ordering = ("id",)
     date_hierarchy = "date_joined"
     search_fields = ("email", "first_name", "last_name",)
+    actions = [user_engagement]
     
     def location(self, obj):
         return obj.get_profile().location

@@ -612,6 +612,8 @@ class GroupLeaveViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
 
 class GroupJoinViewTest(TestCase):
+    fixtures = ["team_membership.json"]
+    
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
@@ -724,6 +726,8 @@ class GroupMembershipRequestViewTest(object):
         self.failUnless("info" in message.tags)
 
 class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
+    fixtures = ["team_membership.json"]
+    
     def __init__(self, *args, **kwargs):
         self.url_name = "group_approve"
         super(TestCase, self).__init__(*args, **kwargs)
@@ -745,6 +749,8 @@ class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
         
 
 class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
+    fixtures = ["team_membership.json"]
+    
     def __init__(self, *args, **kwargs):
         self.url_name = "group_deny"
         super(TestCase, self).__init__(*args, **kwargs)

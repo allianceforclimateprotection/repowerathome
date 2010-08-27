@@ -13,6 +13,7 @@ from rah.models import Profile
 from actions.models import Action
 from invite.models import Invitation, Rsvp
 from thumbnails.fields import ImageAndThumbsField
+from messaging.models import Stream
    
 class GroupManager(models.Manager):
     def groups_with_memberships(self, user, limit=None):
@@ -193,6 +194,9 @@ class Group(models.Model):
         return user.is_authenticated() and \
             self.is_joinable() and \
             GroupUsers.objects.filter(user=user, group=self, is_manager=True).exists()
+            
+    def managers(self):
+        return User.objects.filter(group=self, groupusers__is_manager=True)
         
     def parents(self):
         parents = []
@@ -337,23 +341,9 @@ def update_group_member_count(sender, instance, **kwargs):
     group.member_count = GroupUsers.objects.filter(group=group).count()
     group.save()
 
-# OPTIMIZE: convert alert_users_of_discussion to use message stream 
 def alert_users_of_discussion(sender, instance, **kwargs):
     if instance.is_public and not instance.is_removed and not instance.reply_count:
-        template = "groups/group_disc_email.html"
-        context = {"discussion": instance, "domain": Site.objects.get_current().domain,}
-        users = instance.group.users_not_blacklisted()
-        for user in users:
-            if user.pk == instance.user.pk: #don't send an email to the user that started the discussion
-                continue
-            context["user"] = user
-            msg = EmailMessage("Repower at Home %s Discussion - %s" % (instance.group, instance.subject),
-                loader.render_to_string(template, context), None, [user.email])
-            msg.content_subtype = "html"
-            try:
-                msg.send()
-            except SMTPException, e:
-                return False
+        Stream.objects.get(slug="team-discussion").enqueue(content_object=instance, start=instance.created)
     return True
 
 models.signals.post_save.connect(associate_with_geo_groups, sender=Profile)

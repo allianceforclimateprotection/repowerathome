@@ -1,3 +1,4 @@
+from datetime import datetime
 from smtplib import SMTPException
 
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
@@ -16,6 +17,7 @@ from records.models import Record
 from invite.models import Invitation
 from invite.forms import InviteForm
 from utils import hash_val, forbidden
+from messaging.models import Stream
 
 from models import Group, GroupUsers, MembershipRequests, Discussion
 from forms import GroupForm, MembershipForm, DiscussionSettingsForm, DiscussionCreateForm, DiscussionApproveForm, DiscussionRemoveForm
@@ -65,18 +67,9 @@ def group_join(request, group_id):
         GroupUsers.objects.create(group=group, user=request.user, is_manager=False)
         messages.success(request, "You have successfully joined team %s" % group, extra_tags="sticky")
     else:
-        template = loader.get_template("groups/group_join_request.html")
-        context = { "user": request.user, "group": group, "domain": Site.objects.get_current().domain, }
-        manager_emails = [user_dict["email"] for user_dict in User.objects.filter(group=group, groupusers__is_manager=True).values("email")]
-        # OPTIMIZE: convert group_join to use message stream
-        try:
-            msg = EmailMessage("Team Join Request", template.render(Context(context)), None, manager_emails)
-            msg.content_subtype = "html"
-            msg.send()
-            MembershipRequests.objects.create(group=group, user=request.user)
-            messages.success(request, "You have made a request to join %s, a manager should grant or deny your membership shortly." % group, extra_tags="sticky")
-        except SMTPException, e:
-            messages.error(request, "A problem occured, if this persits please contact feedback@repowerathome.com", extra_tags="sticky")
+        membership_request = MembershipRequests.objects.create(group=group, user=request.user)
+        Stream.objects.get(slug="team-join-request").enqueue(content_object=membership_request, start=datetime.now())
+        messages.success(request, "You have made a request to join %s, a manager should grant or deny your membership shortly." % group, extra_tags="sticky")
     return redirect("group_detail", group_slug=group.slug)
 
 @login_required
@@ -85,35 +78,27 @@ def group_membership_request(request, group_id, user_id, action):
     user = get_object_or_404(User, id=user_id)
     if not group.is_user_manager(request.user):
         return forbidden(request)
-    membership_request = MembershipRequests.objects.filter(group=group, user=user)
+    try:
+        membership_request = MembershipRequests.objects.get(group=group, user=user)
+    except MembershipRequests.DoesNotExist:
+        membership_request = None
     if membership_request:
         if action == "approve":
             GroupUsers.objects.create(group=group, user=user, is_manager=False)
+            Stream.objects.get(slug="team-membership-approved").enqueue(content_object=membership_request,
+                start=datetime.now())
             membership_request.delete()
-            if __send_response_email(request, group, user, True):
-                messages.success(request, "%s has been added to the team" % user.get_full_name())
+            messages.success(request, "%s has been added to the team" % user.get_full_name())
         elif action == "deny":
+            Stream.objects.get(slug="team-membership-denied").enqueue(content_object=membership_request,
+                start=datetime.now())
             membership_request.delete()
-            if __send_response_email(request, group, user, False):
-                messages.success(request, "%s has been denied access to the team" % user.get_full_name())
+            messages.success(request, "%s has been denied access to the team" % user.get_full_name())
     elif GroupUsers.objects.filter(group=group, user=user).exists():
         messages.info(request, "%s has already been added to this team" % user.get_full_name())
     else:
         messages.info(request, "%s has already been denied access to this team" % user.get_full_name())
     return redirect("group_detail", group_slug=group.slug)
-    
-def __send_response_email(request, group, user, approved):
-    template = loader.get_template("groups/group_membership_response.html")
-    context = { "approved": approved, "group": group, "domain": Site.objects.get_current().domain, "user": user, }
-    # OPTIMIZE: convert __send_response_email (group approval) to use message stream
-    msg = EmailMessage("Team Membership Response", template.render(Context(context)), None, [user.email])
-    msg.content_subtype = "html"
-    try:
-        msg.send()
-        return True
-    except SMTPException, e:
-        messages.error(request, "A problem occured, if this persits please contact feedback@repowerathome.com", extra_tags="sticky")
-    return False
 
 def group_detail(request, group_slug):
     """
