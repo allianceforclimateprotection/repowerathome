@@ -14,7 +14,7 @@ from django.db import models
 
 from utils import hash_val
 
-URL_REGEX = re.compile(r"\b(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
+URL_REGEX = re.compile(r"(?<!src=(\"|\'))(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
 
 class Message(models.Model):
     TIMING_TYPES = (
