@@ -28,7 +28,7 @@ from settings import GA_TRACK_PAGEVIEW, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
-from events.models import Event
+from events.models import Event, Guest, Commitment
 from messaging.models import Stream
 from messaging.forms import StreamNotificationsForm
 
@@ -37,12 +37,23 @@ from signals import logged_in
 
 def _coal_challenge_stats():
     locale.setlocale(locale.LC_ALL, "en_US")
-    total_people = locale.format('%d', User.objects.all().count() or 0, True)
-    total_actions = locale.format('%d', Record.objects.filter(void=False, activity=1).count() or 0, 
-        True)
-    total_coal = locale.format('%d', Profile.objects.all().aggregate(
-        Sum('total_points'))['total_points__sum'] or 0, True)
+    total_people = locale.format('%d', _total_users(), True)
+    total_actions = locale.format('%d', _total_actions(), True)
+    total_coal = locale.format('%d', _total_coal(), True)
     return locals()
+    
+def _total_users():
+    return (User.objects.all().count() or 0) + (Guest.objects.filter(user__isnull=True, 
+        rsvp_status="A").count() or 0)
+    
+def _total_actions():
+    return (Record.objects.filter(void=False, activity=1).count() or 0) + \
+        (Commitment.objects.filter(answer="D", action__isnull=False, guest__user__isnull=True).count() or 0)
+        
+def _total_coal():
+    return (Profile.objects.all().aggregate(Sum("total_points"))["total_points__sum"] or 0) + \
+        (Action.objects.filter(commitment__answer="D", commitment__guest__user__isnull=True).aggregate(
+            Sum("points"))["points__sum"] or 0)
 
 @csrf_protect
 def index(request):
