@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'messaging',
     'messaging.tests',
     'thumbnails',
+    'source_tracking',
 )
 
 DEBUG_TOOLBAR_CONFIG = {
