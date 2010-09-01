@@ -70,7 +70,6 @@ urlpatterns += patterns('',
     url(r'^password_reset/$', 'django.contrib.auth.views.password_reset', { 'post_reset_redirect': '/password_reset_done/' }, name='password_reset'),
     url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', { 'post_reset_redirect': '/reset/done/', 'set_password_form': SetPasswordForm }, name='password_reset_confirm'),
     url(r'^', include('django.contrib.auth.urls')),
-    url(r'^admin/(.*)', admin.site.root, name='admin_root'),
     url(r'^blog/', include('basic.blog.urls')),
     url(r'^blog/feed/$', BlogPostsFeed(), name='blog_feed'),
     url(r'^comments/', include('django.contrib.comments.urls')),
@@ -84,7 +83,9 @@ urlpatterns += patterns('',
     url(r'^events/', include('events.urls')),
     url(r'^messaging/', include('messaging.urls')),
     url(r'^facebook/', include('facebook_app.urls')),
+    url(r'^admin/export/', include('export.urls')),
     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}, name='sitemap'),
+    url(r'^admin/', include(admin.site.urls), name='admin_root'),
 )
 
 if settings.DEBUG:
