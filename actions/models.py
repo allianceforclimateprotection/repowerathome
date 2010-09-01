@@ -168,7 +168,12 @@ tagging.register(Action)
 
 class UserActionProgressManager(models.Manager):
     def commitments_for_user(self, user):
-         return self.select_related().filter(user=user, is_completed=False, date_committed__isnull=False).order_by("date_committed")
+         return self.select_related().filter(user=user, is_completed=False, 
+            date_committed__isnull=False).order_by("date_committed")
+            
+    def pending_commitments(self, user=None):
+        queryset = self.filter(is_completed=False, date_committed__isnull=False)
+        return queryset if not user else queryset.filter(user=user)
 
 class UserActionProgress(models.Model):
     user = models.ForeignKey(User)

@@ -13,6 +13,9 @@ from twitter_app import utils as twitter_app
 from actions.models import Action, UserActionProgress
 from facebook_app.models import facebook_profile
 
+def yestarday():
+    return datetime.datetime.today() - datetime.timedelta(days=1)
+
 class DefaultModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -150,35 +153,30 @@ class Profile(models.Model):
         return (hashlib.md5(self.user.email.lower()).hexdigest())
         
     def potential_points(self):
-        return UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False, 
-            is_completed=0).aggregate(models.Sum("action__points"))["action__points__sum"]
+        return UserActionProgress.objects.pending_commitments(user=self.user).aggregate(
+            models.Sum("action__points"))["action__points__sum"]
             
     def number_of_committed_actions(self):
-        return UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False,
-            is_completed=0).count()
+        return UserActionProgress.objects.pending_commitments(user=self.user).count()
             
     def commitments_made_yestarday(self):
-        yestarday = datetime.date.today() - datetime.timedelta(days=1)
-        start = datetime.datetime.combine(yestarday, datetime.time.min)
-        end = datetime.datetime.combine(yestarday, datetime.time.max)
-        return UserActionProgress.objects.filter(user=self.user, updated__gte=start, 
-            updated__lte=end, date_committed__isnull=False, is_completed=0).order_by("-date_committed")
+        start = datetime.datetime.combine(yestarday(), datetime.time.min)
+        end = datetime.datetime.combine(yestarday(), datetime.time.max)
+        return UserActionProgress.objects.pending_commitments(user=self.user).filter(
+            updated__gte=start, updated__lte=end).order_by("-date_committed")
         
     def commitments_made_before_yestarday(self):
-        yestarday = datetime.date.today() - datetime.timedelta(days=1)
-        start = datetime.datetime.combine(yestarday, datetime.time.min)
-        return UserActionProgress.objects.filter(user=self.user, updated__lt=start,
-            date_committed__isnull=False, is_completed=0).order_by("-date_committed")
+        start = datetime.datetime.combine(yestarday(), datetime.time.min)
+        return UserActionProgress.objects.pending_commitments(user=self.user).filter(
+            updated__lt=start).order_by("-date_committed")
             
     def commitments_made_last_24_hours(self):
-        yestarday = datetime.datetime.today() - datetime.timedelta(days=1)
-        return UserActionProgress.objects.filter(user=self.user, updated__gte=yestarday,
-            date_committed__isnull=False, is_completed=0).order_by("-date_committed")
+        return UserActionProgress.objects.pending_commitments(user=self.user).filter(
+            updated__gte=yestarday()).order_by("-date_committed")
             
     def commitments_made_more_than_24_hours(self):
-        yestarday = datetime.datetime.today() - datetime.timedelta(days=1)
-        return UserActionProgress.objects.filter(user=self.user, updated__lt=yestarday,
-            date_committed__isnull=False, is_completed=0).order_by("-date_committed")
+        return UserActionProgress.objects.pending_commitments(user=self.user).filter(
+            updated__lt=yestarday()).order_by("-date_committed")
         
     def commitments_due_in_a_week(self):
         return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
@@ -187,8 +185,8 @@ class Profile(models.Model):
         return self._commitment_due_on(datetime.date.today())
             
     def _commitment_due_on(self, due_date):
-        return UserActionProgress.objects.filter(user=self.user, date_committed=due_date,
-            is_completed=0).order_by("-date_committed")
+        return UserActionProgress.objects.pending_commitments(user=self.user).filter(
+            date_committed=due_date).order_by("-date_committed")
 
 """
 SIGNALS!
