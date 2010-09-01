@@ -33,8 +33,13 @@ class Feedback(DefaultModel):
         return u'%s...' % (self.comment[:15])
         
 class ProfileManager(models.Manager):
-    def user_engagement(self, users=None):
+    def user_engagement(self, users=None, date_start=None, date_end=None):
         from django.db import connection, transaction
+        
+        if not date_start:
+            date_start = datetime.date.min
+        if not date_end:
+            date_end = datetime.date.max
 
         actions = Action.objects.all()
         action_cases = [
@@ -48,32 +53,55 @@ class ProfileManager(models.Manager):
         action_joins = [
             """
             LEFT JOIN actions_useractionprogress `%s_uap` ON `%s_uap`.action_id = %s AND `%s_uap`.user_id = u.id
-            """ % (a.slug, a.slug, a.id, a.slug) for a in actions]
+                AND DATE(`%s_uap`.updated) >= '%s' and DATE(`%s_uap`.updated) <= '%s'
+            """ % (a.slug, a.slug, a.id, a.slug, a.slug, date_start, a.slug, date_end) for a in actions]
         users_filter = "WHERE u.id IN (%s)" % ",".join([str(u.pk) for u in users]) if users else ""
             
+        query_dict = {
+            "action_cases": ", ".join(action_cases),
+            "action_joins": " ".join(action_joins),
+            "users_filter": users_filter,
+            "date_start": date_start,
+            "date_end": date_end
+        }    
         query = """
             SELECT u.id, u.first_name AS "first name", u.last_name AS "last name", u.email,
                 l.name AS city, l.st AS state, l.zipcode AS "zip code",
-                %s,
+                %(action_cases)s,
                 CASE
-                    WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id AND gu.is_manager = 1) = 1 THEN "yes"
+                    WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id AND gu.is_manager = 1
+                        AND DATE(gu.updated) >= '%(date_start)s' AND DATE(gu.updated) <= '%(date_end)s') = 1 THEN "yes"
                 END AS "team manager",
                 CASE
-                    WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id) = 1 THEN "yes"
+                    WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id
+                        AND DATE(gu.updated) >= '%(date_start)s' AND DATE(gu.updated) <= '%(date_end)s') = 1 THEN "yes"
                 END AS "team member",
                 CASE
-                    WHEN EXISTS(SELECT * FROM events_guest g WHERE u.id = g.user_id AND g.is_host = 1) = 1 THEN "yes"
+                    WHEN EXISTS(SELECT * FROM events_guest g WHERE u.id = g.user_id AND g.is_host = 1
+                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1 THEN "yes"
                 END AS "event host",
                 CASE
-                    WHEN EXISTS(SELECT * FROM events_guest g WHERE u.id = g.user_id) = 1 THEN "yes"
-                END AS "event guest"
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id 
+                        JOIN events_commitment c ON g.id = c.guest_id WHERE u.id = g.user_id AND e.event_type_id IN (1,4,5)
+                        AND DATE(c.updated) >= '%(date_start)s' AND DATE(c.updated) <= '%(date_end)s') = 1 THEN "yes"
+                END AS "energy event guest",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id 
+                        JOIN events_commitment c ON g.id = c.guest_id WHERE u.id = g.user_id AND e.event_type_id IN (2)
+                        AND DATE(c.updated) >= '%(date_start)s' AND DATE(c.updated) <= '%(date_end)s') = 1 THEN "yes"
+                END AS "kickoff event guest",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id 
+                        JOIN events_commitment c ON g.id = c.guest_id WHERE u.id = g.user_id AND e.event_type_id IN (3)
+                        AND DATE(c.updated) >= '%(date_start)s' AND DATE(c.updated) <= '%(date_end)s') = 1 THEN "yes"
+                END AS "field training guest"
             FROM auth_user u
             JOIN rah_profile p ON u.id = p.user_id
             LEFT JOIN geo_location l ON p.location_id = l.id
-            %s
-            %s
+            %(action_joins)s
+            %(users_filter)s
             ORDER BY u.id
-            """ % (", ".join(action_cases), " ".join(action_joins), users_filter)
+            """ % query_dict
         cursor = connection.cursor()
         cursor.execute(query)
         header_row = tuple([d[0] for d in cursor.description])

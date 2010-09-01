@@ -168,6 +168,77 @@ class Event(models.Model):
     def delete_guest_in_session(self, request):
         del request.session[self._guest_key()]
         
+class GuestManager(models.Manager):
+    def guest_engagment(self, date_start=None, date_end=None):
+        from django.db import connection, transaction
+        from actions.models import Action
+        
+        if not date_start:
+            date_start = datetime.date.min
+        if not date_end:
+            date_end = datetime.date.max
+
+        actions = Action.objects.all()
+        action_cases = [
+            """
+            CASE
+                WHEN `%s_commit`.answer = "C" THEN "committed"
+                WHEN `%s_commit`.answer = "D" THEN "already done"
+            END AS '%s'
+            """ % (a.slug, a.slug, a.name.lower()) for a in actions]
+        action_joins = [
+            """
+            LEFT JOIN events_commitment `%s_commit` ON `%s_commit`.action_id = %s AND `%s_commit`.guest_id = g.id
+                AND DATE(`%s_commit`.updated) >= '%s' and DATE(`%s_commit`.updated) <= '%s'
+            """ % (a.slug, a.slug, a.id, a.slug, a.slug, date_start, a.slug, date_end) for a in actions]
+            
+        query_dict = {
+            "action_cases": ", ".join(action_cases),
+            "action_joins": " ".join(action_joins),
+            "date_start": date_start,
+            "date_end": date_end,
+        }    
+        query = """
+            SELECT DISTINCT -1, g.first_name AS "first name", g.last_name AS "last name", g.email,
+                l.name AS city, l.st AS state, l.zipcode AS "zip code",
+                %(action_cases)s,
+                NULL AS "team manager",
+                NULL AS "team member",
+                CASE 
+                    WHEN g.is_host = 1 AND 
+                    DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s' 
+                        THEN "yes"
+                END AS "event host",
+                CASE
+                    WHEN e.event_type_id IN (1,4,5) AND c.id IS NOT NULL AND
+                    DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
+                        THEN "yes"
+                END AS "energy event guest",
+                CASE
+                    WHEN e.event_type_id IN (2) AND c.id IS NOT NULL AND
+                    DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
+                        THEN "yes"
+                END AS "kickoff event guest",
+                CASE
+                    WHEN e.event_type_id IN (3) AND c.id IS NOT NULL AND 
+                    DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
+                        THEN "yes"
+                END AS "field training guest"
+            FROM events_guest g
+            JOIN events_event e ON g.event_id = e.id
+            LEFT JOIN events_commitment c ON g.id = c.guest_id
+            LEFT JOIN geo_location l ON g.location_id = l.id
+            %(action_joins)s
+            WHERE g.user_id IS NULL
+            ORDER BY g.id
+            """ % query_dict
+        cursor = connection.cursor()
+        cursor.execute(query)
+        header_row = tuple([d[0] for d in cursor.description])
+        queryset = [header_row] + list(cursor.fetchall())
+        cursor.close()
+        return queryset
+        
 class Guest(models.Model):
     RSVP_STATUSES = (
         ("A", "Attending",),
@@ -189,6 +260,7 @@ class Guest(models.Model):
     user = models.ForeignKey("auth.User", null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    objects = GuestManager()
     
     class Meta:
         unique_together = (("event", "user",),)

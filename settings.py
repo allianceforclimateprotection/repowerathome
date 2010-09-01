@@ -111,6 +111,7 @@ INSTALLED_APPS = (
     'messaging',
     'facebook_app',
     'thumbnails',
+    'export',
 )
 
 FIXTURE_DIR = ('fixtures',)

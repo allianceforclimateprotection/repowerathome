@@ -1,0 +1,69 @@
+{% extends "admin/base_site.html" %}
+{% load adminmedia %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script type="text/javascript" src="/admin/jsi18n/"></script> 
+    <script type="text/javascript" src="/media/js/core.js"></script> 
+    <script type="text/javascript" src="/media/js/admin/RelatedObjectLookups.js"></script> 
+    <script type="text/javascript" src="/media/js/jquery.min.js"></script> 
+    <script type="text/javascript" src="/media/js/jquery.init.js"></script> 
+    <script type="text/javascript" src="/media/js/actions.min.js"></script>
+    {{ form.media }}
+{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />
+    <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/widgets.css"/>
+{% endblock %}
+
+{% block breadcrumbs %}{% if not is_popup %}
+<div class="breadcrumbs">
+     <a href="../../">Home</a> &rsaquo;
+     user export
+</div>
+{% endif %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <form action="{% url user_export %}" method="post" id="user_export_form">{% csrf_token %}
+        <div>
+            <fieldset class="module aligned">
+                {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
+                {% if errors %}
+                    <p class="errornote">
+                        Please correct the error{{ errors|pluralize }} below.
+                    </p>
+                    {{ form.non_field_errors }}
+                {% endif %}
+                {% for field in form %}
+                    <div class="form-row{% if field.errors %} errors{% endif %}{{ field.field.name }}">
+                        {{ field.errors }}
+                        <div>
+                            {% if field.is_checkbox %}
+                                {{ field }}{{ field.label_tag }}
+                            {% else %}
+                                {{ field.label_tag }}
+                                {% if field.is_readonly %}
+                                    <p>{{ field.contents }}</p>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                            {% endif %}
+                            {% if field.field.field.help_text %}
+                                <p class="help">{{ field.field.field.help_text|safe }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </fieldset>
+            
+            <div class="submit-row" > 
+                <input type="submit" value="Export" class="default" /> 
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

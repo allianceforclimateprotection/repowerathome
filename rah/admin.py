@@ -1,5 +1,3 @@
-import csv
-
 from django.contrib import admin
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.comments.models import Comment
@@ -10,27 +8,11 @@ from models import Profile
 from forms import ProfileEditForm
 from rateable.models import Rating
 
-def user_engagement(modeladmin, request, queryset, excel_friendly=False):
-    user_queryset = Profile.objects.user_engagement(users=queryset)
-    
-    response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=user_engagement.csv'
-    writer = csv.writer(response, dialect='excel')
-    for row in user_queryset:
-        writer.writerow(['="%s"' % s if s and excel_friendly else s for s in row])
-    return response
-user_engagement.short_description = "Export user engagement to CSV"
-
-def excel_friendly_user_engagement(modeladmin, request, queryset):
-    return user_engagement(modeladmin, request, queryset, excel_friendly=True)
-excel_friendly_user_engagement.short_description = "Export user engagement to CSV (Excel Friendly)"
-
 class UserAdmin(admin.ModelAdmin):
     list_display = ("email", "first_name", "last_name", "location", "date_joined")
     ordering = ("id",)
     date_hierarchy = "date_joined"
     search_fields = ("email", "first_name", "last_name",)
-    actions = [user_engagement, excel_friendly_user_engagement]
     
     def location(self, obj):
         return obj.get_profile().location
