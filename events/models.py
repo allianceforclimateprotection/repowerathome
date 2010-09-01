@@ -12,6 +12,9 @@ from geo.models import Location
 from invite.models import Invitation
 from messaging.models import Stream
 
+def yestarday():
+    return datetime.datetime.today() - datetime.timedelta(days=1)
+
 class EventType(models.Model):
     name = models.CharField(max_length=50, unique=True)
     teaser = models.CharField(max_length=150)
@@ -332,27 +335,23 @@ class GuestProfile(object):
         return Commitment.object.pending_commitments(guest=self.guest).count()
 
     def commitments_made_yestarday(self):
-        yestarday = datetime.date.today() - datetime.timedelta(days=1)
-        start = datetime.datetime.combine(yestarday, datetime.time.min)
-        end = datetime.datetime.combine(yestarday, datetime.time.max)
+        start = datetime.datetime.combine(yestarday(), datetime.time.min)
+        end = datetime.datetime.combine(yestarday(), datetime.time.max)
         return Commitment.objects.pending_commitments(guest=self.guest).filter(
             updated__gte=start, updated__lte=end)
 
     def commitments_made_before_yestarday(self):
-        yestarday = datetime.date.today() - datetime.timedelta(days=1)
-        start = datetime.datetime.combine(yestarday, datetime.time.min)
+        start = datetime.datetime.combine(yestarday(), datetime.time.min)
         return Commitment.objects.pending_commitments(guest=self.guest).filter(
             updated__lt=start)
 
     def commitments_made_last_24_hours(self):
-        yestarday = datetime.datetime.today() - datetime.timedelta(days=1)
         return Commitment.objects.pending_commitments(guest=self.guest).filter(
-            updated__gte=yestarday)
+            updated__gte=yestarday())
 
     def commitments_made_more_than_24_hours(self):
-        yestarday = datetime.datetime.today() - datetime.timedelta(days=1)
         return Commitment.objects.pending_commitments(guest=self.guest).filter(
-            updated__lt=yestarday)
+            updated__lt=yestarday())
 
     def commitments_due_in_a_week(self):
         return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
