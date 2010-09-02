@@ -59,7 +59,8 @@ class ActionManager(models.Manager):
                     commitment.action.complete_for_user(user)
                 elif commitment.answer == "C":
                     # We are defaulting the commitment date to 21 days from now
-                    commitment.action.commit_for_user(user, datetime.now() + timedelta(days=21))
+                    commitment.action.commit_for_user(user, commitment.date_committed, add_to_stream=False)
+                    # TODO: transition the guest commitment messages to user commitment messages
                 changes.append(commitment)
         return changes
         
@@ -102,7 +103,7 @@ class Action(models.Model):
             return False
         return True
             
-    def commit_for_user(self, user, date):
+    def commit_for_user(self, user, date, add_to_stream=True):
         # This used to use get_or_create, but was giving us trouble. Not sure why...
         # See ticket 328 for details: https://rah.codebasehq.com/rah/tickets/328
         try:
@@ -113,13 +114,14 @@ class Action(models.Model):
         uap.date_committed = date
         uap.save()
         record = None
-        if was_committed:
-            Stream.objects.get(slug="commitment").upqueue(content_object=uap, start=uap.created, 
-                end=uap.date_committed, batch_content_object=user)
-        else:
-            Stream.objects.get(slug="commitment").enqueue(content_object=uap, start=uap.updated,
-                end=uap.date_committed, batch_content_object=user)
-            record = Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
+        if add_to_stream:
+            if was_committed:
+                Stream.objects.get(slug="commitment").upqueue(content_object=uap, start=uap.created, 
+                    end=uap.date_committed, batch_content_object=user)
+            else:
+                Stream.objects.get(slug="commitment").enqueue(content_object=uap, start=uap.updated,
+                    end=uap.date_committed, batch_content_object=user)
+                record = Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
         return (uap, record)
             
     def cancel_for_user(self, user):
