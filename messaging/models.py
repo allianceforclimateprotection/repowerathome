@@ -16,6 +16,10 @@ from utils import hash_val
 
 URL_REGEX = re.compile(r"(?<!src=(\"|\'))(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
 
+class MessageManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
 class Message(models.Model):
     TIMING_TYPES = (
         ("send_immediately", "Send immediately"),
@@ -60,6 +64,10 @@ class Message(models.Model):
         the duration of the stream is only 24 hours.", verbose_name="Minimum duration")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    objects = MessageManager()
+    
+    def natural_key(self):
+        return [self.name]
     
     def send_time(self, start, end=None):
         """
@@ -262,6 +270,9 @@ class Queue(models.Model):
         return "%s" % (self.pk)
         
 class StreamManager(models.Manager):
+    def get_by_natural_key(self, slug):
+        return self.get(slug=slug)
+        
     def streams_not_blacklisted_by_user(self, user):
         return self.exclude(pk__in=user.blacklisted_set.all())
 
@@ -276,6 +287,9 @@ class Stream(models.Model):
     updated = models.DateTimeField(auto_now=True)
     objects = StreamManager()
     
+    def natural_key(self):
+        return [self.slug]
+        
     def _queued_messages(self, content_object):
         potential_messages = ABTest.objects.potential_messages(stream=self)
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
