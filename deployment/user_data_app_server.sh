@@ -31,4 +31,9 @@ chmod 400 /home/ubuntu/.ssh/deploy-pk.pem
 chown -R ubuntu:ubuntu /home/ubuntu/
 
 # Run to undo
-# sudo rm -f /home/ubuntu/.bashrc /home/ubuntu/.ssh/config /home/ubuntu/.ssh/deploy.pem /home/ubuntu/.ssh/deploy-pk.pem /home/ubuntu/webapp/local_settings.py
+# sudo rm -f /home/ubuntu/.bashrc 
+# sudo rm -f /home/ubuntu/.ssh/config 
+# sudo rm -f /home/ubuntu/.ssh/deploy.pem 
+# sudo rm -f /home/ubuntu/.ssh/deploy-pk.pem 
+# sudo rm -f /home/ubuntu/webapp/local_settings.py
+# sudo rm -f /etc/cron.d/send_ready_messages

@@ -33,4 +33,14 @@ chmod 400 /home/ubuntu/.ssh/deploy-pk.pem
 chown -R ubuntu:ubuntu /home/ubuntu/
 
 # Use this command to undo it all before making an AMI
-# sudo rm -f /etc/ssl/repowerathome.key /etc/ssl/private/repowerathome.csr /etc/ssl/private/repowerathome.key /etc/ssl/private/repowerathome_with_pass.key /etc/ssl/certs/repowerathome.crt /etc/ssl/certs/repowerathome_with_gd_bundle.crt /home/ubuntu/htpasswd /home/ubuntu/.bashrc /home/ubuntu/.ssh/config /home/ubuntu/.ssh/deploy.pem /home/ubuntu/.ssh/deploy-pk.pem
+# sudo rm -f /etc/ssl/repowerathome.key 
+# sudo rm -f /etc/ssl/private/repowerathome.csr 
+# sudo rm -f /etc/ssl/private/repowerathome.key 
+# sudo rm -f /etc/ssl/private/repowerathome_with_pass.key 
+# sudo rm -f /etc/ssl/certs/repowerathome.crt 
+# sudo rm -f /etc/ssl/certs/repowerathome_with_gd_bundle.crt 
+# sudo rm -f /home/ubuntu/htpasswd 
+# sudo rm -f /home/ubuntu/.bashrc 
+# sudo rm -f /home/ubuntu/.ssh/config 
+# sudo rm -f /home/ubuntu/.ssh/deploy.pem 
+# sudo rm -f /home/ubuntu/.ssh/deploy-pk.pem
