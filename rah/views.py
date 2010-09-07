@@ -43,8 +43,8 @@ def _coal_challenge_stats():
     return locals()
     
 def _total_users():
-    return (User.objects.all().count() or 0) + (Guest.objects.filter(user__isnull=True, 
-        rsvp_status="A").count() or 0)
+    return (Profile.objects.filter(total_points__gt=0).count() or 0) + \
+        (Guest.objects.filter(commitment__answer='D', commitment__action__isnull=False, user__isnull=True).distinct().count() or 0)
     
 def _total_actions():
     return (Record.objects.filter(void=False, activity=1).count() or 0) + \
