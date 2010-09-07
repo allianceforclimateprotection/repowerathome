@@ -12,12 +12,12 @@ class CloudMaker(object):
     def __init__(self):
         self.conf = {
             "load_balancers": {
-                "ami": "ami-c28862ab",
+                "ami": "ami-3456bc5d",
                 "instance_type": "m1.small",
                 "user_data_script": "user_data_load_balancer.sh"
             },
             "app_servers": {
-                "ami": "ami-60957f09",
+                "ami": "ami-2456bc4d",
                 "instance_type": "c1.medium",
                 "user_data_script": "user_data_app_server.sh",
                 "number": 1,
@@ -33,7 +33,7 @@ class CloudMaker(object):
                 "user": "rah_db_user",
                 "name": "rah"
             },
-            "udata": "snap-6a9f1e01",
+            "udata": "snap-e61a578d",
             "zone": "us-east-1b",
             "s3_bucket": "staging.static.repowerathome.com"
         }
