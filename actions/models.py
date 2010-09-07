@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 import tagging
@@ -11,7 +12,7 @@ import tagging
 from events.models import Commitment
 from records.models import Record
 from dated_static.templatetags.dated_static import timestamp_file
-from messaging.models import Stream
+from messaging.models import Stream, Queue
 from rah.signals import logged_in
 
 class ActionManager(models.Manager):
@@ -58,9 +59,13 @@ class ActionManager(models.Manager):
                 if commitment.answer == "D":
                     commitment.action.complete_for_user(user)
                 elif commitment.answer == "C":
-                    # We are defaulting the commitment date to 21 days from now
-                    commitment.action.commit_for_user(user, commitment.date_committed, add_to_stream=False)
-                    # TODO: transition the guest commitment messages to user commitment messages
+                    uap, record = commitment.action.commit_for_user(user, commitment.date_committed, add_to_stream=False)
+                    # transition the guest commitment messages to user commitment messages
+                    messages = Queue.objects.filter(content_type=ContentType.objects.get_for_model(commitment),
+                        object_pk=commitment.pk)
+                    messages.update(content_type=ContentType.objects.get_for_model(uap),
+                        object_pk=uap.pk, batch_content_type=ContentType.objects.get_for_model(uap.user),
+                        batch_object_pk=uap.user.pk)
                 changes.append(commitment)
         return changes
         

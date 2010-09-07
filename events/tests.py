@@ -10,8 +10,10 @@ from django.test.client import Client
 from utils import hash_val
 
 from geo.models import Location
+from messaging.models import Queue
 from invite.models import Invitation, make_token
-from models import EventType, Event, Guest
+
+from models import EventType, Event, Guest, Commitment
 
 class EventTest(TestCase):
     fixtures = ["test_geo_02804.json", "test_events.json",]
@@ -961,3 +963,57 @@ class EventGuestsEditPhoneViewTest(TestCase):
         self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
+        
+class EventsCommitmentViewTest(TestCase):
+    fixtures = ["test_geo_02804.json", "test_events.json", "actions.json", "surveys.json", "commitment.json"]
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.event_type = EventType.objects.get(pk=1)
+        self.event = Event.objects.get(pk=1)
+        self.guest = Guest.objects.get(pk=1)
+        self.event.creator = self.user
+        self.event.save()
+        self.url = reverse("event-commitments", args=[self.event.id])
+        
+    def test_login_required(self):
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+
+    def test_no_permissions(self):
+        self.hacker = User.objects.create_user(username="2", email="hacker@test.com", password="test")
+        self.client.login(username="hacker@test.com", password="test")
+        response = self.client.post(self.url, {}, follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+
+    def test_invalid_event(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(reverse("event-commitments", args=[999]))
+        self.failUnlessEqual(response.status_code, 404)
+        
+    def test_get(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/commitments.html")
+        guest = Guest.objects.get(pk=1)
+        self.failUnlessEqual(response.context["guest"], guest)
+        self.failUnless(response.context["survey"])
+        
+    def test_save_commitment(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.post(self.url, {"eliminate_vampire": "D", "program_thermostat": "C"}, 
+            follow=True)
+        guest = Guest.objects.get(pk=1)
+        vampire_commit = Commitment.objects.get(guest=guest, question="eliminate_vampire")
+        self.failUnlessEqual(vampire_commit.answer, "D")
+        thermostat_commit = Commitment.objects.get(guest=guest, question="program_thermostat")
+        self.failUnlessEqual(thermostat_commit.answer, "C")
+        messages = Queue.objects.all()
+        self.failUnlessEqual(messages[0].content_object, thermostat_commit)
+        self.failUnlessEqual(messages[0].batch_content_object, guest)
+        self.failUnlessEqual(messages[1].content_object, thermostat_commit)
+        self.failUnlessEqual(messages[1].batch_content_object, guest)
+        self.failUnlessEqual(messages[2].content_object, thermostat_commit)
+        self.failUnlessEqual(messages[2].batch_content_object, guest)
+        
