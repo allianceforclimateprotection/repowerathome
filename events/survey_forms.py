@@ -79,25 +79,34 @@ class EnergyMeetingCommitmentCard(SurveyForm):
     host_event = forms.BooleanField(required=False, label="Host an event")
     join_team = forms.BooleanField(required=False, label="Join a team")
     
-class ApartmentEnergyMeetingCommitmentCard(SurveyForm):
-    CHOICES = (
-        ("D", "I've Done this"),
-        ("C", "I pledge to do this"),
-    )
-    eliminate_vampire = ActionChoiceField(action_slug="eliminate-standby-vampire-power",
-        choices=CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
-        required=False, label="Eliminate vampire power")
-    program_thermostat = ActionChoiceField(action_slug="programmable-thermostat",
-        choices=CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
-        required=False, label="Program your thermostat")
+class EnergyMeetingCommitmentCardVersion2(EnergyMeetingCommitmentCard):
+    organize = forms.BooleanField(required=False, label="Organize my community to save energy")
+    
+    def __init__(self, *args, **kwargs):
+        super(EnergyMeetingCommitmentCardVersion2, self).__init__(*args, **kwargs)
+        del self.fields["host_event"]
+        del self.fields["join_team"]
+    
+class ApartmentEnergyMeetingCommitmentCard(EnergyMeetingCommitmentCard):
     replace_light_bulbs = ActionChoiceField(action_slug="replace-your-incandescent-light-bulbs-with-cfls",
-        choices=CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
+        choices=EnergyMeetingCommitmentCard.CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
         required=False, label="Replace light bulbs with CFLs")
     cold_wash = ActionChoiceField(action_slug="wash-clothes-cold-water",
-        choices=CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
+        choices=EnergyMeetingCommitmentCard.CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
         required=False, label="Use the cold wash cycle")
-    host_event = forms.BooleanField(required=False, label="Host an event")
-    join_team = forms.BooleanField(required=False, label="Join a team")
+        
+    def __init__(self, *args, **kwargs):
+        super(ApartmentEnergyMeetingCommitmentCard, self).__init__(*args, **kwargs)
+        del self.fields["replace_filter"]
+        del self.fields["energy_audit"]
+    
+class ApartmentEnergyMeetingCommitmentCardVersion2(ApartmentEnergyMeetingCommitmentCard):
+    organize = forms.BooleanField(required=False, label="Organize my community to save energy")
+    
+    def __init__(self, *args, **kwargs):
+        super(ApartmentEnergyMeetingCommitmentCardVersion2, self).__init__(*args, **kwargs)
+        del self.fields["host_event"]
+        del self.fields["join_team"]
 
 class PilotEnergyMeetingCommitmentCard(SurveyForm):
     CHOICES = (

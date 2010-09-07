@@ -14,6 +14,10 @@ from messaging.models import Stream
 
 def yestarday():
     return datetime.datetime.today() - datetime.timedelta(days=1)
+    
+class EventTypeManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
 
 class EventType(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -21,9 +25,13 @@ class EventType(models.Model):
     description = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    objects = EventTypeManager()
 
     def __unicode__(self):
         return self.name
+        
+    def natural_key(self):
+        return [self.name]
 
 class Event(models.Model):
     creator = models.ForeignKey("auth.User")

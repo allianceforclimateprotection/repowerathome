@@ -16,7 +16,7 @@ from invite.models import Invitation, make_token
 from models import EventType, Event, Guest, Commitment
 
 class EventTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json",]
+    fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json",]
     
     def setUp(self):
         self.creator = User.objects.get(username="eric", )
@@ -107,7 +107,7 @@ class EventTest(TestCase):
         self.failUnless(not new_event.is_token_valid(token))
 
 class GuestTest(TestCase):
-    fixtures = ["test_events.json",]
+    fixtures = ["event_types.json", "surveys.json", "test_events.json",]
     
     def setUp(self):
         self.jane = Guest.objects.get(first_name="Jane", last_name="Doe")
@@ -287,7 +287,7 @@ class EventCreateViewTest(TestCase):
         # self.failUnlessEqual(event.limit, 20)
         
 class EventDetailViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json"]
+    fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json"]
     
     def setUp(self):
         self.client = Client()
@@ -400,7 +400,7 @@ class EventDetailViewTest(TestCase):
         self.failUnlessEqual(event.is_private, False)
         
 class EventEditViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json"]
+    fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json"]
 
     def setUp(self):
         self.client = Client()
@@ -478,7 +478,7 @@ class EventEditViewTest(TestCase):
         # self.failUnlessEqual(event.limit, 30)
             
 class EventGuestsViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json"]
+    fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json"]
 
     def setUp(self):
         self.client = Client()
@@ -550,7 +550,7 @@ class EventGuestsViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "events/guests_add.html")
         
 class EventGuestsAddViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json"]
+    fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json"]
 
     def setUp(self):
         self.client = Client()
@@ -626,7 +626,7 @@ class EventGuestsAddViewTest(TestCase):
         self.failUnlessEqual(jon.rsvp_status, "N")
         
 class EventGuestsInviteViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json", "invite.json"]
+    fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json", "invite.json"]
 
     def setUp(self):
         self.client = Client()
@@ -765,7 +765,7 @@ class EventGuestsInviteViewTest(TestCase):
         self.failUnlessEqual(len(guests), 7)
         
 class EventGuestsEditNameViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json"]
+    fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json"]
 
     def setUp(self):
         self.client = Client()
@@ -838,7 +838,7 @@ class EventGuestsEditNameViewTest(TestCase):
         self.failUnless("success" in message.tags)
         
 class EventGuestsEditEmailViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json"]
+    fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json"]
 
     def setUp(self):
         self.client = Client()
@@ -907,7 +907,7 @@ class EventGuestsEditEmailViewTest(TestCase):
         self.failUnless("success" in message.tags)
         
 class EventGuestsEditPhoneViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json"]
+    fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json"]
 
     def setUp(self):
         self.client = Client()
@@ -965,7 +965,8 @@ class EventGuestsEditPhoneViewTest(TestCase):
         self.failUnless("success" in message.tags)
         
 class EventsCommitmentViewTest(TestCase):
-    fixtures = ["test_geo_02804.json", "test_events.json", "actions.json", "surveys.json", "commitment.json"]
+    fixtures = ["actions.json", "event_types.json", "surveys.json", "commitment.json",
+        "test_geo_02804.json", "test_events.json"]
 
     def setUp(self):
         self.client = Client()

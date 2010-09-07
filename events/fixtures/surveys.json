@@ -1,5 +1,7 @@
 [
-    {"pk": 1, "model": "events.survey", "fields": {"name": "Energy Meeting Commitment Card", "event_type": 1, "form_name": "EnergyMeetingCommitmentCard", "template_name": "events/_energy_commitment_card.html", "is_active": "True"}},
-    {"pk": 2, "model": "events.survey", "fields": {"name": "Volunteer Interest Form", "event_type": 2, "form_name": "VolunteerInterestForm", "template_name": "events/_volunteer_form.html", "is_active": "True"}},
-    {"pk": 3, "model": "events.survey", "fields": {"name": "Apartment Energy Meeting Commitment Card", "event_type": 4, "form_name": "ApartmentEnergyMeetingCommitmentCard", "template_name": "events/_energy_commitment_card.html", "is_active": "True"}}
+    {"pk": null, "model": "events.survey", "fields": {"name": "Energy Meeting Commitment Card", "event_type": ["Energy Meeting"], "form_name": "EnergyMeetingCommitmentCard", "template_name": "events/_energy_commitment_card.html", "is_active": "False"}},
+    {"pk": null, "model": "events.survey", "fields": {"name": "Volunteer Interest Form", "event_type": ["Kickoff Meeting"], "form_name": "VolunteerInterestForm", "template_name": "events/_volunteer_form.html", "is_active": "True"}},
+    {"pk": null, "model": "events.survey", "fields": {"name": "Apartment Energy Meeting Commitment Card", "event_type": ["Apartment Energy Meeting"], "form_name": "ApartmentEnergyMeetingCommitmentCard", "template_name": "events/_energy_commitment_card.html", "is_active": "False"}},
+    {"pk": null, "model": "events.survey", "fields": {"name": "Energy Meeting Commitment Card Version 2", "event_type": ["Energy Meeting"], "form_name": "EnergyMeetingCommitmentCardVersion2", "template_name": "events/_energy_commitment_card.html", "is_active": "True"}},
+    {"pk": null, "model": "events.survey", "fields": {"name": "Apartment Energy Meeting Commitment Card Version 2", "event_type": ["Apartment Energy Meeting"], "form_name": "ApartmentEnergyMeetingCommitmentCardVersion2", "template_name": "events/_energy_commitment_card.html", "is_active": "True"}}
 ]
