@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 
 from actions.models import Action
+from messaging.models import Stream
 
 from models import Survey, Commitment
 from widgets import RadioRendererForTable
@@ -45,6 +46,17 @@ class SurveyForm(forms.ModelForm):
             commitment.answer = data
             if hasattr(self.fields[field], "action"):
                 commitment.action = self.fields[field].action
+                if commitment.answer == "C":
+                    if created:
+                        Stream.objects.get(slug="commitment").enqueue(content_object=commitment, 
+                            start=commitment.created, end=commitment.date_committed,
+                            batch_content_object=self.guest)
+                    else:
+                        Stream.objects.get(slug="commitment").upqueue(content_object=commitment, 
+                            start=commitment.updated, end=commitment.date_committed,
+                            batch_content_object=self.guest)
+                else:
+                    Stream.objects.get(slug="commitment").dequeue(content_object=commitment)
             commitment.save()
 
 class EnergyMeetingCommitmentCard(SurveyForm):

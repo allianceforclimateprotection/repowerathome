@@ -182,7 +182,7 @@ def commitments(request, event_id, guest_id=None):
     if guest_id:
         guest = get_object_or_404(Guest, id=guest_id)
     else:
-        guests = Guest.objects.filter(event=event)
+        guests = Guest.objects.filter(event=event).order_by("pk")
         guest = guests[0] if len(guests) > 0 else None
     survey = event.survey()
     if survey:

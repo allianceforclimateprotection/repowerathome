@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 import tagging
@@ -11,7 +12,7 @@ import tagging
 from events.models import Commitment
 from records.models import Record
 from dated_static.templatetags.dated_static import timestamp_file
-from messaging.models import Stream
+from messaging.models import Stream, Queue
 from rah.signals import logged_in
 
 class ActionManager(models.Manager):
@@ -58,8 +59,13 @@ class ActionManager(models.Manager):
                 if commitment.answer == "D":
                     commitment.action.complete_for_user(user)
                 elif commitment.answer == "C":
-                    # We are defaulting the commitment date to 21 days from now
-                    commitment.action.commit_for_user(user, datetime.now() + timedelta(days=21))
+                    uap, record = commitment.action.commit_for_user(user, commitment.date_committed, add_to_stream=False)
+                    # transition the guest commitment messages to user commitment messages
+                    messages = Queue.objects.filter(content_type=ContentType.objects.get_for_model(commitment),
+                        object_pk=commitment.pk)
+                    messages.update(content_type=ContentType.objects.get_for_model(uap),
+                        object_pk=uap.pk, batch_content_type=ContentType.objects.get_for_model(uap.user),
+                        batch_object_pk=uap.user.pk)
                 changes.append(commitment)
         return changes
         
@@ -102,7 +108,7 @@ class Action(models.Model):
             return False
         return True
             
-    def commit_for_user(self, user, date):
+    def commit_for_user(self, user, date, add_to_stream=True):
         # This used to use get_or_create, but was giving us trouble. Not sure why...
         # See ticket 328 for details: https://rah.codebasehq.com/rah/tickets/328
         try:
@@ -113,13 +119,14 @@ class Action(models.Model):
         uap.date_committed = date
         uap.save()
         record = None
-        if was_committed:
-            Stream.objects.get(slug="commitment").upqueue(content_object=uap, start=uap.created, 
-                end=uap.date_committed, batch_content_object=user)
-        else:
-            Stream.objects.get(slug="commitment").enqueue(content_object=uap, start=uap.updated,
-                end=uap.date_committed, batch_content_object=user)
-            record = Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
+        if add_to_stream:
+            if was_committed:
+                Stream.objects.get(slug="commitment").upqueue(content_object=uap, start=uap.created, 
+                    end=uap.date_committed, batch_content_object=user)
+            else:
+                Stream.objects.get(slug="commitment").enqueue(content_object=uap, start=uap.updated,
+                    end=uap.date_committed, batch_content_object=user)
+                record = Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
         return (uap, record)
             
     def cancel_for_user(self, user):
@@ -168,7 +175,12 @@ tagging.register(Action)
 
 class UserActionProgressManager(models.Manager):
     def commitments_for_user(self, user):
-         return self.select_related().filter(user=user, is_completed=False, date_committed__isnull=False).order_by("date_committed")
+         return self.select_related().filter(user=user, is_completed=False, 
+            date_committed__isnull=False).order_by("date_committed")
+            
+    def pending_commitments(self, user=None):
+        queryset = self.filter(is_completed=False, date_committed__isnull=False)
+        return queryset if not user else queryset.filter(user=user)
 
 class UserActionProgress(models.Model):
     user = models.ForeignKey(User)
