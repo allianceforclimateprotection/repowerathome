@@ -146,7 +146,7 @@ class Message(models.Model):
         if not blacklisted_emails:
             blacklisted_emails = []
         for email, user_object in self.recipients(content_object):
-            if email in blacklisted_emails:
+            if email and email in blacklisted_emails:
                 continue # email has been blacklisted, don't send to this recipient
             # for each recipient, create a Recipient message to keep track of opens
             recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
