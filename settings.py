@@ -39,8 +39,7 @@ ADMIN_MEDIA_PREFIX = '/media/'
 # Caching
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
-CACHE_MIDDLEWARE_SECONDS = 60 * 60
-CACHE_MIDDLEWARE_KEY_PREFIX = os.path.dirname(__file__)[:12] # This is enough for /scripts/{pr|de|st}
+CACHE_MIDDLEWARE_SECONDS = 30
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -49,7 +48,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    # 'django.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -57,7 +56,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    # 'django.middleware.transaction.TransactionMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    'source_tracking.middleware.SourceTrackingMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
 )
 

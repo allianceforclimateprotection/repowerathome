@@ -17,7 +17,7 @@ class CloudMaker(object):
                 "user_data_script": "user_data_load_balancer.sh"
             },
             "app_servers": {
-                "ami": "ami-2456bc4d",
+                "ami": "ami-ba54bed3",
                 "instance_type": "c1.medium",
                 "user_data_script": "user_data_app_server.sh",
                 "number": 1,
@@ -89,7 +89,7 @@ class CloudMaker(object):
             preferred_backup_window="08:00-10:00",
             multi_az=False
         )
-        print "Launched DB instance!"
+        print "Launched DB instance! ( %s )" % self.db_pass
 
     def lauch_load_balancer(self):
         # Bring up load balancers
