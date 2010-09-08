@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.comments.views import comments
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail, EmailMessage
+from django.core.cache import cache
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, redirect, get_object_or_404
@@ -36,11 +37,17 @@ from decorators import save_queued_POST
 from signals import logged_in
 
 def _coal_challenge_stats():
-    locale.setlocale(locale.LC_ALL, "en_US")
-    total_people = locale.format('%d', _total_users(), True)
-    total_actions = locale.format('%d', _total_actions(), True)
-    total_coal = locale.format('%d', _total_coal(), True)
-    return locals()
+    coal_challenge_stats = cache.get('coal_challenge_stats')
+    if coal_challenge_stats:
+        return coal_challenge_stats
+    else:
+        coal_challenge_stats = {}  
+        locale.setlocale(locale.LC_ALL, "en_US")
+        coal_challenge_stats['total_people'] = locale.format('%d', _total_users(), True)
+        coal_challenge_stats['total_actions'] = locale.format('%d', _total_actions(), True)
+        coal_challenge_stats['total_coal'] = locale.format('%d', _total_coal(), True)
+        cache.set('coal_challenge_stats', coal_challenge_stats, 60 * 5)
+        return coal_challenge_stats
     
 def _total_users():
     return (Profile.objects.filter(total_points__gt=0).count() or 0) + \
