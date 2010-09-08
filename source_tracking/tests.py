@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
@@ -81,4 +82,20 @@ class SourceTrackingTests(TestCase):
         self.failUnlessEqual(test_source.source, "facebook")
         self.failUnlessEqual(test_source.subsource, "")
         self.failUnlessEqual(test_source.referrer, "http://www.facebook.com/")
+        
+    def test_tracking_after_redirected_with_tracking(self):
+        self.client.get(reverse("index"), {"source": "google_ad", "subsource": "md_campaign"}, 
+            HTTP_REFERER="http://www.google.com/")
+        self.client.get(reverse("action_show"), {"source": "invite", "subsource": "/actions/"}, 
+            HTTP_REFERER="http://%s/" % Site.objects.get_current().domain)
+        response = self.client.post(reverse("register"), {"first_name": "test", 
+            "email": "test@test.com", "password1": "testing", "password2": "testing",}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "rah/home_logged_in.html")
+        sources = UserSource.objects.all()
+        self.failUnlessEqual(sources.count(), 1)
+        test_source = sources[0]
+        self.failUnlessEqual(test_source.user.email, "test@test.com")
+        self.failUnlessEqual(test_source.source, "invite")
+        self.failUnlessEqual(test_source.subsource, "/actions/")
+        self.failUnlessEqual(test_source.referrer, "http://www.google.com/")
         
