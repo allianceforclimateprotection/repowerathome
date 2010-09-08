@@ -13,7 +13,7 @@ env.roledefs = {
     "application": ["ec2-184-73-22-211.compute-1.amazonaws.com"],
     "loadbalancer": ["repowerathome.com"],
     "development": ["dev.repowerathome.com"],
-    "staging": ["ec2-184-73-22-211.compute-1.amazonaws.com"],
+    "staging": ["ec2-184-73-74-57.compute-1.amazonaws.com"],
 }
 
 env.deploy_to = "/home/%(user)s/webapp" % env
@@ -95,13 +95,6 @@ def s3sync():
 def backupdb():
     "Create a backup of the database"
     pass
-
-@runs_once
-def migratedb():
-    "Migrate the database"
-    require("hosts", provided_by=deployments)
-    if confirm("Would you like to migrate the database?"):
-        run("cd %(deploy_to)s && python manage.py migrate" % env)
     
 @runs_once
 def syncdb():
@@ -109,6 +102,13 @@ def syncdb():
     require("hosts", provided_by=deployments)
     if confirm("This script can not handle interactive shells, are you sure you want to run syncdb?"):
         run("cd %(deploy_to)s && python manage.py syncdb" % env)
+
+@runs_once
+def migratedb():
+    "Migrate the database"
+    require("hosts", provided_by=deployments)
+    if confirm("Would you like to migrate the database?"):
+        run("cd %(deploy_to)s && python manage.py migrate" % env)
     
 def restart_apache():
     "Reboot Apache2 server."
@@ -118,7 +118,7 @@ def restart_apache():
 @roles("loadbalancer")
 def disable_maintenance_page():
     "Turns off the maintenance page"
-    if _determine_environment() == "application"
+    if _determine_environment() == "application":
         sudo("rm /etc/nginx/sites-enabled/maintenance")
         sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
         sudo("/etc/init.d/nginx reload")
@@ -164,8 +164,8 @@ def deploy(revision=None, sync_media=True):
     if bool(sync_media) and str(sync_media).upper() != "FALSE":
         s3sync()
     #backupdb()
-    migratedb()
-    syncdb()
+    #syncdb()
+    #migratedb()
     restart_apache()
     disable_maintenance_page()
     notify_codebase()
