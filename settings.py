@@ -48,7 +48,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.cache.UpdateCacheMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -56,9 +56,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
     'source_tracking.middleware.SourceTrackingMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -112,6 +112,7 @@ INSTALLED_APPS = (
     'facebook_app',
     'thumbnails',
     'export',
+    'source_tracking',
 )
 
 FIXTURE_DIR = ('fixtures',)
