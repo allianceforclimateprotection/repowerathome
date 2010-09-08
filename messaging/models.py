@@ -16,6 +16,18 @@ from utils import hash_val
 
 URL_REGEX = re.compile(r"(?<!src=(\"|\'))(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
 
+class LinkReplacer(object):
+    def __init__(self, recipient_message, *args, **kwargs):
+        self.recipient_message = recipient_message
+        self.count = 0
+        
+    def replace_link(self, match_obj):
+        # for each unique link in the body, create a Message link to track the clicks
+        ml = MessageLink.objects.create(recipient_message=self.recipient_message,
+            link=match_obj.group(0), token=hash_val([self.count, datetime.datetime.now()]))
+        self.count += 1
+        return "http://%s%s" % (Site.objects.get_current().domain, reverse("message_click", args=[ml.token]))
+
 class MessageManager(models.Manager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
@@ -160,13 +172,8 @@ class Message(models.Model):
             # render the body and subject template with the given, template
             subject = template.Template(self.subject).render(context)
             body = template.Template(self.body).render(context)
-            for index, link in enumerate([m.group() for m in URL_REGEX.finditer(body)]):
-                # for each unique link in the body, create a Message link to track the clicks
-                ml = MessageLink.objects.create(recipient_message=recipient_message,
-                    link=link, token=hash_val([index, datetime.datetime.now()]))
-                tracker = "http://%s%s" % (domain, reverse("message_click", args=[ml.token]))
-                # replace the original link with traking URL
-                body = body.replace(link, tracker, 1)
+            replacer = LinkReplacer(recipient_message=recipient_message)
+            body = re.sub(URL_REGEX, replacer.replace_link, body)
             open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", args=[recipient_message.token]))
             # insert an open tracking image into the body
             body += open_link
