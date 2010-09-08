@@ -14,11 +14,16 @@ class SourceTrackingMiddleware(object):
     def process_request(self, request):
         if request.user.is_authenticated():
             return None
+        codes = request.session.get(STK, {})
+        source = request.GET.get("source", None)
+        subsource = request.GET.get("subsource", None)
+        if source or subsource:
+            codes["source"] = source or ""
+            codes["subsource"] = subsource or ""
         referrer = request.META.get("HTTP_REFERER", None)
         if referrer and not re.search(DOMAIN, referrer):
-            codes = {"source": request.GET.get("source", ""), 
-                "subsource": request.GET.get("subsource", ""),
-                "referrer": referrer}
+            codes["referrer"] = referrer
+        if codes.items():
             request.session[STK] = codes
             
 def add_source_tracking(sender, request, user, is_new_user, **kwargs):
