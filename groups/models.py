@@ -125,7 +125,6 @@ class Group(models.Model):
         verbose_name = "team"
         verbose_name_plural = "teams"
         
-    
     def is_joinable(self):
         return not self.is_geo_group
     
@@ -257,10 +256,11 @@ class GroupUsers(models.Model):
     
     class Meta:
         unique_together = ("user", "group",)
-        verbose_name_plural = "group users"
+        verbose_name = "member"
+        verbose_name_plural = "members"
     
     def __unicode__(self):
-        return u'%s belongs to team %s' % (self.user, self.group)
+        return u'%s belongs to team %s' % (self.user.get_full_name(), self.group)
         
 class MembershipRequests(models.Model):
     user = models.ForeignKey(User)
