@@ -9,7 +9,7 @@ from forms import ProfileEditForm
 from rateable.models import Rating
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("email", "first_name", "last_name", "location", "date_joined")
+    list_display = ("email", "first_name", "last_name", "location", "date_joined",)
     ordering = ("id",)
     date_hierarchy = "date_joined"
     search_fields = ("email", "first_name", "last_name",)

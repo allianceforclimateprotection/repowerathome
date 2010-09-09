@@ -32,7 +32,8 @@ class AskToShareForm(forms.Form):
             last_record = Record.objects.user_records(user=request.user, quantity=1)[0]
             message = last_record.render_for_social(request)
             message = message.encode("utf-8")
-            link = "http://%s%s" % (Site.objects.get_current().domain, last_record.get_absolute_url())
+            link = "http://%s%s?source=sm-fb-post&subsource=%s" % (Site.objects.get_current().domain, 
+                last_record.get_absolute_url(), last_record.get_absolute_url())
             publish_message(request.user, message, link)
         if network == "t":
             profile = request.user.get_profile()

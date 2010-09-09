@@ -49,9 +49,9 @@ def group_leave(request, group_id):
             GroupUsers.objects.filter(group=group, user=request.user).delete()
             messages.success(request, "You have been removed from team %s" % group)
         else:
-            messages.error(request, "You can not leave the team, until you've assigned someone else to be manager.", extra_tags="sticky")
+            messages.error(request, "You cannot leave the team, until you've assigned someone else to be manager.", extra_tags="sticky")
     else:
-        messages.error(request, "You can not leave a team your not a member of")
+        messages.error(request, "You cannot leave a team your not a member of")
     return redirect("group_detail", group_slug=group.slug)
     
 @login_required
