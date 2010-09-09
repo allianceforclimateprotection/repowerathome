@@ -4,6 +4,25 @@
             <li class="messages {{ message.tags }}">
                 {% if "ga_track_pageview" in message.tags %}
                     <script type="text/javascript">_gaq.push(['_trackPageview', '{{ message }}']);</script>
+                    
+                    <!-- Google Code for Repower at Home Sign Up Conversion Page -->
+                    <script type="text/javascript">
+                    /* <![CDATA[ */
+                    var google_conversion_id = 1055391835;
+                    var google_conversion_language = "en";
+                    var google_conversion_format = "3";
+                    var google_conversion_color = "ffffff";
+                    var google_conversion_label = "LZ1HCMXv7QEQ24Cg9wM";
+                    var google_conversion_value = 0;
+                    /* ]]> */
+                    </script>
+                    <script type="text/javascript" src="http://www.googleadservices.com/pagead/conversion.js">
+                    </script>
+                    <noscript>
+                    <div style="display:inline;">
+                    <img height="1" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1055391835/?label=LZ1HCMXv7QEQ24Cg9wM&amp;guid=ON&amp;script=0"/>
+                    </div>
+                    </noscript>
                 {% else %}
                     {{ message|safe }} <a href="#" class="dismiss">close</a>
                 {% endif %}
