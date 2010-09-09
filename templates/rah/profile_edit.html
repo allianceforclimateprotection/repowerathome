@@ -96,7 +96,7 @@
                             {% endif %}
                         {% endif %}
                         {% if profile.facebook_connect_only %}
-                            You can not unlink your facebook account, since you are currently logged in with facebook
+                            You cannot unlink your facebook account, since you are currently logged in with facebook
                         {% else %}
                             {% if profile.facebook_access_token %}
                                 <br/><a class="" href="{% url facebook_unauthorize %}">Unlink your Facebook account</a>

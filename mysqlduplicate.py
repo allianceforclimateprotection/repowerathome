@@ -28,7 +28,7 @@ Requirements:
             }
         }
     
-    Notice by default a database can not be replaced, if the database needs to be replaceable, 
+    Notice by default a database cannot be replaced, if the database needs to be replaceable, 
     you must set the "CAN_REPLACE" property to True.  Also if a server name is not provided it 
     assumes that the databased is stored locally.
     
@@ -163,7 +163,7 @@ def parse_args(args):
     duplicate, replace = server_aliases
     
     if not replace.can_replace:
-        print "Sorry, but %s can not be replaced" % replace.name
+        print "Sorry, but %s cannot be replaced" % replace.name
         parser.print_help()
         sys.exit(2)
         

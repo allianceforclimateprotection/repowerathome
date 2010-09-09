@@ -100,7 +100,7 @@ def backupdb():
 def syncdb():
     "Sync the database with any new models"
     require("hosts", provided_by=deployments)
-    if confirm("This script can not handle interactive shells, are you sure you want to run syncdb?"):
+    if confirm("This script cannot handle interactive shells, are you sure you want to run syncdb?"):
         run("cd %(deploy_to)s && python manage.py syncdb" % env)
 
 @runs_once

@@ -40,16 +40,16 @@ class GroupForm(forms.ModelForm):
         data = self.cleaned_data["image"]
         if data:
             if data.size > 4194304:
-                raise forms.ValidationError("Team images can not be larger than 512K")
+                raise forms.ValidationError("Team images cannot be larger than 512K")
             self.image_format = pil_open(data.file).format
             if not self.image_format in GroupForm.IMAGE_FORMATS:
-                raise forms.ValidationError("Images can not be of type %s" % data.content_type)
+                raise forms.ValidationError("Images cannot be of type %s" % data.content_type)
         return data
         
     def clean_slug(self):
         data = self.cleaned_data["slug"]
         if data in GroupForm.states or any([data.startswith("%s-" % state) for state in GroupForm.states]):
-            raise forms.ValidationError("Team addresses can not begin with a state name.")
+            raise forms.ValidationError("Team addresses cannot begin with a state name.")
         
         # Make sure the name is not in the blacklist or a resolvable URL
         try:
