@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from models import Location
+from filterspecs import StateFilterSpec
 
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'county', 'recruit')

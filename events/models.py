@@ -40,6 +40,7 @@ class Event(models.Model):
         help_text="Label for where the event is being held (e.g. Jon's House)")
     where = models.CharField(max_length=100)
     location = models.ForeignKey("geo.Location", null=True)
+    location.state_filter = True
     when = models.DateField()
     start = models.TimeField()
     duration = models.PositiveIntegerField(blank=True, null=True)

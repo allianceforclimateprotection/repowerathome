@@ -16,7 +16,8 @@ class EventAdminForm(EventForm):
         return super(EventForm, self).save(*args, **kwargs)
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("__unicode__", "place_name", "start_datetime", "is_private")
+    list_display = ("__unicode__", "place_name", "start_datetime", "is_private",)
+    list_filter = ("event_type", "location",)
     readonly_fields = ("limit",)
     form = EventAdminForm
 
