@@ -152,7 +152,7 @@ def notify_codebase():
     response = urllib2.urlopen(request).read()
 
 def deploy(revision=None, sync_media=True):
-    "Deploy code to server"
+    "Deploy a revision to server"
     if revision: env.revision = revision
     require("deploy_to", provided_by=deployments)
     enable_maintenance_page()
@@ -170,4 +170,17 @@ def deploy(revision=None, sync_media=True):
     disable_maintenance_page()
     notify_codebase()
     print("%(branch)s:%(revision)s has been deployed to %(hosts)s" % env)
-        
+    
+def code_only_deploy(revision=None):
+    "Deploy only the new code to the server"
+    if revision: env.revision = revision
+    require("deploy_to", provided_by=deployments)
+    enable_maintenance_page()
+    enable_maintenance_page()
+    reset()
+    pull()
+    checkout()
+    restart_apache()
+    disable_maintenance_page()
+    notify_codebase()
+    print("%(branch)s:%(revision)s has been deployed to %(hosts)s" % env)
