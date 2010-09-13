@@ -176,7 +176,6 @@ def code_only_deploy(revision=None):
     if revision: env.revision = revision
     require("deploy_to", provided_by=deployments)
     enable_maintenance_page()
-    enable_maintenance_page()
     reset()
     pull()
     checkout()
