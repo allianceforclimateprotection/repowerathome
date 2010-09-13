@@ -103,7 +103,13 @@ class Event(models.Model):
          return Guest.objects.filter(event=self, invited__isnull=False).count()
         
     def outstanding_invitations(self):
-        return Guest.objects.filter(event=self, invited__isnull=False, rsvp_status="").count()
+        return self.guests_that_have_not_responded.count()
+        
+    def guests_that_have_not_responded(self):
+        return Guest.objects.filter(event=self, invited__isnull=False, rsvp_status="")
+        
+    def guests_no_response_id_list(self):
+        return ",".join([g.id for g in self.guests_that_have_not_responded()])
         
     def is_token_valid(self, token):
         try:
@@ -218,23 +224,26 @@ class GuestManager(models.Manager):
                 NULL AS "team member",
                 CASE 
                     WHEN g.is_host = 1 AND 
-                    DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s' 
+                    DATE(e.when) >= '%(date_start)s' AND DATE(e.when) <= '%(date_end)s' 
+                        THEN "completed"
+                    WHEN g.is_host = 1 AND 
+                    DATE(e.created) >= '%(date_start)s' AND DATE(e.created) <= '%(date_end)s' 
                         THEN "yes"
                 END AS "event host",
                 CASE
                     WHEN e.event_type_id IN (1,4,5) AND c.id IS NOT NULL AND
                     DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
-                        THEN "yes"
+                        THEN "completed"
                 END AS "energy event guest",
                 CASE
                     WHEN e.event_type_id IN (2) AND c.id IS NOT NULL AND
                     DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
-                        THEN "yes"
+                        THEN "completed"
                 END AS "kickoff event guest",
                 CASE
                     WHEN e.event_type_id IN (3) AND c.id IS NOT NULL AND 
                     DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
-                        THEN "yes"
+                        THEN "completed"
                 END AS "field training guest"
             FROM events_guest g
             JOIN events_event e ON g.event_id = e.id
