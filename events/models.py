@@ -103,7 +103,7 @@ class Event(models.Model):
          return Guest.objects.filter(event=self, invited__isnull=False).count()
         
     def outstanding_invitations(self):
-        return self.guests_that_have_not_responded.count()
+        return self.guests_that_have_not_responded().count()
         
     def guests_that_have_not_responded(self):
         return Guest.objects.filter(event=self, invited__isnull=False, rsvp_status="")
