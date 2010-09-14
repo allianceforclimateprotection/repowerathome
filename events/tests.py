@@ -59,15 +59,15 @@ class EventTest(TestCase):
         self.failUnlessEqual(list(self.event.hosts()), [alex])
         
     def test_confirmed_guests(self):
-        self.failUnlessEqual(self.event.confirmed_guests(), 1)
+        self.failUnlessEqual(self.event.confirmed_guests().count(), 1)
         alex = Guest.objects.get(first_name="Alex", last_name="Smith")
         alex.rsvp_status = "A"
         alex.save()
-        self.failUnlessEqual(self.event.confirmed_guests(), 2)
+        self.failUnlessEqual(self.event.confirmed_guests().count(), 2)
         jane = Guest.objects.get(first_name="Jane", last_name="Doe")
         jane.rsvp_status = "N"
         jane.save()
-        self.failUnlessEqual(self.event.confirmed_guests(), 1)
+        self.failUnlessEqual(self.event.confirmed_guests().count(), 1)
         
     def test_outstanding_invitations(self):
         self.failUnlessEqual(self.event.outstanding_invitations(), 2)
@@ -76,19 +76,19 @@ class EventTest(TestCase):
         jon.save()
         self.failUnlessEqual(self.event.outstanding_invitations(), 1)
         
-    def test_maybe_attending_count(self):
-        self.failUnlessEqual(self.event.maybe_attending_count(), 1)
+    def test_maybe_attending(self):
+        self.failUnlessEqual(self.event.maybe_attending().count(), 1)
         jon = Guest.objects.get(first_name="Jon", last_name="Doe")
         jon.rsvp_status = "M"
         jon.save()
-        self.failUnlessEqual(self.event.maybe_attending_count(), 2)
+        self.failUnlessEqual(self.event.maybe_attending().count(), 2)
         
-    def test_not_attending_count(self):
-        self.failUnlessEqual(self.event.not_attending_count(), 1)
+    def test_not_attending(self):
+        self.failUnlessEqual(self.event.not_attending().count(), 1)
         jonathan = Guest.objects.get(first_name="Jonathan")
         jonathan.rsvp_status = "N"
         jonathan.save()
-        self.failUnlessEqual(self.event.not_attending_count(), 2)
+        self.failUnlessEqual(self.event.not_attending().count(), 2)
         
     def test_attendees(self):
         self.failUnlessEqual(len(self.event.attendees()), 5)

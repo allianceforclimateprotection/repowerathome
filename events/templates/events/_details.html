@@ -43,14 +43,14 @@
     <div>
         <h3>Invitations</h3>
         <p>
-            {% if event.confirmed_guests %}
-                {{ event.confirmed_guests }} confirmed<br />
+            {% if event.confirmed_guests.count %}
+                {{ event.confirmed_guests.count }} confirmed<br />
             {% endif %}
-            {% if event.maybe_attending_count %}
-                {{ event.maybe_attending_count }} maybe{{ event.maybe_attending_count|pluralize }}<br />
+            {% if event.maybe_attending.count %}
+                {{ event.maybe_attending.count }} maybe{{ event.maybe_attending.count|pluralize }}<br />
             {% endif %}
-            {% if event.not_attending_count %}
-                {{ event.not_attending_count }} can't attend <br />
+            {% if event.not_attending.count %}
+                {{ event.not_attending.count }} can't attend <br />
             {% endif %}
             {% if event.outstanding_invitations %}
                 {{ event.outstanding_invitations }} outstanding invitation{{ event.outstanding_invitations|pluralize }}
