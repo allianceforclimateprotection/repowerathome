@@ -10,7 +10,7 @@ env.user = "ubuntu"
 env.disable_known_hosts = True
 
 env.roledefs = {
-    "application": ["ec2-184-73-22-211.compute-1.amazonaws.com"],
+    "application": ["ec2-184-73-74-57.compute-1.amazonaws.com"],
     "loadbalancer": ["repowerathome.com"],
     "development": ["dev.repowerathome.com"],
     "staging": ["ec2-184-73-74-57.compute-1.amazonaws.com"],
@@ -23,18 +23,15 @@ env.revision = "HEAD"
 env.repository = "git@codebasehq-deploy:rah/rah/rah.git"
 
 def dev():
-    env.hosts = env.roledefs["development"]
+    env.roles = ["development"]
+    env.environment = "development"
 def staging():
-    env.hosts = env.roledefs["staging"]
+    env.roles = ["staging"]
+    env.environment = "staging"
 def prod():
-    env.hosts = env.roledefs["application"]
+    env.roles = ["application"]
+    env.environment = "production"
 deployments = [dev, staging, prod]
-
-def _determine_environment():
-    for key,value in env.roledefs.items():
-        if value == env.hosts:
-            return key
-    return None
 
 def test():
     "Run all tests"
@@ -50,13 +47,14 @@ def clean():
     else:
         local("find . -name '*.pyc' -depth -exec rm {} \;")
 
-@roles("loadbalancer")
 def enable_maintenance_page():
     "Turns on the maintenance page"
-    if _determine_environment() == "application":
-        sudo("rm /etc/nginx/sites-enabled/rah")
-        sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
-        sudo("/etc/init.d/nginx reload")
+    if env.environment == "production":
+        for host in env.roledefs["loadbalancer"]:
+            with settings(host_string=host):
+                sudo("rm /etc/nginx/sites-enabled/rah")
+                sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
+                sudo("/etc/init.d/nginx reload")
     
 def reset():
     "Set the workspace to the desired revision"
@@ -115,13 +113,14 @@ def restart_apache():
     require("hosts", provided_by=deployments)
     sudo("/etc/init.d/apache2 restart")
 
-@roles("loadbalancer")
 def disable_maintenance_page():
     "Turns off the maintenance page"
-    if _determine_environment() == "application":
-        sudo("rm /etc/nginx/sites-enabled/maintenance")
-        sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
-        sudo("/etc/init.d/nginx reload")
+    if env.environment == "production":
+        for host in env.roledefs["loadbalancer"]:
+            with settings(host_string=host):
+                sudo("rm /etc/nginx/sites-enabled/maintenance")
+                sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
+                sudo("/etc/init.d/nginx reload")
     
 @runs_once
 def notify_codebase():
@@ -139,9 +138,8 @@ def notify_codebase():
     xml.append("<deployment>")
     xml.append("<servers>%s</servers>" % ",".join(env.hosts))
     xml.append("<revision>%s</revision>" % commit_hash)
-    environment = _determine_environment()
-    if environment:
-        xml.append("<environment>%s</environment>" % environment)
+    if "environment" in env:
+        xml.append("<environment>%s</environment>" % env.environment)
     xml.append("<branch>%(branch)s:%(revision)s</branch>" % env)
     xml.append("</deployment>")
 
@@ -177,9 +175,9 @@ def code_only_deploy(revision=None):
     require("deploy_to", provided_by=deployments)
     enable_maintenance_page()
     reset()
-    pull()
-    checkout()
-    restart_apache()
+    # pull()
+    # checkout()
+    # restart_apache()
     disable_maintenance_page()
-    notify_codebase()
+    # notify_codebase()
     print("%(branch)s:%(revision)s has been deployed to %(hosts)s" % env)
