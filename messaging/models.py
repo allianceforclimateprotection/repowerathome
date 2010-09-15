@@ -14,6 +14,8 @@ from django.db import models
 
 from utils import hash_val
 
+from fields import PickledObjectField
+
 URL_REGEX = re.compile(r"(?<!src=(\"|\'))(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
 
 class LinkReplacer(object):
@@ -74,9 +76,23 @@ class Message(models.Model):
         then end of the stream is greater than this number. For example, if this number is set to\
         72 hours and a user makes a commitment for tomorrow. This message will not be set because\
         the duration of the stream is only 24 hours.", verbose_name="Minimum duration")
+    content_types = models.ManyToManyField("contenttypes.contenttype", null=True, blank=True,
+        help_text="Use this field to select all of the different types of content that might\
+        be rendered within this template.  Upon saving this form, the system will run a series\
+        of tests to ensure that this message is compatible with the types of content you have\
+        selected.")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = MessageManager()
+    
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        for ct in self.content_types.all():
+            for eco in ExampleContentObject.objects.filter(app_label=ct.app_label, model=ct.model):
+                try:
+                    self.send(content_object=eco.content_object, dry_run=True)
+                except Exception, e:
+                    raise ValidationError(str(e))
     
     def natural_key(self):
         return [self.name]
@@ -153,7 +169,7 @@ class Message(models.Model):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
     
-    def send(self, content_object, blacklisted_emails=None, extra_params=None): # TODO: create unit tests for Message.send()
+    def send(self, content_object, blacklisted_emails=None, extra_params=None, dry_run=False): # TODO: create unit tests for Message.send()
         sent = []
         if not blacklisted_emails:
             blacklisted_emails = []
@@ -161,11 +177,11 @@ class Message(models.Model):
             if not email or email in blacklisted_emails:
                 continue # email has been blacklisted, don't send to this recipient
             # for each recipient, create a Recipient message to keep track of opens
-            recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
-                token=hash_val([email, datetime.datetime.now()]))
+            recipient_message = RecipientMessage(message=self, recipient=email, token=hash_val([email, datetime.datetime.now()]))
+            if not dry_run:
+                recipient_message.save()
             domain = Site.objects.get_current().domain
-            params = {"content_object": content_object, "domain": domain, 
-                "recipient": user_object if user_object else email }
+            params = {"content_object": content_object, "domain": domain, "recipient": user_object if user_object else email }
             if extra_params:
                 params.update(extra_params)
             context = template.Context(params)
@@ -179,10 +195,11 @@ class Message(models.Model):
             body += open_link
             msg = EmailMessage(subject, body, None, [email])
             msg.content_subtype = "html"
-            msg.send()
-            self.sends += 1 # after the message is sent, increment the sends count
-            self.save()
-            sent.append(Sent.objects.create(message=self, recipient=email, email=msg.message()))
+            if not dry_run:
+                msg.send()
+                self.sends += 1 # after the message is sent, increment the sends count
+                self.save()
+                sent.append(Sent.objects.create(message=self, recipient=email, email=msg.message()))
         return sent
     
     def unique_opens(self):
@@ -412,3 +429,13 @@ class StreamBlacklist(models.Model):
 
     def __unicode__(self):
         return u"%s will not recieve emails for %s streams" % (self.user, self.stream)
+        
+class ExampleContentObjectManager(models.Manager):
+    def add_model(self, content_object):
+        content_type = ContentType.objects.get_for_model(content_object)
+        return ExampleContentObject.objects.create(content_type=content_type, content_object=content_object)
+        
+class ExampleContentObject(models.Model):
+    content_type = models.ForeignKey("contenttypes.contenttype")
+    content_object = PickledObjectField()
+    objects = ExampleContentObjectManager()

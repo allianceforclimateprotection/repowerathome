@@ -8,7 +8,8 @@ class MessageAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ("name", "subject", "body", "sends", "recipient_function",)}),
         ("Send Time", {"fields": ("message_timing", "x_value",)}),
-        ("Advanced Options", {"fields": ("send_as_batch", "batch_window", "time_snap", "minimum_duration"),
+        ("Advanced Options", {"fields": ("send_as_batch", "batch_window", "time_snap", 
+            "minimum_duration", "content_types"),
             "classes": ("collapse",)}),
     )
     
