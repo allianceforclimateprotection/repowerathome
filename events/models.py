@@ -434,6 +434,18 @@ def make_creator_a_guest(sender, instance, **kwargs):
         "rsvp_status": "A", "is_host":True, "location": creator.get_profile().location })
 models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 
+def update_event_create_stream(sender, instance, created, **kwargs):
+    stream = Stream.objects.get(slug="event-create")
+    if created:
+        stream.enqueue(content_object=instance, start=instance.created, end=instance.start_datetime)
+    else:
+        stream.upqueue(content_object=instance, start=instance.created, end=instance.start_datetime)
+models.signals.post_save.connect(update_event_create_stream, sender=Event)
+
+def remove_event_create_stream(sender, instance, **kwargs):
+    Stream.objects.get(slug="event-create").dequeue(content_object=instance)
+models.signals.post_delete.connect(remove_event_create_stream, sender=Event)
+
 rsvp_recieved = Signal(providing_args=["guest"])
 def notification_on_rsvp(sender, guest, **kwargs):
     if guest.rsvp_status and guest.notify_on_rsvp:
