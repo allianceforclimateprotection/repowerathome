@@ -82,7 +82,7 @@ class Command(NoArgsCommand):
                 print "Running SQL migrations in migrations/sql/migrate.sql"
             try:
                 for sql in custom_sql:
-                    cursor.execute(sql)
+                    cursor.execute(sql.replace("%", "%%"))
             except Exception, e:
                 sys.stderr.write("Failed to run custom SQL in migrations/sql/migrate.sql: %s" % e)
                 if show_traceback:
