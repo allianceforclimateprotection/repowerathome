@@ -10,7 +10,7 @@ from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
-from django.db import models
+from django.db import models, transaction
 
 from utils import hash_val
 
@@ -81,18 +81,34 @@ class Message(models.Model):
         be rendered within this template.  Upon saving this form, the system will run a series\
         of tests to ensure that this message is compatible with the types of content you have\
         selected.")
+    generic_relation_content_type = models.ForeignKey("contenttypes.contenttype", null=True, 
+        blank=True, help_text="Only set this field if the content types, that are to be rendered\
+        with this message, itself have generic relations to another model.  For example if we\
+        were creating a message for Team Invites, the invitation model has a generic relationship\
+        with another model, in this case it would reference a team.  Thus this field would\
+        be set to 'team'", related_name="generic_content_type")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = MessageManager()
     
+    @transaction.commit_manually
     def clean(self):
         from django.core.exceptions import ValidationError
         for ct in self.content_types.all():
-            for eco in ExampleContentObject.objects.filter(app_label=ct.app_label, model=ct.model):
+            for eco in ExampleContentObject.objects.filter(content_type=ct):
+                if hasattr(eco.content_object, "content_object"):
+                    generic_relation = ContentType.objects.get_for_model(eco.content_object.content_object) \
+                        if eco.content_object.content_object else None
+                    if generic_relation != self.generic_relation_content_type:
+                        continue
                 try:
-                    self.send(content_object=eco.content_object, dry_run=True)
+                    for email, user_object in self.recipients(eco.content_object):
+                        self.render_message(eco.content_object, email, user_object)
                 except Exception, e:
+                    transaction.rollback()
                     raise ValidationError(str(e))
+                else:
+                    transaction.rollback()
     
     def natural_key(self):
         return [self.name]
@@ -168,8 +184,30 @@ class Message(models.Model):
         if not hasattr(recipients, "__iter__"):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
-    
-    def send(self, content_object, blacklisted_emails=None, extra_params=None, dry_run=False): # TODO: create unit tests for Message.send()
+        
+    def render_message(self, content_object, email, user_object, extra_params=None):
+        recipient_message = RecipientMessage.objects.create(message=self, recipient=email, 
+            token=hash_val([email, datetime.datetime.now()]))
+        domain = Site.objects.get_current().domain
+        params = {"content_object": content_object, "domain": domain, "recipient": 
+            user_object if user_object else email }
+        if extra_params:
+            params.update(extra_params)
+        context = template.Context(params)
+        # render the body and subject template with the given, template
+        subject = template.Template(self.subject).render(context)
+        body = template.Template(self.body).render(context)
+        replacer = LinkReplacer(recipient_message=recipient_message)
+        body = re.sub(URL_REGEX, replacer.replace_link, body)
+        open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", 
+            args=[recipient_message.token]))
+        # insert an open tracking image into the body
+        body += open_link
+        msg = EmailMessage(subject, body, None, [email])
+        msg.content_subtype = "html"
+        return msg
+
+    def send(self, content_object, blacklisted_emails=None, extra_params=None): # TODO: create unit tests for Message.send()
         sent = []
         if not blacklisted_emails:
             blacklisted_emails = []
@@ -177,29 +215,12 @@ class Message(models.Model):
             if not email or email in blacklisted_emails:
                 continue # email has been blacklisted, don't send to this recipient
             # for each recipient, create a Recipient message to keep track of opens
-            recipient_message = RecipientMessage(message=self, recipient=email, token=hash_val([email, datetime.datetime.now()]))
-            if not dry_run:
-                recipient_message.save()
-            domain = Site.objects.get_current().domain
-            params = {"content_object": content_object, "domain": domain, "recipient": user_object if user_object else email }
-            if extra_params:
-                params.update(extra_params)
-            context = template.Context(params)
-            # render the body and subject template with the given, template
-            subject = template.Template(self.subject).render(context)
-            body = template.Template(self.body).render(context)
-            replacer = LinkReplacer(recipient_message=recipient_message)
-            body = re.sub(URL_REGEX, replacer.replace_link, body)
-            open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", args=[recipient_message.token]))
-            # insert an open tracking image into the body
-            body += open_link
-            msg = EmailMessage(subject, body, None, [email])
-            msg.content_subtype = "html"
-            if not dry_run:
-                msg.send()
-                self.sends += 1 # after the message is sent, increment the sends count
-                self.save()
-                sent.append(Sent.objects.create(message=self, recipient=email, email=msg.message()))
+            msg = self.render_message(content_object=content_object, email=email, 
+                user_object=user_object, extra_params=extra_params)
+            msg.send()
+            self.sends += 1 # after the message is sent, increment the sends count
+            self.save()
+            sent.append(Sent.objects.create(message=self, recipient=email, email=msg.message()))
         return sent
     
     def unique_opens(self):

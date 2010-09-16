@@ -9,7 +9,7 @@ class MessageAdmin(admin.ModelAdmin):
         (None, {"fields": ("name", "subject", "body", "sends", "recipient_function",)}),
         ("Send Time", {"fields": ("message_timing", "x_value",)}),
         ("Advanced Options", {"fields": ("send_as_batch", "batch_window", "time_snap", 
-            "minimum_duration", "content_types"),
+            "minimum_duration", "content_types", "generic_relation_content_type"),
             "classes": ("collapse",)}),
     )
     
