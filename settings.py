@@ -115,6 +115,7 @@ INSTALLED_APPS = (
     'thumbnails',
     'export',
     'source_tracking',
+    'commitments',
 )
 
 FIXTURE_DIR = ('fixtures',)
