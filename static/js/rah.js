@@ -126,7 +126,7 @@ var rah = {
         build_dialog: function(data) {
             var container = $("<div />");
             container.html(data);
-            container.dialog({autoOpen: false, modal: true, height: 294, width: 386,
+            container.dialog({autoOpen: false, modal: true, height: 312, width: 386,
                 title: "Repower at Home &hearts; Facebook"});
             $("input:submit, .button, button", container).button();
             // $(".buttonset", container).buttonset();
@@ -296,7 +296,7 @@ var rah = {
                         dateFormat: 'yy-mm-dd', 
                         maxDate: '+2y', 
                         minDate: '0', 
-                        numberOfMonths: 2, 
+                        numberOfMonths: 2,
                         onSelect: function(dateText, inst) { 
                             $(".date_commit_field").val(dateText);
                         }
