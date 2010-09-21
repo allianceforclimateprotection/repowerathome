@@ -36,6 +36,7 @@ class EventType(models.Model):
 class Event(models.Model):
     creator = models.ForeignKey("auth.User")
     event_type = models.ForeignKey(EventType, default="")
+    default_survey = models.ForeignKey("commitments.survey")
     place_name = models.CharField(max_length=100, blank=True,
         help_text="Label for where the event is being held (e.g. Jon's House)")
     where = models.CharField(max_length=100)
@@ -50,6 +51,7 @@ class Event(models.Model):
     limit = models.PositiveIntegerField(blank=True, null=True, help_text="Adding a limit sets a \
         cap on the number of guests that can RSVP. If the limit is reached, potential guests \
         will need to contact you first.")
+    guests = models.ManyToManyField("commitments.contributor", through="Guest")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
@@ -267,53 +269,19 @@ class Guest(models.Model):
         ("N", "Not Attending",),
     )
     event = models.ForeignKey(Event)
-    first_name = models.CharField(blank=True, max_length=50)
-    last_name = models.CharField(blank=True, max_length=50)
-    email = models.EmailField(blank=True, db_index=True)
-    phone = models.CharField(blank=True, max_length=12)
-    location = models.ForeignKey("geo.Location", blank=True, null=True)
+    contributor = models.ForeignKey("commitments.contributor")
     invited = models.DateField(null=True, blank=True)
     added = models.DateField(null=True, blank=True)
     rsvp_status = models.CharField(blank=True, max_length=1, choices=RSVP_STATUSES)
     comments = models.TextField(blank=True)
     notify_on_rsvp = models.BooleanField(default=False)
     is_host = models.BooleanField(default=False)
-    user = models.ForeignKey("auth.User", null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = GuestManager()
     
     class Meta:
-        unique_together = (("event", "user",),)
-        ordering = ['first_name', 'last_name']
-        
-    def __init__(self, *args, **kwargs):
-        super(Guest, self).__init__(*args, **kwargs)
-        self.guest_profile = GuestProfile(self)
-        
-    def _set_name(self, value):
-        first, space, last = value.partition(" ")
-        self.first_name = first
-        self.last_name = last
-    def _get_name(self):
-        if self.user:
-            return self.user.get_full_name()
-        return ("%s %s" % (self.first_name, self.last_name)).strip()
-    name = property(_get_name, _set_name)
-    
-    def _set_zipcode(self, value):
-        try:
-            self.location = Location.objects.get(zipcode=value)
-        except Location.DoesNotExist:
-            self.location = None
-    def _get_zipcode(self):
-        return self.location.zipcode if self.location else ""
-    zipcode = property(_get_zipcode, _set_zipcode)
-    
-    def get_profile(self):
-        # Note: this is somewhat of a hack to get Commitment objects to behave like UserActionProgress objects
-        return self.guest_profile
-    get_profile = property(get_profile)
+        unique_together = (("event", "contributor",),)
     
     def status(self):
         if self.rsvp_status:
@@ -323,105 +291,9 @@ class Guest(models.Model):
         if self.added:
             return "Added %s" % DateFormat(self.added).format("M j")
         raise AttributeError
-        
-    def needs_more_info(self):
-        return not (self.user or (self.first_name and self.email))
-        
-    def has_made_commitments(self):
-        return Commitment.objects.filter(guest=self).exists()
-    
-    def get_full_name(self):
-        if self.user:
-            return self.user.get_full_name()
-        elif self.name:
-            return self.name
-        else:
-            return self.email
             
     def __unicode__(self):
-        return self.get_full_name()
-        
-class GuestProfile(object):
-    def __init__(self, guest):
-        self.guest = guest
-        
-    def potential_points(self):
-        return Commitment.objects.pending_commitments(guest=self.guest).aggregate(
-            models.Sum("action__points"))["action__points__sum"]
-
-    def number_of_committed_actions(self):
-        return Commitment.object.pending_commitments(guest=self.guest).count()
-
-    def commitments_made_yestarday(self):
-        start = datetime.datetime.combine(yestarday(), datetime.time.min)
-        end = datetime.datetime.combine(yestarday(), datetime.time.max)
-        return Commitment.objects.pending_commitments(guest=self.guest).filter(
-            updated__gte=start, updated__lte=end)
-
-    def commitments_made_before_yestarday(self):
-        start = datetime.datetime.combine(yestarday(), datetime.time.min)
-        return Commitment.objects.pending_commitments(guest=self.guest).filter(
-            updated__lt=start)
-
-    def commitments_made_last_24_hours(self):
-        return Commitment.objects.pending_commitments(guest=self.guest).filter(
-            updated__gte=yestarday())
-
-    def commitments_made_more_than_24_hours(self):
-        return Commitment.objects.pending_commitments(guest=self.guest).filter(
-            updated__lt=yestarday())
-
-    def commitments_due_in_a_week(self):
-        return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
-
-    def commitments_due_today(self):
-        return self._commitment_due_on(datetime.date.today())
-
-    def _commitment_due_on(self, due_date):
-        commitments = Commitment.objects.pending_commitments(guest=self.guest)
-        return [c for c in commitments if c.date_committed == due_date]
-        
-class Survey(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    event_type = models.ForeignKey(EventType)
-    form_name = models.CharField(max_length=75)
-    template_name = models.CharField(max_length=200)
-    is_active = models.BooleanField(default=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-
-    def __unicode__(self):
-        return "%s Survey" % self.name
-
-class CommitmentManager(models.Manager):
-    def pending_commitments(self, guest=None):
-        queryset = self.filter(answer="C", action__isnull=False)
-        return queryset if not guest else queryset.filter(guest=guest)
-
-class Commitment(models.Model):
-    guest = models.ForeignKey(Guest, db_index=True)
-    survey = models.ForeignKey(Survey, db_index=True)
-    question = models.CharField(max_length=50)
-    answer = models.CharField(max_length=100)
-    action = models.ForeignKey("actions.Action", null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    objects = CommitmentManager()
-    
-    class Meta:
-        unique_together = (("guest", "survey", "question",),)
-        
-    def _get_user(self):
-        # Note: this is somewhat of a hack to get Commitment objects to behave like UserActionProgress objects
-        return self.guest
-    user = property(_get_user)
-    
-    def _get_date_committed(self):
-        # Note: this is somewhat of a hack to get Commitment objects to behave like UserActionProgress objects
-        if self.action and self.answer == "C":
-            return (self.updated + datetime.timedelta(weeks=3)).date()
-        return None
-    date_committed = property(_get_date_committed)
+        return unicode(self.contibutor)
 
 # 
 # Signals!!!

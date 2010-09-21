@@ -3,7 +3,7 @@ from django.db import models
 class Contributor(models.Model):
     first_name = models.CharField(blank=True, max_length=50)
     last_name = models.CharField(blank=True, max_length=50)
-    email = models.EmailField(blank=True, db_index=True, unique=True)
+    email = models.EmailField(blank=True, db_index=True)
     phone = models.CharField(blank=True, max_length=12)
     location = models.ForeignKey("geo.Location", blank=True, null=True)
     user = models.ForeignKey("auth.User", null=True, blank=True)
@@ -17,6 +17,47 @@ class Contributor(models.Model):
     def __init__(self, *args, **kwargs):
         super(Contributor, self).__init__(*args, **kwargs)
         self.contributor_profile = ContributorProfile(self)
+        
+    def _set_name(self, value):
+        first, space, last = value.partition(" ")
+        self.first_name = first
+        self.last_name = last
+    def _get_name(self):
+        if self.user:
+            return self.user.get_full_name()
+        return ("%s %s" % (self.first_name, self.last_name)).strip()
+    name = property(_get_name, _set_name)
+    
+    def _set_zipcode(self, value):
+        try:
+            self.location = Location.objects.get(zipcode=value)
+        except Location.DoesNotExist:
+            self.location = None
+    def _get_zipcode(self):
+        return self.location.zipcode if self.location else ""
+    zipcode = property(_get_zipcode, _set_zipcode)
+    
+    def needs_more_info(self):
+        return not (self.user or (self.first_name and self.email))
+        
+    def has_made_commitments(self):
+        return Commitment.objects.filter(contributor=self).exists()
+        
+    def get_profile(self):
+        # Note: this is somewhat of a hack to get Commitment objects to behave like UserActionProgress objects
+        return self.contributor_profile
+    get_profile = property(get_profile)
+    
+    def get_full_name(self):
+        if self.user:
+            return self.user.get_full_name()
+        elif self.name:
+            return self.name
+        else:
+            return self.email
+            
+    def __unicode__(self):
+        return self.get_full_name()
         
 class ContributorProfile(object):
     def __init__(self, contributor):

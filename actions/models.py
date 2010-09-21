@@ -9,7 +9,7 @@ from django.db import models
 
 import tagging
 
-from events.models import Commitment
+from commitments.models import Commitment
 from records.models import Record
 from dated_static.templatetags.dated_static import timestamp_file
 from messaging.models import Stream, Queue
