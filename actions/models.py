@@ -239,7 +239,7 @@ class ActionFormData(models.Model):
         unique_together = ("action_form", "user",)
     
     def __unicode__(self):
-        return u"%s is working on %s" (self.user, self.action_form)
+        return u"%s is working on %s" % (self.user, self.action_form)
 
 """
 SIGNALS!
