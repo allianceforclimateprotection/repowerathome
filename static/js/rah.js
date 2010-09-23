@@ -931,6 +931,31 @@ var rah = {
         }
     },
     
+    page_commitments_show: {
+        init: function() {
+            $(".commit_action").toggle(
+                function(){
+                    $(this).children("span").toggleClass("ui-icon-triangle-1-e");
+                    $(this).children("span").toggleClass("ui-icon-triangle-1-s");
+                    $(this).next(".commit_user_list").show();
+                },
+                function(){
+                    $(this).children("span").toggleClass("ui-icon-triangle-1-e");
+                    $(this).children("span").toggleClass("ui-icon-triangle-1-s");
+                    $(this).next(".commit_user_list").hide();
+                }
+            );
+            $(".commit_user_list li").hover(
+                function(){
+                    $(this).children(".commit_user_list_edit_link").show();
+                },
+                function(){
+                    $(this).children(".commit_user_list_edit_link").hide();
+                }
+            );
+        }
+    },
+    
     page_event_commitments: {
         init: function() {
             rah.mod_event_tabs.init(2);
