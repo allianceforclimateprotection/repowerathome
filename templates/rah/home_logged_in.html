@@ -67,10 +67,17 @@
         
     </div>
     <div class="grid_3 omega">
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+            <h3>Commitment Cards</h3>
+            <a href="{% url commitments_card_create %}" class="button">Enter a card</a><br/>
+            <a href="{% url commitments_show %}">Go to commitment dashboard</a>
+        </div>
+        <div class="box_one_bottom"></div>
         {% if commitment_list %}
         <div class="box_one_top"></div>
         <div class="box_one_middle">
-            <h3>Commitments</h3>
+            <h3>Your Commitments</h3>
             {% for row in commitment_list %}
             <p>
                 <a href="{% url action_detail row.action.slug %}">{{row.action.name}}</a><br/>
