@@ -544,8 +544,9 @@ Profile Profile Profile Profile Profile Profile Profile Profile Profile Profile 
 /* ---------------------------------------------------------------------------------------------------------------------
 Commitments Commitments Commitments Commitments Commitments Commitments Commitments Commitments Commitments Commitments 
 --------------------------------------------------------------------------------------------------------------------- */
-span.ui-icon {float:left;}
-
+.commit_tick {float:left;}
+.commit_check {display:inline-block !important;}
+.commit_totals {font-size:18px; font-weight:bold;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 

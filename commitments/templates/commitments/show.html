@@ -2,28 +2,29 @@
 {% block title %}My commitments on Repower at Home{% endblock %}
 
 {% block right_content %}
+<div class="box_two_top"></div>
+<div class="box_two_middle">
     <h1>The Commitment Landing Page</h1>
+    <p>
+        <a href="{% url commitments_card_create %}" class="button">Enter commitment cards</a>
+    </p>
     <table border="0" cellspacing="5" cellpadding="5">
         <tr>
             <th></th>
-            <th class="center smaller" style="width:96px; font-weight:bold;">
-                <div style="font-size:18px; font-weight:bold;">
-                    13
-                </div>
+            <th class="center smaller" style="width:70px;">
+                <div class="commit_totals">13</div>
                 Committed
             </th>
-            <th class="center smaller" style="width:96px; font-weight:bold;">
-                <div style="font-size:18px; font-weight:bold;">
-                    13
-                </div>
+            <th class="center smaller" style="width:70px;">
+                <div class="commit_totals">13</div>
                 Completed
             </th>
         </tr>
         <tr>
-            <td>
-                <span class="ui-icon ui-icon-triangle-1-e"></span>
-    	        <a href="#" class="commit_action">Eliminate Vampire Power</a>
-    	        <ul class="commit_user_list hidden">
+            <td class="top">
+                <span class="ui-icon ui-icon-triangle-1-e commit_tick"></span>
+    	        <a href="#" class="commit_action" id="commit_action__1">Eliminate Vampire Power</a>
+    	        <ul class="commit_list_ul commit_list_ul_1 hidden">
         			<li>List item <span class="commit_user_list_edit_link hidden">(<a href="#">edit</a>)</span></li>
         			<li>List item <span class="commit_user_list_edit_link hidden">(<a href="#">edit</a>)</span></li>
         			<li>List item <span class="commit_user_list_edit_link hidden">(<a href="#">edit</a>)</span></li>
@@ -34,15 +35,33 @@
         		</ul>
     	    </td>
     	    <td class="top center">
-    	        1
+    	        <b>4</b>
+    	        <ul class="plain_list commit_list_ul_1 hidden">
+        			<li>&#10003;</li>
+        			<li>&nbsp;</li>
+        			<li>&nbsp;</li>
+        			<li>&#10003;</li>
+        			<li>&nbsp;</li>
+        			<li>&#10003;</li>
+        			<li>&#10003;</li>
+        		</ul>
     	    </td>
     	    <td class="top center">
-    	        2
+    	        <b>3</b>
+    	        <ul class="plain_list commit_list_ul_1 hidden">
+        			<li>&nbsp;</li>
+        			<li>&#10003;</li>
+        			<li>&#10003;</li>
+        			<li>&nbsp;</li>
+        			<li>&#10003;</li>
+        			<li>&nbsp;</li>
+        			<li>&nbsp;</li>
+        		</ul>
     	    </td>
         </tr>
         <tr>
             <td>
-                <span class="ui-icon ui-icon-triangle-1-e"></span>
+                <span class="ui-icon ui-icon-triangle-1-e commit_tick"></span>
     	        <a href="#" class="commit_action">Set your water heater to 120°F</a>
     	        <ul class="commit_user_list hidden">
         			<li>List item <span class="commit_user_list_edit_link hidden">(<a href="#">edit</a>)</span></li>
@@ -55,15 +74,15 @@
         		</ul>
     	    </td>
     	    <td class="top center">
-    	        1
+    	        <b>1</b>
     	    </td>
     	    <td class="top center">
-    	        2
+    	        <b>2</b>
     	    </td>
         </tr>
         <tr>
             <td>
-                <span class="ui-icon ui-icon-triangle-1-e"></span>
+                <span class="ui-icon ui-icon-triangle-1-e commit_tick"></span>
     	        <a href="#" class="commit_action">Have a home energy audit and retrofit</a>
     	        <ul class="commit_user_list hidden">
         			<li>List item <span class="commit_user_list_edit_link hidden">(<a href="#">edit</a>)</span></li>
@@ -76,15 +95,15 @@
         		</ul>
     	    </td>
     	    <td class="top center">
-    	        1
+    	        <b>1</b>
     	    </td>
     	    <td class="top center">
-    	        2
+    	        <b>2</b>
     	    </td>
         </tr>
         <tr>
             <td>
-                <span class="ui-icon ui-icon-triangle-1-e"></span>
+                <span class="ui-icon ui-icon-triangle-1-e commit_tick"></span>
     	        <a href="#" class="commit_action">Install a low-flow sink aerator</a>
     	        <ul class="commit_user_list hidden">
         			<li>List item <span class="commit_user_list_edit_link hidden">(<a href="#">edit</a>)</span></li>
@@ -97,17 +116,15 @@
         		</ul>
     	    </td>
     	    <td class="top center">
-    	        1
+    	        <b>1</b>
     	    </td>
     	    <td class="top center">
-    	        2
+    	        <b>2</b>
     	    </td>
         </tr>
     </table>
-    <div id="commit_totals">
-        
-    </div>
-    
+</div>
+<div class="box_two_bottom"></div>    
 {% endblock %}
 
 {% block js %}page_commitments_show{% endblock %}

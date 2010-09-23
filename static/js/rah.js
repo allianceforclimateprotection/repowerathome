@@ -933,19 +933,21 @@ var rah = {
     
     page_commitments_show: {
         init: function() {
+            // When show or hide a list of users when the action is clicked
             $(".commit_action").toggle(
                 function(){
-                    $(this).children("span").toggleClass("ui-icon-triangle-1-e");
-                    $(this).children("span").toggleClass("ui-icon-triangle-1-s");
-                    $(this).next(".commit_user_list").show();
+                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-e");
+                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-s");
+                    $("td .commit_list_ul_" + $(this).attr("id").split("__")[1]).show();
                 },
                 function(){
-                    $(this).children("span").toggleClass("ui-icon-triangle-1-e");
-                    $(this).children("span").toggleClass("ui-icon-triangle-1-s");
-                    $(this).next(".commit_user_list").hide();
+                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-e");
+                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-s");
+                    $("td .commit_list_ul_" + $(this).attr("id").split("__")[1]).hide();
                 }
             );
-            $(".commit_user_list li").hover(
+            // Show an edit link when the user hovers over a name
+            $(".commit_list_ul li").hover(
                 function(){
                     $(this).children(".commit_user_list_edit_link").show();
                 },

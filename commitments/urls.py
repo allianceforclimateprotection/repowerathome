@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('commitments.views',
-    url(r'^$', 'commitment_show', name='commitment_show'),
-    url(r'^card/$', 'commitment_card_create', name='commitment_card_create'),
-    url(r'^card/(?P<contributor>\d+)/$', 'commitment_card', name='commitment_card'),
+    url(r'^$', 'show', name='commitments_show'),
+    url(r'^card/$', 'card_create', name='commitments_card_create'),
+    url(r'^card/(?P<contributor>\d+)/$', 'card', name='commitments_card'),
 )
