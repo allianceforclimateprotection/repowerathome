@@ -44,6 +44,7 @@ class Command(NoArgsCommand):
     )
     help = "Execute all of the SQL statments found in the migrations/sql/migrate.sql file."
 
+    @transaction.commit_manually
     def handle_noargs(self, **options):
         verbosity = int(options.get('verbosity', 1))
         interactive = options.get('interactive')
@@ -88,9 +89,9 @@ class Command(NoArgsCommand):
                 if show_traceback:
                     import traceback
                     traceback.print_exc()
-                transaction.rollback_unless_managed(using=db)
+                transaction.rollback(using=db)
             else:
-                transaction.commit_unless_managed(using=db)
+                transaction.commit(using=db)
         else:
             if verbosity >= 2:
                 print "No SQL migrations to run"

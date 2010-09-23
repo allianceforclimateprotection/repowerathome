@@ -42,10 +42,10 @@
                 {% for guest in attendees %}
                     <tr>
                         <td><input type="checkbox"></input></td>
-                        <td>{{ guest.name }}</td>
-                        <td>{{ guest.email }}</td>
-                        <td>{{ guest.phone }}</td>
-                        <td>{{ guest.location.zipcode }}</td>
+                        <td>{{ guest.contributor.name }}</td>
+                        <td>{{ guest.contributor.email }}</td>
+                        <td>{{ guest.contributor.phone }}</td>
+                        <td>{{ guest.contributor.location.zipcode }}</td>
                     </tr>
                 {% endfor %}
                 {% for row in blank_rows %}

@@ -17,8 +17,9 @@ from invite.models import Invitation
 from invite.forms import InviteForm
 from invite.fields import MultiEmailField
 from messaging.models import Stream
+from commitments.models import Survey, Commitment, Contributor
 
-from models import EventType, Event, Guest, Survey, Commitment, rsvp_recieved
+from models import EventType, Event, Guest, rsvp_recieved
 from widgets import SelectTimeWidget, RadioRendererForTable
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID",
@@ -111,7 +112,8 @@ class GuestInviteForm(InviteForm):
         event = self.instance.content_object
         rsvp_notification = self.cleaned_data["rsvp_notification"]
         for email in self.cleaned_data["emails"]:
-            guest, created = Guest.objects.get_or_create(event=event, email=email,
+            contributor, created = Contributor.objects.get_or_create(email=email)
+            guest, created = Guest.objects.get_or_create(event=event, contributor=contributor,
                 defaults={"invited":datetime.date.today()})
             guest.notify_on_rsvp = rsvp_notification
             guest.save()
@@ -123,7 +125,10 @@ class GuestInviteForm(InviteForm):
 
 class GuestAddForm(forms.ModelForm):
     first_name = forms.CharField(required=True, max_length=50)
-    zipcode = forms.CharField(max_length=5, min_length=5, required=False)
+    last_name = forms.CharField(required=False, max_length=50)
+    email = forms.EmailField(required=False, max_length=75)
+    phone = forms.CharField(required=False, max_length=12)
+    zipcode = forms.CharField(required=False, max_length=5, min_length=5)
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES,
         label="Is this person planning on attending?", widget=forms.RadioSelect)
     
@@ -136,7 +141,7 @@ class GuestAddForm(forms.ModelForm):
     
     def clean_email(self):
         data = self.cleaned_data["email"]
-        if data and Guest.objects.filter(event=self.instance.event, email=data).exists():
+        if data and Guest.objects.filter(event=self.instance.event, contributor__email=data).exists():
             raise forms.ValidationError("A Guest with this email address already exists.")
         return data
     
@@ -144,12 +149,18 @@ class GuestAddForm(forms.ModelForm):
         data = self.cleaned_data["zipcode"]
         if data:
             try:
-                self.instance.location = Location.objects.get(zipcode=data)
+                self.location = Location.objects.get(zipcode=data)
             except Location.DoesNotExist:
                 raise forms.ValidationError("Invalid zipcode %s" % data)
+        else:
+            self.location = None
         return data
     
     def save(self, *args, **kwargs):
+        contributor, created = Contributor.objects.get_or_create(email=self.cleaned_data["email"], defaults={
+            "first_name": self.cleaned_data["first_name"], "last_name": self.cleaned_data["last_name"],
+            "phone": self.cleaned_data["phone"], "location": self.location})
+        self.instance.contributor = contributor
         self.instance.added = datetime.date.today()
         return super(GuestAddForm, self).save(*args, **kwargs)
 
@@ -186,7 +197,7 @@ class GuestListForm(forms.Form):
     def clean(self):
         action = self.cleaned_data.get("action", "")
         if re.search("^\d+_E", action): # Check to see if the action is of type Email
-            if any([not g.email for g in self.cleaned_data["guests"]]): # Action of type Email can only be performed on guests with emails
+            if any([not g.contributor.email for g in self.cleaned_data["guests"]]): # Action of type Email can only be performed on guests with emails
                 raise forms.ValidationError("All guests must have an email address")
         if action in ["6_MR", "8_MU"]:
             guests = self.cleaned_data["guests"]
@@ -201,6 +212,8 @@ class GuestListForm(forms.Form):
 
 class GuestEditForm(forms.ModelForm):
     name = forms.CharField(required=False, max_length=100)
+    email = forms.EmailField(required=False, max_length=75)
+    phone = forms.CharField(required=False, max_length=12)
     zipcode = forms.CharField(required=False, max_length=5)
     
     class Meta:
@@ -208,7 +221,7 @@ class GuestEditForm(forms.ModelForm):
         
     def clean_email(self):
         data = self.cleaned_data["email"]
-        if data and Guest.objects.filter(event=self.instance.event, email=data).exclude(
+        if data and Guest.objects.filter(event=self.instance.event, contributor__email=data).exclude(
             id=self.instance.id).exists():
             raise forms.ValidationError("A Guest with this email address already exists.")
         return data
@@ -225,10 +238,16 @@ class GuestEditForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         name = self.cleaned_data.get("name", None)
         if name:
-            self.instance.name = name
+            self.instance.contributor.name = name
+        email = self.cleaned_data.get("email", None)
+        if email:
+            self.instance.contributor.email = email
+        phone = self.cleaned_data.get("phone", None)
+        if phone:
+            self.instance.contributor.phone = phone
         zipcode = self.cleaned_data.get("zipcode", None)
         if zipcode:
-            self.instance.zipcode = zipcode
+            self.instance.contributor.zipcode = zipcode
         return super(GuestEditForm, self).save(*args, **kwargs)
 
 class RsvpForm(forms.ModelForm):

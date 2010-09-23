@@ -28,7 +28,7 @@ from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_ha
 def show(request):
     events = Event.objects.filter(is_private=False, when__gt=datetime.datetime.now()).order_by("when", "start")
     if request.user.is_authenticated():
-        my_events = Event.objects.filter(guest__user=request.user)
+        my_events = Event.objects.filter(guest__contributor__user=request.user)
     house_party_form = HousePartyForm(request.user)
     return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
 
@@ -106,7 +106,7 @@ def guests_edit(request, event_id, guest_id, type):
     guest = get_object_or_404(Guest, id=guest_id)
     if guest.event != event:
         return forbidden(request, "Guest is not a member of this event")
-    if not hasattr(guest, type):
+    if not hasattr(guest, type) and not hasattr(guest.contributor, type):
         return forbidden(request, "Guest has no attribute %s" % type)
     data = request.POST.copy()
     for field in guest._meta.fields:
@@ -159,7 +159,7 @@ def rsvp_account(request, event_id):
     form = RsvpAccountForm(instance=guest, data=(request.POST or None))
     if form.is_valid():
         guest = form.save(request)
-        user = auth.authenticate(username=guest.email, password=form.cleaned_data["password1"])
+        user = auth.authenticate(username=guest.contributor.email, password=form.cleaned_data["password1"])
         logged_in.send(sender=None, request=request, user=user, is_new_user=True)
         auth.login(request, user)
         return redirect(event)
@@ -176,7 +176,7 @@ def rsvp_statuses(request):
 @login_required
 @user_is_event_manager
 def commitments(request, event_id, guest_id=None):
-    import survey_forms
+    from commitments import survey_forms
 
     event = get_object_or_404(Event, id=event_id)
     if guest_id:
@@ -184,9 +184,9 @@ def commitments(request, event_id, guest_id=None):
     else:
         guests = Guest.objects.filter(event=event).order_by("pk")
         guest = guests[0] if len(guests) > 0 else None
-    survey = event.survey()
+    survey = event.default_survey
     if survey:
-        form = getattr(survey_forms, survey.form_name)(guest=guest, instance=survey, data=(request.POST or None))
+        form = getattr(survey_forms, survey.form_name)(guest.contributor, data=(request.POST or None))
         if form.is_valid():
             form.save()
             return redirect("event-commitments-guest", event_id=event.id, guest_id=event.next_guest(guest).id)

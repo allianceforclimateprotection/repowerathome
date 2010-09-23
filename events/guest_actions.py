@@ -9,7 +9,7 @@ def not_attending(queryset):
     queryset.update(rsvp_status="N")
     
 def invitation_email(queryset):
-    emails = ", ".join([guest.email for guest in queryset])
+    emails = ", ".join([guest.contributor.email for guest in queryset])
     event_id = queryset.distinct().values_list("event__id", flat=True)[0]
     return HttpResponseRedirect(reverse("event-guests-add", args=[event_id]) + "?emails=" + urlquote(emails))
     

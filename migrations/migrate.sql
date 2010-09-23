@@ -63,9 +63,16 @@ VALUES
 	(27,22,48),
 	(28,23,48);
 	
-INSERT INTO commitments_survey (id, name, form_name, template_name, is_active, created, updated)
-SELECT id, name, form_name, template_name, is_active, created, updated
-FROM events_survey;
+CREATE TABLE dup_guests AS
+	SELECT MAX(g.id) AS id
+	FROM events_guest g
+	WHERE g.email <> ''
+	GROUP BY g.event_id, g.email
+	HAVING count(*) > 1;
+UPDATE events_guest
+SET email = ''
+WHERE id IN (SELECT id FROM dup_guests);
+DROP TABLE dup_guests;
 
 INSERT INTO commitments_contributor (id, first_name, last_name, email, phone, location_id, user_id, created, updated)
 SELECT id, MAX(first_name), MAX(last_name), MAX(email), MAX(phone), MAX(location_id), user_id, created, updated
@@ -73,9 +80,14 @@ FROM events_guest
 WHERE user_id IS NOT NULL
 GROUP BY user_id
 UNION
-SELECT id, first_name, last_name, email, phone, location_id, NULL, created, updated
+SELECT id, MAX(first_name), MAX(last_name), email, MAX(phone), MAX(location_id), NULL, created, updated
 FROM events_guest
-WHERE user_id IS NULL;
+WHERE user_id IS NULL AND email <> ''
+GROUP BY email
+UNION
+SELECT id, first_name, last_name, NULL, phone, location_id, NULL, created, updated
+FROM events_guest
+WHERE user_id IS NULL AND email = '';
 
 CREATE TABLE `events_guest_new` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -97,10 +109,10 @@ CREATE TABLE `events_guest_new` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO events_guest_new (id, event_id, contributor_id, invited, added, rsvp_status, comments, notify_on_rsvp, is_host, created, updated)
-SELECT eg.id, eg.event_id, CASE WHEN cc.id IS NULL THEN eg.id ELSE cc.id END, 
+SELECT eg.id, eg.event_id, CASE WHEN cc.id IS NOT NULL THEN cc.id ELSE eg.id END, 
     eg.invited, eg.added, eg.rsvp_status, eg.comments, eg.notify_on_rsvp, eg.is_host, eg.created, eg.updated
 FROM events_guest eg
-LEFT JOIN commitments_contributor cc ON eg.user_id = cc.user_id;
+LEFT JOIN commitments_contributor cc ON eg.user_id = cc.user_id OR eg.email = cc.email;
 
 RENAME TABLE events_guest TO events_guest_old, events_guest_new TO events_guest;
 
@@ -110,6 +122,12 @@ SELECT MAX(ec.id), eg.contributor_id, ec.question, MAX(ec.answer), ec.action_id,
 FROM events_commitment ec
 JOIN events_guest eg ON ec.guest_id = eg.id
 GROUP BY eg.contributor_id, ec.question, ec.action_id;
+
+ALTER TABLE events_eventtype ADD survey_id int(11) AFTER description;
+ALTER TABLE events_eventtype ADD CONSTRAINT `survey_id_refs_id_3de7612c` FOREIGN KEY (`survey_id`) REFERENCES `commitments_survey` (`id`);
+UPDATE events_eventtype et
+JOIN events_survey s ON et.id = s.event_type_id AND s.is_active = 1
+SET et.survey_id = s.id;
 
 ALTER TABLE events_event ADD default_survey_id int(11) AFTER event_type_id;
 ALTER TABLE events_event ADD CONSTRAINT `default_survey_id_refs_id_9d07220a` FOREIGN KEY (`default_survey_id`) REFERENCES `commitments_survey` (`id`);

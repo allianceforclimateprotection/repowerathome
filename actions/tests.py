@@ -24,18 +24,19 @@ class ActionTest(TestCase):
         date_before_event = event_date - datetime.timedelta(1)
         
         # Create an event cruft (the creator is automatically a guest)
-        from events.models import EventType, Event, Guest, Survey, Commitment
-        event_type = EventType.objects.create()
+        from events.models import EventType, Event, Guest
+        from commitments.models import Survey, Commitment, Contributor
+        survey = Survey.objects.create()
+        event_type = EventType.objects.create(survey=survey)
         event = Event.objects.create(creator=self.user, event_type=event_type, when=event_date, start="06:00:00")
         guest = Guest.objects.get(pk=1)
-        guest2 = Guest.objects.create(email="guest2@gmail.com", event=event)
-        survey = Survey.objects.create(event_type=event_type)
+        guest2 = Guest.objects.create(contributor=Contributor.objects.create(email="guest2@gmail.com"), event=event)
         
         # Create commitments
-        Commitment.objects.create(guest=guest, survey=survey, action=self.iwh, answer="D", question="1")
-        Commitment.objects.create(guest=guest, survey=survey, action=self.csp, answer="D", question="2")
-        Commitment.objects.create(guest=guest, survey=survey, action=self.cfw, answer="C", question="3")
-        
+        Commitment.objects.create(contributor=guest.contributor, action=self.iwh, answer="D", question="1")
+        Commitment.objects.create(contributor=guest.contributor, action=self.csp, answer="D", question="2")
+        Commitment.objects.create(contributor=guest.contributor, action=self.cfw, answer="C", question="3")
+                                               
         # Set last_login to be after the event
         # User has no entries in User Action Progress, so all actions and commitments should be applied
         response = self.client.post(reverse("login"), {"email":self.user.email, "password": "test"}, follow=True)
@@ -51,9 +52,9 @@ class ActionTest(TestCase):
         self.failUnlessEqual(UserActionProgress.objects.filter(user=self.user).count(), 0)
         
         # Test that the commitments are added when a new user registers with an email that matches a guest with commitments
-        Commitment.objects.create(guest=guest2, survey=survey, action=self.iwh, answer="D", question="1")
-        Commitment.objects.create(guest=guest2, survey=survey, action=self.csp, answer="D", question="2")
-        Commitment.objects.create(guest=guest2, survey=survey, action=self.cfw, answer="C", question="3")
+        Commitment.objects.create(contributor=guest2.contributor, action=self.iwh, answer="D", question="1")
+        Commitment.objects.create(contributor=guest2.contributor, action=self.csp, answer="D", question="2")
+        Commitment.objects.create(contributor=guest2.contributor, action=self.cfw, answer="C", question="3")
         # Register a rando user whose email does not match a guest
         reg_post = {"email": "ada@asd.com", "password1": "userpass", "password2": "userpass", "first_name": "guest2"}
         response = self.client.post(reverse("register"), reg_post, follow=True)
@@ -61,7 +62,7 @@ class ActionTest(TestCase):
         user2 = User.objects.get(pk=2)
         self.failUnlessEqual(UserActionProgress.objects.filter(user=user2).count(), 0)
         # Register a user whose email matches a guest
-        reg_post = {"email": guest2.email, "password1": "userpass", "password2": "userpass", "first_name": "guest2"}
+        reg_post = {"email": guest2.contributor.email, "password1": "userpass", "password2": "userpass", "first_name": "guest2"}
         response = self.client.post(reverse("register"), reg_post, follow=True)
         self.client.get(reverse("logout"))
         user3 = User.objects.get(pk=3)

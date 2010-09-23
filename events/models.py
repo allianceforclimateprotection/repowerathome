@@ -11,6 +11,7 @@ from django.utils.dateformat import DateFormat
 from geo.models import Location
 from invite.models import Invitation
 from messaging.models import Stream
+from commitments.models import Contributor, Commitment, Survey
 
 def yestarday():
     return datetime.datetime.today() - datetime.timedelta(days=1)
@@ -23,6 +24,7 @@ class EventType(models.Model):
     name = models.CharField(max_length=50, unique=True)
     teaser = models.CharField(max_length=150)
     description = models.TextField()
+    survey = models.ForeignKey("commitments.survey")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = EventTypeManager()
@@ -78,13 +80,13 @@ class Event(models.Model):
         if not user.is_authenticated():
             return False
         return user.has_perm("events.view_any_event") or \
-            Guest.objects.filter(event=self, user=user, is_host=True).exists()
+            Guest.objects.filter(event=self, contributor__user=user, is_host=True).exists()
             
     def is_guest(self, request):
         user = request.user
         if not user.is_authenticated():
             return self._guest_key() in request.session
-        return Guest.objects.filter(event=self, user=user).exists()
+        return Guest.objects.filter(event=self, contributor__user=user).exists()
         
     def hosts(self):
         return Guest.objects.filter(event=self, is_host=True)
@@ -134,24 +136,17 @@ class Event(models.Model):
     def has_comments(self):
         return Guest.objects.filter(event=self).exclude(comments="").exists()
         
-    def survey(self):
-        try:
-            return Survey.objects.get(event_type=self.event_type, is_active=True)
-        except Survey.DoesNotExist:
-            return None
-        
     def survey_questions(self):
         return Commitment.objects.distinct().filter(survey__event_type=self.event_type, survey__is_active=True,
             guest__event=self).values_list("question", flat=True).order_by("question")
             
     def guests_with_commitments(self):
-        survey = self.survey()
         query = Guest.objects.filter(event=self)
         for question in self.survey_questions():
-            query = query.extra(select_params=(survey.id, question,),
+            query = query.extra(select_params=(question,),
                 select={question: """
-                    SELECT answer FROM events_commitment ec 
-                    WHERE events_guest.id = ec.guest_id AND ec.survey_id = %s AND ec.question = %s
+                    SELECT answer FROM commitments_commitment cc
+                    WHERE events_guest.contributor_id = cc.contributor_id AND cc.question = %s
                     """
                 }
             )
@@ -164,16 +159,20 @@ class Event(models.Model):
         if request.user.is_authenticated():
             user = request.user
             try:
-                return Guest.objects.get(event=self, user=user)
+                return Guest.objects.get(event=self, contributor__user=user)
             except Guest.DoesNotExist:
-                return Guest(event=self, first_name=user.first_name, last_name=user.last_name,
-                    email=user.email, location=user.get_profile().location, user=user)
+                try:
+                    contributor = Contributor.objects.get(user=user)
+                except Contributor.DoesNotExist:
+                    contributor = Contributor(first_name=user.first_name, last_name=user.last_name,
+                        email=user.email, location=user.get_profile().location, user=user)
+                return Guest(event=self, contributor=contributor)
         if self._guest_key() in request.session:
             return request.session[self._guest_key()]
         if token:
             try:
                 invite = Invitation.objects.get(token=token)
-                guest = Guest.objects.get(event=self, email=invite.email)
+                guest = Guest.objects.get(event=self, contributor__email=invite.email)
                 if not guest.rsvp_status:
                     return guest
             except Invitation.DoesNotExist:
@@ -282,6 +281,10 @@ class Guest(models.Model):
     
     class Meta:
         unique_together = (("event", "contributor",),)
+        
+    def save(self, *args, **kwargs):
+        self.contributor.save()
+        return super(Guest, self).save(*args, **kwargs)
     
     def status(self):
         if self.rsvp_status:
@@ -293,17 +296,24 @@ class Guest(models.Model):
         raise AttributeError
             
     def __unicode__(self):
-        return unicode(self.contibutor)
+        return unicode(self.contributor)
 
 # 
 # Signals!!!
 #
 
+def set_default_survey(sender, instance, **kwargs):
+    if not instance.pk and instance.event_type:
+        instance.default_survey = instance.event_type.survey
+models.signals.pre_save.connect(set_default_survey, sender=Event)
+
 def make_creator_a_guest(sender, instance, **kwargs):
     creator = instance.creator
-    Guest.objects.get_or_create(event=instance, user=creator, defaults={"first_name":creator.first_name, 
-        "last_name":creator.last_name, "email":creator.email, "added":datetime.date.today(), 
-        "rsvp_status": "A", "is_host":True, "location": creator.get_profile().location })
+    contributor, created = Contributor.objects.get_or_create(user=creator, defaults={
+        "first_name":creator.first_name, "last_name":creator.last_name, "email":creator.email,
+        "location": creator.get_profile().location})
+    Guest.objects.get_or_create(event=instance, contributor=contributor, defaults={
+        "added":datetime.date.today(), "rsvp_status": "A", "is_host":True})
 models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 
 def update_event_create_stream(sender, instance, created, **kwargs):
@@ -323,24 +333,3 @@ def notification_on_rsvp(sender, guest, **kwargs):
     if guest.rsvp_status and guest.notify_on_rsvp:
         Stream.objects.get(slug="event-rsvp-notification").enqueue(content_object=guest, start=guest.updated)
 rsvp_recieved.connect(notification_on_rsvp)
-
-def link_guest_to_user(sender, instance, **kwargs):
-    if instance.email:
-        try:
-            user = User.objects.get(email=instance.email)
-            instance.user = user
-        except User.DoesNotExist:
-            instance.user = None
-models.signals.pre_save.connect(link_guest_to_user, sender=Guest)
-
-def link_new_user_to_guest(sender, instance, created, **kwargs):
-    """
-    When a user registers, see if they exists as a guest record and if so, link them up.
-    """
-    if created and instance.email:
-        guests = Guest.objects.filter(email=instance.email)
-        for guest in guests:
-            guest.user = instance
-            guest.save()
-        
-models.signals.post_save.connect(link_new_user_to_guest, sender=User)
