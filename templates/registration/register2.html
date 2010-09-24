@@ -6,7 +6,7 @@
         <div class="box_three_top"></div>
         <div class="box_three_middle">
             <div id="registration_left_col">
-                <h1>Join the Challenge!</h1>
+                <h1>Join the Challenge</h1>
                 <p>
                     <object width="360" height="227"><param name="movie" value="https://repowerathome.com/youtube/v/kPm9wMhIcJs&amp;hl=en_US&amp;fs=1?rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="https://repowerathome.com/youtube/v/kPm9wMhIcJs&amp;hl=en_US&amp;fs=1?rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="360" height="227"></embed></object>
                 </p>
@@ -18,19 +18,22 @@
                 </p>
                 <p>
                     <b>
-                        Join the Challenge using the form to the right or the Facebook button below so we can count your
+                        Join the Challenge using the form to the right so we can count your
                         savings toward our goal.
                     </b>
                 </p>
+            </div>
+            <div id="registration_right_col">
                 <p>
                     <div class="fb_button" id="fb-login">
-                        <a href="#" class="fb_button fb_button_medium">
+                        <a href="#" class="fb_button fb_button_medium center" style="width:283px; font-size:12px;">
                             <span id="fb_login_text" class="fb_button_text">Join with Facebook</span>
                         </a>
                     </div>
                 </p>
-            </div>
-            <div id="registration_right_col">
+                <p class="center smaller">
+                    &mdash; <i><b>or</b> create an account below</i> &mdash;
+                </p>
                 <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
                     <div class="form_row overset form_row_float form_row_float_left_field">
                         <label for="id_first_name">First name</label>
