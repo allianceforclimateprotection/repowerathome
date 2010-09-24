@@ -1,0 +1,13 @@
+{% extends "commitments/base.html" %}
+{% block title %}My commitments on Repower at Home{% endblock %}
+
+{% block right_content %}
+<div class="box_two_top"></div>
+<div class="box_two_middle">
+    {% include "commitments/_card.html" %}
+</div>
+<div class="box_two_bottom"></div>
+    
+{% endblock %}
+
+{% block js %}page_commitments_card{% endblock %}

@@ -126,7 +126,7 @@ var rah = {
         build_dialog: function(data) {
             var container = $("<div />");
             container.html(data);
-            container.dialog({autoOpen: false, modal: true, height: 294, width: 386,
+            container.dialog({autoOpen: false, modal: true, height: 312, width: 386,
                 title: "Repower at Home &hearts; Facebook"});
             $("input:submit, .button, button", container).button();
             // $(".buttonset", container).buttonset();
@@ -296,7 +296,7 @@ var rah = {
                         dateFormat: 'yy-mm-dd', 
                         maxDate: '+2y', 
                         minDate: '0', 
-                        numberOfMonths: 2, 
+                        numberOfMonths: 2,
                         onSelect: function(dateText, inst) { 
                             $(".date_commit_field").val(dateText);
                         }
@@ -928,6 +928,33 @@ var rah = {
                     form.attr("action", form.attr("action") + "#" + tab.attr("id"));
                 });
             });
+        }
+    },
+    
+    page_commitments_show: {
+        init: function() {
+            // When show or hide a list of users when the action is clicked
+            $(".commit_action").toggle(
+                function(){
+                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-e");
+                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-s");
+                    $("td .commit_list_ul_" + $(this).attr("id").split("__")[1]).show();
+                },
+                function(){
+                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-e");
+                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-s");
+                    $("td .commit_list_ul_" + $(this).attr("id").split("__")[1]).hide();
+                }
+            );
+            // Show an edit link when the user hovers over a name
+            $(".commit_list_ul li").hover(
+                function(){
+                    $(this).children(".commit_user_list_edit_link").show();
+                },
+                function(){
+                    $(this).children(".commit_user_list_edit_link").hide();
+                }
+            );
         }
     },
     

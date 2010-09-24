@@ -542,6 +542,13 @@ Profile Profile Profile Profile Profile Profile Profile Profile Profile Profile 
 #profile_edit_tabs #social_networks_tab .floater { float:left; margin-right:12px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
+Commitments Commitments Commitments Commitments Commitments Commitments Commitments Commitments Commitments Commitments 
+--------------------------------------------------------------------------------------------------------------------- */
+.commit_tick {float:left;}
+.commit_check {display:inline-block !important;}
+.commit_totals {font-size:18px; font-weight:bold;}
+
+/* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 --------------------------------------------------------------------------------------------------------------------- */
 .hidden { display: none;}
@@ -556,6 +563,7 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .smaller {font-size:12px;}
 .center {text-align:center;}
 .right {text-align:right;}
+.top {vertical-align: top;}
 .blog_byline {}
 .post_body li,
 #flat_page li{ list-style: disc; }
