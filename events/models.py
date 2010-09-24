@@ -203,7 +203,7 @@ class GuestManager(models.Manager):
             """ % (a.slug, a.slug, a.name.lower()) for a in actions]
         action_joins = [
             """
-            LEFT JOIN events_commitment `%s_commit` ON `%s_commit`.action_id = %s AND `%s_commit`.guest_id = g.id
+            LEFT JOIN commitments_commitment `%s_commit` ON `%s_commit`.action_id = %s AND `%s_commit`.contributor_id = cn.id
                 AND DATE(`%s_commit`.updated) >= '%s' and DATE(`%s_commit`.updated) <= '%s'
             """ % (a.slug, a.slug, a.id, a.slug, a.slug, date_start, a.slug, date_end) for a in actions]
             
@@ -214,7 +214,7 @@ class GuestManager(models.Manager):
             "date_end": date_end,
         }    
         query = """
-            SELECT DISTINCT -1, g.first_name AS "first name", g.last_name AS "last name", g.email,
+            SELECT DISTINCT -1, cn.first_name AS "first name", cn.last_name AS "last name", cn.email,
                 l.name AS city, l.st AS state, l.zipcode AS "zip code",
                 %(action_cases)s,
                 NULL AS "team manager",
@@ -228,26 +228,27 @@ class GuestManager(models.Manager):
                         THEN "yes"
                 END AS "event host",
                 CASE
-                    WHEN e.event_type_id IN (1,4,5) AND c.id IS NOT NULL AND
+                    WHEN e.event_type_id IN (1,4,5) AND cm.id IS NOT NULL AND
                     DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
                         THEN "completed"
                 END AS "energy event guest",
                 CASE
-                    WHEN e.event_type_id IN (2) AND c.id IS NOT NULL AND
+                    WHEN e.event_type_id IN (2) AND cm.id IS NOT NULL AND
                     DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
                         THEN "completed"
                 END AS "kickoff event guest",
                 CASE
-                    WHEN e.event_type_id IN (3) AND c.id IS NOT NULL AND 
+                    WHEN e.event_type_id IN (3) AND cm.id IS NOT NULL AND 
                     DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
                         THEN "completed"
                 END AS "field training guest"
             FROM events_guest g
             JOIN events_event e ON g.event_id = e.id
-            LEFT JOIN events_commitment c ON g.id = c.guest_id
-            LEFT JOIN geo_location l ON g.location_id = l.id
+            JOIN commitments_contributor cn ON cn.id = g.contributor_id
+            LEFT JOIN commitments_commitment cm ON cn.id = cm.contributor_id
+            LEFT JOIN geo_location l ON cn.location_id = l.id
             %(action_joins)s
-            WHERE g.user_id IS NULL
+            WHERE cn.user_id IS NULL
             ORDER BY g.id
             """ % query_dict
         cursor = connection.cursor()
