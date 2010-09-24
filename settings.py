@@ -125,8 +125,8 @@ ABSOLUTE_URL_OVERRIDES = {
 
 AUTHENTICATION_BACKENDS = ('rah.backends.EmailBackend',)
 LOGIN_REDIRECT_URL = "/"
-LOGIN_URL = "/login"
-LOGOUT_URL = "/logout"
+LOGIN_URL = "/register/"
+LOGOUT_URL = "/logout/"
 AUTH_PROFILE_MODULE = 'rah.Profile'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
