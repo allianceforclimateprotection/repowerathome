@@ -133,7 +133,7 @@ def rsvp(request, event_id):
     rsvp_form = RsvpForm(instance=guest, data=request.POST)
     if rsvp_form.is_valid():
         guest = rsvp_form.store(request)
-        if guest.needs_more_info():
+        if guest.contributor.needs_more_info():
             return redirect("event-rsvp-confirm", event_id=event.id)
         else:
             rsvp_form.save()
@@ -147,7 +147,7 @@ def rsvp_confirm(request, event_id):
     form = RsvpConfirmForm(instance=guest, data=(request.POST or None))
     if form.is_valid():
         guest = form.save(request)
-        if guest.user:
+        if guest.contributor.user:
             return redirect(event)
         return redirect("event-rsvp-account", event_id=event.id)
     return render_to_response("events/rsvp_confirm.html", locals(), context_instance=RequestContext(request))
@@ -227,13 +227,13 @@ def spreadsheet(request, event_id):
     response = HttpResponse(mimetype="text/csv")
     response["Content-Disposition"] = "attachment; filename=%s Guest List.csv" % event
     
-    questions = event.survey_questions()
+    questions = event.default_survey.questions()
     writer = csv.writer(response)
     writer.writerow(["Name", "Email", "Phone", "Zipcode", "Status"] + list(questions))
     
     for g in event.guests_with_commitments():
         answers = [getattr(g, question) for question in questions]
-        writer.writerow([g.name, g.email, g.phone, g.zipcode, g.status()] + answers)
+        writer.writerow([g.contributor.name, g.contributor.email, g.contributor.phone, g.contributor.zipcode, g.status()] + answers)
     
     return response
     

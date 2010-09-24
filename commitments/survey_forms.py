@@ -36,8 +36,9 @@ class SurveyForm(forms.ModelForm):
         self.contributor = contributor
         data = {}
         for commitment in Commitment.objects.filter(contributor=contributor):
-            field = self.fields[commitment.question]
-            field.initial = field.to_python(commitment.answer)
+            field = self.fields.get(commitment.question, None)
+            if field:
+                field.initial = field.to_python(commitment.answer)
     
     def save(self, *args, **kwargs):
         for field, data in self.cleaned_data.items():

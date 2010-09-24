@@ -135,14 +135,10 @@ class Event(models.Model):
         
     def has_comments(self):
         return Guest.objects.filter(event=self).exclude(comments="").exists()
-        
-    def survey_questions(self):
-        return Commitment.objects.distinct().filter(survey__event_type=self.event_type, survey__is_active=True,
-            guest__event=self).values_list("question", flat=True).order_by("question")
             
     def guests_with_commitments(self):
         query = Guest.objects.filter(event=self)
-        for question in self.survey_questions():
+        for question in self.default_survey.questions():
             query = query.extra(select_params=(question,),
                 select={question: """
                     SELECT answer FROM commitments_commitment cc
@@ -319,9 +315,9 @@ models.signals.post_save.connect(make_creator_a_guest, sender=Event)
 def update_event_create_stream(sender, instance, created, **kwargs):
     stream = Stream.objects.get(slug="event-create")
     if created:
-        stream.enqueue(content_object=instance, start=instance.created, end=instance.start_datetime)
+        stream.enqueue(content_object=instance, start=instance.created, end=instance.start_datetime())
     else:
-        stream.upqueue(content_object=instance, start=instance.created, end=instance.start_datetime)
+        stream.upqueue(content_object=instance, start=instance.created, end=instance.start_datetime())
 models.signals.post_save.connect(update_event_create_stream, sender=Event)
 
 def remove_event_create_stream(sender, instance, **kwargs):

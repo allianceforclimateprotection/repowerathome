@@ -280,7 +280,9 @@ class RsvpForm(forms.ModelForm):
 
 class RsvpConfirmForm(forms.ModelForm):
     first_name = forms.CharField(required=True, max_length=50)
+    last_name = forms.CharField(required=False, max_length=50)
     email = forms.EmailField(required=True)
+    phone = forms.CharField(required=False, max_length=12)
     
     class Meta:
         model = Guest
@@ -290,7 +292,7 @@ class RsvpConfirmForm(forms.ModelForm):
         data = self.cleaned_data["email"]
         if data:
             try:
-                existing = Guest.objects.get(event=self.instance.event, email=data)
+                existing = Guest.objects.get(event=self.instance.event, contributor__email=data)
                 existing.rsvp_status = self.instance.rsvp_status
                 existing.comments = self.instance.comments
                 self.instance = existing
@@ -299,6 +301,18 @@ class RsvpConfirmForm(forms.ModelForm):
         return data
     
     def save(self, request, *args, **kwargs):
+        first_name = self.cleaned_data.get("first_name", None)
+        if first_name:
+            self.instance.contributor.first_name = first_name
+        last_name = self.cleaned_data.get("last_name", None)
+        if last_name:
+            self.instance.contributor.last_name = last_name
+        email = self.cleaned_data.get("email", None)
+        if email:
+            self.instance.contributor.email = email
+        phone = self.cleaned_data.get("phone", None)
+        if phone:
+            self.instance.contributor.phone = phone
         guest = super(RsvpConfirmForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
         rsvp_recieved.send(sender=self, guest=guest)

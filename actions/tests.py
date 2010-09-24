@@ -28,7 +28,7 @@ class ActionTest(TestCase):
         from commitments.models import Survey, Commitment, Contributor
         survey = Survey.objects.create()
         event_type = EventType.objects.create(survey=survey)
-        event = Event.objects.create(creator=self.user, event_type=event_type, when=event_date, start="06:00:00")
+        event = Event.objects.create(creator=self.user, event_type=event_type, when=event_date, start=datetime.time(6, 0))
         guest = Guest.objects.get(pk=1)
         guest2 = Guest.objects.create(contributor=Contributor.objects.create(email="guest2@gmail.com"), event=event)
         
