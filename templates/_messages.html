@@ -53,6 +53,12 @@
                     gwoTracker._trackPageview("/1500145245/goal");
                     }catch(err){}</script>
                     <!-- End of Google Website Optimizer Conversion Script -->
+                    {% if user.get_profile.facebook_connect_only %}
+                        <script type="text/javascript">_gaq.push(['_trackPageview', '/register/facebook']);</script>
+                    {% else %}
+                        <script type="text/javascript">_gaq.push(['_trackPageview', '/register/account']);</script>
+                    {% endif %}
+
                 {% else %}
                     {{ message|safe }} <a href="#" class="dismiss">close</a>
                 {% endif %}
