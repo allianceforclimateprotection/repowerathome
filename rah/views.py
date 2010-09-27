@@ -25,7 +25,7 @@ from actions.models import Action, UserActionProgress
 from rah.models import Profile
 from records.models import Record
 from rah.forms import RegistrationForm, AuthenticationForm, HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm
-from settings import GA_TRACK_PAGEVIEW, LOGIN_REDIRECT_URL
+from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
@@ -358,4 +358,6 @@ def track_registration(sender, request, user, is_new_user, **kwargs):
     if is_new_user:
         messages.success(request, 'Thanks for registering.')
         messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
+        messages.add_message(request, GA_TRACK_CONVERSION, True)
+        
 logged_in.connect(track_registration)
