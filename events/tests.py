@@ -12,8 +12,9 @@ from utils import hash_val
 from geo.models import Location
 from messaging.models import Queue
 from invite.models import Invitation, make_token
+from commitments.models import Contributor, Commitment, Survey
 
-from models import EventType, Event, Guest, Commitment
+from models import EventType, Event, Guest
 
 class EventTest(TestCase):
     fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json",]
@@ -23,13 +24,14 @@ class EventTest(TestCase):
         self.event_type = EventType.objects.get(name="Energy Meeting")
         self.ashaway = Location.objects.get(zipcode="02804")
         self.event = Event.objects.get(pk=1)
+        self.survey = Survey.objects.get(pk=1)
             
     def test_has_manager_privileges(self):
         self.failUnlessEqual(self.event.has_manager_privileges(self.creator), False)
         hacker = User.objects.create_user(username="hacker", email="hacker@email.com", password="hacker")
         self.failUnlessEqual(self.event.has_manager_privileges(hacker), False)
-        guest = Guest.objects.get(first_name="Jane", last_name="Doe")
-        guest.email = hacker.email
+        guest = Guest.objects.get(contributor__first_name="Jane", contributor__last_name="Doe")
+        guest.contributor.email = hacker.email
         guest.save()
         self.failUnlessEqual(self.event.has_manager_privileges(hacker), False)
         guest.is_host = True
@@ -46,46 +48,46 @@ class EventTest(TestCase):
         
     def test_hosts(self):
         self.failUnlessEqual(list(self.event.hosts()), [])
-        jane = Guest.objects.get(first_name="Jane", last_name="Doe")
-        alex = Guest.objects.get(first_name="Alex", last_name="Smith")
+        jane = Guest.objects.get(contributor__first_name="Jane", contributor__last_name="Doe")
+        alex = Guest.objects.get(contributor__first_name="Alex", contributor__last_name="Smith")
         jane.is_host = True
         jane.save()
         self.failUnlessEqual(list(self.event.hosts()), [jane])
         alex.is_host = True
         alex.save()
-        self.failUnlessEqual(list(self.event.hosts()), [alex, jane])
+        self.failUnlessEqual(list(self.event.hosts()), [jane, alex])
         jane.is_host = False
         jane.save()
         self.failUnlessEqual(list(self.event.hosts()), [alex])
         
     def test_confirmed_guests(self):
         self.failUnlessEqual(self.event.confirmed_guests().count(), 1)
-        alex = Guest.objects.get(first_name="Alex", last_name="Smith")
+        alex = Guest.objects.get(contributor__first_name="Alex", contributor__last_name="Smith")
         alex.rsvp_status = "A"
         alex.save()
         self.failUnlessEqual(self.event.confirmed_guests().count(), 2)
-        jane = Guest.objects.get(first_name="Jane", last_name="Doe")
+        jane = Guest.objects.get(contributor__first_name="Jane", contributor__last_name="Doe")
         jane.rsvp_status = "N"
         jane.save()
         self.failUnlessEqual(self.event.confirmed_guests().count(), 1)
         
     def test_outstanding_invitations(self):
         self.failUnlessEqual(self.event.outstanding_invitations(), 2)
-        jon = Guest.objects.get(first_name="Jon", last_name="Doe")
+        jon = Guest.objects.get(contributor__first_name="Jon", contributor__last_name="Doe")
         jon.rsvp_status = "M"
         jon.save()
         self.failUnlessEqual(self.event.outstanding_invitations(), 1)
         
     def test_maybe_attending(self):
         self.failUnlessEqual(self.event.maybe_attending().count(), 1)
-        jon = Guest.objects.get(first_name="Jon", last_name="Doe")
+        jon = Guest.objects.get(contributor__first_name="Jon", contributor__last_name="Doe")
         jon.rsvp_status = "M"
         jon.save()
         self.failUnlessEqual(self.event.maybe_attending().count(), 2)
         
     def test_not_attending(self):
         self.failUnlessEqual(self.event.not_attending().count(), 1)
-        jonathan = Guest.objects.get(first_name="Jonathan")
+        jonathan = Guest.objects.get(contributor__first_name="Jonathan")
         jonathan.rsvp_status = "N"
         jonathan.save()
         self.failUnlessEqual(self.event.not_attending().count(), 2)
@@ -103,19 +105,19 @@ class EventTest(TestCase):
         self.failUnless(self.event.is_token_valid(token))
         new_event = Event.objects.create(creator=self.creator, event_type=self.event_type,
             location=self.ashaway, when=datetime.date(2050, 9, 9), start=datetime.time(9,0),
-            duration=90, details="test")
+            duration=90, details="test", default_survey=self.survey)
         self.failUnless(not new_event.is_token_valid(token))
 
 class GuestTest(TestCase):
     fixtures = ["event_types.json", "surveys.json", "test_events.json",]
     
     def setUp(self):
-        self.jane = Guest.objects.get(first_name="Jane", last_name="Doe")
-        self.alex = Guest.objects.get(first_name="Alex", last_name="Smith")
-        self.jon = Guest.objects.get(first_name="Jon", last_name="Doe")
-        self.me = Guest.objects.get(email="me@gmail.com")
-        self.jonathan = Guest.objects.get(first_name="Jonathan")
-        self.mike = Guest.objects.get(first_name="Mike", last_name="Roberts")
+        self.jane = Guest.objects.get(contributor__first_name="Jane", contributor__last_name="Doe")
+        self.alex = Guest.objects.get(contributor__first_name="Alex", contributor__last_name="Smith")
+        self.jon = Guest.objects.get(contributor__first_name="Jon", contributor__last_name="Doe")
+        self.me = Guest.objects.get(contributor__email="me@gmail.com")
+        self.jonathan = Guest.objects.get(contributor__first_name="Jonathan")
+        self.mike = Guest.objects.get(contributor__first_name="Mike", contributor__last_name="Roberts")
         
     def test_status(self):
         self.failUnlessEqual(self.jane.status(), "Attending")
@@ -126,42 +128,43 @@ class GuestTest(TestCase):
         self.failUnlessEqual(self.mike.status(), "Maybe Attending")
         
     def test_needs_more_info(self):
-        self.failUnlessEqual(self.jane.needs_more_info(), False)
-        self.failUnlessEqual(self.alex.needs_more_info(), False)
-        self.failUnlessEqual(self.jon.needs_more_info(), False)
-        self.failUnlessEqual(self.me.needs_more_info(), True)
-        self.failUnlessEqual(self.jonathan.needs_more_info(), True)
-        self.failUnlessEqual(self.mike.needs_more_info(), False)
+        self.failUnlessEqual(self.jane.contributor.needs_more_info(), False)
+        self.failUnlessEqual(self.alex.contributor.needs_more_info(), False)
+        self.failUnlessEqual(self.jon.contributor.needs_more_info(), False)
+        self.failUnlessEqual(self.me.contributor.needs_more_info(), True)
+        self.failUnlessEqual(self.jonathan.contributor.needs_more_info(), True)
+        self.failUnlessEqual(self.mike.contributor.needs_more_info(), False)
 
     def test_link_new_user_to_guest(self):
         # Make sure the guest isn't currently linked to a user
-        self.failUnlessEqual(self.me.user, None)
+        self.failUnlessEqual(self.me.contributor.user, None)
         # Add a new user with the same email as an existing guest.
         u1 = User.objects.create_user(username="mememe", email="me@gmail.com", password="test")
         # Refetch the list
-        self.me = Guest.objects.get(email="me@gmail.com")
+        self.me = Guest.objects.get(contributor__email="me@gmail.com")
         # Make sure only the right guest record was linked to a user
-        self.failUnlessEqual(self.me.user, u1)
-        self.failUnlessEqual(Guest.objects.exclude(user=None).count(), 1)
+        self.failUnlessEqual(self.me.contributor.user, u1)
+        self.failUnlessEqual(Guest.objects.exclude(contributor__user=None).count(), 1)
         
         # Create two guest with the same email for two different events.
-        g1a = Guest.objects.create(email="g1@gmail.com", event_id=1)
-        g1b = Guest.objects.create(email="g1@gmail.com", event_id=2)
+        contributor = Contributor.objects.create(email="g1@gmail.com")
+        g1a = Guest.objects.create(contributor=contributor, event_id=1)
+        g1b = Guest.objects.create(contributor=contributor, event_id=2)
         u2 = User.objects.create_user(username="g1", email="g1@gmail.com", password="test")
         g1a = Guest.objects.get(pk=g1a.id)
         g1b = Guest.objects.get(pk=g1b.id)
         # Both guest records should be updated with the user after registration
-        self.failUnlessEqual(g1a.user, u2)
-        self.failUnlessEqual(g1b.user, u2)
-        self.failUnlessEqual(Guest.objects.exclude(user=None).count(), 3)
+        self.failUnlessEqual(g1a.contributor.user, u2)
+        self.failUnlessEqual(g1b.contributor.user, u2)
+        self.failUnlessEqual(Guest.objects.exclude(contributor__user=None).count(), 3)
         
 class EventCreateViewTest(TestCase):
-    fixtures = ["test_geo_02804.json"]
+    fixtures = ["test_geo_02804.json", "event_types.json"]
     
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
-        self.event_type = EventType.objects.create(name="Energy Meeting")
+        self.event_type = EventType.objects.get(name="Energy Meeting")
         self.event_create_url = reverse("event-create")
     
     def test_login_required(self):
@@ -322,7 +325,8 @@ class EventDetailViewTest(TestCase):
     def test_guest_and_private(self):
         self.event.is_private = True
         self.event.save()
-        Guest.objects.create(event=self.event, first_name="test", email="test@test.com", user=self.user)
+        contributor = Contributor.objects.create(first_name="test", email="test@test.com", user=self.user)
+        Guest.objects.create(event=self.event, contributor=contributor)
         self.client.login(username="test@test.com", password="test")
         response = self.client.get(self.event_show_url, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/rsvp.html")
@@ -485,7 +489,8 @@ class EventGuestsViewTest(TestCase):
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
         self.event_type = EventType.objects.get(pk=1)
         self.event = Event.objects.get(pk=1)
-        Guest.objects.create(event=self.event, user=self.user, is_host=True)
+        contributor = Contributor.objects.create(user=self.user)
+        Guest.objects.create(event=self.event, contributor=contributor, is_host=True)
         self.event.save()
         self.event_guests_url = reverse("event-guests", args=[self.event.id])
 
@@ -620,10 +625,13 @@ class EventGuestsAddViewTest(TestCase):
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 8)
-        jon = guests[4]
-        self.failUnlessEqual(jon.first_name, "Jon")
-        self.failUnlessEqual(jon.email, "jon@gmail.com")
+        jon = guests[7]
+        self.failUnlessEqual(jon.contributor.first_name, "Jon")
+        self.failUnlessEqual(jon.contributor.email, "jon@gmail.com")
         self.failUnlessEqual(jon.rsvp_status, "N")
+        
+    def test_valid_post_duplicate_contributor(self):
+        pass
         
 class EventGuestsInviteViewTest(TestCase):
     fixtures = ["event_types.json", "surveys.json", "test_geo_02804.json", "test_events.json", "invite.json"]
@@ -703,9 +711,9 @@ class EventGuestsInviteViewTest(TestCase):
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 8)
-        jon = guests[2]
-        self.failUnlessEqual(jon.first_name, "")
-        self.failUnlessEqual(jon.email, "jon@gmail.com")
+        jon = guests[7]
+        self.failUnlessEqual(jon.contributor.first_name, "")
+        self.failUnlessEqual(jon.contributor.email, "jon@gmail.com")
         
     def test_multiple_invite(self):
         self.client.login(username="test@test.com", password="test")
@@ -723,12 +731,12 @@ class EventGuestsInviteViewTest(TestCase):
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 9)
-        jon = guests[2]
-        self.failUnlessEqual(jon.first_name, "")
-        self.failUnlessEqual(jon.email, "jon@gmail.com")
-        eric = guests[3]
-        self.failUnlessEqual(eric.first_name, "")
-        self.failUnlessEqual(eric.email, "eric@gmail.com")
+        jon = guests[7]
+        self.failUnlessEqual(jon.contributor.first_name, "")
+        self.failUnlessEqual(jon.contributor.email, "jon@gmail.com")
+        eric = guests[8]
+        self.failUnlessEqual(eric.contributor.first_name, "")
+        self.failUnlessEqual(eric.contributor.email, "eric@gmail.com")
         
     def test_copy_me_email(self):
         self.client.login(username="test@test.com", password="test")
@@ -746,9 +754,9 @@ class EventGuestsInviteViewTest(TestCase):
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 8)
-        jon = guests[2]
-        self.failUnlessEqual(jon.first_name, "")
-        self.failUnlessEqual(jon.email, "jon@gmail.com")
+        jon = guests[7]
+        self.failUnlessEqual(jon.contributor.first_name, "")
+        self.failUnlessEqual(jon.contributor.email, "jon@gmail.com")
         
     def test_duplicate_email(self):
         self.client.login(username="test@test.com", password="test")
@@ -806,19 +814,19 @@ class EventGuestsEditNameViewTest(TestCase):
         ashaway = Location.objects.get(zipcode="02804")
         new_event = Event.objects.create(creator=self.user, event_type=self.event_type,
             location=ashaway, when=datetime.date(2050, 9, 9), start=datetime.time(9,0),
-            duration=60, details="test")
+            duration=60, details="test", default_survey=self.event_type.survey)
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(reverse("event-guests-edit-name", args=[new_event.id,self.guest.id]))
         self.failUnlessEqual(response.status_code, 403)
         
     def test_set_first_name(self):
         self.client.login(username="test@test.com", password="test")
-        self.failUnlessEqual(self.guest.first_name, "Jane")
-        self.failUnlessEqual(self.guest.last_name, "Doe")
+        self.failUnlessEqual(self.guest.contributor.first_name, "Jane")
+        self.failUnlessEqual(self.guest.contributor.last_name, "Doe")
         response = self.client.post(self.event_guests_edit_url, {"value": "Jimmy"}, follow=True)
         self.guest = Guest.objects.get(pk=1)
-        self.failUnlessEqual(self.guest.first_name, "Jimmy")
-        self.failUnlessEqual(self.guest.last_name, "")
+        self.failUnlessEqual(self.guest.contributor.first_name, "Jimmy")
+        self.failUnlessEqual(self.guest.contributor.last_name, "")
         self.failUnlessEqual(response.get("content-type", 1), "text/json")
         self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
         message = iter(response.context["messages"]).next()
@@ -826,12 +834,12 @@ class EventGuestsEditNameViewTest(TestCase):
         
     def test_set_name(self):
         self.client.login(username="test@test.com", password="test")
-        self.failUnlessEqual(self.guest.first_name, "Jane")
-        self.failUnlessEqual(self.guest.last_name, "Doe")
+        self.failUnlessEqual(self.guest.contributor.first_name, "Jane")
+        self.failUnlessEqual(self.guest.contributor.last_name, "Doe")
         response = self.client.post(self.event_guests_edit_url, {"value": "Jimmy Smith Williams"}, follow=True)
         self.guest = Guest.objects.get(pk=1)
-        self.failUnlessEqual(self.guest.first_name, "Jimmy")
-        self.failUnlessEqual(self.guest.last_name, "Smith Williams")
+        self.failUnlessEqual(self.guest.contributor.first_name, "Jimmy")
+        self.failUnlessEqual(self.guest.contributor.last_name, "Smith Williams")
         self.failUnlessEqual(response.get("content-type", 1), "text/json")
         self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
         message = iter(response.context["messages"]).next()
@@ -886,10 +894,10 @@ class EventGuestsEditEmailViewTest(TestCase):
         
     def test_set_invalid_email(self):
         self.client.login(username="test@test.com", password="test")
-        self.failUnlessEqual(self.guest.email, "jd@email.com")
+        self.failUnlessEqual(self.guest.contributor.email, "jd@email.com")
         response = self.client.post(self.event_guests_edit_url, {"value": "jimmy@"}, follow=True)
         self.guest = Guest.objects.get(pk=1)
-        self.failUnlessEqual(self.guest.email, "jd@email.com")
+        self.failUnlessEqual(self.guest.contributor.email, "jd@email.com")
         self.failUnlessEqual(response.get("content-type", 1), "text/json")
         self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
         message = iter(response.context["messages"]).next()
@@ -897,10 +905,10 @@ class EventGuestsEditEmailViewTest(TestCase):
         
     def test_set_email(self):
         self.client.login(username="test@test.com", password="test")
-        self.failUnlessEqual(self.guest.email, "jd@email.com")
+        self.failUnlessEqual(self.guest.contributor.email, "jd@email.com")
         response = self.client.post(self.event_guests_edit_url, {"value": "jimmy@email.com"}, follow=True)
         self.guest = Guest.objects.get(pk=1)
-        self.failUnlessEqual(self.guest.email, "jimmy@email.com")
+        self.failUnlessEqual(self.guest.contributor.email, "jimmy@email.com")
         self.failUnlessEqual(response.get("content-type", 1), "text/json")
         self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
         message = iter(response.context["messages"]).next()
@@ -955,17 +963,17 @@ class EventGuestsEditPhoneViewTest(TestCase):
 
     def test_set_phone(self):
         self.client.login(username="test@test.com", password="test")
-        self.failUnlessEqual(self.guest.phone, "")
+        self.failUnlessEqual(self.guest.contributor.phone, "")
         response = self.client.post(self.event_guests_edit_url, {"value": "555-555-5555"}, follow=True)
         self.guest = Guest.objects.get(pk=1)
-        self.failUnlessEqual(self.guest.phone, "555-555-5555")
+        self.failUnlessEqual(self.guest.contributor.phone, "555-555-5555")
         self.failUnlessEqual(response.get("content-type", 1), "text/json")
         self.failUnlessEqual(response.template[1].name, "events/_guest_row.html")
         message = iter(response.context["messages"]).next()
         self.failUnless("success" in message.tags)
         
 class EventsCommitmentViewTest(TestCase):
-    fixtures = ["actions.json", "event_types.json", "surveys.json", "commitment.json",
+    fixtures = ["actions.json", "event_types.json", "commitment.json",
         "test_geo_02804.json", "test_events.json"]
 
     def setUp(self):
@@ -1006,15 +1014,15 @@ class EventsCommitmentViewTest(TestCase):
         response = self.client.post(self.url, {"eliminate_vampire": "D", "program_thermostat": "C"}, 
             follow=True)
         guest = Guest.objects.get(pk=1)
-        vampire_commit = Commitment.objects.get(guest=guest, question="eliminate_vampire")
+        vampire_commit = Commitment.objects.get(contributor=guest.contributor, question="eliminate_vampire")
         self.failUnlessEqual(vampire_commit.answer, "D")
-        thermostat_commit = Commitment.objects.get(guest=guest, question="program_thermostat")
+        thermostat_commit = Commitment.objects.get(contributor=guest.contributor, question="program_thermostat")
         self.failUnlessEqual(thermostat_commit.answer, "C")
         messages = Queue.objects.all()
         self.failUnlessEqual(messages[0].content_object, thermostat_commit)
-        self.failUnlessEqual(messages[0].batch_content_object, guest)
+        self.failUnlessEqual(messages[0].batch_content_object, guest.contributor)
         self.failUnlessEqual(messages[1].content_object, thermostat_commit)
-        self.failUnlessEqual(messages[1].batch_content_object, guest)
+        self.failUnlessEqual(messages[1].batch_content_object, guest.contributor)
         self.failUnlessEqual(messages[2].content_object, thermostat_commit)
-        self.failUnlessEqual(messages[2].batch_content_object, guest)
+        self.failUnlessEqual(messages[2].batch_content_object, guest.contributor)
         

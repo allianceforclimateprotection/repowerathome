@@ -29,7 +29,8 @@ from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
-from events.models import Event, Guest, Commitment
+from commitments.models import Contributor, Commitment
+from events.models import Event, Guest
 from messaging.models import Stream
 from messaging.forms import StreamNotificationsForm
 
@@ -51,15 +52,15 @@ def _coal_challenge_stats():
     
 def _total_users():
     return (Profile.objects.filter(total_points__gt=0).count() or 0) + \
-        (Guest.objects.filter(commitment__answer='D', commitment__action__isnull=False, user__isnull=True).distinct().count() or 0)
+        (Contributor.objects.filter(commitment__answer='D', commitment__action__isnull=False, user__isnull=True).distinct().count() or 0)
     
 def _total_actions():
     return (Record.objects.filter(void=False, activity=1).count() or 0) + \
-        (Commitment.objects.filter(answer="D", action__isnull=False, guest__user__isnull=True).count() or 0)
+        (Commitment.objects.filter(answer="D", action__isnull=False, contributor__user__isnull=True).count() or 0)
         
 def _total_coal():
     return (Profile.objects.all().aggregate(Sum("total_points"))["total_points__sum"] or 0) + \
-        (Action.objects.filter(commitment__answer="D", commitment__guest__user__isnull=True).aggregate(
+        (Action.objects.filter(commitment__answer="D", commitment__contributor__user__isnull=True).aggregate(
             Sum("points"))["points__sum"] or 0)
 
 @csrf_protect
@@ -79,7 +80,7 @@ def index(request):
     featured_actions = Action.objects.filter(id__in=[18,23]).order_by("-id")
     commitment_list = UserActionProgress.objects.commitments_for_user(request.user)
     my_groups = Group.objects.filter(users=request.user, is_geo_group=False)
-    my_events = Event.objects.filter(guest__user=request.user)
+    my_events = Event.objects.filter(guest__contributor__user=request.user)
     records = Record.objects.user_records(request.user, 10)
     
     vars = _coal_challenge_stats()

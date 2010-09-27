@@ -81,26 +81,34 @@ class ProfileManager(models.Manager):
                 END AS "team member",
                 CASE
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
-                        WHERE u.id = g.user_id AND g.is_host = 1
+                        JOIN commitments_contributor c ON g.contributor_id = c.id
+                        WHERE u.id = c.user_id AND g.is_host = 1
                         AND DATE(e.when) >= '%(date_start)s' AND DATE(e.when) <= '%(date_end)s') = 1 THEN "completed"
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
-                        WHERE u.id = g.user_id AND g.is_host = 1
+                        JOIN commitments_contributor c ON g.contributor_id = c.id
+                        WHERE u.id = c.user_id AND g.is_host = 1
                         AND DATE(e.created) >= '%(date_start)s' AND DATE(e.created) <= '%(date_end)s') = 1 THEN "yes"
                 END AS "event host",
                 CASE
-                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id 
-                        JOIN events_commitment c ON g.id = c.guest_id WHERE u.id = g.user_id AND e.event_type_id IN (1,4,5)
-                        AND DATE(c.updated) >= '%(date_start)s' AND DATE(c.updated) <= '%(date_end)s') = 1 THEN "completed"
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
+                        JOIN commitments_contributor cn ON g.contributor_id = cn.id
+                        JOIN commitments_commitment cm ON cn.id = cm.contributor_id 
+                        WHERE u.id = cn.user_id AND e.event_type_id IN (1,4,5)
+                        AND DATE(cm.updated) >= '%(date_start)s' AND DATE(cm.updated) <= '%(date_end)s') = 1 THEN "completed"
                 END AS "energy event guest",
                 CASE
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id 
-                        JOIN events_commitment c ON g.id = c.guest_id WHERE u.id = g.user_id AND e.event_type_id IN (2)
-                        AND DATE(c.updated) >= '%(date_start)s' AND DATE(c.updated) <= '%(date_end)s') = 1 THEN "completed"
+                        JOIN commitments_contributor cn ON g.contributor_id = cn.id
+                        JOIN commitments_commitment cm ON cn.id = cm.contributor_id 
+                        WHERE u.id = cn.user_id AND e.event_type_id IN (2)
+                        AND DATE(cm.updated) >= '%(date_start)s' AND DATE(cm.updated) <= '%(date_end)s') = 1 THEN "completed"
                 END AS "kickoff event guest",
                 CASE
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id 
-                        JOIN events_commitment c ON g.id = c.guest_id WHERE u.id = g.user_id AND e.event_type_id IN (3)
-                        AND DATE(c.updated) >= '%(date_start)s' AND DATE(c.updated) <= '%(date_end)s') = 1 THEN "completed"
+                        JOIN commitments_contributor cn ON g.contributor_id = cn.id
+                        JOIN commitments_commitment cm ON cn.id = cm.contributor_id 
+                        WHERE u.id = cn.user_id AND e.event_type_id IN (3)
+                        AND DATE(cm.updated) >= '%(date_start)s' AND DATE(cm.updated) <= '%(date_end)s') = 1 THEN "completed"
                 END AS "field training guest"
             FROM auth_user u
             JOIN rah_profile p ON u.id = p.user_id

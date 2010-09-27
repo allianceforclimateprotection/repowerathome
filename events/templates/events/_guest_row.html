@@ -6,12 +6,12 @@
         {% endif %}
     </td>
 {% endif %}
-{% if guest.user %}
-    <td id="{% url event-guests-edit-name event.id,guest.id %}">{% safe_user_link guest.user %}{% if guest.is_host %} (host){% endif %}</td>
+{% if guest.contributor.user %}
+    <td id="{% url event-guests-edit-name event.id,guest.id %}">{% safe_user_link guest.contributor.user %}{% if guest.is_host %} (host){% endif %}</td>
 {% else %}
-    <td id="{% url event-guests-edit-name event.id,guest.id %}" class="editable">{{ guest.name }}{% if guest.is_host %} (host){% endif %}</td>
+    <td id="{% url event-guests-edit-name event.id,guest.id %}" class="editable">{{ guest.contributor.name }}{% if guest.is_host %} (host){% endif %}</td>
 {% endif %}
-<td id="{% url event-guests-edit-email event.id,guest.id %}" class="editable">{{ guest.email }}</td>
-<td id="{% url event-guests-edit-phone event.id,guest.id %}" class="editable phone">{{ guest.phone }}</td>
-<td id="{% url event-guests-edit-zipcode event.id,guest.id %}" class="editable zipcode">{{ guest.location.zipcode }}</td>
+<td id="{% url event-guests-edit-email event.id,guest.id %}" class="editable">{{ guest.contributor.email }}</td>
+<td id="{% url event-guests-edit-phone event.id,guest.id %}" class="editable phone">{{ guest.contributor.phone }}</td>
+<td id="{% url event-guests-edit-zipcode event.id,guest.id %}" class="editable zipcode">{{ guest.contributor.location.zipcode }}</td>
 <td id="{% url event-guests-edit-status event.id,guest.id %}" class="editable rsvp_select">{{ guest.status }}</td>

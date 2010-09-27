@@ -21,6 +21,8 @@ admin.site.unregister(Category)
 admin.site.unregister(BlogRoll)
 admin.site.unregister(TaggedItem)
 
+admin.site.disable_action('delete_selected')
+
 # Sitemaps
 from basic.blog.sitemap import BlogSitemap
 from django.contrib.sitemaps import FlatPageSitemap

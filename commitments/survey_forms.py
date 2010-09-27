@@ -31,18 +31,19 @@ class SurveyForm(forms.ModelForm):
         model = Survey
         exclude = ("name", "event_type", "form_name", "template_name", "is_active",)
         
-    def __init__(self, guest, *args, **kwargs):
+    def __init__(self, contributor, *args, **kwargs):
         super(SurveyForm, self).__init__(*args, **kwargs)
-        self.guest = guest
+        self.contributor = contributor
         data = {}
-        for commitment in Commitment.objects.filter(guest=guest, survey=self.instance):
-            field = self.fields[commitment.question]
-            field.initial = field.to_python(commitment.answer)
+        for commitment in Commitment.objects.filter(contributor=contributor):
+            field = self.fields.get(commitment.question, None)
+            if field:
+                field.initial = field.to_python(commitment.answer)
     
     def save(self, *args, **kwargs):
         for field, data in self.cleaned_data.items():
-            commitment, created = Commitment.objects.get_or_create(guest=self.guest, 
-                survey=self.instance, question=field)
+            commitment, created = Commitment.objects.get_or_create(contributor=self.contributor, 
+                question=field)
             commitment.answer = data
             if hasattr(self.fields[field], "action"):
                 commitment.action = self.fields[field].action
@@ -50,11 +51,11 @@ class SurveyForm(forms.ModelForm):
                     if created:
                         Stream.objects.get(slug="commitment").enqueue(content_object=commitment, 
                             start=commitment.created, end=commitment.date_committed,
-                            batch_content_object=self.guest)
+                            batch_content_object=self.contributor)
                     else:
                         Stream.objects.get(slug="commitment").upqueue(content_object=commitment, 
                             start=commitment.updated, end=commitment.date_committed,
-                            batch_content_object=self.guest)
+                            batch_content_object=self.contributor)
                 else:
                     Stream.objects.get(slug="commitment").dequeue(content_object=commitment)
             commitment.save()

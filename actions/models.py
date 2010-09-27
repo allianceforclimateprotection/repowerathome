@@ -9,7 +9,7 @@ from django.db import models
 
 import tagging
 
-from events.models import Commitment
+from commitments.models import Commitment
 from records.models import Record
 from dated_static.templatetags.dated_static import timestamp_file
 from messaging.models import Stream, Queue
@@ -41,19 +41,17 @@ class ActionManager(models.Manager):
     def process_commitment_card(self, user, new_user=False):
         # Are there any event_commitments for this user that were updated after the user's last_login timestamp?
         if new_user:
-            commitments = Commitment.objects.filter(guest__email=user.email, action__isnull=False)
+            commitments = Commitment.objects.filter(contributor__email=user.email, action__isnull=False)
         else:
-            commitments = Commitment.objects.filter(updated__gt=user.last_login, guest__email=user.email, action__isnull=False)
+            commitments = Commitment.objects.filter(updated__gt=user.last_login, contributor__email=user.email, action__isnull=False)
         changes = []
-        
         # If yes, apply those commitments to the user's account
         for commitment in commitments:
             try:
                 # If there is a conflict, go with the later of: user's action date | event date
                 uap = UserActionProgress.objects.get(action=commitment.action, user=user)
-                if commitment.guest.event.start_datetime() > uap.updated and commitment.answer == "D":
-                    uap.is_completed = True;
-                    uap.save()
+                if commitment.answer == "D":
+                    commitment.action.complete_for_user(user)
                     changes.append(commitment)
             except UserActionProgress.DoesNotExist:
                 if commitment.answer == "D":
@@ -239,7 +237,7 @@ class ActionFormData(models.Model):
         unique_together = ("action_form", "user",)
     
     def __unicode__(self):
-        return u"%s is working on %s" (self.user, self.action_form)
+        return u"%s is working on %s" % (self.user, self.action_form)
 
 """
 SIGNALS!
