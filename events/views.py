@@ -186,7 +186,7 @@ def commitments(request, event_id, guest_id=None):
         guest = guests[0] if len(guests) > 0 else None
     survey = event.default_survey
     if survey:
-        form = getattr(survey_forms, survey.form_name)(guest.contributor, data=(request.POST or None))
+        form = getattr(survey_forms, survey.form_name)(guest.contributor, request.user, data=(request.POST or None))
         if form.is_valid():
             form.save()
             return redirect("event-commitments-guest", event_id=event.id, guest_id=event.next_guest(guest).id)

@@ -148,4 +148,11 @@ UPDATE events_event e
 JOIN events_survey s ON e.event_type_id = s.event_type_id AND s.is_active = 1
 SET e.default_survey_id = s.id;
 
+INSERT INTO commitments_contributorsurvey (contributor_id, survey_id, entered_by_id, created, updated)
+SELECT DISTINCT g.contributor_id, e.default_survey_id, e.creator_id, MIN(c.created), MAX(c.created)
+FROM events_guest g
+JOIN events_event e ON g.event_id = e.id
+JOIN commitments_commitment c ON g.contributor_id = c.contributor_id
+GROUP BY g.contributor_id, e.default_survey_id, e.creator_id;
+
 DROP TABLE events_commitment, events_guest_old, events_survey;

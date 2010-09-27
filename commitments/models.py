@@ -114,6 +114,7 @@ class Survey(models.Model):
     form_name = models.CharField(max_length=75)
     template_name = models.CharField(max_length=200)
     is_active = models.BooleanField(default=True)
+    contributors = models.ManyToManyField(Contributor, through="ContributorSurvey")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = SurveyManager()
@@ -128,6 +129,16 @@ class Survey(models.Model):
         import survey_forms
         form = getattr(survey_forms, self.form_name)
         return form.base_fields.keys()
+        
+class ContributorSurvey(models.Model):
+    contributor = models.ForeignKey(Contributor)
+    survey = models.ForeignKey(Survey)
+    entered_by = models.ForeignKey("auth.user")
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+        
+    class Meta:
+        unique_together = (("contributor", "survey", "entered_by",),)
         
 class CommitmentManager(models.Manager):
     def pending_commitments(self, contributor=None):

@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from actions.models import Action
 from messaging.models import Stream
 
-from models import Survey, Commitment
+from models import Survey, Commitment, ContributorSurvey
 from widgets import RadioRendererForTable
 
 class ActionChoiceField(forms.ChoiceField):
@@ -29,11 +29,13 @@ class ActionBooleanField(forms.BooleanField):
 class SurveyForm(forms.ModelForm):
     class Meta:
         model = Survey
-        exclude = ("name", "event_type", "form_name", "template_name", "is_active",)
+        exclude = ("name", "event_type", "form_name", "template_name", "is_active", "contributors",)
         
-    def __init__(self, contributor, *args, **kwargs):
+    def __init__(self, contributor, entered_by, *args, **kwargs):
         super(SurveyForm, self).__init__(*args, **kwargs)
         self.contributor = contributor
+        self.entered_by = entered_by
+        self.instance = Survey.objects.get(form_name=self.__class__.__name__)
         data = {}
         for commitment in Commitment.objects.filter(contributor=contributor):
             field = self.fields.get(commitment.question, None)
@@ -59,6 +61,8 @@ class SurveyForm(forms.ModelForm):
                 else:
                     Stream.objects.get(slug="commitment").dequeue(content_object=commitment)
             commitment.save()
+        ContributorSurvey.objects.get_or_create(contributor=self.contributor, survey=self.instance,
+            entered_by=self.entered_by)
 
 class EnergyMeetingCommitmentCard(SurveyForm):
     CHOICES = (
