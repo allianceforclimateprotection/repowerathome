@@ -131,8 +131,10 @@ AUTH_PROFILE_MODULE = 'rah.Profile'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
 GA_TRACK_PAGEVIEW = 50
+GA_TRACK_CONVERSION = 51
 MESSAGE_TAGS = {
     GA_TRACK_PAGEVIEW: 'ga_track_pageview',
+    GA_TRACK_CONVERSION: 'ga_track_conversion', 
 }
 
 # sync media s3

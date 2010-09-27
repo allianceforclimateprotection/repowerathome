@@ -14,6 +14,7 @@ from records.models import Record
 from records.signals import record_created
 from rah.decorators import login_required_save_POST
 
+from settings import GA_TRACK_PAGEVIEW 
 from models import Action, UserActionProgress, ActionForm, ActionFormData
 from forms import ActionCommitForm
 
@@ -57,6 +58,8 @@ def action_complete(request, action_slug):
     if record:
         record_created.send(sender=None, request=request, record=record)
     messages.success(request, "Nice work! We've updated your profile, so all your friends can see your progress (<a href='#' class='undo_trigger'>Undo</a>)")
+    messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/complete')
+    messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/complete/%s' % action_slug)
     return redirect("action_detail", action_slug=action.slug)
     
 @login_required
@@ -67,6 +70,8 @@ def action_undo(request, action_slug):
         return redirect("action_detail", action_slug=action.slug)
     if action.undo_for_user(request.user):
         messages.success(request, "No worries. We've updated the record. Let us know when you're finished with this action.")
+        messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/undo')
+        messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/undo/%s' % action_slug)
     return redirect("action_detail", action_slug=action.slug)
     
 @login_required_save_POST
@@ -83,6 +88,8 @@ def action_commit(request, action_slug):
         if record:
             record_created.send(sender=None, request=request, record=record)
         messages.success(request, "Thanks for making a commitment.")
+        messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/commit')
+        messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/commit/%s' % action_slug)
         return redirect("action_detail", action_slug=action.slug)
     default_vars = _default_action_vars(action, request.user)
     default_vars.update(locals())
@@ -95,6 +102,8 @@ def action_cancel(request, action_slug):
     if request.method == "POST":    
         if action.cancel_for_user(request.user):
             messages.success(request, "We cancelled your commitment. If you're having trouble completing an action, try asking a question. Other members will be happy to help!")
+            messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/cancel')
+            messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/cancel/%s' % action_slug)
         return redirect("action_detail", action_slug=action.slug)
     return render_to_response("actions/action_cancel.html", locals(), RequestContext(request))
 
