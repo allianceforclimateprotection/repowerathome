@@ -126,14 +126,16 @@ ABSOLUTE_URL_OVERRIDES = {
 
 AUTHENTICATION_BACKENDS = ('rah.backends.EmailBackend',)
 LOGIN_REDIRECT_URL = "/"
-LOGIN_URL = "/login"
-LOGOUT_URL = "/logout"
+LOGIN_URL = "/register/"
+LOGOUT_URL = "/logout/"
 AUTH_PROFILE_MODULE = 'rah.Profile'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
 GA_TRACK_PAGEVIEW = 50
+GA_TRACK_CONVERSION = 51
 MESSAGE_TAGS = {
     GA_TRACK_PAGEVIEW: 'ga_track_pageview',
+    GA_TRACK_CONVERSION: 'ga_track_conversion',
 }
 
 # sync media s3
