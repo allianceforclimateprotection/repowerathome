@@ -123,6 +123,19 @@ FROM events_commitment ec
 JOIN events_guest eg ON ec.guest_id = eg.id
 GROUP BY eg.contributor_id, ec.question, ec.action_id;
 
+UPDATE messaging_queue q
+JOIN django_content_type ct ON q.content_type_id = ct.id
+JOIN django_content_type nct ON nct.app_label = "commitments" AND nct.model = "commitment"
+SET q.content_type_id = nct.id
+WHERE ct.app_label = "events" AND ct.model = "commitment";
+
+UPDATE messaging_queue q
+JOIN django_content_type ct ON q.batch_content_type_id = ct.id
+JOIN django_content_type nct ON nct.app_label = "commitments" AND nct.model = "contributor"
+JOIN events_guest g ON q.batch_object_pk = g.id
+SET q.batch_content_type_id = nct.id, q.batch_object_pk = g.contributor_id
+WHERE ct.app_label = "events" AND ct.model = "guest";
+
 ALTER TABLE events_eventtype ADD survey_id int(11) AFTER description;
 ALTER TABLE events_eventtype ADD CONSTRAINT `survey_id_refs_id_3de7612c` FOREIGN KEY (`survey_id`) REFERENCES `commitments_survey` (`id`);
 UPDATE events_eventtype et
