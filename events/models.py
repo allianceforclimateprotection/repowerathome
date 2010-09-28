@@ -204,7 +204,7 @@ class GuestManager(models.Manager):
         action_joins = [
             """
             LEFT JOIN commitments_commitment `%s_commit` ON `%s_commit`.action_id = %s AND `%s_commit`.contributor_id = cn.id
-                AND DATE(`%s_commit`.updated) >= '%s' and DATE(`%s_commit`.updated) <= '%s'
+                AND DATE(`%s_commit`.updated) >= '%s' AND DATE(`%s_commit`.updated) <= '%s'
             """ % (a.slug, a.slug, a.id, a.slug, a.slug, date_start, a.slug, date_end) for a in actions]
             
         query_dict = {
@@ -215,8 +215,12 @@ class GuestManager(models.Manager):
         }    
         query = """
             SELECT DISTINCT -1, cn.first_name AS "first name", cn.last_name AS "last name", cn.email,
-                l.name AS city, l.st AS state, l.zipcode AS "zip code",
+                cn.phone, l.name AS city, l.st AS state, l.zipcode AS "zip code",
                 %(action_cases)s,
+                CASE
+                    WHEN `organize_commit`.answer = "True" THEN "yes"
+                    WHEN `organize_commit`.answer = "False" THEN "no"
+                END AS 'organize',
                 NULL AS "team manager",
                 NULL AS "team member",
                 CASE 
@@ -247,6 +251,10 @@ class GuestManager(models.Manager):
             JOIN commitments_contributor cn ON cn.id = g.contributor_id
             LEFT JOIN commitments_commitment cm ON cn.id = cm.contributor_id
             LEFT JOIN geo_location l ON cn.location_id = l.id
+            LEFT JOIN commitments_commitment `organize_commit` ON `organize_commit`.question = 'organize' 
+                AND `organize_commit`.contributor_id = cn.id
+                AND DATE(`organize_commit`.updated) >= '%(date_start)s'
+                AND DATE(`organize_commit`.updated) <= '%(date_end)s'
             %(action_joins)s
             WHERE cn.user_id IS NULL
             ORDER BY g.id

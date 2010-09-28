@@ -69,8 +69,9 @@ class ProfileManager(models.Manager):
         }    
         query = """
             SELECT u.id, u.first_name AS "first name", u.last_name AS "last name", u.email,
-                l.name AS city, l.st AS state, l.zipcode AS "zip code",
+                NULL AS phone, l.name AS city, l.st AS state, l.zipcode AS "zip code",
                 %(action_cases)s,
+                NULL AS 'organize',
                 CASE
                     WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id AND gu.is_manager = 1
                         AND DATE(gu.updated) >= '%(date_start)s' AND DATE(gu.updated) <= '%(date_end)s') = 1 THEN "yes"
