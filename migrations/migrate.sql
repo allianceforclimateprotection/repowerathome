@@ -156,3 +156,11 @@ JOIN commitments_commitment c ON g.contributor_id = c.contributor_id
 GROUP BY g.contributor_id, e.default_survey_id, e.creator_id;
 
 DROP TABLE events_commitment, events_guest_old, events_survey;
+
+ALTER TABLE source_tracking_usersource ADD created datetime;
+ALTER TABLE source_tracking_usersource ADD updated datetime;
+UPDATE source_tracking_usersource t
+JOIN auth_user u ON t.user_id = u.id
+SET created = u.date_joined, updated = u.date_joined;
+ALTER TABLE source_tracking_usersource MODIFY created datetime NOT NULL;
+ALTER TABLE source_tracking_usersource MODIFY updated datetime NOT NULL;
