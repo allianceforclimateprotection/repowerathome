@@ -46,6 +46,8 @@ INSTALLED_APPS = (
     'commitments',
 )
 
+LOGIN_URL = "/login/"
+
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
     'HIDE_DJANGO_SQL': True,
