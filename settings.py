@@ -161,7 +161,7 @@ MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue", "geo_location")
 POSTMARK_SENDER = 'noreply@repowerathome.com'
 
 # Date defaults
-DATETIME_FORMAT = "F j, Y, P"
+DATETIME_FORMAT = "N j, Y, P"
 DATE_FORMAT = "F j, Y"
 TIME_FORMAT = "P"
 SHORT_DATE_FORMAT = "m/d/Y"
