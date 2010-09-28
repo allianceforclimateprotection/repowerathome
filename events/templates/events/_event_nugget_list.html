@@ -1,9 +1,10 @@
-<ul class="plain_list">
+<ul class="plain_list" style="margin-bottom:0px;">
     {% for event in events %}
         <li>
-            <a href="{{ event.get_absolute_url }}">{{ event }}</a><br />
-            <span class="smaller">{{ event.when|date }} @ {{ event.start|time }}</span>
-            <br/>
+            <p>
+                <a href="{{ event.get_absolute_url }}">{{ event }}</a><br />
+                <span class="smaller">{{ event.when|date }} @ {{ event.start|time }}</span>
+            </p>
         </li>
     {% endfor %}
 </ul>

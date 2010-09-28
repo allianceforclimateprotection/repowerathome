@@ -140,6 +140,10 @@ a.button:hover { color: white; }
     background-color: transparent;
     width: 320px;}
 
+.form_row_float {float:left; width:148px;}
+.form_row_float_left_field {margin-right:24px;}
+
+
 /* ---------------------------------------------------------------------------------------------------------------------
 Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages Messages 
 --------------------------------------------------------------------------------------------------------------------- */
@@ -522,7 +526,6 @@ Events Events Events Events Events Events Events Events Events Events Events Eve
 .editable_highlight { background-color: #ffff99; cursor: text; }
 #commitment_card { width: 400px; padding: 5px; border: 1px solid black; }
 #commitment_card ul { margin-left: 18px; }
-.commitment_table { margin-bottom: 18px; }
 #attendee_list { float: right; font-weight: bold; clear: both; margin-right: 40px; }
 #attendee_list ul { margin-left: 0; padding-left: 5px; }
 .active_attendee { font-weight: bold; font-size: 16px; }

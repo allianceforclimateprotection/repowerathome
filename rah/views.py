@@ -120,7 +120,7 @@ def password_reset_complete(request):
     return redirect("index")
 
 @csrf_protect
-def register(request):
+def register(request, template_name="registration/register.html"):
     
     redirect_to = request.REQUEST.get(REDIRECT_FIELD_NAME, '')
     
@@ -156,7 +156,7 @@ def register(request):
             form = RegistrationForm(initial={"email": request.GET["email"]})
         else:
             form = RegistrationForm()
-    return render_to_response("registration/register.html", {
+    return render_to_response(template_name, {
         'register_form': form,
         REDIRECT_FIELD_NAME: redirect_to,
         'login_form': AuthenticationForm()
