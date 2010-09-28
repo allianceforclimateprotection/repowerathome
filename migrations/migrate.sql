@@ -164,3 +164,7 @@ JOIN auth_user u ON t.user_id = u.id
 SET created = u.date_joined, updated = u.date_joined;
 ALTER TABLE source_tracking_usersource MODIFY created datetime NOT NULL;
 ALTER TABLE source_tracking_usersource MODIFY updated datetime NOT NULL;
+
+UPDATE messaging_message
+SET body = '{% extends \'rah/base_email.html\' %}\r\n{% block email_content %}\r\nThe following user has just registered for a RAH account:\r\n    <a href=\"http://{{ domain }}{{ content_object.get_absolute_url }}\">{{ content_object.get_full_name }}</a>\r\n    Location: {{ content_object.get_profile.location }}\r\n    {% with content_object.usersource_set.all.0 as usersource %}\r\n    Source: {{ usersource.source }}\r\n    Subsource: {{ usersource.subsource }}\r\n    Referrer: {{ usersource.referrer }}\r\n    {% endwith %}\r\n{% endblock %}'
+WHERE name = 'New Account';

@@ -204,7 +204,7 @@ class Profile(models.Model):
 """
 SIGNALS!
 """
-def user_post_save(sender, instance, **kwargs):
-    Profile.objects.get_or_create(user=instance)
-    
+def user_post_save(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
 models.signals.post_save.connect(user_post_save, sender=User)

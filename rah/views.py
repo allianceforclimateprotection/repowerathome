@@ -128,16 +128,15 @@ def register(request, template_name="registration/register.html"):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
+            # Add the location to profile if the user registered with one
+            if "location" in form.cleaned_data:
+                profile = new_user.get_profile()
+                profile.location = form.cleaned_data["location"]
+                profile.save()
             user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
             logged_in.send(sender=None, request=request, user=user, is_new_user=True)
             auth.login(request, user)
             save_queued_POST(request)
-            
-            # Add the location to profile if the user registered with one
-            if "location" in form.cleaned_data:
-                profile = user.get_profile()
-                profile.location = form.cleaned_data["location"]
-                profile.save()
             
             # Light security check -- make sure redirect_to isn't garbage.
             if not redirect_to or ' ' in redirect_to:
@@ -349,16 +348,15 @@ comments.signals.comment_was_posted.connect(comment_message)
 def forbidden(request, message="You do not have permissions."):
     from django.http import HttpResponseForbidden
     return HttpResponseForbidden(loader.render_to_string('403.html', { 'message':message, }, RequestContext(request)))
-    
-def send_registration_emails(sender, request, user, is_new_user, **kwargs):
-    if is_new_user:
-        Stream.objects.get(slug="registration").enqueue(content_object=user, start=user.date_joined)
-logged_in.connect(send_registration_emails)
 
 def track_registration(sender, request, user, is_new_user, **kwargs):
     if is_new_user:
         messages.success(request, 'Thanks for registering.')
         messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
-        messages.add_message(request, GA_TRACK_CONVERSION, True)
-        
+        messages.add_message(request, GA_TRACK_CONVERSION, True) 
 logged_in.connect(track_registration)
+
+def send_registration_emails(sender, request, user, is_new_user, **kwargs):
+    if is_new_user:
+        Stream.objects.get(slug="registration").enqueue(content_object=user, start=user.date_joined)
+logged_in.connect(send_registration_emails)
