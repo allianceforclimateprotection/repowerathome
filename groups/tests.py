@@ -43,7 +43,7 @@ class GroupDiscViews(TestCase):
     def test_create_discussion_get(self):
         # Anon users should get redirected to login
         response = self.client.get(self.urls['group_disc_create'], follow=True)
-        self.assertRedirects(response, "/login/?next=%2Fyankees%2Fdiscussions%2Fcreate%2F")
+        self.assertRedirects(response, "/login/?next=/yankees/discussions/create/")
         
         # As a group member
         self.client.login(username="gu", password="gu")
@@ -155,7 +155,7 @@ class GroupDiscViews(TestCase):
         # try to remove as an anon user
         self.client.logout()
         response = self.client.post(self.urls['d1_remove'], {'is_removed': True}, follow=True)
-        self.assertRedirects(response, "/login/?next=%2Fteams%2Fyankees%2Fdiscussions%2F1%2Fremove%2F")
+        self.assertRedirects(response, "/login/?next=/teams/yankees/discussions/1/remove/")
         disc = Discussion.objects.get(pk=1)
         self.failUnlessEqual(disc.is_removed, False)
         
