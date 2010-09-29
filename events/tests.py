@@ -1011,12 +1011,12 @@ class EventsCommitmentViewTest(TestCase):
         
     def test_save_commitment(self):
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"eliminate_vampire": "D", "program_thermostat": "C"}, 
+        response = self.client.post(self.url, {"eliminate_standby_vampire_power": "D", "programmable_thermostat": "C"}, 
             follow=True)
         guest = Guest.objects.get(pk=1)
-        vampire_commit = Commitment.objects.get(contributor=guest.contributor, question="eliminate_vampire")
+        vampire_commit = Commitment.objects.get(contributor=guest.contributor, question="eliminate_standby_vampire_power")
         self.failUnlessEqual(vampire_commit.answer, "D")
-        thermostat_commit = Commitment.objects.get(contributor=guest.contributor, question="program_thermostat")
+        thermostat_commit = Commitment.objects.get(contributor=guest.contributor, question="programmable_thermostat")
         self.failUnlessEqual(thermostat_commit.answer, "C")
         messages = Queue.objects.all()
         self.failUnlessEqual(messages[0].content_object, thermostat_commit)

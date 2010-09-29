@@ -63,6 +63,10 @@ VALUES
 	(27,22,48),
 	(28,23,48);
 	
+UPDATE events_commitment c
+JOIN actions_action a ON c.action_id = a.id
+SET c.question = REPLACE(a.slug, '-', '_');
+	
 CREATE TABLE dup_guests AS
 	SELECT MAX(g.id) AS id
 	FROM events_guest g
