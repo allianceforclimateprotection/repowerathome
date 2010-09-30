@@ -82,8 +82,13 @@ class Action(models.Model):
     updated = models.DateTimeField(auto_now=True)
     objects = ActionManager()
     
+    @transaction.commit_on_success
     def complete_for_user(self, user):
-        uap, created = UserActionProgress.objects.get_or_create(user=user, action=self)
+        try:
+            uap = UserActionProgress.objects.create(user=user, action=self)
+        except IntegrityError:
+            transaction.commit()
+            uap = UserActionProgress.objects.get(user=user, action=self)
         was_completed = uap.is_completed
         uap.is_completed = True
         uap.save()
@@ -108,7 +113,7 @@ class Action(models.Model):
             return False
         return True
     
-    @transaction.commit_on_success        
+    @transaction.commit_on_success
     def commit_for_user(self, user, date, add_to_stream=True):
         try:
             uap = UserActionProgress.objects.create(user=user, action=self)
