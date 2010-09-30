@@ -3,37 +3,37 @@
     <table class="">
         <thead>
             <tr>
-                <th></th>
-                <th>Committed</th>
-                <th>Done</th>
+                <th>Actions</th>
+                <th class="commit_card_choice">
+                    <ul>
+                        <li>Committed</li>
+                        <li>Done</li>
+                    </ul>    
+                </th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Eliminate Vampire Power</td>
-                <td></td>
-                <td>{{ field }}</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>{{ field.label }}</td>
-                <td>{{ field }}</td>
-            </tr>
             {% for field in form %}
                 {% if field.field.action %}
                     <tr>
-                        <td></td>
                         <td>{{ field.label }}</td>
-                        <td>{{ field }}</td>
+                        <td class="commit_card_choice">{{ field }}</td>
                     </tr>
                 {% endif %}
             {% endfor %}
+        </tbody>
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
             {% for field in form %}
                 {% if not field.field.action %}
                     <tr>
-                        <td></td>
                         <td>{{ field.label }}</td>
-                        <td>{{ field }}</td>
+                        <td class="center">{{ field }}</td>
                     </tr>
                 {% endif %}
             {% endfor %}

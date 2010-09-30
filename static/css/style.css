@@ -550,6 +550,7 @@ Commitments Commitments Commitments Commitments Commitments Commitments Commitme
 .commit_tick {float:left;}
 .commit_check {display:inline-block !important;}
 .commit_totals {font-size:18px; font-weight:bold;}
+.commit_card_choice ul li{float:left; width:50%; text-align:center;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 

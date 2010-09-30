@@ -8,7 +8,6 @@ from actions.models import Action
 from messaging.models import Stream
 
 from models import Survey, Commitment, ContributorSurvey
-from widgets import RadioRendererForTable
 
 class ActionChoiceField(forms.ChoiceField):
     def __init__(self, action, *args, **kwargs):
@@ -17,8 +16,8 @@ class ActionChoiceField(forms.ChoiceField):
         
 class SurveyForm(forms.ModelForm):
     CHOICES = (
-        ("D", "I've Done this"),
-        ("C", "I pledge to do this"),
+        ("D", ""),
+        ("C", ""),
     )
     action_slugs = ()
     
@@ -39,7 +38,7 @@ class SurveyForm(forms.ModelForm):
         for slug in self.action_slugs:
             action = Action.objects.get(slug=slug)
             self.fields[action.slug.replace('-', '_')] = ActionChoiceField(action=action,
-                choices=SurveyForm.CHOICES, widget=forms.RadioSelect(renderer=RadioRendererForTable),
+                choices=SurveyForm.CHOICES, widget=forms.CheckboxSelectMultiple,
                 required=False, label=action.name)
     
     def save(self, *args, **kwargs):
@@ -82,6 +81,7 @@ class ApartmentEnergyMeetingCommitmentCardVersion2(ApartmentEnergyMeetingCommitm
 
 class PilotEnergyMeetingCommitmentCard(SurveyForm):
     action_slugs = (a.slug for a in Action.objects.all())
+
     
 class VolunteerInterestForm(SurveyForm):
     action_slugs = ("eliminate-standby-vampire-power", "programmable-thermostat")

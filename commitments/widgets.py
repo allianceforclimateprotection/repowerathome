@@ -174,20 +174,4 @@ class SelectTimeWidget(Widget):
             return '%0.2d:%0.2d:%0.2d' % (int(h), int(m), int(s))
         except ValueError:
             return super(SelectTimeWidget, self).value_from_datadict(data, files, name)
-            
-class RadioInputForTable(RadioInput):
-    def __unicode__(self):
-        return self.tag()
-
-class RadioRendererForTable(RadioFieldRenderer):
-    def __iter__(self):
-        for i, choice in enumerate(self.choices):
-            yield RadioInputForTable(self.name, self.value, self.attrs.copy(), choice, i)
-
-    def __getitem__(self, idx):
-        choice = self.choices[idx] # Let the IndexError propogate
-        return RadioInputForTable(self.name, self.value, self.attrs.copy(), choice, idx)
-
-    def render(self):
-        """Outputs a <ul> for this set of radio fields."""
-        return mark_safe(u''.join([u'<td>%s</td>'% force_unicode(w) for w in self]))
+    

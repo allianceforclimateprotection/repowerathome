@@ -20,7 +20,7 @@ from messaging.models import Stream
 from commitments.models import Survey, Commitment, Contributor
 
 from models import EventType, Event, Guest, rsvp_recieved
-from widgets import SelectTimeWidget, RadioRendererForTable
+from widgets import SelectTimeWidget
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID",
     "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND",

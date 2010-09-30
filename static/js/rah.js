@@ -958,6 +958,19 @@ var rah = {
         }
     },
     
+    page_commitments_card: {
+        init: function() {
+            // Make sure only one box is checked
+            $(".commit_card_choice input").live("click", function(){
+                var id = $(this).attr("id");
+                var index = id.substr(-1);
+                var other_index = (index == "1") ? "0" : "1";
+                var field_name = id.substr(0, id.length-1);
+                $("#" + field_name + other_index).attr("checked", false);
+            });
+        }
+    },
+    
     page_event_commitments: {
         init: function() {
             rah.mod_event_tabs.init(2);
