@@ -11,7 +11,7 @@ from django.contrib.comments.views import comments
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail, EmailMessage
 from django.core.cache import cache
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader, Context
@@ -29,7 +29,7 @@ from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
-from commitments.models import Contributor, Commitment
+from commitments.models import Contributor, Commitment, Survey
 from events.models import Event, Guest
 from messaging.models import Stream
 from messaging.forms import StreamNotificationsForm
@@ -334,6 +334,22 @@ def house_party(request):
                 Record.objects.create_record(request.user, 'mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
     return redirect('event-show')
+    
+def vampire_hunt(request):
+    survey = Survey.objects.get(name="Energy Meeting Commitment Card Version 2")
+    individual_leaders = cache.get('individual_leaders')
+    if not individual_leaders:
+        individual_leaders = User.objects.filter(is_staff=False,
+            contributorsurvey__survey=survey).annotate(
+            contributions=Count("contributorsurvey")).order_by("-contributions")[:5]
+        cache.set('individual_leaders', individual_leaders, 60 * 5)
+    team_leaders = cache.get('team_leaders')
+    if not team_leaders:
+        team_leaders = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
+            groupusers__user__contributorsurvey__survey=survey).annotate(
+            contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
+        cache.set('team_leaders', team_leaders, 60 * 5)
+    return render_to_response('rah/vampire_hunt.html', locals(), context_instance=RequestContext(request))
 
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))

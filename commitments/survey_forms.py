@@ -10,15 +10,21 @@ from messaging.models import Stream
 from models import Survey, Commitment, ContributorSurvey
 
 class ActionChoiceField(forms.ChoiceField):
+    CHOICES = (
+        ("D", "I've done this"),
+        ("C", "I commit to do this"),
+    )
+    
     def __init__(self, action, *args, **kwargs):
         super(ActionChoiceField, self).__init__(*args, **kwargs)
         self.action = action
+
+    def to_python(self, value):
+        if value and isinstance(value, (list, tuple)):
+            return value[0]
+        return value
         
 class SurveyForm(forms.ModelForm):
-    CHOICES = (
-        ("D", ""),
-        ("C", ""),
-    )
     action_slugs = ()
     
     class Meta:
@@ -38,7 +44,7 @@ class SurveyForm(forms.ModelForm):
         for slug in self.action_slugs:
             action = Action.objects.get(slug=slug)
             self.fields[action.slug.replace('-', '_')] = ActionChoiceField(action=action,
-                choices=SurveyForm.CHOICES, widget=forms.CheckboxSelectMultiple,
+                choices=ActionChoiceField.CHOICES, widget=forms.CheckboxSelectMultiple,
                 required=False, label=action.name)
     
     def save(self, *args, **kwargs):
@@ -81,7 +87,6 @@ class ApartmentEnergyMeetingCommitmentCardVersion2(ApartmentEnergyMeetingCommitm
 
 class PilotEnergyMeetingCommitmentCard(SurveyForm):
     action_slugs = (a.slug for a in Action.objects.all())
-
     
 class VolunteerInterestForm(SurveyForm):
     action_slugs = ("eliminate-standby-vampire-power", "programmable-thermostat")
