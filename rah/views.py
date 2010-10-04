@@ -24,7 +24,7 @@ from tagging.models import Tag
 from actions.models import Action, UserActionProgress
 from rah.models import Profile
 from records.models import Record
-from rah.forms import RegistrationForm, AuthenticationForm, HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm
+from rah.forms import RegistrationForm, RegistrationProfileForm, AuthenticationForm, HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm
 from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
@@ -121,43 +121,33 @@ def password_reset_complete(request):
 @csrf_protect
 def register(request, template_name="registration/register.html"):
     redirect_to = request.REQUEST.get(REDIRECT_FIELD_NAME, '')
-    
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            new_user = form.save()
-            user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
-            logged_in.send(sender=None, request=request, user=user, is_new_user=True)
-            auth.login(request, user)
-            save_queued_POST(request)
-            
-            # Add the location to profile if the user registered with one
-            if "location" in form.cleaned_data:
-                profile = user.get_profile()
-                profile.location = form.cleaned_data["location"]
-                profile.save()
-            
-            # Light security check -- make sure redirect_to isn't garbage.
-            if not redirect_to or ' ' in redirect_to:
-                redirect_to = settings.LOGIN_REDIRECT_URL
-            
-            # Heavier security check -- redirects to http://example.com should 
-            # not be allowed, but things like /view/?param=http://example.com 
-            # should be allowed. This regex checks if there is a '//' *before* a
-            # question mark.
-            elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
-                redirect_to = settings.LOGIN_REDIRECT_URL
-                    
-            return HttpResponseRedirect(redirect_to)
-    else:
-        if "email" in request.GET:
-            form = RegistrationForm(initial={"email": request.GET["email"]})
-        else:
-            form = RegistrationForm()
+    initial = {"email": request.GET["email"]} if "email" in request.GET else None
+    user_form = RegistrationForm(initial=initial, data=(request.POST or None))
+    profile_form = RegistrationProfileForm(request.POST or None)
+    if user_form.is_valid() and profile_form.is_valid():
+        new_user = user_form.save()
+        RegistrationProfileForm(instance=new_user.get_profile(), data=request.POST).save()
+        user = auth.authenticate(username=user_form.cleaned_data["email"], password=user_form.cleaned_data["password1"])
+        logged_in.send(sender=None, request=request, user=user, is_new_user=True)
+        auth.login(request, user)
+        save_queued_POST(request)
+        
+        # Light security check -- make sure redirect_to isn't garbage.
+        if not redirect_to or ' ' in redirect_to:
+            redirect_to = settings.LOGIN_REDIRECT_URL
+        
+        # Heavier security check -- redirects to http://example.com should 
+        # not be allowed, but things like /view/?param=http://example.com 
+        # should be allowed. This regex checks if there is a '//' *before* a
+        # question mark.
+        elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
+            redirect_to = settings.LOGIN_REDIRECT_URL
+                
+        return HttpResponseRedirect(redirect_to)
     return render_to_response(template_name, {
-        'register_form': form,
+        'user_form': user_form,
+        'profile_form': profile_form,
         REDIRECT_FIELD_NAME: redirect_to,
-        'login_form': AuthenticationForm()
     }, context_instance=RequestContext(request))
 
 @csrf_exempt

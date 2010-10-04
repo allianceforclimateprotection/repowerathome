@@ -18,22 +18,19 @@
                 </p>
                 <p>
                     <b>
-                        Join the Challenge using the form to the right so we can count your
+                        Join the Challenge using the form to the right or the Facebook button below so we can count your
                         savings toward our goal.
                     </b>
                 </p>
-            </div>
-            <div id="registration_right_col">
                 <p>
                     <div class="fb_button" id="fb-login">
-                        <a href="#" class="fb_button fb_button_medium center" style="width:283px; font-size:12px;">
+                        <a href="#" class="fb_button fb_button_medium">
                             <span id="fb_login_text" class="fb_button_text">Join with Facebook</span>
                         </a>
                     </div>
                 </p>
-                <p class="center smaller">
-                    &mdash; <i><b>or</b> create an account below</i> &mdash;
-                </p>
+            </div>
+            <div id="registration_right_col">
                 <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
                     <div class="form_row overset form_row_float form_row_float_left_field">
                         <label for="id_first_name">First name</label>
@@ -65,6 +62,10 @@
                         <input id="id_zipcode" type="text" name="zipcode" maxlength="10" />
                         {# <div class="help_text"></div> #}
                     </div>
+                    <div class="form_row overset ">
+                        {{ profile_form.building_type.label_tag }}
+                        {{ profile_form.building_type }}
+                    </div>
                     <p>
                         <input type="submit" value="Join" id="register_submit" style="font-size:18px;"/>
                         <span class="smaller">
@@ -92,7 +93,7 @@ if(typeof(_gat)!='object')document.write('<sc'+'ript src="http'+
 <script type="text/javascript">
 try {
 var gwoTracker=_gat._getTracker("UA-11623269-2");
-gwoTracker._trackPageview("/1500145245/test");
+gwoTracker._trackPageview("/2042308889/test");
 }catch(err){}</script>
 <!-- End of Google Website Optimizer Tracking Script -->
 {% endblock %}
