@@ -18,7 +18,6 @@ from settings import GA_TRACK_PAGEVIEW
 from models import Action, UserActionProgress, ActionForm, ActionFormData
 from forms import ActionCommitForm
 
-
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
     if tag_slug:

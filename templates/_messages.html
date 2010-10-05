@@ -4,8 +4,7 @@
             <li class="messages {{ message.tags }}">
                 {% if "ga_track_pageview" in message.tags %}
                     <script type="text/javascript">_gaq.push(['_trackPageview', '{{ message }}']);</script>
-                    
-                {% else %}
+                {% else %}  
                     {% if "ga_track_conversion" in message.tags %}
                         <!-- Google Code for Repower at Home Sign Up Conversion Page (grant account)-->
                         <script type="text/javascript">
@@ -25,7 +24,7 @@
                                     src="http://www.googleadservices.com/pagead/conversion/1055391835/?label=LZ1HCMXv7QEQ24Cg9wM&amp;guid=ON&amp;script=0"/>
                             </div>
                         </noscript>
-
+                    
                         <!-- Google Code for Repower at Home Sign Up Conversion Page (paid account)-->
                         <script type="text/javascript">
                             /* <![CDATA[ */
@@ -44,7 +43,6 @@
                                     src="http://www.googleadservices.com/pagead/conversion/1019290765/?label=Ow0dCLvK9gEQjcmE5gM&amp;guid=ON&amp;script=0"/>
                             </div>
                         </noscript>
-                        
                         <!-- Google Website Optimizer Conversion Script -->
                         <script type="text/javascript">
                         if(typeof(_gat)!='object')document.write('<sc'+'ript src="http'+
@@ -53,7 +51,7 @@
                         <script type="text/javascript">
                         try {
                         var gwoTracker=_gat._getTracker("UA-11623269-2");
-                        gwoTracker._trackPageview("/1500145245/goal");
+                        gwoTracker._trackPageview("/2042308889/goal");
                         }catch(err){}</script>
                         <!-- End of Google Website Optimizer Conversion Script -->
                         {% if user.get_profile.facebook_connect_only %}
@@ -61,7 +59,6 @@
                         {% else %}
                             <script type="text/javascript">_gaq.push(['_trackPageview', '/register/account']);</script>
                         {% endif %}
-                        
                     {% else %}
                         {{ message|safe }} <a href="#" class="dismiss">close</a>
                     {% endif %}

@@ -6,7 +6,7 @@
         <div class="box_three_top"></div>
         <div class="box_three_middle">
             <div id="registration_left_col">
-                <h1>Join the Challenge!</h1>
+                <h1>Join the Challenge</h1>
                 <p>
                     <object width="360" height="227"><param name="movie" value="https://repowerathome.com/youtube/v/kPm9wMhIcJs&amp;hl=en_US&amp;fs=1?rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="https://repowerathome.com/youtube/v/kPm9wMhIcJs&amp;hl=en_US&amp;fs=1?rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="360" height="227"></embed></object>
                 </p>
@@ -62,6 +62,10 @@
                         <input id="id_zipcode" type="text" name="zipcode" maxlength="10" />
                         {# <div class="help_text"></div> #}
                     </div>
+                    <div class="form_row overset ">
+                        {{ profile_form.building_type.label_tag }}
+                        {{ profile_form.building_type }}
+                    </div>
                     <p>
                         <input type="submit" value="Join" id="register_submit" style="font-size:18px;"/>
                         <span class="smaller">
@@ -89,7 +93,7 @@ if(typeof(_gat)!='object')document.write('<sc'+'ript src="http'+
 <script type="text/javascript">
 try {
 var gwoTracker=_gat._getTracker("UA-11623269-2");
-gwoTracker._trackPageview("/1500145245/test");
+gwoTracker._trackPageview("/2042308889/test");
 }catch(err){}</script>
 <!-- End of Google Website Optimizer Tracking Script -->
 {% endblock %}

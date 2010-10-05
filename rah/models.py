@@ -129,8 +129,10 @@ class Profile(models.Model):
     """Profile"""
     # OPTIMIZE these choices can be tied to an IntegerField if the value is an integer: (1, 'Apartment'),
     BUILDING_CHOICES = (
+        ('S', 'House'),
         ('A', 'Apartment'),
-        ('S', 'Single Family Home'),
+        ('C', 'Condo'),
+        ('O', 'Other'),
     )
 
     user = models.ForeignKey(User, unique=True)
