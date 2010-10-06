@@ -1,23 +1,96 @@
 {% extends "rah/base.html" %}
 
 {% block right_content %}
-    <div class="grid_6 alpha omega">
+    <div class="grid_6 alpha">
         <div class="box_two_top"></div>
         <div class="box_two_middle">
-            <h1>Vampire Hunt</h1>
-            <h3>Individual Leader Board</h3>
+            <h1>The Vampire Hunt</h1>
+            <p>
+                There are vampires in your home right now -- energy vampires. Every
+                day, these vampires suck energy and money away from your home. With
+                Halloween just around the corner, time is running out to fight back
+                against vampire power. Join the vampire hunt and become a vampire slayer.
+            </p>
+            <h3>What is vampire power?</h3>
+            <p>
+                Your electronics use energy even when they're switched "off" to power
+                things like sensors and lights. In fact, <strong>the average electronic consumes
+                most of its energy when you're not even using it</strong>. Every month,
+                you spend about 10% of your electricity bill feeding these vampires.
+            </p>
+            <h3>Become a vampire slayer</h3>
+            <p>Your first challenge is to free your own home from the grips of vampire power</p>
+            <p style="text-align: center;">
+                <a class="button" href="{% url action_detail 'eliminate-standby-vampire-power' %}">Start slaying</a>
+            </p>
+            <h3>Free your community</h3>
+            <p>
+                Your home may be vampire-free, but what about your friends? Only you can save
+                them from the vampires! Recruit them to slay their vampires and watch your 
+                standing rise on our leader board. The more people you inspire to take action, 
+                the higher your standing in the slayer community. Will you be the top recruiter
+                on Halloween night?
+            </p>
+            <p>
+                <a href='{% url invite-invite %}' class='invite_friend_link button'>Invite via email</a>
+                <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com%2Fvampire_hunt%2F&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
+                <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+            </p>
+            <h3>Take it to the streets</h3>
+            <p>
+                Online recruitment is just the beginning. You can also gather commitments to
+                slay vampires face-to-face. We'll give you a set of materials that will turn
+                and Joe Schmoe into a vampire-slaying machine.<br/>
+                <a href="#">Download recruitment materials</a>
+            </p>
+            <p>
+                Did you gather some commitments offline? Nice work! Report your progress now.
+                We'll give you credit for recruiting these slayers.<br/>
+                <a href="#">Report your progress</a>
+        </div>
+        <div class="box_two_bottom"></div>
+    </div>
+    
+    <div class="grid_3 omega">
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+            <strong>{{ slayers }}</strong> slayers have stopped vampire power in their homes
+        </div>
+        <div class="box_one_bottom"></div>
+        {% if user.is_authenticated %}
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                <h3>Your progress</h3>
+                <p>
+                    You've recruited {{ my_contributors }} slayers.
+                    {% if my_contributors %}
+                        You're ranked Xth on the leader board.
+                    {% endif %}
+                </p>
+            </div>
+            <div class="box_one_bottom"></div>
+        {% endif %}
+        
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+            <h3>Top recruiters</h3>
             <ol>
                 {% for leader in individual_leaders %}
-                    <li>{{ leader.contributions }} : {% safe_user_link leader %}</li>
-                {% endfor %}
-            </ol>
-            <h3>Team Leader Board</h3>
-            <ol>
-                {% for leader in team_leaders %}
-                    <li>{{ leader.contributions }} : <a href="{{ leader.get_absolute_url }}">{{ leader }}</a></li>
+                    <li>{% safe_user_link leader %}: {{ leader.contributions }} slayers</li>
                 {% endfor %}
             </ol>
         </div>
-        <div class="box_two_bottom"></div>
+        <div class="box_one_bottom"></div>
+        
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+            <h3>Top team recruiters</h3>
+            <ol>
+                {% for leader in team_leaders %}
+                    <li><a href="{{ leader.get_absolute_url }}">{{ leader }}</a>: {{ leader.contributions }} slayers</li>
+                {% endfor %}
+            </ol>
+        </div>
+        <div class="box_one_bottom"></div>
     </div>
 {% endblock %}

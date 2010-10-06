@@ -327,19 +327,22 @@ def house_party(request):
     return redirect('event-show')
     
 def vampire_hunt(request):
-    survey = Survey.objects.get(name="Energy Meeting Commitment Card Version 2")
-    individual_leaders = cache.get('individual_leaders')
-    if not individual_leaders:
+    stats = cache.get('vampire_hunt_stats')
+    if not stats:
+        survey = Survey.objects.get(name="Energy Meeting Commitment Card Version 2")
         individual_leaders = User.objects.filter(is_staff=False,
             contributorsurvey__survey=survey).annotate(
             contributions=Count("contributorsurvey")).order_by("-contributions")[:5]
-        cache.set('individual_leaders', individual_leaders, 60 * 5)
-    team_leaders = cache.get('team_leaders')
-    if not team_leaders:
         team_leaders = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
             groupusers__user__contributorsurvey__survey=survey).annotate(
             contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
-        cache.set('team_leaders', team_leaders, 60 * 5)
+        slayers = User.objects.filter(useractionprogress__action__name="Eliminate vampire power").count()
+        cache.set('vampire_hunt_stats', {"individual_leaders": individual_leaders, 
+            "team_leaders": team_leaders, "slayers": slayers}, 60 * 5)
+    else:
+        locals().update(stats)
+    if request.user.is_authenticated():
+        my_contributors = Contributor.objects.filter(contributorsurvey__entered_by=request.user).count()
     return render_to_response('rah/vampire_hunt.html', locals(), context_instance=RequestContext(request))
 
 def search(request):
