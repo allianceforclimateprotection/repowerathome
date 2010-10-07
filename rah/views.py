@@ -336,7 +336,8 @@ def vampire_hunt(request):
         team_leaders = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
             groupusers__user__contributorsurvey__contributor__commitment__action=vampire_action).annotate(
             contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
-        slayers = User.objects.filter(useractionprogress__action__name="Eliminate vampire power").count()
+        slayers = (User.objects.filter(useractionprogress__action=vampire_action, useractionprogress__is_completed=True).count() or 0) + \
+            (Contributor.objects.filter(commitment__action=vampire_action, commitment__answer='D', user__isnull=True).distinct().count() or 0)
         cache.set('vampire_hunt_stats', {"individual_leaders": individual_leaders, 
             "team_leaders": team_leaders, "slayers": slayers}, 60 * 5)
     else:
