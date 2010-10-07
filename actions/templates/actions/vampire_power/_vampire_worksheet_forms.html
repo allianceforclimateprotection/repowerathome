@@ -3,17 +3,22 @@
 
 <div class="box_two_top"></div>
 <div class="box_two_middle">
-    
 
 <div id="vampire_worksheet">
     <ul id="vampire_worksheet_wizard_nav">
         <li class="hidden"><a id="t0" href="#get_started"></a></li>
-        <li><a id="t1" href="#directions">Guide</a></li>
-        {% for field in vampire_worksheet_form %}
-            <li><a id="t{{ forloop.counter|add:"1" }}" href="#{{ field.name }}">{{ forloop.counter }}</a></li>
+        <li><a id="t1" href="#directions">1</a></li>
+        <li><a id="t2" href="#home_office">2</a></li>
+        {% for field in vampire_worksheet_form.home_office_fields %}
+            <li><a id="t{{ forloop.counter|add:"2" }}" href="#{{ field.name }}">{{ forloop.counter|add:"2" }}</a></li>
         {% endfor %}
-        <li><a id="t8" href="#plan">Plan</a></li>
+        <li><a id="t2" href="#home_entertainment">6</a></li>
+        {% for field in vampire_worksheet_form.home_entertainment_fields %}
+            <li><a id="t{{ forloop.counter|add:"6" }}" href="#{{ field.name }}">{{ forloop.counter|add:"6" }}</a></li>
+        {% endfor %}
+        <li><a id="t11" href="#plan">11</a></li>
     </ul>
+    <br/>
     <div id="vampire_worksheet_wizard">
         <ul class="items">
             <li class="worksheet">
@@ -22,7 +27,18 @@
             <li id="vampire_directions" class="worksheet">
                 {% include "actions/vampire_power/_directions.html" %}
             </li>
-            {% for field in vampire_worksheet_form %}
+            <li class="worksheet">
+                {% include "actions/vampire_power/_home_office.html" %}
+            </li>
+            {% for field in vampire_worksheet_form.home_office_fields %}
+                <li class="worksheet">
+                    {% include "actions/vampire_power/_device.html" %}
+                </li>
+            {% endfor %}
+            <li class="worksheet">
+                {% include "actions/vampire_power/_home_entertainment.html" %}
+            </li>
+            {% for field in vampire_worksheet_form.home_entertainment_fields %}
                 <li class="worksheet">
                     {% include "actions/vampire_power/_device.html" %}
                 </li>

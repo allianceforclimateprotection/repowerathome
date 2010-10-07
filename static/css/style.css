@@ -510,7 +510,7 @@ ul#vampire_worksheet_wizard_nav {
 #vampire_worksheet_wizard .vampire_savings {  font-weight: bold; }
 #vampire_worksheet_wizard .buttonset { margin-left: 0px; padding-bottom: 0px; padding-left: 0px; }
 #vampire_worksheet_wizard .device_button { list-style: none; font-size: 12px; float: left; }
-#vampire_worksheet_wizard .buttonset .ui-button-text { height: 57px; width: 76px; display: table-cell; vertical-align: middle; }
+#vampire_worksheet_wizard .buttonset .ui-button-text { height: 35px; width: 76px; display: table-cell; vertical-align: middle; }
 #vampire_worksheet_wizard .slayer_help_wrapper { font-weight: bold; text-align: center; }
 #vampire_worksheet_wizard .slayer_recommended { font-weight: bold; color: #92C139; text-align: center; }
 #vampire_plan .col-1 { width: 150px; }

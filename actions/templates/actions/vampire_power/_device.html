@@ -8,7 +8,7 @@
 <br class="clear" />
 <form method="post" action="{% url save_action_form action.slug 'VampirePowerWorksheetForm' %}">
     <div>
-        <b>Select an option to slay this vampire:</b>
+        <b>Do you have this?</b>
     </div>
     <ul class="buttonset">
         {% for id, label, help in field.field.choices %}
@@ -17,6 +17,7 @@
                     name="{{ field.name }}" id="id_{{ field.name }}{{ forloop.counter0 }}"
                     {% if id == field.data %}checked="checked"{% endif %} />
                 <label for="id_{{ field.name }}{{ forloop.counter0 }}">{{ label }}</label>
+                
                 {% if help %}
                     <div class="slayer_help_wrapper">
                         <a class="slayer_help tooltip" href="{{ help }}">Learn More</a>
@@ -28,4 +29,5 @@
             </li>
         {% endfor %}
     </ul>
+    <input type="hidden" class="device_label" value="{{ field.label }}"></input>
 </form>

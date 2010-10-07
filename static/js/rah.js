@@ -23,7 +23,8 @@ var rah = {
     base: {
         init: function(){
             // Setup TypeKit for non IE browsers
-            if (!$.browser.msie) {
+            var browser = $.browser;
+            if (!browser.msie && !(browser.mozilla && browser.version.substr(0,5)=="1.9.0")) {
                 WebFont.load({typekit: {id: 'vbg1eri'}});
             }
             
@@ -378,18 +379,20 @@ var rah = {
                         url: form.attr("action"),
                         type: form.attr("method"),
                         data: form.serialize(),
-                        success: function(data) {
-                            $("#vampire_savings_total").text(data["total_savings"]);
-                        },
+                        success: function(data) {},
                         error: function() {},
                         dataType: "json"
                     });
                     
                     /* set the slay method in the plan sheet */
                     var input_selected = $(this);
-                    var plan_value = $("." + input_selected.attr("name") + " .slay_method");
-                    plan_value.text(input_selected.parent().find("label").text());
-                    $("." + input_selected.attr("name") + " .slay_link").show();
+                    var device = input_selected.parents("form").find(".device_label").val();
+                    if(input_selected.val()=="y") {
+                        $("#my_vampire_list").append("<li>" + device + "</li>");
+                    } else{
+                        $("#my_vampire_list li:contains('" + device + "')").remove();
+                    }
+                    $("#my_vampire_count").text($("#my_vampire_list li").length);
                     
                     /* skip to the next incomplete worksheet */
                     var worksheet = input_selected.parents(".worksheet");

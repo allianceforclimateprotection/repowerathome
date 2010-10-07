@@ -161,6 +161,7 @@ def _build_action_form_vars(action, user):
     
     forms = {}
     for form in action.action_forms_with_data(user):
-        data = json.loads(form.data) if form.data else None
-        forms[form.var_name] = getattr(action_forms, form.form_name)(data=data)
+        if hasattr(action_forms, form.form_name):
+            data = json.loads(form.data) if form.data else None
+            forms[form.var_name] = getattr(action_forms, form.form_name)(data=data)
     return forms

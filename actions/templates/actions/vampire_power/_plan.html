@@ -1,42 +1,17 @@
-<h3>My plan of attack</h3>
-{# <p> #}
-{#     Total plan savings: #}
-{#     $<span id="vampire_savings_total">{{ vampire_worksheet_form.total_savings }}</span> annually #}
-{# </p> #}
-<br/>
-<table id="vampire_plan">
-    <thead>
-        <tr>
-            <th class="top-left col-1">Device</th>
-            <th class="top-right">Slay Method</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for field in vampire_worksheet_form %}
-            <tr class="{{ field.name }}">
-                <td class="col-1 {% if forloop.last %}bottom-left{% endif %}">{{ field.label }}</td>
-                <td {% if forloop.last %}class="bottom-right"{% endif %}>
-                    {% if field.data %}
-                        <span class="slay_method">
-                            {% for value, label in field.field.choices %}
-                                {% if value == field.data %}{{ label }}{% endif %}
-                            {% endfor %}
-                        </span>
-                        <span class="slay_link">
-                            (<a href="#{{ field.name }}">change</a>)
-                        </span>
-                    {% else %}
-                        <span class="slay_method">
-                            <span class="slay_link"><a href="#{{ field.name }}">Slay me</a></span>
-                        </span>
-                        <span class="slay_link" style="display: none;">
-                            (<a href="#{{ field.name }}">change</a>)
-                        </span>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<br/>
+<h2>
+    You have <span id="my_vampire_count">{{ vampire_worksheet_form.my_vampires|length }}</span> 
+    powerful vampires<br/> in your home
+</h2>
+
+<ul id="my_vampire_list">
+    {% for field in vampire_worksheet_form.my_vampires %}
+        <li>{{ field.name }}</li>
+    {% endfor %}
+</ul>
+
+<p>
+    Slay these vampires by unplugging them or using a smart power strip. <a href="">Learn 
+    more about how to slay vampires</a>.
+</p>
+
 {% action_form "I completed my plan!" "Commit to my plan" %}
