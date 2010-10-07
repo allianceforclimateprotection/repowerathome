@@ -66,6 +66,7 @@ urlpatterns = patterns('rah.views',
     url(r'^user/ga-opt-out/$', 'ga_opt_out', name='ga_opt_out'),
     url(r'user/(?P<user_id>\d+)/feed/$', UserActivityFeed(), name='user_activity_feed'),
     url(r'vampire_hunt/', 'vampire_hunt', name='vampire_hunt'),
+    url(r'trendsetter_sticker/', 'trendsetter_sticker', name='trendsetter_sticker'),
 )
 
 urlpatterns += patterns('',

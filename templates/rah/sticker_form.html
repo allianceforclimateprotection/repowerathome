@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Get your free vampire sticker{% endblock %}
+{% block right_content %}
+    <div class="grid_6 alpha">
+        <div class="box_two_top"></div>
+        <div class="box_two_middle">
+            <h1>Apply for a free sticker</h1>
+            <form id="sticker_form" action="" method="post">
+                {% for error in form.non_field_errors %}
+                    <div class="overset_form_message error">{{ error }}</div>
+                {% endfor %}
+                {% for field in form.visible_fields %}
+                    <div class="form_row {% if field.errors %}error{% endif %}{% if 'TextInput' in field.field.widget|pprint or 'Textarea' in field.field.widget|pprint %} overset{% endif %}">
+                        {% if "CheckboxInput" in field.field.widget|pprint %}
+                            {{ field }}{{ field.label_tag }}
+                        {% else %}
+                            {{ field.label_tag }}{{ field }}
+                        {% endif %}
+                        <span class="help_text">{{ field.help_text }}</span>
+                        {% for error in field.errors %}
+                            <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <div class="hidden">
+                    {% for field in form.hidden_fields %}
+                        {{ field }}
+                    {% endfor %}
+                </div>
+                {% csrf_token %}
+                <input type="submit" value="Apply" />
+            </form>
+        </div>
+        <div class="box_two_bottom"></div>
+    </div>
+{% endblock %}

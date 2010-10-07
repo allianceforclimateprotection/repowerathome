@@ -22,10 +22,10 @@ from django.views.decorators.cache import cache_page
 from basic.blog.models import Post
 from tagging.models import Tag
 from actions.models import Action, UserActionProgress
-from rah.models import Profile
+from rah.models import Profile, StickerRecipient
 from records.models import Record
 from rah.forms import RegistrationForm, RegistrationProfileForm, AuthenticationForm, \
-    HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm
+    HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm, StickerRecipientForm
 from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
@@ -345,6 +345,22 @@ def vampire_hunt(request):
     if request.user.is_authenticated():
         my_contributors = Contributor.objects.filter(contributorsurvey__entered_by=request.user).count()
     return render_to_response('rah/vampire_hunt.html', locals(), context_instance=RequestContext(request))
+    
+def trendsetter_sticker(request):
+    if request.user.is_authenticated():
+        instance = StickerRecipient(first_name=request.user.first_name, 
+            last_name=request.user.last_name, email=request.user.email)
+    else:
+        instance = StickerRecipient(**dict(request.GET.items()))
+    form = StickerRecipientForm(instance=instance, data=(request.POST or None))
+    if form.is_valid():
+        recipient = form.save()
+        if recipient.user:
+            messages.add_message(request, messages.SUCCESS, "Thanks for requesting a sticker, you should recieve it in a few weeks")
+        else:
+            messages.add_message(request, messages.SUCCESS, "Your sticker will arrive shortly, in the mean time have you considered registering")
+        return redirect('index')
+    return render_to_response('rah/sticker_form.html', locals(), context_instance=RequestContext(request))
 
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))

@@ -6,6 +6,7 @@ import re
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.localflavor.us.models import USStateField
 
 from geo.models import Location
 from records.models import Record
@@ -202,6 +203,19 @@ class Profile(models.Model):
     def _commitment_due_on(self, due_date):
         return UserActionProgress.objects.pending_commitments(user=self.user).filter(
             date_committed=due_date).order_by("-date_committed")
+            
+class StickerRecipient(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    email = models.EmailField()
+    address = models.CharField(max_length=100)
+    city = models.CharField(max_length=50)
+    state = USStateField()
+    zipcode = models.CharField(max_length=10)
+    user = models.ForeignKey("auth.user", blank=True, null=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
 
 """
 SIGNALS!
@@ -210,3 +224,10 @@ def user_post_save(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 models.signals.post_save.connect(user_post_save, sender=User)
+
+def sticker_recipient_link_user(sender, instance, **kwargs):
+    try:
+        instance.user = User.objects.get(email=instance.email)
+    except:
+        pass
+models.signals.pre_save.connect(sticker_recipient_link_user, sender=StickerRecipient)

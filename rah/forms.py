@@ -12,7 +12,7 @@ from django.core.urlresolvers import resolve, Resolver404
 from django.forms.widgets import CheckboxSelectMultiple
 from django.template import Context, loader
 
-from rah.models import Profile, Feedback
+from rah.models import Profile, Feedback, StickerRecipient
 from geo.models import Location
 
 from fields import Honeypot
@@ -34,7 +34,7 @@ class RegistrationForm(forms.ModelForm):
     def clean(self):
         self.instance.username = hashlib.md5(self.cleaned_data.get("email", "")).hexdigest()[:30] 
         self.instance.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
-        super(RegistrationForm, self).clean()        
+        super(RegistrationForm, self).clean()
         return self.cleaned_data
 
     def clean_email(self):
@@ -247,4 +247,10 @@ class GroupNotificationsForm(forms.Form):
                 DiscussionBlacklist.objects.create(user=self.user, group=group)
             if group in notifications and group.pk not in self.not_blacklisted:
                 DiscussionBlacklist.objects.get(user=self.user, group=group).delete()
-        
+                
+class StickerRecipientForm(forms.ModelForm):
+    honeypot = Honeypot()
+    
+    class Meta:
+        model = StickerRecipient
+        exclude = ("user",)
