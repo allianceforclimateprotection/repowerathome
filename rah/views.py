@@ -329,12 +329,12 @@ def house_party(request):
 def vampire_hunt(request):
     stats = cache.get('vampire_hunt_stats')
     if not stats:
-        survey = Survey.objects.get(name="Energy Meeting Commitment Card Version 2")
+        vampire_action = Action.objects.get(name="Eliminate vampire power")
         individual_leaders = User.objects.filter(is_staff=False,
-            contributorsurvey__survey=survey).annotate(
+            contributorsurvey__contributor__commitment__action=vampire_action).annotate(
             contributions=Count("contributorsurvey")).order_by("-contributions")[:5]
         team_leaders = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
-            groupusers__user__contributorsurvey__survey=survey).annotate(
+            groupusers__user__contributorsurvey__contributor__commitment__action=vampire_action).annotate(
             contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
         slayers = User.objects.filter(useractionprogress__action__name="Eliminate vampire power").count()
         cache.set('vampire_hunt_stats', {"individual_leaders": individual_leaders, 
