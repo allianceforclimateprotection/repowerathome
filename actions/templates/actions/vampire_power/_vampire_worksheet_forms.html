@@ -27,7 +27,7 @@
             <li id="vampire_directions" class="worksheet">
                 {% include "actions/vampire_power/_directions.html" %}
             </li>
-            <li class="worksheet">
+            <li class="worksheet transition_slide">
                 {% include "actions/vampire_power/_home_office.html" %}
             </li>
             {% for field in vampire_worksheet_form.home_office_fields %}
@@ -35,7 +35,7 @@
                     {% include "actions/vampire_power/_device.html" %}
                 </li>
             {% endfor %}
-            <li class="worksheet">
+            <li class="worksheet transition_slide">
                 {% include "actions/vampire_power/_home_entertainment.html" %}
             </li>
             {% for field in vampire_worksheet_form.home_entertainment_fields %}
