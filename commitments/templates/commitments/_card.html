@@ -62,9 +62,9 @@
     </table>
     <br/>
     <br/>
-    <div>
-        <input type="submit" value="Save and add another" />
-        <input type="submit" value="Save and close" />
-    </div>
+    <p class="right">
+        <button type="submit" value="save_and_close" name="submit">Save and close</button>
+        <button type="submit" value="save_and_add_another" name="submit">Save and add another</button>
+    </p>
     {% csrf_token %}
 </form>
