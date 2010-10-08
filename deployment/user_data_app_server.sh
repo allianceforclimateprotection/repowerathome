@@ -30,6 +30,10 @@ chmod 400 /home/ubuntu/.ssh/deploy.pem
 chmod 400 /home/ubuntu/.ssh/deploy-pk.pem
 chown -R ubuntu:ubuntu /home/ubuntu/
 
+# Run updates
+sudo aptitude update
+sudo aptitude safe-upgrade -y
+
 # Run to undo
 # sudo rm -f /home/ubuntu/.bashrc 
 # sudo rm -f /home/ubuntu/.ssh/config 

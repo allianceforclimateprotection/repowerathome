@@ -2,6 +2,8 @@
 
 set -e -x
 export DEBIAN_FRONTEND=noninteractive
+export LANG='en_US.UTF-8'
+export LC_ALL='en_US.UTF-8'
 
 # Copy nginx sites over
 cp /udata/etc/nginx/sites-available/* /etc/nginx/sites-available/
@@ -31,6 +33,10 @@ chmod 644 /home/ubuntu/.ssh/config
 chmod 400 /home/ubuntu/.ssh/deploy.pem
 chmod 400 /home/ubuntu/.ssh/deploy-pk.pem
 chown -R ubuntu:ubuntu /home/ubuntu/
+
+# Run updates
+sudo aptitude update
+sudo aptitude safe-upgrade -y
 
 # Use this command to undo it all before making an AMI
 # sudo rm -f /etc/ssl/repowerathome.key 

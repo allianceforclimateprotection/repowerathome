@@ -18,7 +18,7 @@ class CloudMaker(object):
             },
             "app_servers": {
                 "ami": "ami-ba54bed3",
-                "instance_type": "c1.medium",
+                "instance_type": "m1.small",
                 "user_data_script": "user_data_app_server.sh",
                 "number": 1,
                 "twit_key": "bfFELg3eHpBpku4NeGik4A",
