@@ -594,9 +594,12 @@ ul.plain_list {margin-left: 0px; padding-left: 0px; list-style: none;}
 .selector { font-size: 12px; }
 #team_selectors { margin-left: 15px; }
 #vampire_hunt_directions ol { margin-left: 20px; }
-#vampire_hunt_directions li { list-style: decimal; margin-bottom: 5px; }
-#vampire_hunt_shart_list li.social_button { width: 54px; padding: 0 38px; }
+#vampire_hunt_directions li { margin-bottom: 5px; list-style: decimal; }
+#vampire_hunt_directions li li { list-style: disc; margin-bottom: 0; }
+#vampire_hunt_share_list { margin: 0; }
 #vampire_hunt_share_list li { float: left; text-align: center; width: 130px; }
+#vampire_hunt_share_list li.social_button { width: 54px; padding: 0 38px; }
+#vampire_hunt_share_list .ui-button-text { height: 50px; display: table-cell; vertical-align: middle; }
 
 
 /* ---------------------------------------------------------------------------------------------------------------------
