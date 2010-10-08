@@ -1,9 +1,11 @@
 import base64
 import re
+import sys
 import urllib2
 
 from fabric.api import *
 from fabric.contrib.console import confirm
+from fabric.colors import green, red
 
 env.user = "ubuntu"
 env.disable_known_hosts = True
@@ -17,7 +19,6 @@ env.roledefs = {
 
 env.deploy_to = "/home/%(user)s/webapp" % env
 env.parent = "origin"
-env.branch = "master"
 env.revision = "HEAD"
 env.repository = "git@codebasehq-deploy:rah/rah/rah.git"
 
@@ -32,12 +33,6 @@ def prod():
     env.environment = "production"
 deployments = [dev, staging, prod]
 
-def _determine_environment():
-    for key,value in env.roledefs.items():
-        if value == env.hosts:
-            return key
-    return None
-    
 def _query_revision(treeish="HEAD"):
     if re.match("^[0-9a-f]{40}$", treeish): return treeish
     return local("git show %s | sed q | cut -d ' ' -f 2" % treeish)
@@ -79,7 +74,12 @@ def reset():
 def checkout():
     "Checkout the revision you would like to deploy"
     require("hosts", provided_by=deployments)
-    run("cd %(deploy_to)s && git checkout -b `date +'%%Y-%%m-%%d_%%H-%%M-%%S'` %(sha)s" % env)
+    with settings(warn_only=True):
+        result = run("cd %(deploy_to)s && git checkout -b \
+            `date +'%%Y-%%m-%%d_%%H-%%M-%%S'`_`whoami` %(sha)s" % env)
+        if result.failed:
+            print(red("Have you pushed your latest changes to the repository?"))
+            sys.exit(1)
 
 def install_requirements():
     "Using pip install all of the requirements defined"
@@ -141,16 +141,13 @@ def notify_codebase():
     repository = match.group(4)
     username = local("git config codebase.username").strip()
     api_key = local("git config codebase.apikey").strip()
-    commit_hash = local("git show-ref %(revision)s | cut -d ' ' -f 1" % env).strip()
     
     xml = []
     xml.append("<deployment>")
-    xml.append("<servers>%s</servers>" % ",".join(env.hosts))
-    xml.append("<revision>%s</revision>" % commit_hash)
-    environment = _determine_environment()
-    if environment:
-        xml.append("<environment>%s</environment>" % environment)
-    xml.append("<branch>%(branch)s:%(revision)s</branch>" % env)
+    xml.append("<servers>%s</servers>" % ",".join(env.roles))
+    xml.append("<revision>%(sha)s</revision>" % env)
+    xml.append("<environment>%(environment)s</environment>" % env)
+    xml.append("<branch>%(revision)s</branch>" % env)
     xml.append("</deployment>")
 
     url = "https://%s/%s/%s/deployments" % (domain, project, repository)
@@ -159,7 +156,7 @@ def notify_codebase():
     request = urllib2.Request(url, "".join(xml), headers)
     response = urllib2.urlopen(request).read()
 
-def deploy(revision=None, sync_media=True):
+def deploy(revision=None, sync_media=True, code_only=False):
     "Deploy a revision to server"
     if revision:
         env.revision = revision
@@ -169,27 +166,15 @@ def deploy(revision=None, sync_media=True):
     fetch()
     reset()
     checkout()
-    install_requirements()
-    minify()
-    if bool(sync_media) and str(sync_media).upper() != "FALSE":
-        s3sync()
-    #backupdb()
-    #syncdb()
-    #migratedb()
+    if not code_only:
+        install_requirements()
+        minify()
+        if bool(sync_media) and str(sync_media).upper() != "FALSE":
+            s3sync()
+        #backupdb()
+        #syncdb()
+        #migratedb()
     restart_apache()
     #disable_maintenance_page()
     notify_codebase()
-    print("%(branch)s:%(revision)s has been deployed to %(hosts)s" % env)
-    
-def code_only_deploy(revision=None):
-    "Deploy only the new code to the server"
-    if revision: env.revision = revision
-    require("deploy_to", provided_by=deployments)
-    enable_maintenance_page()
-    fetch()
-    reset()
-    checkout()
-    restart_apache()
-    disable_maintenance_page()
-    notify_codebase()
-    print("%(branch)s:%(revision)s has been deployed to %(hosts)s" % env)
+    print(green("%(revision)s has been deployed to %(hosts)s" % env))
