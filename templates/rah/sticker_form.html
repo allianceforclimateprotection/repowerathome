@@ -1,36 +1,82 @@
 {% extends "base.html" %}
+{% load dated_static %}
 {% block title %}Get your free vampire sticker{% endblock %}
 {% block right_content %}
     <div class="grid_6 alpha">
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <h1>Apply for a free sticker</h1>
-            <form id="sticker_form" action="" method="post">
-                {% for error in form.non_field_errors %}
-                    <div class="overset_form_message error">{{ error }}</div>
-                {% endfor %}
-                {% for field in form.visible_fields %}
-                    <div class="form_row {% if field.errors %}error{% endif %}{% if 'TextInput' in field.field.widget|pprint or 'Textarea' in field.field.widget|pprint %} overset{% endif %}">
-                        {% if "CheckboxInput" in field.field.widget|pprint %}
-                            {{ field }}{{ field.label_tag }}
-                        {% else %}
-                            {{ field.label_tag }}{{ field }}
-                        {% endif %}
-                        <span class="help_text">{{ field.help_text }}</span>
-                        {% for error in field.errors %}
-                            <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+        <div class="box_three_top"></div>
+        <div class="box_three_middle">
+            <div id="registration_left_col">
+                <h1>We did it!</h1>
+                <p>
+                    This summer, we set an ambitious goal: inspire Americans to save the equivalent of seven million pounds
+                    of coal by 10/10. Thanks to Trendsetters like you, not only did we meet that goal, but we surpassed it.
+                    On 10/10, a global day of action, we joined thousands of people around the world in sending a clear
+                    message: <b>we’re not waiting for solutions to climate change – we’re getting to work.</b>
+                </p>
+                <p>
+                    To commemorate our achievement, <b>we’re giving all of our Trendsetters a free sticker</b>, identifying you as
+                    someone who is committed to blazing the trail forward.
+                </p>
+                <p>
+                    Together, we are laying the groundwork for an enormous transformation in how we consume and think about
+                    energy. But we’re just at the beginning of this movement. The Trendsetter sticker isn’t just a reward
+                    for being on the cutting edge of climate action; it’s also a powerful way to encourage others to join
+                    us.
+                </p>
+                <p>
+                    When your friends and neighbors see that you’re taking action to save energy, it inspires them to get
+                    involved. Maybe your neighbor wants to save energy, but keeps putting it off. Seeing that you’re already
+                    taking action will help her move from someone who is on the sidelines, to someone who is taking action
+                    and making a difference.
+                </p>
+                <p>
+                    That’s why we’re asking you to put your sticker someplace visible. Great places to show off your
+                    Trendsetter status include you laptop, your favorite water bottle, your mailbox, your recycling bin
+                    and your car. Once you put up the sticker, take a picture of it and <a
+                    href="mailto:feedback@repowerathome.com?subject=My%20Trendsetter%20Sticker">email it back to us</a>.
+                    We love seeing the creative places that Trendsetters are using to get the message out.
+                </p>
+                <p>
+                    Thank you again for helping us reach our goal. We’re often a great start, and with your help, we can
+                    make a huge difference.
+                </p>
+                <p>
+                    <i>Fill out the form to receive your free Trendsetter sticker in the mail.</i>
+                </p>
+            </div>
+            <div id="registration_right_col">
+                <p class="center">
+                    <img src="{% dated_static 'images/theme/sticker_fpo.png' %}" width="275px" height="275px"/>
+                </p>
+                <h2>Claim your free sticker</h2>
+                <form id="registration_form" action="" method="post" >
+                    {% for error in form.non_field_errors %}
+                        <div class="overset_form_message error">{{ error }}</div>
+                    {% endfor %}
+                    {% for field in form.visible_fields %}
+                        <div class="form_row {% if field.errors %}error{% endif %} {% if field.name == 'first_name' %}form_row_float form_row_float_left_field{% endif%} {% if field.name == 'last_name' %}form_row_float{% endif%}">
+                            {% if "CheckboxInput" in field.field.widget|pprint %}
+                                {{ field }}{{ field.label_tag }}
+                            {% else %}
+                                {{ field.label_tag }}{{ field }}
+                            {% endif %}
+                            <span class="help_text">{{ field.help_text }}</span>
+                            {% for error in field.errors %}
+                                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+                            {% endfor %}
+                        </div>
+                        {% if field.name == 'last_name' %}<br class="clear"/>{% endif%}
+                    {% endfor %}
+                    <div class="hidden">
+                        {% for field in form.hidden_fields %}
+                            {{ field }}
                         {% endfor %}
                     </div>
-                {% endfor %}
-                <div class="hidden">
-                    {% for field in form.hidden_fields %}
-                        {{ field }}
-                    {% endfor %}
-                </div>
-                {% csrf_token %}
-                <input type="submit" value="Apply" />
-            </form>
+                    {% csrf_token %}
+                    <input type="submit" value="Submit" />
+                </form>
+            </div>
         </div>
-        <div class="box_two_bottom"></div>
+        <div class="box_three_bottom"></div>
     </div>
 {% endblock %}
