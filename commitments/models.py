@@ -19,6 +19,8 @@ class Contributor(models.Model):
     class Meta:
         unique_together = (("user",),("email",),)
         ordering = ['first_name', 'last_name']
+        permissions = (("edit_any_contributor", "Can edit any contributor"),)
+        
         
     def __init__(self, *args, **kwargs):
         super(Contributor, self).__init__(*args, **kwargs)

@@ -1,6 +1,27 @@
 <h1>Commitment Card</h1>
 <form action="" method="post">
-    <table class="">
+    {% for error in contrib_form.non_field_errors %}
+        <div class="overset_form_message error">{{ error }}</div>
+    {% endfor %}
+    {% for field in contrib_form.visible_fields %}
+        <div class="form_row {% if field.errors %}error{% endif %} {% if field.name == 'first_name' %}form_row_float form_row_float_left_field{% endif%} {% if field.name == 'last_name' %}form_row_float{% endif%}">
+            {% if "CheckboxInput" in field.field.widget|pprint %}
+                {{ field }}{{ field.label_tag }}
+            {% else %}
+                {{ field.label_tag }}{{ field }}
+            {% endif %}
+            {% for error in field.errors %}
+                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+            {% endfor %}
+        </div>
+        {% if field.name == 'last_name' %}<br class="clear"/>{% endif%}
+    {% endfor %}
+    <div class="hidden">
+        {% for field in contrib_form.hidden_fields %}
+            {{ field }}
+        {% endfor %}
+    </div>
+    <table>
         <thead>
             <tr>
                 <th>Actions</th>
@@ -13,7 +34,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for field in form %}
+            {% for field in survey_form %}
                 {% if field.field.action %}
                     <tr>
                         <td>{{ field.label }}</td>
@@ -29,7 +50,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for field in form %}
+            {% for field in survey_form %}
                 {% if not field.field.action %}
                     <tr>
                         <td>{{ field.label }}</td>
@@ -39,29 +60,8 @@
             {% endfor %}
         </tbody>
     </table>
-    <div class="form_row overset form_row_float form_row_float_left_field">
-        <label for="id_first_name">First name</label>
-        <input type="text" name="first_name" id="id_first_name" />
-    </div>
-    
-    <div class="form_row overset form_row_float">
-        <label for="id_last_name">Last name</label>
-        <input id="id_last_name" type="text" name="last_name" maxlength="30" />
-    </div>
-    <br class="clear"/>
-    <div class="form_row overset ">
-        <label for="email_register">Email</label>
-        <input type="text" id="email_register" name="email" />
-    </div>
-    <div class="form_row overset ">
-        <label for="id_phone">Phone</label>
-        <input type="text" id="id_phone" name="phone" />
-    </div>
-    <div class="form_row overset ">
-        <label for="id_zipcode">Zipcode (US residents only)</label>
-        <input id="id_zipcode" type="text" name="zipcode" maxlength="10" />
-        {# <div class="help_text"></div> #}
-    </div>
+    <br/>
+    <br/>
     <div>
         <input type="submit" value="Save and add another" />
         <input type="submit" value="Save and close" />

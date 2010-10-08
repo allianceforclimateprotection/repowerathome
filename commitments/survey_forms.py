@@ -11,8 +11,8 @@ from models import Survey, Commitment, ContributorSurvey
 
 class ActionChoiceField(forms.ChoiceField):
     CHOICES = (
-        ("D", "I've done this"),
-        ("C", "I commit to do this"),
+        ("D", ""),
+        ("C", ""),
     )
     
     def __init__(self, action, *args, **kwargs):
@@ -36,16 +36,18 @@ class SurveyForm(forms.ModelForm):
         self.contributor = contributor
         self.entered_by = entered_by
         self.instance = Survey.objects.get(form_name=self.__class__.__name__)
-        data = {}
-        for commitment in Commitment.objects.filter(contributor=contributor):
-            field = self.fields.get(commitment.question, None)
-            if field:
-                field.initial = field.to_python(commitment.answer)
         for slug in self.action_slugs:
             action = Action.objects.get(slug=slug)
             self.fields[action.slug.replace('-', '_')] = ActionChoiceField(action=action,
                 choices=ActionChoiceField.CHOICES, widget=forms.CheckboxSelectMultiple,
                 required=False, label=action.name)
+
+        for commitment in Commitment.objects.filter(contributor=contributor):
+            field = self.fields.get(commitment.question, None)
+
+            if field:
+                field.initial = field.to_python(commitment.answer)
+
     
     def save(self, *args, **kwargs):
         for field, data in self.cleaned_data.items():
