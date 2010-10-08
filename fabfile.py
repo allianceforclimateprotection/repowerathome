@@ -1,4 +1,3 @@
-from __future__ import with_statement
 import base64
 import re
 import urllib2
@@ -13,7 +12,7 @@ env.roledefs = {
     "application": ["ec2-184-73-74-57.compute-1.amazonaws.com"],
     "loadbalancer": ["repowerathome.com"],
     "development": ["dev.repowerathome.com"],
-    "staging": ["ec2-184-73-74-57.compute-1.amazonaws.com"],
+    "staging": ["ec2-184-72-148-152.compute-1.amazonaws.com"],
 }
 
 env.deploy_to = "/home/%(user)s/webapp" % env
@@ -32,6 +31,17 @@ def prod():
     env.roles = ["application"]
     env.environment = "production"
 deployments = [dev, staging, prod]
+
+def _determine_environment():
+    for key,value in env.roledefs.items():
+        if value == env.hosts:
+            return key
+    return None
+    
+def _query_revision(treeish="HEAD"):
+    if re.match("^[0-9a-f]{40}$", treeish): return treeish
+    return local("git show %s | sed q | cut -d ' ' -f 2" % treeish)
+env.sha = _query_revision()
 
 def test():
     "Run all tests"
@@ -56,21 +66,20 @@ def enable_maintenance_page():
                 sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
                 sudo("/etc/init.d/nginx reload")
     
+def fetch():
+    "Updates the application with new code"
+    require("hosts", provided_by=deployments)
+    run("cd %(deploy_to)s && git fetch --all" % env)
+    
 def reset():
     "Set the workspace to the desired revision"
     require("hosts", provided_by=deployments)
-    with cd("%(deploy_to)s" % env):
-        run("git checkout master && git reset --hard HEAD")
-    
-def pull():
-    "Updates the application with new code"
-    require("hosts", provided_by=deployments)
-    run("cd %(deploy_to)s && git pull --ff-only %(parent)s %(branch)s" % env)
+    run("cd %(deploy_to)s && git reset --hard" % env)
     
 def checkout():
     "Checkout the revision you would like to deploy"
     require("hosts", provided_by=deployments)
-    run("cd %(deploy_to)s && git checkout -f %(revision)s" % env)
+    run("cd %(deploy_to)s && git checkout -b `date +'%%Y-%%m-%%d_%%H-%%M-%%S'` %(sha)s" % env)
 
 def install_requirements():
     "Using pip install all of the requirements defined"
@@ -138,8 +147,9 @@ def notify_codebase():
     xml.append("<deployment>")
     xml.append("<servers>%s</servers>" % ",".join(env.hosts))
     xml.append("<revision>%s</revision>" % commit_hash)
-    if "environment" in env:
-        xml.append("<environment>%s</environment>" % env.environment)
+    environment = _determine_environment()
+    if environment:
+        xml.append("<environment>%s</environment>" % environment)
     xml.append("<branch>%(branch)s:%(revision)s</branch>" % env)
     xml.append("</deployment>")
 
@@ -151,11 +161,13 @@ def notify_codebase():
 
 def deploy(revision=None, sync_media=True):
     "Deploy a revision to server"
-    if revision: env.revision = revision
+    if revision:
+        env.revision = revision
+        env.sha = _query_revision(revision)
     require("deploy_to", provided_by=deployments)
-    enable_maintenance_page()
+    #enable_maintenance_page()
+    fetch()
     reset()
-    pull()
     checkout()
     install_requirements()
     minify()
@@ -165,7 +177,7 @@ def deploy(revision=None, sync_media=True):
     #syncdb()
     #migratedb()
     restart_apache()
-    disable_maintenance_page()
+    #disable_maintenance_page()
     notify_codebase()
     print("%(branch)s:%(revision)s has been deployed to %(hosts)s" % env)
     
@@ -174,10 +186,10 @@ def code_only_deploy(revision=None):
     if revision: env.revision = revision
     require("deploy_to", provided_by=deployments)
     enable_maintenance_page()
+    fetch()
     reset()
-    # pull()
-    # checkout()
-    # restart_apache()
+    checkout()
+    restart_apache()
     disable_maintenance_page()
-    # notify_codebase()
+    notify_codebase()
     print("%(branch)s:%(revision)s has been deployed to %(hosts)s" % env)

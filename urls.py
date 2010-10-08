@@ -50,7 +50,7 @@ admin.site.add_action(admin_list_export, 'Export to CSV')
 urlpatterns = patterns('rah.views',
     url(r'^$', 'index', name='index'),
     url(r'^register/$', 'register', name='register'),
-    url(r'^register2/$', 'register', {'template_name': 'registration/register2.html'}, name='register2'), 
+    url(r'^register2/$', 'register', {'template_name': 'registration/register2.html'}, name='register2'),
     url(r'^login/$', 'login', name='login'),
     url(r'^logout/$', 'logout', name='logout'),
     url(r'^password_change_done/$', 'password_change_done', name='password_change_done'),
@@ -65,7 +65,8 @@ urlpatterns = patterns('rah.views',
     url(r'^search/$', 'search', name='search'),
     url(r'^user/ga-opt-out/$', 'ga_opt_out', name='ga_opt_out'),
     url(r'user/(?P<user_id>\d+)/feed/$', UserActivityFeed(), name='user_activity_feed'),
-    url(r'vampire_hunt', 'vampire_hunt', name='vampire_hunt'),
+    url(r'vampire_hunt/', 'vampire_hunt', name='vampire_hunt'),
+    url(r'trendsetter_sticker/', 'trendsetter_sticker', name='trendsetter_sticker'),
 )
 
 urlpatterns += patterns('',

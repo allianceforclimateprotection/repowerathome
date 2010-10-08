@@ -3,10 +3,9 @@ from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 
 VAMPIRE_OPTIONS = (
-    ('p', 'Turn off power strip', reverse("power_strip_help"),),
-    ('u', 'Unplug the device',),
-    ('s', 'Smart power strip', reverse("smart_power_strip_help"),),
-    ('k', 'Skip',),
+    ('y', 'Yes',),
+    ('n', 'No',),
+    ('u', 'Not sure',),
 )
 
 class VampireSlayerWidget(forms.RadioSelect):
@@ -18,30 +17,28 @@ class VampireSlayerWidget(forms.RadioSelect):
             attrs = html_class
         return super(VampireSlayerWidget, self).__init__(attrs=attrs, *args, **kwargs)
 
-class VampireField(forms.ChoiceField):    
-    def __init__(self, recommended=None, choices=None, savings=0, widget=None, *args, **kwargs):
+class VampireField(forms.ChoiceField):
+    def __init__(self, choices=None, widget=None, *args, **kwargs):
         if not choices:
             choices=VAMPIRE_OPTIONS
-        self.savings = savings
-        self.recommended = recommended
         if not widget:
             widget = VampireSlayerWidget
         return super(VampireField, self).__init__(choices=choices, widget=widget, *args, **kwargs)
 
-class VampirePowerWorksheetForm(forms.Form):
-    television = VampireField(savings=150, required=False, recommended='s')
-    dvd_player = VampireField(savings=9, required=False, recommended='s', label="DVD Player")
-    cable_box = VampireField(savings=13, required=False, recommended='s', label="Cable Box")
-    game_system = VampireField(savings=30, required=False, recommended='s', label="Game System")
-    cell_phone = VampireField(savings=4, required=False, recommended='u', label="Cell Phone")
-    monitor = VampireField(savings=3, required=False, recommended='s')
+class VampirePowerWorksheetForm2(forms.Form):
+    computers = VampireField(required=False)
+    monitor = VampireField(required=False)
+    computer_speakers = VampireField(required=False)
+    televisions = VampireField(required=False)
+    dvd_players = VampireField(required=False, label="DVD/VCR Players")
+    cable_box = VampireField(required=False, label="Cable Box/DVR")
+    game_systems = VampireField(required=False, label="Game Systems")
     
-    def ajax_data(self):
-        return {"total_savings": self.total_savings()}
-    
-    def total_savings(self):
-        total_savings = 0
-        for bound_field in self:
-            if bound_field.data in ['p', 'u', 's']:
-                total_savings += bound_field.field.savings
-        return total_savings
+    def home_office_fields(self):
+        return [self['computers'], self['monitor'], self['computer_speakers']]
+        
+    def home_entertainment_fields(self):
+        return [self['televisions'], self['dvd_players'], self['cable_box'], self['game_systems']]
+        
+    def my_vampires(self):
+        return [f for f in self if f.data == 'y']

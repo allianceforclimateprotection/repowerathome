@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
+from django.db import models, transaction, IntegrityError
 
 import tagging
 
@@ -80,8 +80,13 @@ class Action(models.Model):
     updated = models.DateTimeField(auto_now=True)
     objects = ActionManager()
     
+    @transaction.commit_on_success
     def complete_for_user(self, user):
-        uap, created = UserActionProgress.objects.get_or_create(user=user, action=self)
+        try:
+            uap = UserActionProgress.objects.create(user=user, action=self)
+        except IntegrityError:
+            transaction.commit()
+            uap = UserActionProgress.objects.get(user=user, action=self)
         was_completed = uap.is_completed
         uap.is_completed = True
         uap.save()
@@ -105,14 +110,14 @@ class Action(models.Model):
         except UserActionProgress.DoesNotExist:
             return False
         return True
-            
+    
+    @transaction.commit_on_success
     def commit_for_user(self, user, date, add_to_stream=True):
-        # This used to use get_or_create, but was giving us trouble. Not sure why...
-        # See ticket 328 for details: https://rah.codebasehq.com/rah/tickets/328
         try:
+            uap = UserActionProgress.objects.create(user=user, action=self)
+        except IntegrityError:
+            transaction.commit()
             uap = UserActionProgress.objects.get(user=user, action=self)
-        except UserActionProgress.DoesNotExist:
-            uap = UserActionProgress(user=user, action=self)
         was_committed = uap.date_committed <> None
         uap.date_committed = date
         uap.save()

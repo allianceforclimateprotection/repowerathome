@@ -22,9 +22,10 @@ from django.views.decorators.cache import cache_page
 from basic.blog.models import Post
 from tagging.models import Tag
 from actions.models import Action, UserActionProgress
-from rah.models import Profile
+from rah.models import Profile, StickerRecipient
 from records.models import Record
-from rah.forms import RegistrationForm, AuthenticationForm, HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm
+from rah.forms import RegistrationForm, RegistrationProfileForm, AuthenticationForm, \
+    HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm, StickerRecipientForm
 from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
@@ -121,44 +122,34 @@ def password_reset_complete(request):
 
 @csrf_protect
 def register(request, template_name="registration/register.html"):
-    
     redirect_to = request.REQUEST.get(REDIRECT_FIELD_NAME, '')
-    
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            new_user = form.save()
-            # Add the location to profile if the user registered with one
-            if "location" in form.cleaned_data:
-                profile = new_user.get_profile()
-                profile.location = form.cleaned_data["location"]
-                profile.save()
-            user = auth.authenticate(username=form.cleaned_data["email"], password=form.cleaned_data["password1"])
-            logged_in.send(sender=None, request=request, user=user, is_new_user=True)
-            auth.login(request, user)
-            save_queued_POST(request)
-            
-            # Light security check -- make sure redirect_to isn't garbage.
-            if not redirect_to or ' ' in redirect_to:
-                redirect_to = settings.LOGIN_REDIRECT_URL
-            
-            # Heavier security check -- redirects to http://example.com should 
-            # not be allowed, but things like /view/?param=http://example.com 
-            # should be allowed. This regex checks if there is a '//' *before* a
-            # question mark.
-            elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
-                redirect_to = settings.LOGIN_REDIRECT_URL
-                    
-            return HttpResponseRedirect(redirect_to)
-    else:
-        if "email" in request.GET:
-            form = RegistrationForm(initial={"email": request.GET["email"]})
-        else:
-            form = RegistrationForm()
+    initial = {"email": request.GET["email"]} if "email" in request.GET else None
+    user_form = RegistrationForm(initial=initial, data=(request.POST or None))
+    profile_form = RegistrationProfileForm(request.POST or None)
+    if user_form.is_valid() and profile_form.is_valid():
+        new_user = user_form.save()
+        RegistrationProfileForm(instance=new_user.get_profile(), data=request.POST).save()
+        user = auth.authenticate(username=user_form.cleaned_data["email"], password=user_form.cleaned_data["password1"])
+        logged_in.send(sender=None, request=request, user=user, is_new_user=True)
+        auth.login(request, user)
+        save_queued_POST(request)
+        
+        # Light security check -- make sure redirect_to isn't garbage.
+        if not redirect_to or ' ' in redirect_to:
+            redirect_to = settings.LOGIN_REDIRECT_URL
+        
+        # Heavier security check -- redirects to http://example.com should 
+        # not be allowed, but things like /view/?param=http://example.com 
+        # should be allowed. This regex checks if there is a '//' *before* a
+        # question mark.
+        elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
+            redirect_to = settings.LOGIN_REDIRECT_URL
+                
+        return HttpResponseRedirect(redirect_to)
     return render_to_response(template_name, {
-        'register_form': form,
+        'user_form': user_form,
+        'profile_form': profile_form,
         REDIRECT_FIELD_NAME: redirect_to,
-        'login_form': AuthenticationForm()
     }, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -336,20 +327,40 @@ def house_party(request):
     return redirect('event-show')
     
 def vampire_hunt(request):
-    survey = Survey.objects.get(name="Energy Meeting Commitment Card Version 2")
-    individual_leaders = cache.get('individual_leaders')
-    if not individual_leaders:
+    stats = cache.get('vampire_hunt_stats')
+    if not stats:
+        vampire_action = Action.objects.get(name="Eliminate vampire power")
         individual_leaders = User.objects.filter(is_staff=False,
-            contributorsurvey__survey=survey).annotate(
+            contributorsurvey__contributor__commitment__action=vampire_action).annotate(
             contributions=Count("contributorsurvey")).order_by("-contributions")[:5]
-        cache.set('individual_leaders', individual_leaders, 60 * 5)
-    team_leaders = cache.get('team_leaders')
-    if not team_leaders:
         team_leaders = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
-            groupusers__user__contributorsurvey__survey=survey).annotate(
+            groupusers__user__contributorsurvey__contributor__commitment__action=vampire_action).annotate(
             contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
-        cache.set('team_leaders', team_leaders, 60 * 5)
+        slayers = (User.objects.filter(useractionprogress__action=vampire_action, useractionprogress__is_completed=True).count() or 0) + \
+            (Contributor.objects.filter(commitment__action=vampire_action, commitment__answer='D', user__isnull=True).distinct().count() or 0)
+        cache.set('vampire_hunt_stats', {"individual_leaders": individual_leaders, 
+            "team_leaders": team_leaders, "slayers": slayers}, 60 * 5)
+    else:
+        locals().update(stats)
+    if request.user.is_authenticated():
+        my_contributors = Contributor.objects.filter(contributorsurvey__entered_by=request.user).count()
     return render_to_response('rah/vampire_hunt.html', locals(), context_instance=RequestContext(request))
+    
+def trendsetter_sticker(request):
+    if request.user.is_authenticated():
+        instance = StickerRecipient(first_name=request.user.first_name, 
+            last_name=request.user.last_name, email=request.user.email)
+    else:
+        instance = StickerRecipient(**dict(request.GET.items()))
+    form = StickerRecipientForm(instance=instance, data=(request.POST or None))
+    if form.is_valid():
+        recipient = form.save()
+        if recipient.user:
+            messages.add_message(request, messages.SUCCESS, "Thanks for requesting a sticker, you should recieve it in a few weeks")
+        else:
+            messages.add_message(request, messages.SUCCESS, "Your sticker will arrive shortly, in the mean time have you considered registering")
+        return redirect('index')
+    return render_to_response('rah/sticker_form.html', locals(), context_instance=RequestContext(request))
 
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))
@@ -369,7 +380,7 @@ def track_registration(sender, request, user, is_new_user, **kwargs):
     if is_new_user:
         messages.success(request, 'Thanks for registering.')
         messages.add_message(request, GA_TRACK_PAGEVIEW, '/register/complete')
-        messages.add_message(request, GA_TRACK_CONVERSION, True) 
+        messages.add_message(request, GA_TRACK_CONVERSION, True)
 logged_in.connect(track_registration)
 
 def send_registration_emails(sender, request, user, is_new_user, **kwargs):

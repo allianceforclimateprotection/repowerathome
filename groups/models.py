@@ -3,7 +3,7 @@ from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail, EmailMessage
-from django.db import models
+from django.db import models, transaction, IntegrityError
 from django.template import loader
 from django.template.defaultfilters import slugify
 
@@ -312,6 +312,7 @@ class Discussion(models.Model):
 """
 Signals!
 """
+@transaction.commit_on_success
 def associate_with_geo_groups(sender, instance, **kwargs):
     user = instance.user
     GroupUsers.objects.filter(user=user, group__is_geo_group=True).delete()
@@ -321,7 +322,10 @@ def associate_with_geo_groups(sender, instance, **kwargs):
         for location_type, geo_group in reversed(geo_groups):
             if not geo_group:
                 geo_group = Group.objects.create_geo_group(location_type, instance.location, parent)
-            GroupUsers(user=user, group=geo_group).save()
+            try:
+                GroupUsers.objects.create(user=user, group=geo_group)
+            except IntegrityError:
+                transaction.commit()
             parent = geo_group
 
 def add_invited_user_to_group(sender, instance, **kwargs):

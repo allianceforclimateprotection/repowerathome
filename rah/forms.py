@@ -12,22 +12,17 @@ from django.core.urlresolvers import resolve, Resolver404
 from django.forms.widgets import CheckboxSelectMultiple
 from django.template import Context, loader
 
-from rah.models import Profile, Feedback
+from rah.models import Profile, Feedback, StickerRecipient
 from geo.models import Location
 
 from fields import Honeypot
 
-class DefaultRahForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(DefaultRahForm, self).__init__(label_suffix="", *args, **kwargs)
-
-class RegistrationForm(DefaultRahForm):
+class RegistrationForm(forms.ModelForm):
     """
     A form that creates a user, with no privileges, from the given email and password.
     """
     email = forms.EmailField(label='Email', widget=forms.TextInput(attrs={'id':'email_register'}))
     first_name = forms.CharField(min_length=2)
-    zipcode = forms.CharField(max_length=10, required=False, help_text="Leave blank if not a US resident")
     password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
     honeypot = Honeypot()
@@ -39,7 +34,7 @@ class RegistrationForm(DefaultRahForm):
     def clean(self):
         self.instance.username = hashlib.md5(self.cleaned_data.get("email", "")).hexdigest()[:30] 
         self.instance.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
-        super(RegistrationForm, self).clean()        
+        super(RegistrationForm, self).clean()
         return self.cleaned_data
 
     def clean_email(self):
@@ -58,19 +53,25 @@ class RegistrationForm(DefaultRahForm):
         if len(password2) < 5:
             raise forms.ValidationError("Your password must contain at least 5 characters.")
         return password2
-
+            
+class RegistrationProfileForm(forms.ModelForm):
+    zipcode = forms.CharField(max_length=10, required=False, help_text="Leave blank if not a US resident")
+    
+    class Meta:
+        model = Profile
+        fields = ("building_type",)
+        
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
-        if not len(data):
-            self.instance.location = None
-            return
-        if len(data) <> 5:
-            raise forms.ValidationError("Please enter a 5 digit zipcode")
-        try:
-            self.cleaned_data["location"] = Location.objects.get(zipcode=data)
-        except Location.DoesNotExist, e:
-            raise forms.ValidationError("Zipcode is invalid")
-
+        if data:
+            if len(data) <> 5:
+                raise forms.ValidationError("Please enter a 5 digit zipcode")
+            try:
+                self.instance.location = Location.objects.get(zipcode=data)
+            except Location.DoesNotExist, e:
+                raise forms.ValidationError("Zipcode is invalid")
+        return data
+        
 class AuthenticationForm(forms.Form):
    """
    Base class for authenticating users. Extend this to get a form that accepts
@@ -246,4 +247,10 @@ class GroupNotificationsForm(forms.Form):
                 DiscussionBlacklist.objects.create(user=self.user, group=group)
             if group in notifications and group.pk not in self.not_blacklisted:
                 DiscussionBlacklist.objects.get(user=self.user, group=group).delete()
-        
+                
+class StickerRecipientForm(forms.ModelForm):
+    honeypot = Honeypot()
+    
+    class Meta:
+        model = StickerRecipient
+        exclude = ("user",)

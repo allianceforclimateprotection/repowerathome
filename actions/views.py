@@ -18,7 +18,6 @@ from settings import GA_TRACK_PAGEVIEW
 from models import Action, UserActionProgress, ActionForm, ActionFormData
 from forms import ActionCommitForm
 
-
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
     if tag_slug:
@@ -162,6 +161,7 @@ def _build_action_form_vars(action, user):
     
     forms = {}
     for form in action.action_forms_with_data(user):
-        data = json.loads(form.data) if form.data else None
-        forms[form.var_name] = getattr(action_forms, form.form_name)(data=data)
+        if hasattr(action_forms, form.form_name):
+            data = json.loads(form.data) if form.data else None
+            forms[form.var_name] = getattr(action_forms, form.form_name)(data=data)
     return forms
