@@ -358,7 +358,7 @@ def trendsetter_sticker(request):
         if recipient.user:
             messages.add_message(request, messages.SUCCESS, "Thanks for requesting a sticker, you should recieve it in a few weeks")
         else:
-            messages.add_message(request, messages.SUCCESS, "Your sticker will arrive shortly, in the mean time have you considered registering")
+            messages.add_message(request, messages.SUCCESS, "Your sticker will arrive shortly, in the mean time have you considered <a href='/register/'>registering</a>", extra_tags="sticky")
         return redirect('index')
     return render_to_response('rah/sticker_form.html', locals(), context_instance=RequestContext(request))
 
