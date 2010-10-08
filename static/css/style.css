@@ -505,6 +505,7 @@ ul#vampire_worksheet_wizard_nav {
     margin-left: 0px; padding-left: 0px; padding-bottom:18px;}
 #vampire_directions li { list-style: disc; }
 #vampire_worksheet_wizard .worksheet { width: 432px; float: left; list-style: none; }
+#vampire_worksheet_wizard .transition_slide { text-align: center; }
 #vampire_worksheet_wizard .vampire_device_image { float: left; }
 #vampire_worksheet_wizard .vampire_savings_container { float: left; }
 #vampire_worksheet_wizard .vampire_savings {  font-weight: bold; }
@@ -592,6 +593,11 @@ ul.plain_list {margin-left: 0px; padding-left: 0px; list-style: none;}
 
 .selector { font-size: 12px; }
 #team_selectors { margin-left: 15px; }
+#vampire_hunt_directions ol { margin-left: 20px; }
+#vampire_hunt_directions li { list-style: decimal; margin-bottom: 5px; }
+#vampire_hunt_shart_list li.social_button { width: 54px; padding: 0 38px; }
+#vampire_hunt_share_list li { float: left; text-align: center; width: 130px; }
+
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid  
