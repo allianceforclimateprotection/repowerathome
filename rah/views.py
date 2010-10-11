@@ -1,6 +1,7 @@
 import json
 import logging
 import locale
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -10,6 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.comments.views import comments
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail, EmailMessage
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
 from django.db.models import Sum, Count
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -64,6 +66,59 @@ def _total_coal():
         (Action.objects.filter(commitment__answer="D", commitment__contributor__user__isnull=True).aggregate(
             Sum("points"))["points__sum"] or 0)
 
+def _vampire_power_leaderboards():
+    key = 'vampire_hunt_leaderboards'
+    vamp_stats = cache.get(key, {})
+    if not vamp_stats:
+        vampire_action = Action.objects.get(slug="eliminate-standby-vampire-power")
+        vamp_stats['individual_leaders'] = User.objects.filter(is_staff=False,
+            contributorsurvey__contributor__commitment__action=vampire_action).annotate(
+            contributions=Count("contributorsurvey")).order_by("-contributions")[:5]
+        vamp_stats['team_leaders'] = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
+            groupusers__user__contributorsurvey__contributor__commitment__action=vampire_action).annotate(
+            contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
+        
+        cache.set(key, vamp_stats, 60 * 5)
+    
+    return vamp_stats
+
+def _vampire_power_slayers():
+    key = 'vampire_hunt_slayers'
+    vamp_stats = cache.get(key, {})
+    if not vamp_stats:
+        locale.setlocale(locale.LC_ALL, "en_US")
+        
+        # This is wrapped in a try catch so tests which do not instantiate the vampire action will still pass
+        try:
+            vampire_action = Action.objects.get(slug="eliminate-standby-vampire-power")
+        except ObjectDoesNotExist:
+            return vamp_stats
+        
+        # Get the number of slayers
+        slayer_count = (User.objects.filter(useractionprogress__action=vampire_action, useractionprogress__is_completed=True).count() or 0) + \
+            (Contributor.objects.filter(commitment__action=vampire_action, commitment__answer='D', user__isnull=True).distinct().count() or 0)
+        vamp_stats['slayers'] = locale.format('%d', slayer_count, True)
+        
+        # Figure out who the last slayer is
+        last_user = UserActionProgress.objects.filter(action=vampire_action, is_completed=True).order_by("-updated").select_related("user")[:1]
+        last_user_date = last_user[0].updated if last_user else datetime(1, 1, 1, 0, 0, 0)
+        last_contributor = Commitment.objects.filter(question=vampire_action.slug.replace('-', '_'), answer='D', contributor__user__isnull=True).order_by("-updated").select_related("contributor")[:1]
+        last_contributor_date = last_contributor[0].updated if last_contributor else datetime(1, 1, 1, 0, 0, 0)
+        
+        # Compare the latest contributor and user, then set some slayer vars
+        if last_user_date > last_contributor_date:
+            vamp_stats['last_slayer_is_user'] = True
+            vamp_stats['last_slayer'] = last_user[0].user
+            vamp_stats['last_slayer_loc'] = last_user[0].user.get_profile().location
+        elif last_contributor:
+            vamp_stats['last_slayer_is_user'] = False
+            vamp_stats['last_slayer'] = last_contributor[0].contributor
+            vamp_stats['last_slayer_loc'] = last_contributor[0].contributor.location
+        
+        cache.set(key, vamp_stats, 60 * 5)
+
+    return vamp_stats
+    
 @csrf_protect
 def index(request):
     """
@@ -76,7 +131,7 @@ def index(request):
     total_points = request.user.get_profile().total_points
     recommended, committed, completed = Action.objects.actions_by_status(request.user)[1:4]
     twitter_status_form = TwitterStatusForm(initial={
-        "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com"
+        "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com/"
     })
     featured_actions = Action.objects.filter(id__in=[18,23]).order_by("-id")
     commitment_list = UserActionProgress.objects.commitments_for_user(request.user)
@@ -84,12 +139,15 @@ def index(request):
     my_events = Event.objects.filter(guest__contributor__user=request.user)
     records = Record.objects.user_records(request.user, 10)
     
+    locals().update(_vampire_power_slayers())
+    
     return render_to_response('rah/home_logged_in.html', locals(), context_instance=RequestContext(request))
 
 def logged_out_home(request):
     # blog_posts = Post.objects.filter(status=2)[:3]
     # pop_actions = Action.objects.get_popular(count=5)
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:4]
+    locals().update(_vampire_power_slayers())
     
     return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))
 
@@ -323,21 +381,8 @@ def house_party(request):
     return redirect('event-show')
     
 def vampire_hunt(request):
-    stats = cache.get('vampire_hunt_stats')
-    if not stats:
-        vampire_action = Action.objects.get(name="Eliminate vampire power")
-        individual_leaders = User.objects.filter(is_staff=False,
-            contributorsurvey__contributor__commitment__action=vampire_action).annotate(
-            contributions=Count("contributorsurvey")).order_by("-contributions")[:5]
-        team_leaders = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
-            groupusers__user__contributorsurvey__contributor__commitment__action=vampire_action).annotate(
-            contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
-        slayers = (User.objects.filter(useractionprogress__action=vampire_action, useractionprogress__is_completed=True).count() or 0) + \
-            (Contributor.objects.filter(commitment__action=vampire_action, commitment__answer='D', user__isnull=True).distinct().count() or 0)
-        cache.set('vampire_hunt_stats', {"individual_leaders": individual_leaders, 
-            "team_leaders": team_leaders, "slayers": slayers}, 60 * 5)
-    else:
-        locals().update(stats)
+    locals().update(_vampire_power_slayers())
+    locals().update(_vampire_power_leaderboards())
     if request.user.is_authenticated():
         my_contributors = Contributor.objects.filter(contributorsurvey__entered_by=request.user).count()
     return render_to_response('rah/vampire_hunt.html', locals(), context_instance=RequestContext(request))
