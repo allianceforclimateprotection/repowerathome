@@ -35,24 +35,49 @@
                 on Halloween night?
             </p>
             <p>
-                <a href='{% url invite-invite %}' class='invite_friend_link button'>Invite via email</a>
-                <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com%2Fvampire_hunt%2F&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
-                <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+                <ul id="vampire_hunt_share_list">
+                    <li class="social_button">
+                        <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com%2Fvampire_hunt%2F&amp;layout=box_count&amp;show_faces=true&amp;width=120&amp;action=like&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:120px; height:60px;" allowTransparency="true"></iframe>
+                    </li>
+                    <li>
+                        <a href='{% url invite-invite %}' class='invite_friend_link button'>Invite via email</a>
+                    </li>
+                    <li class="social_button">
+                        <a href="http://twitter.com/share" class="twitter-share-button" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+                    </li>
+                </ul>
+                <br class="clear" />
             </p>
             <h3>Take it to the streets</h3>
-            <p>
-                You can also recruit vampire slayers face-to-face. Start a vampire hunting party
-                in your community. Organize a door knocking campaign or a tabling event to 
-                inspire slayers to take action wit you. We'll give you a set of materials that 
-                will turn any Joe Schmoe into a vampire-slaying machine. To learn more about 
-                how you can bring the Vampire Hunt to your community, email 
-                field@repowerathome.com<br/>
-                <a href="#">Download recruitment materials</a>
-            </p>
-            <p>
-                Did you gather some commitments offline? Nice work! Report your progress now.
-                We'll give you credit for recruiting these slayers.<br/>
-                <a href="#">Report your progress</a>
+            <div id="vampire_hunt_directions">
+                <p>You can also recruit vampire slayers face-to-face. It's easy:</p>
+                <ol>
+                    <li>
+                        Download and print out materials for recruiting slayers. These materials 
+                        will turn any Joe Schmoe into a vampire-slaying machine.
+                        <ul>
+                            <li><a href="http://rahstatic.s3.amazonaws.com/meeting_materials/vampire_power/vampire_commitment_card.pdf">Commitment card</a></li>
+                            <li><a href="http://rahstatic.s3.amazonaws.com/meeting_materials/vampire_power/leave_behind.pdf">Slayer Guide</a></li>
+                            <li><a href="http://rahstatic.s3.amazonaws.com/meeting_materials/vampire_power/decoration.pdf">Halloween decorations</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        Talk to friends, neighbors and community members about slaying vampires.
+                        Knock on doors in your neighborhood. Set up a table at your kid’s 
+                        school. Anytime you meet people you can help them save energy and money.
+                    </li>
+                    <li>
+                        Have potential slayers fill out the commitment card and hand it back to you.
+                    </li>
+                    <li>
+                        Give your newly-recruited slayer the Slayer Guide and the Halloween Decoration.
+                    </li>
+                    <li>
+                        <a href="{% url commitments_show %}">Enter the commitment card</a> info 
+                        on the website and watch your ranking rise on the leader board.
+                    </li>
+                </ol>
+            </div>
         </div>
         <div class="box_two_bottom"></div>
     </div>
