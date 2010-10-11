@@ -3,7 +3,7 @@
 {% block rah_nav_select %}nav_home{% endblock %}
 {% block right_content %}
 <div id="home_page_header" class="box_three_middle">
-    <div class="home_page_vampire_copy">
+    <div id="home_page_vampire_copy">
         <h1>Vampire Power Challenge</h1>
         <p>
             There are vampires in your home &mdash; energy vampires. Day and night, they silently suck energy and money
@@ -24,23 +24,25 @@
         Vampire Slayer.
     </div>
 </div>
-<div class="grid_3 alpha">
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
-        <h3>Popular Actions</h3>
-        {% for action in pop_actions %}
+<div class="grid_6 alpha">
+    <div id="home_page_sticker" class="box_two_middle">
+        <div id="home_page_sticker_copy">
+            <b>The October 10<sup>th</sup></b>
+            <h1 class="blue_dark">Coal Challenge</h1>
             <p>
-                <a href="{{ action.get_absolute_url }}">{{action.name}}</a><br/>
-                <span class="smaller">{{action.users_completed}} completed, {{action.users_committed}} committed</span>
+                <span class="blue_dark"><b>We did it!</b></span> Repower at Home trendsetters met our goal of saving <span
+                class="blue_dark"><b>7 million pounds of coal</b></span> by October 10.
             </p>
-        {% endfor %}
-        <div class="more_link">
-            <a href="{% url action_show %}">More Actions</a>
+            <p>
+                Show the world you made a difference with <b class="blue_dark">Free Trendsetter sticker</b>.
+            </p>
+            <p>
+                <a href="{% url trendsetter_sticker %}" class="button">Claim Your Sticker</a>
+            </p>
         </div>
     </div>
-    <div class="box_one_bottom"></div>
 </div>
-<div class="grid_3">
+<div class="grid_3 omega">
     <div class="box_one_top"></div>
     <div class="box_one_middle">
         <h3>Top Teams</h3>
@@ -56,22 +58,39 @@
     </div>
     <div class="box_one_bottom"></div>
 </div>
-<div class="grid_3 omega">
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
-        <h3>Recent Blog Posts</h3>
-        {% for post in blog_posts %}
-        <p>
-            <a href="{{ post.get_absolute_url }}">{{post.title}}</a><br/>
-            <span class="smaller">Posted {{post.publish|date}}</span>
-        </p>
-        {% endfor %}
-        <div class="more_link">
-            <a href="{% url blog_index %}">More Posts</a>
-        </div>
-    </div>
-    <div class="box_one_bottom"></div>
-</div>
+<br class="clear"/>
+{# <div class="grid_3 alpha"> #}
+{#     <div class="box_one_top"></div> #}
+{#     <div class="box_one_middle"> #}
+{#         <h3>Popular Actions</h3> #}
+{#         {% for action in pop_actions %} #}
+{#             <p> #}
+{#                 <a href="{{ action.get_absolute_url }}">{{action.name}}</a><br/> #}
+{#                 <span class="smaller">{{action.users_completed}} completed, {{action.users_committed}} committed</span> #}
+{#             </p> #}
+{#         {% endfor %} #}
+{#         <div class="more_link"> #}
+{#             <a href="{% url action_show %}">More Actions</a> #}
+{#         </div> #}
+{#     </div> #}
+{#     <div class="box_one_bottom"></div> #}
+{# </div> #}
+{# <div class="grid_3 omega"> #}
+{#     <div class="box_one_top"></div> #}
+{#     <div class="box_one_middle"> #}
+{#         <h3>Recent Blog Posts</h3> #}
+{#         {% for post in blog_posts %} #}
+{#         <p> #}
+{#             <a href="{{ post.get_absolute_url }}">{{post.title}}</a><br/> #}
+{#             <span class="smaller">Posted {{post.publish|date}}</span> #}
+{#         </p> #}
+{#         {% endfor %} #}
+{#         <div class="more_link"> #}
+{#             <a href="{% url blog_index %}">More Posts</a> #}
+{#         </div> #}
+{#     </div> #}
+{#     <div class="box_one_bottom"></div> #}
+{# </div> #}
 
 {% endblock %}
 {% block js %}page_home_logged_out{% endblock %}

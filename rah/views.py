@@ -84,18 +84,14 @@ def index(request):
     my_events = Event.objects.filter(guest__contributor__user=request.user)
     records = Record.objects.user_records(request.user, 10)
     
-    vars = _coal_challenge_stats()
-    vars.update(locals())
-    return render_to_response('rah/home_logged_in.html', vars, context_instance=RequestContext(request))
+    return render_to_response('rah/home_logged_in.html', locals(), context_instance=RequestContext(request))
 
 def logged_out_home(request):
-    blog_posts = Post.objects.filter(status=2)[:3]
-    pop_actions = Action.objects.get_popular(count=3)
-    top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:3]
+    # blog_posts = Post.objects.filter(status=2)[:3]
+    # pop_actions = Action.objects.get_popular(count=5)
+    top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:4]
     
-    vars = _coal_challenge_stats()
-    vars.update(locals())
-    return render_to_response("rah/home_logged_out.html", vars, context_instance=RequestContext(request))
+    return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))
 
 @cache_page(60 * 60)
 def user_list(request):

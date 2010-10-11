@@ -29,6 +29,7 @@ Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Col
 .blue       { color: #388ca0; }
 .red        { color: #c3262f; }
 .blue_light { color: #5bbcca; }
+.blue_dark  { color: #006283; }
 .orange     { color: #ed6623; }
 .yellow     { color: #ffc20e; }
 .green      { color: #6e9b31; }
@@ -285,12 +286,24 @@ Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage
     height:402px;
     width:700px;
     position:relative;
-    margin-top:-12px;}
-.home_page_vampire_copy { width: 340px; padding-top:54px;}
+    margin-top:-12px;
+    margin-bottom:9px;}
+#home_page_vampire_copy { width: 340px; padding-top:54px;}
 #home_page_header p{color:#FFF;}
 
 /*#home_page_header h1 {text-shadow: #FFF 1px 1px 1px;}*/
 #home_page_header h1 { padding-top:-18px; font-size:34px;}
+
+#home_page_sticker {
+    background: transparent url(../images/home_page/sticker.png?0000000004) no-repeat top center; 
+    height:319px;
+    width:435px;
+    margin-top:9px;
+    position:relative;
+}
+#home_page_sticker_copy {position:absolute; top:18px; left: 245px; width:214px;}
+#home_page_sticker_copy h1 {font-size: 24px;}
+#home_page_sticker_copy .button {padding-top: 3px; padding-bottom:3px;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Register Register Register Register Register Register Register Register Register Register Register Register Register 
@@ -751,9 +764,9 @@ JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI
 .ui-widget :active { outline: none; }
 
 /* orange button */
-.orange .ui-state-default, .orange .ui-widget-content .ui-state-default { border: 2px solid #ff8d55; background: #0078ae url(../images/theme/button_bg_orange_default.png?0000000004) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
-.orange .ui-state-hover, .orange .ui-widget-content .ui-state-hover, .orange .ui-state-focus, .orange .ui-widget-content .ui-state-focus { border: 2px solid #ff6d38; background: #79c9ec url(../images/theme/button_bg_orange_hover.png?0000000004) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
-.orange .ui-state-active, .orange .ui-widget-content .ui-state-active { border: 2px solid #62DDFF; background: #6e9b31; font-weight: normal; color: #ffffff; }
+.orange .ui-state-default, .orange .ui-widget-content .ui-state-default { border: 3px solid #ff8d55; background: #0078ae url(../images/theme/button_bg_orange_default.png?0000000004) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
+.orange .ui-state-hover, .orange .ui-widget-content .ui-state-hover, .orange .ui-state-focus, .orange .ui-widget-content .ui-state-focus { border: 3px solid #ff6d38; background: #79c9ec url(../images/theme/button_bg_orange_hover.png?0000000004) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
+.orange .ui-state-active, .orange .ui-widget-content .ui-state-active { border: 3px solid #ff6d38; background: #6e9b31; font-weight: normal; color: #ffffff; }
 
 /* Interaction Cues
 ----------------------------------*/
