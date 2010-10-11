@@ -51,12 +51,10 @@
                 <input type="submit" value="Log In" id="tongue_login_form_submit"/>
                 <a href="{% url password_reset %}">Recover password</a>
             </p>
-            <p>
-                <div class="fb_button" id="fb-login">
-                    <a href="#" class="fb_button fb_button_medium">
-                        <span id="fb_login_text" class="fb_button_text">Login in with Facebook</span>
-                    </a>
-                </div>
+            <p class="fb_button" id="fb-login">
+                <a href="#" class="fb_button fb_button_medium">
+                    <span id="fb_login_text" class="fb_button_text">Login in with Facebook</span>
+                </a>
             </p>
             {% csrf_token %}
             <div><input type="hidden" name="next" value="{{ request.path|escape }}" /></div>
