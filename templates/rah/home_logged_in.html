@@ -3,35 +3,12 @@
 {% load dated_static %}
 {% block rah_nav_select %}nav_home{% endblock %}
 {% block right_content %}
-<div id="home_page_header" class="box_three_middle">
-    <div class="grid_4 alpha" style="padding-left:18px;">
-        <br/>
-        <div class="blue"><b>The October 10th</b></div>
-        <h1>Coal Challenge</h1>
-        <p>
-            By October 10th, we can take action to keep <br/><strike>1 million pounds</strike> <b>7 million pounds</b> of dirty coal from polluting our air and our communities.
-        </p>
-        <h3>How it works</h3>
-        <p>
-            You earn points by completing <a href="{% url action_show %}">actions</a>. Every point you earn means one less pound of coal needs to be burned.
-        </p> 
-        <p class="center">
-            <a href="{% url action_show %}" class="button" id="home_page_join_button">Take Action</a><br/>
-            <a href="/coal-challenge/">Learn more</a> about the challenge.
-        </p>
-           
-    </div>
-    <div id="home_page_numbers">
-        <div>{{total_people}} trendsetters</div>
-        have taken
-        <div>{{total_actions}} actions</div>
-        to keep
-        <div>{{total_coal}} lbs of coal</div>
-        out of our air!
-    </div>
+<div class="grid_9 alpha omega">
+    {% include "rah/_vampire_block.html" %}
 </div>
 <br class="clear"/>
     <div class="grid_6 alpha">
+        {% include "rah/_sticker_block.html" %}
         {% if featured_actions %}
         <div class="box_two_top"></div>
         <div class="box_two_middle">
