@@ -31,6 +31,8 @@ var rah = {
             // setup buttons
             $("button, input:submit, a.button, input.button").button();
             $(".buttonset").buttonset();
+            
+            // Setup datepicker
             $(".datepicker").datepicker();
             
             // setup tabs

@@ -34,6 +34,7 @@ Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Col
 .green      { color: #6e9b31; }
 .grey       { color: #333333; }
 .grey_light { color: #C1C1C1; }
+.white      { color: #FFFFFF; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements 
@@ -174,7 +175,6 @@ Content Content Content Content Content Content Content Content Content Content 
 --------------------------------------------------------------------------------------------------------------------- */
 #content_container{width:100%; position:relative; background-color:#b0d8f2;}
 #content{position:relative;}
-#content_bg {background: transparent url(../images/theme/content_bg.jpg?0000000004) no-repeat top center;}
 #content {
     min-height:500px;
     padding-bottom:200px;
@@ -270,15 +270,26 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 /* ---------------------------------------------------------------------------------------------------------------------
 Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage
 --------------------------------------------------------------------------------------------------------------------- */
-#home_page_join_button {font-size:24px; text-shadow:none; margin-bottom:9px; width:100%; text-shadow: #333 1px 1px 1px;}
-#home_page_numbers {text-align:center; line-height:22px; position:absolute; top:30px; left:400px; width:200px; font-style: italic;}
-#home_page_numbers div {color:#ed6623; font-size:18px; font-weight:bold; line-height:18px;}
+#home_page_join_button {font-size:24px; text-shadow:none; margin-bottom:9px; width:100%; text-shadow: #333 1px 1px 1px; visibility: hidden;}
+#home_page_vampire_star {text-align:center; position:absolute; top:46px; left:560px; width:165px; }
+#home_page_slayer_count {
+    font-family:"superclarendon-1", "superclarendon-2", Tahoma, sans-serif;
+    font-weight:700;
+    font-style: normal;
+    visibility: hidden;
+    color:#ed6623; font-size:30px; font-weight:bold; line-height:30px;
+}
+.wf-active #home_page_slayer_count, .wf-active #home_page_join_button {visibility:visible;}
 #home_page_header {
-    background: #fff url(../images/home_page/header.jpg?0000000004) no-repeat top center; 
-    height:399px;
-    position:relative;}
-#home_page_header p{text-shadow: #FFF 1px 1px 1px;}
-#home_page_header h3, #home_page_header h1 {text-shadow: #FFF 2px 2px 1px;}
+    background: transparent url(../images/home_page/vampire.png?0000000004) no-repeat top center; 
+    height:402px;
+    width:700px;
+    position:relative;
+    margin-top:-12px;}
+.home_page_vampire_copy { width: 340px; padding-top:54px;}
+#home_page_header p{color:#FFF;}
+
+/*#home_page_header h1 {text-shadow: #FFF 1px 1px 1px;}*/
 #home_page_header h1 { padding-top:-18px; font-size:34px;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
@@ -735,6 +746,11 @@ JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI
 .ui-state-active, .ui-widget-content .ui-state-active { border: 2px solid #62DDFF; background: #6e9b31; font-weight: normal; color: #ffffff; }
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #ffffff; text-decoration: none; }
 .ui-widget :active { outline: none; }
+
+/* orange button */
+.orange .ui-state-default, .orange .ui-widget-content .ui-state-default { border: 2px solid #ff8d55; background: #0078ae url(../images/theme/button_bg_orange_default.png?0000000004) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
+.orange .ui-state-hover, .orange .ui-widget-content .ui-state-hover, .orange .ui-state-focus, .orange .ui-widget-content .ui-state-focus { border: 2px solid #ff6d38; background: #79c9ec url(../images/theme/button_bg_orange_hover.png?0000000004) 50% 50% repeat-x; font-weight: normal; color: #ffffff; }
+.orange .ui-state-active, .orange .ui-widget-content .ui-state-active { border: 2px solid #62DDFF; background: #6e9b31; font-weight: normal; color: #ffffff; }
 
 /* Interaction Cues
 ----------------------------------*/
