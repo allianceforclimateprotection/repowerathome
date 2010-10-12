@@ -41,7 +41,7 @@ Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Col
 Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements 
 --------------------------------------------------------------------------------------------------------------------- */
 body {
-    font: 14px/18px Helvetica, Arial, sans-serif;
+    font: 14px/18px Arial, Helvetica, sans-serif;
     color: #333; 
     background-color: #92C139; }
 a { color: #388ca0; text-decoration: none; }
@@ -83,12 +83,6 @@ ul{
 /* ---------------------------------------------------------------------------------------------------------------------
 Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms 
 --------------------------------------------------------------------------------------------------------------------- */
-input, select, textarea {
-    font-family:"superclarendon-1", "superclarendon-2", Tahoma, sans-serif;
-    font-weight: 700;
-    visibility: hidden;
-    font-style: normal; }
-.wf-active input, .wf-active select, .wf-active textarea {visibility: visible;}
 form ul { margin-left: 0px; padding-left: 0px; list-style: none;}
 form input[type="checkbox"] { width: 15px; }
 a.button:hover { color: white; }
@@ -99,7 +93,7 @@ a.button:hover { color: white; }
 .form_row input, .form_row textarea {
     width: 100%;
     border: 1px #A1D3E4 solid;
-    padding: 6px;
+    padding: 4px;
     font-size: 14px;
     color: #333;
     background: #fff url(../images/theme/input_text_background.png?0000000004) repeat-x;
@@ -124,7 +118,7 @@ a.button:hover { color: white; }
     color: #DE6060;
     background: #FEDEDE url(../images/theme/input_text_error_background.png?0000000004) repeat-x; }
 .form_row label {
-    font-family: helvetica;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     position: absolute;
     font-weight:bold;
@@ -195,21 +189,11 @@ Header Header Header Header Header Header Header Header Header Header Header Hea
 #header{position:relative;}
 #header_logo { position:absolute; left: 352px; top:9px; }
 #header #cse_search_box_form{ position:absolute; right:0px; top:15px; }
-#cse_search_box_form label.inside{
-    font-family:"superclarendon-1", "superclarendon-2", Tahoma, sans-serif;
-    font-weight: 700;
-    font-style: normal;
-    color: #C1C1C1;
-    font-size: 18px;
-    position: absolute;
-    display: block;
-    top: 6px;
-    left: 9px; }
 #cse_search_box{
-    font-size:18px;
+    font-size:14px;
     color:#333;
-    padding:2px 10px;
-    width:180px;
+    padding:3px;
+    width:140px;
     border:1px solid #638a19;
     background: #e2eb9d url(../images/theme/input_text_search_background.png?0000000004) repeat-x; }
 #cse_search_box_submit{ padding:2px 6px; }
@@ -412,7 +396,7 @@ Comments Comments Comments Comments Comments Comments Comments Comments Comments
 .comment_buttons * { display: inline; }
 .comment_date { position:absolute; top: 9px; left:18px; }
 /* form */
-#id_comment { height: 100px; background: #FFF; font-family: Helvetica, Arial; width:454px; }
+#id_comment { height: 100px; background: #FFF; font-family: Arial, Helvetica, sans-serif; width:454px; }
 #id_comment[class~="error"] { background: #FEDEDE; }
 #add_comment_submit { width: 474px; }
 
@@ -421,7 +405,7 @@ Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Groups Gro
 --------------------------------------------------------------------------------------------------------------------- */
 #group_slug_wrapper { position: relative; }
 #group_slug_domain {
-    font-family: helvetica;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     color: #333;
     position: absolute;
@@ -1044,14 +1028,10 @@ JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI JqueryUI
 /* Button
 ----------------------------------*/
 .ui-button { 
-    font-family:"superclarendon-1", "superclarendon-2", Tahoma, sans-serif !important;
-    font-weight:700;
     font-size: 14px;
-    font-style: normal;
-    visibility: hidden;
+    font-family: "Arial Black", Gadget, sans-serif;
     text-shadow: #333 1px 1px 1px;
     display: inline-block; position: relative; padding: 0; margin-right: .1em; text-decoration: none !important; cursor: pointer; text-align: center; zoom: 1; overflow: visible; } /* the overflow property removes extra width in IE */
-.wf-active .ui-button {visibility: visible;}
 .ui-button-icon-only { width: 2.2em; } /* to make room for the icon, a width needs to be set here */
 button.ui-button-icon-only { width: 2.4em; } /* button elements seem to need a little more width */
 .ui-button-icons-only { width: 3.4em; } 

@@ -1034,13 +1034,10 @@ var rah = {
             
             $("#commitment_card_form").validate({
                 rules: {
-                    zipcode:    { required: false, minlength: 5, remote: { url: "/validate/", type: "post" } },
+                    zipcode:    { required: false, minlength: 5, digits: true },
                     email:      { required: false, email: true },
                     first_name: { required: true, minlength: 2 }
                 },
-                messages: {
-                    zipcode: { remote: "We couldn't locate this zipcode" }
-                }
             });
             
             $("#commitment_card_form").attr("action", action);
