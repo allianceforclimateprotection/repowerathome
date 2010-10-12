@@ -1,10 +1,10 @@
 import datetime
 
 from django.db import models
+from django.contrib.auth.models import User
 
 from geo.models import Location
 
-from django.contrib.auth.models import User
 
 class Contributor(models.Model):
     first_name = models.CharField(blank=True, max_length=50)

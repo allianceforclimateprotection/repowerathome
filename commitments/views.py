@@ -5,13 +5,9 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 
 from utils import forbidden
-
 from models import Commitment, Contributor, ContributorSurvey
 from forms import ContributorForm
 from commitments import survey_forms
-
-import pdb
-
 
 @login_required
 def show(request):
@@ -37,7 +33,7 @@ def show(request):
     return render_to_response('commitments/show.html', locals(), context_instance=RequestContext(request))
     
 def card(request, contrib_id=None, form_name=None):
-    # Get the contributor object is specified
+    # Get the contributor object if specified
     if not contrib_id:
         contributor = Contributor()
     else:
@@ -62,11 +58,14 @@ def card(request, contrib_id=None, form_name=None):
     except AttributeError:
         survey_form = survey_forms.EnergyMeetingCommitmentCardVersion2(contributor, request.user, (request.POST or None))
     
-    # pdb.set_trace()
     if request.method == 'POST' and contrib_form.is_valid() and survey_form.is_valid():
+        # If the contrib form finds that the email already exists, it'll return the matched contributor
         contributor = contrib_form.save()
-        # pdb.set_trace()
+        
+        # Make sure the survey form has the right contributor in case one was matched on email
+        survey_form.contributor = contributor
         survey_form.save()
+        
         messages.success(request, "Commitment card for %s saved" % contributor.get_full_name())
         if request.POST.get("submit") == "save_and_add_another":
             return redirect("commitments_card_create")

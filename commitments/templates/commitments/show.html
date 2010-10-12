@@ -4,7 +4,16 @@
 {% block right_content %}
 <div class="box_two_top"></div>
 <div class="box_two_middle">
-    <h1>The Commitment Landing Page</h1>
+    <h1>Manage Commitment Cards</h1>
+    <p>
+        Have you inspired someone to fill out a commitment card? Nice work! Click the button to enter the information
+        from the commitment card. Your new Trendsetters will be able to update their progress and commit to new actions.
+    </p>
+    <p>
+        Want to learn more about what commitment cards are and how they’re collected? Visit the <a href="{% url
+        events_show %}">events page</a>, or <a href="mailto:field@repowerathome.com?subject=Commitment%20Cards"
+        title="">email a field organizer</a>.
+    </p>
     <p>
         <a href="{% url commitments_card_create %}" class="button">Enter a new commitment card</a>
     </p>
@@ -28,7 +37,9 @@
             	        <a href="#" class="commit_action" id="commit_action__{{ action.id }}">{{ action.name }}</a>
             	        <ul class="commit_list_ul commit_list_ul_{{ action.id }} hidden">
             	            {% for commitment in tuple.0 %}
-                			    <li class="contributor__{{ commitment.contributor.id }}">{{ commitment.contributor }} 
+                			    <li class="contributor__{{ commitment.contributor.id }}">
+                			        {{ commitment.contributor.first_name }} 
+                			        {{ commitment.contributor.last_name }}
                 			        <span class="commit_user_list_edit_link hidden">
                 			            (<a href="{% url commitments_card commitment.contributor.id %}">edit</a>)
                 			        </span>
