@@ -224,6 +224,9 @@ var rah = {
                 title: 'Tell your tweeps about us', modal: true, autoOpen: false,
                 buttons: ($('#twitter_status_form').size() > 0 ? { "Update status": function() { $('#twitter_status_form').submit(); } } : { })
             });
+            
+            // Setup the commitment card open link
+            rah.mod_commitment_card_open_link_setup.init();
         }
     },
         
@@ -961,7 +964,28 @@ var rah = {
                 }
             );
             
+            rah.mod_commitment_card_open_link_setup.init();
+        }
+    },
+    
+    page_commitments_card: {
+        init: function() {
+            rah.mod_commitment_card_form_setup.init();
+        }
+    },
+    
+    mod_commitment_card_open_link_setup: {
+        init: function() {
+            /*
+                Must apply the class commitment_card_open to a link pointing to a commitment card
+                e.g.:  <a href="/commitments/card/" class="commitment_card_open">New Card</a>
+                e.g.:  <a href="/commitments/card/70/" class="commitment_card_open">Edit Joe Smith's card</a>
+                e.g.:  <a href="/commitments/card/70/someform/" class="commitment_card_open">Edit Joe someform Card</a>
+            
+            */
+            
             // Setup dialog when new commitment card button is pressed
+            $('body').append('<div id="commitment_card_dialog"></div>')
             $("#commitment_card_dialog").dialog({
                 modal:true,
                 buttons: {
@@ -991,12 +1015,6 @@ var rah = {
                 });
                 return false;
             });
-        }
-    },
-    
-    page_commitments_card: {
-        init: function() {
-            rah.mod_commitment_card_form_setup.init();
         }
     },
     
