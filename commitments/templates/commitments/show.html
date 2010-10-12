@@ -17,8 +17,8 @@
     <p>
         <a href="{% url commitments_card_create %}" class="button commitment_card_open">Enter a new commitment card</a>
     </p>
-    {% if actions %}
     <div id="commitments_show_table">
+    {% if actions %}
         <table border="0" cellspacing="5" cellpadding="5">
             <tr>
                 <th></th>
@@ -71,8 +71,8 @@
                 </tr>
             {% endfor %}
         </table>
-    </div>
     {% endif %}
+    </div>
 </div>
 <div class="box_two_bottom"></div>
 <div id="commitment_card_dialog"></div>

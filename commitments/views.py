@@ -48,6 +48,7 @@ def card(request, contrib_id=None, form_name=None):
             return forbidden(request, "You don't have permission to edit this contributor.")
         
     # If the contributor has a location, get the zipcode
+    # TODO: move this to the form's init
     contrib_loc = contributor.location.zipcode if contributor.location else ""
     
     # Setup a contrib form
@@ -76,10 +77,7 @@ def card(request, contrib_id=None, form_name=None):
             message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))
             return HttpResponse(message_html)
         
-        if request.GET.get("partial"):
-            template = 'commitments/%s.html' % request.GET.get("partial")
-        else:
-            template = 'commitments/_card.html'
+        template = 'commitments/_card.html'
     else:
         if request.method == 'POST':
             if request.POST.get("submit") == "save_and_add_another":
