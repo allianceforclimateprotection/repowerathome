@@ -392,7 +392,9 @@ def trendsetter_sticker(request):
         instance = StickerRecipient(first_name=request.user.first_name, 
             last_name=request.user.last_name, email=request.user.email)
     else:
-        instance = StickerRecipient(**dict(request.GET.items()))
+        fields = dict([(k,v) for k,v in request.GET.items() if k in 
+            ['address', 'city', 'email', 'first_name', 'last_name', 'state', 'zipcode']])
+        instance = StickerRecipient(**fields)
     form = StickerRecipientForm(instance=instance, data=(request.POST or None))
     if form.is_valid():
         recipient = form.save()
