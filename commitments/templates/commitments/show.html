@@ -15,9 +15,10 @@
         <a href="mailto:field@repowerathome.com?subject=Commitment%20Cards">email a field organizer</a>.
     </p>
     <p>
-        <a href="{% url commitments_card_create %}" class="button">Enter a new commitment card</a>
+        <a href="{% url commitments_card_create %}" class="button commitment_card_open">Enter a new commitment card</a>
     </p>
     {% if actions %}
+    <div id="commitments_show_table">
         <table border="0" cellspacing="5" cellpadding="5">
             <tr>
                 <th></th>
@@ -27,7 +28,7 @@
                 </th>
                 <th class="center smaller" style="width:70px;">
                     <div class="commit_totals">{{ total_completes }}</div>
-                    Completed
+                    Done
                 </th>
             </tr>
             {% for action, tuple in actions.items %}
@@ -41,7 +42,7 @@
                 			        {{ commitment.contributor.first_name }} 
                 			        {{ commitment.contributor.last_name }}
                 			        <span class="commit_user_list_edit_link hidden">
-                			            (<a href="{% url commitments_card commitment.contributor.id %}">edit</a>)
+                			            (<a href="{% url commitments_card commitment.contributor.id %}" class="commitment_card_open">edit</a>)
                 			        </span>
                 			    </li>
                 			{% endfor %}
@@ -70,9 +71,11 @@
                 </tr>
             {% endfor %}
         </table>
+    </div>
     {% endif %}
 </div>
-<div class="box_two_bottom"></div>    
+<div class="box_two_bottom"></div>
+<div id="commitment_card_dialog"></div>
 {% endblock %}
 
 {% block js %}page_commitments_show{% endblock %}

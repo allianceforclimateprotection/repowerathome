@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 
 from models import Contributor
+from geo.models import Location
 
 class ContributorForm(forms.ModelForm):
     
@@ -15,6 +16,7 @@ class ContributorForm(forms.ModelForm):
         
     def clean(self):
         email = self.cleaned_data.get('email', None)
+                
         # If there's an email we'll try to match it to contributors in the data. If there's already a contributor id
         # then we can skip the lookup because we're editing a known contributor
         if email and not self.instance.id:
@@ -36,7 +38,9 @@ class ContributorForm(forms.ModelForm):
         email = self.cleaned_data.get('email')
         if email == '':
             self.cleaned_data['email'] = None
-    
+        
+        return self.cleaned_data['email']
+        
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
         if not len(data):
@@ -45,7 +49,6 @@ class ContributorForm(forms.ModelForm):
         if len(data) <> 5:
             raise forms.ValidationError("Please enter a 5 digit zipcode")
         try:
-            self.cleaned_data["location"] = Location.objects.get(zipcode=data)
+            self.instance.location = Location.objects.get(zipcode=data)
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
-        

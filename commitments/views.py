@@ -3,9 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect, get_object_or_404
+from django.template import RequestContext, loader
+from django.http import HttpResponse
 
 from utils import forbidden
-from models import Commitment, Contributor, ContributorSurvey
+from models import Commitment, Contributor, ContributorSurvey, Survey
 from forms import ContributorForm
 from commitments import survey_forms
 
@@ -59,6 +61,7 @@ def card(request, contrib_id=None, form_name=None):
         survey_form = survey_forms.EnergyMeetingCommitmentCardVersion2(contributor, request.user, (request.POST or None))
     
     if request.method == 'POST' and contrib_form.is_valid() and survey_form.is_valid():
+                
         # If the contrib form finds that the email already exists, it'll return the matched contributor
         contributor = contrib_form.save()
         
@@ -66,13 +69,31 @@ def card(request, contrib_id=None, form_name=None):
         survey_form.contributor = contributor
         survey_form.save()
         
-        messages.success(request, "Commitment card for %s saved" % contributor.get_full_name())
-        if request.POST.get("submit") == "save_and_add_another":
-            return redirect("commitments_card_create")
-        else:
-            return redirect("commitments_show")
+        messages.success(request, "Commitment card for %s %s saved" % (contributor.first_name, contributor.last_name,))
     
-    return render_to_response('commitments/card.html', {
+    if request.is_ajax():
+        if request.method == 'POST':
+            message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))
+            return HttpResponse(message_html)
+        
+        if request.GET.get("partial"):
+            template = 'commitments/%s.html' % request.GET.get("partial")
+        else:
+            template = 'commitments/_card.html'
+    else:
+        if request.method == 'POST':
+            if request.POST.get("submit") == "save_and_add_another":
+                return redirect("commitments_card_create")
+            else:
+                return redirect("commitments_show")
+        template = 'commitments/card.html'
+    
+    # Get the Surveys for the survey select widget
+    survey_types = Survey.objects.filter(is_active=True)
+    
+    return render_to_response(template, {
         "survey_form": survey_form,
-        "contrib_form": contrib_form
+        "contrib_form": contrib_form,
+        "survey_types": survey_types,
+        "current_form_name": survey_form.__class__.__name__
     }, context_instance=RequestContext(request))

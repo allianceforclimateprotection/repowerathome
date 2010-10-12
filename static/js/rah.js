@@ -960,18 +960,73 @@ var rah = {
                     $(this).children(".commit_user_list_edit_link").hide();
                 }
             );
+            
+            // Setup dialog when new commitment card button is pressed
+            $("#commitment_card_dialog").dialog({
+                modal:true,
+                buttons: {
+                    "Save and close": function() { 
+                        $("#commitment_card_form").ajaxSubmit({
+                            success: function(messages_html) {
+                                $("#commitment_card_dialog").dialog("close");
+                                rah.mod_messages.init(messages_html);
+                                $("#commitments_show_table").load('/commitments/ #commitments_show_table table', function(){
+                                    rah.page_commitments_show.init();
+                                });
+                            }
+                        });
+                    }
+                },
+                autoOpen: false,
+                width: 780
+            });
+            
+            // Attach functionality commitment card links
+            $(".commitment_card_open").click(function(){
+                var href = $(this).attr('href');
+                
+                $("#commitment_card_dialog").load(href, function(){                    
+                    rah.mod_commitment_card_form_setup.init(href);
+                    $("#commitment_card_dialog").dialog("open");
+                });
+                return false;
+            });
         }
     },
     
     page_commitments_card: {
         init: function() {
+            rah.mod_commitment_card_form_setup.init();
+        }
+    },
+    
+    mod_commitment_card_form_setup: {
+        init: function(action) {
             // Make sure only one box is checked
-            $(".commit_card_choice input").live("click", function(){
+            $("#commitment_card_form .commit_card_choice input").live("click", function(){
                 var id = $(this).attr("id");
                 var index = id.substr(-1);
                 var other_index = (index == "1") ? "0" : "1";
                 var field_name = id.substr(0, id.length-1);
                 $("#" + field_name + other_index).attr("checked", false);
+            });
+            
+            $("#commitment_card_form").validate({
+                rules: {
+                    zipcode:    { required: false, minlength: 5, remote: { url: "/validate/", type: "post" } },
+                    email:      { required: false, email: true },
+                    first_name: { required: true, minlength: 2 }
+                },
+                messages: {
+                    zipcode: { remote: "We couldn't locate this zipcode" }
+                }
+            });
+            
+            $("#commitment_card_form").attr("action", action);
+            
+            $("#commitment_card_select_form #id_form_name").change(function(){
+                var load_str = action + '?form_name=' + $(this).val() + ' #commitment_card_action_table table';
+                $("#commitment_card_action_table").load(load_str);
             });
         }
     },

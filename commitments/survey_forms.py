@@ -89,6 +89,10 @@ class ApartmentEnergyMeetingCommitmentCardVersion2(ApartmentEnergyMeetingCommitm
 
 class PilotEnergyMeetingCommitmentCard(SurveyForm):
     action_slugs = (a.slug for a in Action.objects.all())
+
+class VampireHuntCommitmentCard(SurveyForm):
+    volunteer = forms.BooleanField(required=False, label="I want to volunteer with Repower at Home")
+    action_slugs = ("eliminate-standby-vampire-power",)
     
 class VolunteerInterestForm(SurveyForm):
     action_slugs = ("eliminate-standby-vampire-power", "programmable-thermostat")

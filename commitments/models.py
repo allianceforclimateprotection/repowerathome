@@ -120,7 +120,10 @@ class Survey(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = SurveyManager()
-
+    
+    class Meta:
+        ordering = ['name', 'updated']
+        
     def __unicode__(self):
         return "%s Survey" % self.name
         
