@@ -10,11 +10,11 @@
         {% endfor %}
         </select>        
     </div>
-    {% if not request.is_ajax %}
+    <noscript>
         <div>
             <button type="submit" id="commitment_card_select_submit">Change commitment card</button>
         </div>
-    {% endif %}
+    </noscript>
 </form>
 <br class="clear"/>
 <form action="" method="post" id="commitment_card_form">
@@ -87,7 +87,6 @@
         <br class="clear"/>
         <button type="submit" value="save_and_close" name="submit" id="submit_save_and_close">Save and close</button>
         <button type="submit" value="save_and_add_another" name="submit">Save and add another</button>
-        <input type="submit" name="some_name" value="SUBMIT" id="some_name"/>
     </p>
     {% csrf_token %}
 </form>

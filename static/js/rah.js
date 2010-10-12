@@ -970,7 +970,7 @@ var rah = {
     
     page_commitments_card: {
         init: function() {
-            rah.mod_commitment_card_form_setup.init();
+            rah.mod_commitment_card_form_setup.init(window.location.pathname);
         }
     },
     
@@ -1019,6 +1019,9 @@ var rah = {
     },
     
     mod_commitment_card_form_setup: {
+        /*
+            param action: The path where the commitment card form should POST to
+        */
         init: function(action) {
             // Make sure only one box is checked
             $("#commitment_card_form .commit_card_choice input").live("click", function(){
