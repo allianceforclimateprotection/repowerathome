@@ -30,7 +30,13 @@ class ContributorForm(forms.ModelForm):
                         del(self.cleaned_data[key])
         
         return self.cleaned_data
-                    
+    
+    def clean_email(self):
+        # If there is no email entered, make sure it's set to NULL in the DB because there can't be more than one ''
+        email = self.cleaned_data.get('email')
+        if email == '':
+            self.cleaned_data['email'] = None
+    
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
         if not len(data):
