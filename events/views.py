@@ -226,6 +226,6 @@ def message(request, event_id, type):
     if form.is_valid():
         form.save()
         messages.success(request, "Your message has been sent.")
-        return redirect("event-guests", event_id=event.id)
+        return redirect(event)
     template = "events/message.html"
     return render_to_response(template, locals(), context_instance=RequestContext(request))
