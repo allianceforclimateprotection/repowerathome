@@ -53,7 +53,7 @@ class Event(models.Model):
     limit = models.PositiveIntegerField(blank=True, null=True, help_text="Adding a limit sets a \
         cap on the number of guests that can RSVP. If the limit is reached, potential guests \
         will need to contact you first.")
-    guests = models.ManyToManyField("commitments.contributor", through="Guest")
+    # guests = models.ManyToManyField("commitments.contributor", through="Guest")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
@@ -72,6 +72,12 @@ class Event(models.Model):
         
     def place(self):
         return "%s %s" % (self.where, self.location)
+        
+    def odd_guests(self):
+        return [g for i,g in enumerate(self.guest_set.rsvped_with_order()) if i % 2 != 0]
+        
+    def even_guests(self):
+        return [g for i,g in enumerate(self.guest_set.rsvped_with_order()) if i % 2 == 0]
     
     def start_datetime(self):
         return datetime.datetime.combine(self.when, self.start)
@@ -184,6 +190,9 @@ class Event(models.Model):
         del request.session[self._guest_key()]
         
 class GuestManager(models.Manager):
+    def rsvped_with_order(self):
+        return self.exclude(rsvp_status=" ").order_by("rsvp_status", "created")
+    
     def guest_engagment(self, date_start=None, date_end=None):
         from django.db import connection, transaction
         from actions.models import Action
@@ -308,8 +317,7 @@ class Guest(models.Model):
 #
 
 def set_default_survey(sender, instance, **kwargs):
-    if not instance.pk and instance.event_type:
-        instance.default_survey = instance.event_type.survey
+    instance.default_survey = instance.event_type.survey
 models.signals.pre_save.connect(set_default_survey, sender=Event)
 
 def make_creator_a_guest(sender, instance, **kwargs):

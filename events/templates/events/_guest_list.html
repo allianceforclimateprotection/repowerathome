@@ -1,0 +1,14 @@
+<div id="guest_list">
+    <div class="guest_list_col">
+        {% for guest in event.even_guests %}
+            {% include "events/_guest.html" %}
+        {% endfor %}
+    </div>
+    <div class="guest_list_col">
+        {% for guest in event.odd_guests %}
+            {% include "events/_guest.html" %}
+        {% endfor %}
+    </div>
+</div>
+<div id="guests_add_container" class="hidden"></div>
+<div id="guests_invite_container" class="hidden"></div>

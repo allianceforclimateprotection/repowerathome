@@ -22,7 +22,7 @@
             {% if guest.rsvp_status and not request.GET.reset %}
                 <p>
                     You are: <span>{{ guest.get_rsvp_status_display }}</span><br />
-                    (<a href="{% url event-detail event.id %}?reset=true">change</a>)
+                    (<a href="{{ event.get_absolute_url }}?reset=true">change</a>)
                 </p>
             {% else %}
                 {% include "events/_rsvp_form.html" %}
@@ -30,6 +30,15 @@
         </div>
         <div class="box_one_bottom"></div>
     </div>
+    {% if event.invited %}
+        <div class="grid_3 omega">
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                {% include "events/_invitations.html" %}
+            </div>
+            <div class="box_one_bottom"></div>
+        </div>
+    {% endif %}
     <br class="clear"/>
     <br class="clear"/>
     <div id="comments">

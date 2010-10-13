@@ -22,7 +22,7 @@ from records.models import Record
 
 from models import Event, Guest
 from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, GuestEditForm, \
-    RsvpForm, RsvpConfirmForm, RsvpAccountForm, MessageForm
+    RsvpForm, RsvpConfirmForm, RsvpAccountForm, MessageForm, HostForm
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
 
 def show(request):
@@ -47,7 +47,7 @@ def detail(request, event_id, token=None):
     event = get_object_or_404(Event, id=event_id)
     guest = event.current_guest(request, token)
     if event.has_manager_privileges(request.user):
-        template = "events/_detail.html" if request.is_ajax() else "events/detail.html"
+        template = "events/detail.html"
     else:
         rsvp_form = RsvpForm(instance=guest, initial={"token": token, "rsvp_status": "A"})
         template = "events/rsvp.html"
@@ -66,36 +66,27 @@ def edit(request, event_id):
 
 @login_required
 @user_is_event_manager
-def guests(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    form = GuestListForm(event=event, data=(request.POST or None))
-    if form.is_valid():
-        response = form.save()
-        if response:
-            return response
-        if event.has_manager_privileges(request.user):
-            return redirect("event-guests", event_id=event.id)
-        else:
-            return redirect(event)
-    template = "events/_guests.html" if request.is_ajax() else "events/guests.html"
-    return render_to_response(template, locals(), context_instance=RequestContext(request))
-
-@login_required
-@user_is_event_manager
-def guests_add(request, event_id, type):
+def guests_add(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     guest = Guest(event=event)
-    guest_add_form = GuestAddForm(instance=guest, data=(request.POST or None if type == "add" else None))
-    if guest_add_form.is_valid():
-        guest_add_form.save()
-        return redirect("event-guests", event_id=event.id)
-    invite = Invitation(user=request.user, content_object=event)
-    guest_invite_form = GuestInviteForm(instance=invite, initial={"emails": request.GET.get("emails", "")},
-        data=(request.POST or None if type == "invite" else None))
-    if guest_invite_form.is_valid():
-        guest_invite_form.save()
-        return redirect("event-guests", event_id=event.id)
+    form = GuestAddForm(instance=guest, data=(request.POST or None))
+    if form.is_valid():
+        form.save()
+        return redirect(event)
     template = "events/_guests_add.html" if request.is_ajax() else "events/guests_add.html"
+    return render_to_response(template, locals(), context_instance=RequestContext(request))
+    
+@login_required
+@user_is_event_manager
+def guests_invite(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    invite = Invitation(user=request.user, content_object=event)
+    form = GuestInviteForm(instance=invite, initial={"emails": request.GET.get("emails", "")},
+        data=(request.POST or None))
+    if form.is_valid():
+        form.save()
+        return redirect(event)
+    template = "events/_guests_invite.html" if request.is_ajax() else "events/guests_invite.html"
     return render_to_response(template, locals(), context_instance=RequestContext(request))
     
 @login_required
@@ -122,8 +113,19 @@ def guests_edit(request, event_id, guest_id, type):
                 messages.error(request, error)
     guest = Guest.objects.get(id=guest_id)
     message_html = render_to_string("_messages.html", {}, context_instance=RequestContext(request))
-    guest_row = render_to_string("events/_guest_row.html", {"event": event, "guest": guest}, context_instance=RequestContext(request))
-    return HttpResponse(json.dumps({"message_html": message_html, "guest_row": guest_row}), mimetype="text/json")
+    guest_status = render_to_string("events/_guest_status.html", {"event": event, "guest": guest}, context_instance=RequestContext(request))
+    return HttpResponse(json.dumps({"message_html": message_html, "guest_status": guest_status}), mimetype="text/json")
+    
+@login_required
+@user_is_event_manager
+def hosts(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    form = HostForm(event=event, data=(request.POST or None))
+    if form.is_valid():
+        form.save()
+        return redirect(event)
+    template = "events/_hosts.html" if request.is_ajax() else "events/hosts.html"
+    return render_to_response(template, locals(), context_instance=RequestContext(request))
 
 @require_POST
 @user_is_guest_or_has_token
@@ -172,26 +174,6 @@ def rsvp_cancel(request, event_id):
     
 def rsvp_statuses(request):
     return HttpResponse(json.dumps(dict(Guest.RSVP_STATUSES)), mimetype="text/json")
-    
-@login_required
-@user_is_event_manager
-def commitments(request, event_id, guest_id=None):
-    from commitments import survey_forms
-
-    event = get_object_or_404(Event, id=event_id)
-    if guest_id:
-        guest = get_object_or_404(Guest, id=guest_id)
-    else:
-        guests = Guest.objects.filter(event=event).order_by("pk")
-        guest = guests[0] if len(guests) > 0 else None
-    survey = event.default_survey
-    if survey:
-        form = getattr(survey_forms, survey.form_name)(guest.contributor, request.user, data=(request.POST or None))
-        if form.is_valid():
-            form.save()
-            return redirect("event-commitments-guest", event_id=event.id, guest_id=event.next_guest(guest).id)
-    template = "events/_commitments.html" if request.is_ajax() else "events/commitments.html"
-    return render_to_response(template, locals(), context_instance=RequestContext(request))
 
 @login_required
 @user_is_event_manager

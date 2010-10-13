@@ -1,12 +1,63 @@
-{% extends "events/management.html" %}
-{% block title %}{{ event }}{% endblock %}
+{% extends "events/base.html" %}
 {% load comments %}
+{% block title %}{{ event }}{% endblock %}
 {% block breadcrumbs %}
-    {{ block.super }}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url event-show %}">Events</a> &rsaquo;
     {{ event }}
 {% endblock %}
-{% block event_details_content %}
-    {% include "events/_detail.html" %}
+{% block right_content %}
+    <div class="grid_6 alpha">
+        <div class="box_two_top"></div>
+        <div class="box_two_middle">
+            <h1>{{ event }}</h1>
+            {% include "events/_details.html" %}
+        </div>
+        <div class="box_two_bottom"></div>
+        
+        <div class="box_two_top"></div>
+        <div class="box_two_middle">
+            <h1>Guest List</h1>
+            {% include "events/_guest_list.html" %}
+        </div>
+        <div class="box_two_bottom"></div>
+    </div>
+    <div class="grid_3 omega">
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+            <div>
+                <h3>Host Tools</h3>
+                <div><a href="{% url event-edit event.id %}">Edit Event Details</a></div>
+                <div><a class="guests_add_link" href="{% url event-guests-add event.id %}">Add Guest</a></div>
+                <div><a id="event_hosts_link" href="{% url event-hosts event.id %}">Select Hosts</a></div>
+                <div>
+                    <a href="{% url event-print event.id %}">Sign In Sheet</a>
+                    <span class="file_icon pdf_icon" title="PDF sign in sheet download"></span>
+                </div>
+                <div>
+                    <a href="{% url event-spreadsheet event.id %}">Guest List</a>
+                    <span class="file_icon excel_icon" title="Excel guest list download"></span>
+                </div>
+            </div>
+        </div>
+        <div class="box_one_bottom"></div>
+        
+        {% if event.invited %}
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                {% include "events/_invitations.html" %}
+            </div>
+            <div class="box_one_bottom"></div>
+        {% endif %}
+    </div>
+    <br class="clear"/>
+    <br class="clear"/>
+    <div id="comments">
+        {% with event as object %}
+            {% render_comment_list for object %}
+            {% render_comment_form for object %}
+        {% endwith %}
+    </div>
 {% endblock %}
 
 {% block extrajs %}

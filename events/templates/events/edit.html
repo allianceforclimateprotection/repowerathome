@@ -3,7 +3,7 @@
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
     <a href="{% url event-show %}">Events</a> &rsaquo;
-    <a href="{% url event-detail event.id %}">{{ event }}</a> &rsaquo;
+    <a href="{{ event.get_absolute_url }}">{{ event }}</a> &rsaquo;
     Edit Event
 {% endblock %}
 {% block right_content %}
@@ -15,7 +15,7 @@
                 {% include "events/_form.html" %}
                 {% csrf_token %}
                 <input type="submit" value="Save Changes" /> |
-                <a href="{% url event-detail event.id %}">cancel</a>
+                <a href="{{ event.get_absolute_url }}">cancel</a>
             </form>
         </div>
         <div class="box_two_bottom"></div>

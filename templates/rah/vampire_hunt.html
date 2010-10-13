@@ -127,9 +127,9 @@
         <div class="box_one_top"></div>
         <div class="box_one_middle">
             <h3>Top team recruiters</h3>
-            <ol>
+            <ol style="font-size: 0.9em;">
                 {% for leader in team_leaders %}
-                    <li><a href="{{ leader.get_absolute_url }}">{{ leader }}</a>: {{ leader.contributions }} slayers</li>
+                    <li>{{ leader.contributions }} - <a href="{{ leader.get_absolute_url }}">{{ leader|truncate:20 }}</a></li>
                 {% endfor %}
             </ol>
         </div>

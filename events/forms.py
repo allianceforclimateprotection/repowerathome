@@ -52,7 +52,6 @@ class EventForm(forms.ModelForm):
         fields = ("event_type", "place_name", "where", "city", "state", "zipcode", "when", "start", "duration",
             "details", "is_private")
         widgets = {
-            "event_type": forms.RadioSelect,
             "when": forms.DateInput(format="%m/%d/%Y", attrs={"class": "datepicker future_date_warning"}),
             "start": SelectTimeWidget(minute_step=15, twelve_hr=True, use_seconds=False),
             "duration": forms.Select(choices=[("", "---")]+DURATIONS)
@@ -249,6 +248,18 @@ class GuestEditForm(forms.ModelForm):
         if zipcode:
             self.instance.contributor.zipcode = zipcode
         return super(GuestEditForm, self).save(*args, **kwargs)
+        
+class HostForm(forms.Form):
+    guests = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple)
+    
+    def __init__(self, event, *args, **kwargs):
+        super(HostForm, self).__init__(*args, **kwargs)
+        self.event = event
+        self.fields["guests"].queryset = event.guest_set
+        self.fields["guests"].initial = [g.id for g in event.hosts()]
+        
+    def save(self):
+        self.cleaned_data["guests"].update(is_host=True)
 
 class RsvpForm(forms.ModelForm):
     rsvp_status = forms.ChoiceField(choices=Guest.RSVP_STATUSES, widget=forms.RadioSelect)

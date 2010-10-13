@@ -1,0 +1,15 @@
+<div class="guest">
+    <div class="guest_name">
+        {{ guest.contributor.name}}
+        {% if guest.is_host %}
+            <span class="smaller event_host" title="{{ guest.contributor.name }} is a host">Host</span>
+        {% endif %}
+        {% if guest.comments %}
+            <span class="ui-icon ui-icon-comment tooltip guest_icon" title="{{ guest.comments }}"></span>
+        {% endif %}
+    </div>
+    <h5 id="{% url event-guests-edit-status event.id,guest.id %}" class="editable rsvp_select">
+        {% include "events/_guest_status.html" %}
+    </h5>
+    <a class="commitment_card_open" href="{% url commitments_card_with_form guest.contributor.id,event.default_survey.form_name %}">Commitment Card</a>
+</div>
