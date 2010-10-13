@@ -15,17 +15,19 @@
         </div>
         <div class="box_two_bottom"></div>
         
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <h1>Guest List</h1>
-            {% include "events/_guest_list.html" %}
-        </div>
-        <div class="box_two_bottom"></div>
+        {% if has_manager_privileges %}
+            <div class="box_two_top"></div>
+            <div class="box_two_middle">
+                <h1>Guest List</h1>
+                {% include "events/_guest_list.html" %}
+            </div>
+            <div class="box_two_bottom"></div>
+        {% endif %}
     </div>
     <div class="grid_3 omega">
         <div class="box_one_top"></div>
         <div class="box_one_middle">
-            <div>
+            {% if has_manager_privileges %}
                 <h3>Host Tools</h3>
                 <div><a href="{% url event-edit event.id %}">Edit Event Details</a></div>
                 <div><a class="guests_add_link" href="{% url event-guests-add event.id %}">Add Guest</a></div>
@@ -38,11 +40,21 @@
                     <a href="{% url event-spreadsheet event.id %}">Guest List</a>
                     <span class="file_icon excel_icon" title="Excel guest list download"></span>
                 </div>
-            </div>
+            {% else %}
+                <h3>RSVP</h3>
+                {% if guest.rsvp_status and not request.GET.reset %}
+                    <p>
+                        You are: <span>{{ guest.get_rsvp_status_display }}</span><br />
+                        (<a href="{{ event.get_absolute_url }}?reset=true">change</a>)
+                    </p>
+                {% else %}
+                    {% include "events/_rsvp_form.html" %}
+                {% endif %}
+            {% endif %}
         </div>
         <div class="box_one_bottom"></div>
         
-        {% if event.invited %}
+        {% if has_manager_privileges and event.invited %}
             <div class="box_one_top"></div>
             <div class="box_one_middle">
                 {% include "events/_invitations.html" %}

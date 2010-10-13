@@ -46,12 +46,10 @@ def create(request):
 def detail(request, event_id, token=None):
     event = get_object_or_404(Event, id=event_id)
     guest = event.current_guest(request, token)
-    if event.has_manager_privileges(request.user):
-        template = "events/detail.html"
-    else:
+    has_manager_privileges = event.has_manager_privileges(request.user)
+    if not has_manager_privileges:
         rsvp_form = RsvpForm(instance=guest, initial={"token": token, "rsvp_status": "A"})
-        template = "events/rsvp.html"
-    return render_to_response(template, locals(), context_instance=RequestContext(request))
+    return render_to_response("events/detail.html", locals(), context_instance=RequestContext(request))
 
 @login_required
 @user_is_event_manager
