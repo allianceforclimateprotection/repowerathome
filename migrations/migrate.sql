@@ -176,4 +176,9 @@ WHERE name = 'New Account';
 INSERT INTO actions_actionform (action_id, form_name, var_name, created, updated)
 SELECT a.id, "VampirePowerWorksheetForm2", "vampire_worksheet_form", NOW(), NOW()
 FROM actions_action a
-WHERE a.name = "Eliminate vampire power"
+WHERE a.name = "Eliminate vampire power";
+
+INSERT INTO events_eventtype (name, teaser, description, survey_id, created, updated)
+SELECT "Trick or Slay canvasing", "", "", s.id, NOW(), NOW()
+FROM commitments_survey s
+WHERE s.name = "Vampire Hunt Commitment Card";

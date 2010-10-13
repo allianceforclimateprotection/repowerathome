@@ -30,5 +30,4 @@
     {"pk": 4, "model": "events.guest", "fields": {"contributor": 4, "created": "2010-02-02", "updated": "2010-02-02", "notify_on_rsvp": false, "is_host": false, "added": null, "rsvp_status": "", "invited": "2010-03-12", "event": 1}}, 
     {"pk": 5, "model": "events.guest", "fields": {"contributor": 5, "created": "2010-02-02", "updated": "2010-02-02", "notify_on_rsvp": false, "is_host": false, "added": "2010-02-02", "rsvp_status": "", "invited": null, "event": 1}},
     {"pk": 6, "model": "events.guest", "fields": {"contributor": 6, "created": "2010-02-02", "updated": "2010-02-02", "notify_on_rsvp": false, "is_host": false, "added": "2010-01-15", "rsvp_status": "M", "invited": null, "event": 1}}
-    
 ]
