@@ -664,9 +664,9 @@ var rah = {
                             success: function(messages_html) {
                                 $("#invite_friend_dialog").dialog("close");
                                 rah.mod_messages.init(messages_html);
+                                $("#id_emails, #id_note").val("");
                             }
                         });
-                        // $("#invite_form").submit(); 
                     }
                 }
             });
@@ -1071,7 +1071,7 @@ var rah = {
                     zipcode:    { required: false, minlength: 5, digits: true },
                     email:      { required: false, email: true },
                     first_name: { required: true, minlength: 2 }
-                },
+                }
             });
             
             $("#commitment_card_form").attr("action", action);
