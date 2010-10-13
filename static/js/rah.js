@@ -7,7 +7,7 @@ $(document).ready(function() {
         try{
             rah[rah_name].init();
         }catch(err){
-            if(typeof(console) !== 'undefined' && console != null) {
+            if(typeof(console) !== 'undefined' && console !== null) {
                 console.log("No page specific javascript was run.");
             }
         }
@@ -39,7 +39,7 @@ var rah = {
             $(".tabs").tabs();
             
             // Highlight the right nav option if specified
-            if(typeof(rah_nav_select) !== 'undefined' && rah_nav_select != '') {
+            if(typeof(rah_nav_select) !== 'undefined' && rah_nav_select !== '') {
                 $("#" + rah_nav_select).addClass("selected");
             }
             
@@ -443,7 +443,7 @@ var rah = {
             skip_to_next_sheet: function(worksheet, delay, scroller){
                 var offset = 1;
                 worksheet.nextAll().each(function(){
-                    if($(this).find(".vampire_slayer:checked").length == 0) {
+                    if($(this).find(".vampire_slayer:checked").length === 0) {
                         return false;
                     }
                     /* increment the offset, as we want to skip ahead and find
@@ -828,7 +828,7 @@ var rah = {
             });
             $(".form_row:has(.datepicker)").change(function() {
                 var row = $(this);
-                if($(".datepicker", row).val() != "") {
+                if($(".datepicker", row).val() !== "") {
                     $("label.inside", row).removeClass("inside");
                 } else {
                     $("label:first", row).addClass("inside");
@@ -908,7 +908,7 @@ var rah = {
                 placeholder: '<span class="event_inline_placeholder">click to add</span>',
                 cancel: 'Cancel',
                 submit: '<br/><button type="submit">Ok</button>'
-            }
+            };
             if(element.hasClass("rsvp_select")) {
                 args.type = "select";
                 args.loadurl = "/events/rsvp_statuses/";
@@ -971,7 +971,7 @@ var rah = {
             */
             
             // Setup dialog when new commitment card button is pressed
-            $('body').append('<div id="commitment_card_dialog"></div>')
+            $('body').append('<div id="commitment_card_dialog"></div>');
             $("#commitment_card_dialog").dialog({
                 modal:true,
                 buttons: {
