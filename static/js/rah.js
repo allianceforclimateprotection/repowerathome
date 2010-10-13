@@ -630,14 +630,48 @@ var rah = {
     
     mod_invite_friend: {
         init: function(){
+            // Add a validator method for checking the comma separated email list
+            jQuery.validator.addMethod("multiemail", function(value, element) {
+                // return true on optional element
+                if (this.optional(element)){
+                    return true;
+                }
+                var emails = value.split( new RegExp( "\\s*,\\s*", "gi" ) );
+                valid = true;
+                for(var i in emails) {
+                    valid = jQuery.validator.methods.email.call(this, emails[i], element);
+                }
+                return valid;
+            }, "The format for one or more emails doesn't look right.");
+            
             // Setup invite friend form, link, and dialog
             $('.invite_form_submit').remove();
-            $("#invite_form").validate({rules: {email: { required: true, email: true }}});
+            $("#invite_form").validate({rules: {emails: { required: true, multiemail: true }}});
             $('.invite_friend_link').click(function(){ $('#invite_friend_dialog').dialog('open'); return false; });
             $('#invite_friend_dialog').dialog({
-                title: 'Invite a friend', modal: true, autoOpen: false, 
-                buttons: { "Send Invitation": function() { $("#invite_form").submit(); }}
+                title: 'Invite a friend', 
+                modal: true,
+                autoOpen: false, 
+                resizable: false, 
+                draggable: false, 
+                width: 360,
+                buttons: { 
+                    "Send Invitation": function() {
+                        if (!$("#invite_form").valid()){
+                            return;
+                        }
+                        $("#invite_form").ajaxSubmit({
+                            success: function(messages_html) {
+                                $("#invite_friend_dialog").dialog("close");
+                                rah.mod_messages.init(messages_html);
+                            }
+                        });
+                        // $("#invite_form").submit(); 
+                    }
+                }
             });
+            
+            
         }
     },
     
@@ -1055,5 +1089,11 @@ var rah = {
             $("#ui-tabs-2").removeClass("ui-tabs-hide");
             rah.mod_comment_form.init();
         }
-    }
+    },
+    
+    page_vampire_hunt_landing: {
+        init: function() {
+            rah.mod_invite_friend.init();
+        }
+    }  
 };

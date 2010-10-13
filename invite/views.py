@@ -1,7 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from django.template import RequestContext
+from django.template import RequestContext, loader
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 
@@ -20,6 +21,10 @@ def invite(request, next=None):
         messages.success(request, 'Invitation sent to %s' % emails)
     else:
         messages.error(request, 'Form values where invalid, please try fill out the form again.')
+    
+    if request.is_ajax() and request.method == 'POST':
+        message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))
+        return HttpResponse(message_html)
     
     next = request.POST.get("next", next)
     if next:

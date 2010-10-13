@@ -13,7 +13,8 @@ from models import Invitation, make_token
 from fields import MultiEmailField
 
 class InviteForm(forms.ModelForm):
-    emails = MultiEmailField(label="Email addresses", required=True)
+    emails = MultiEmailField(label="Email addresses", required=True, widget=forms.Textarea, 
+        help_text="Separate multiple email addresses with a comma.")
     note = forms.CharField(widget=forms.Textarea, label="Personal note (optional)", required=False)
     signature = forms.CharField(widget=forms.HiddenInput, required=True)
     
