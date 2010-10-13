@@ -1,5 +1,8 @@
 {% extends "rah/base.html" %}
-{% load invites %}
+{% if request.user.is_authenticated %}
+    {% load invites %}
+{% endif %}
+
 
 {% block right_content %}
     <div class="grid_6 alpha">
@@ -85,7 +88,9 @@
                 </li>
             </ul>
             <div id='invite_friend_dialog'>
-                {% get_invite_form %}
+                {% if request.user.is_authenticated %}
+                    {% get_invite_form %}
+                {% endif %}
             </div>
             <br/>
             
