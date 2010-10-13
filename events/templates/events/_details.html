@@ -24,37 +24,3 @@
     <div id="event_map"></div>
     <br/>
 </div>
-<div>
-    <h3>Hosts</h3>
-    <p>
-        {% for host in event.hosts %}
-            {% if host.user %}
-                {% safe_user_link host.user %}
-            {% else %}
-                {{ host }}
-            {% endif %}
-            {% if not forloop.last %}
-                <br />
-            {% endif %}
-        {% endfor %}
-    </p>
-</div>
-{% if event.invited %}
-    <div>
-        <h3>Invitations</h3>
-        <p>
-            {% if event.confirmed_guests.count %}
-                {{ event.confirmed_guests.count }} confirmed<br />
-            {% endif %}
-            {% if event.maybe_attending.count %}
-                {{ event.maybe_attending.count }} maybe{{ event.maybe_attending.count|pluralize }}<br />
-            {% endif %}
-            {% if event.not_attending.count %}
-                {{ event.not_attending.count }} can't attend <br />
-            {% endif %}
-            {% if event.outstanding_invitations %}
-                {{ event.outstanding_invitations }} outstanding invitation{{ event.outstanding_invitations|pluralize }}
-            {% endif %}
-        </p>
-    </div>
-{% endif %}

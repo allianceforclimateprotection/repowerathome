@@ -4,14 +4,14 @@
     <a href="{% url index %}">Home</a> &rsaquo;
     <a href="{% url event-show %}">Events</a> &rsaquo;
     <a href="{{ event.get_absolute_url }}">{{ event }}</a> &rsaquo;
-    Add Guest
+    Hosts
 {% endblock %}
 
 {% block right_content %}
     <div class="grid_6 alpha">
         <div class="box_three_top"></div>
         <div class="box_three_middle">
-            {% include "events/_guests_add.html" %}
+            {% include "events/_hosts.html" %}
         </div>
         <div class="box_three_bottom"></div>
     </div>

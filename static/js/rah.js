@@ -557,6 +557,7 @@ var rah = {
                 $(this).parents(".messages").slideUp(400, function(){
                     $(this).remove();
                 });
+                return false;
             });
             $(".messages:not(.sticky)").each(function() {
                 var elem = $(this);
@@ -769,22 +770,6 @@ var rah = {
         }
     },
     
-    mod_event_tabs: {
-        init: function(tab_number) {
-            $("#event_tabs").tabs({
-                select: function(event, ui) {
-                    var url = $.data(ui.tab, "load.tabs");
-                    if( url ) {
-                        window.location.href = url;
-                        return false;
-                    }
-                    return true;
-                },
-                selected: tab_number
-            });
-        }
-    },
-    
     page_event_list: {
         init: function() {
             $("#house_party_form").validate({rules: {phone_number: { required: true }}});
@@ -799,7 +784,6 @@ var rah = {
     page_event_show: {
         init: function() {
             rah.mod_comment_form.init();
-            rah.mod_event_tabs.init(0);
             var address = $("#event_address").text();
             var location = $("#event_location").text();
             geocoder = new google.maps.Geocoder();
@@ -826,6 +810,8 @@ var rah = {
                     }
                 });
             }
+            rah.mod_event_guests.init();
+            rah.mod_commitment_card_open_link_setup.init();
         }
     },
     
@@ -863,27 +849,19 @@ var rah = {
         }
     },
     
-    page_event_guests: {
+    mod_event_guests: {
         init: function() {
-            rah.mod_event_tabs.init(1);
-            rah.mod_comment_form.init();
-            var table = $("#event_guests_table");
-            $(".selector").click(function(){
-                var checked = $(this).hasClass("select_all");
-                $("input[type='checkbox']", table).attr("checked", checked);
-                return false;
-            });
-            rah.page_event_guests.submit_on_select();
-            $("#event_guests_selectors").removeClass("hidden");
             var namespace = this;
             var editables = $(".editable");
-            editables.each(rah.page_event_guests.make_editable);
-            editables.live("mouseover", function(){
-                $(this).addClass("editable_highlight");
+            editables.each(rah.mod_event_guests.make_editable);
+            $(".guest_icon", editables).live("mouseover", function(){
+                $(this).addClass("ui-icon-circle-triangle-s");
+                $(this).removeClass("ui-icon-triangle-1-s");
             }).live("mouseout", function(){
-                $(this).removeClass("editable_highlight");
+                $(this).addClass("ui-icon-triangle-1-s");
+                $(this).removeClass("ui-icon-circle-triangle-s");
             });
-            $("#event_guests_table .tooltip").qtip({
+            $("#guest_list .tooltip").qtip({
                 position: {
                     corner: {
                         target: 'rightMiddle',
@@ -904,22 +882,24 @@ var rah = {
                 show: 'mouseover',
                 hide: 'mouseout'
             });
-            var guests_add_link = $("#guests_add_link");
-            var guests_add_container = $("#guests_add_container");
-            guests_add_container.load(guests_add_link.attr("href"), function() {
-                $(".tabs", guests_add_container).tabs();
-                $("button, input:submit, a.button, input.button", guests_add_container).button();
-                rah.page_guest_add.init();
-                guests_add_container.dialog({ 
-                    autoOpen: false,
-                    modal: true,
-                    height: 650,
-                    width: 500
+            $(".guests_add_link, #event_hosts_link").each(function() {
+                var link = $(this);
+                var container = $("<div class='hidden'></div>");
+                $("body").append(container);
+                container.load(link.attr("href"), function() {
+                    $("button, input:submit, a.button, input.button", container).button();
+                    $("form", container).attr("action", link.attr("href"));
+                    container.dialog({ 
+                        autoOpen: false,
+                        modal: true,
+                        height: 575,
+                        width: 360
+                    });
                 });
-            });
-            guests_add_link.click(function() {
-                guests_add_container.dialog("open");
-                return false;
+                link.click(function() {
+                    container.dialog("open");
+                    return false;
+                });
             });
         },
         make_editable: function() {
@@ -936,40 +916,12 @@ var rah = {
             element.editable(function(value, settings) {
                 $.post(element.attr("id"), {"value": value}, function(data) {
                     rah.mod_messages.init(data["message_html"]);
-                    var row = element.parents("tr");
-                    row.html(data["guest_row"]).effect(
-                           "highlight", {"backgroundColor": "#FFF"}, 1500);
-                    $(".editable", row).each(rah.page_event_guests.make_editable);
+                    element.html(data["guest_status"]);
+                    // added editable event back to element
                 }, "json");
+                
                 return value;
             }, args);
-        },
-        submit_on_select: function() {
-            var form = $("#guest_edit_form");
-            $("#id_action").change(function(){
-                var select = $(this);
-                if(!select.val().trim()) {
-                    return;
-                }
-                if($("input[type='checkbox']", form).is(":checked")) {
-                    form.submit();
-                } else {
-                    alert("Please select at least one guest.");
-                    return;
-                }
-            });
-        }
-    },
-    
-    page_guest_add: {
-        init: function() {
-            $("#guests_add .tab").each(function() {
-                var tab = $(this);
-                $("form", tab).each(function() {
-                    var form = $(this);
-                    form.attr("action", form.attr("action") + "#" + tab.attr("id"));
-                });
-            });
         }
     },
     

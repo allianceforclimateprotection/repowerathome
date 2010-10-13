@@ -1,0 +1,18 @@
+<div>
+    <h3>Invitations</h3>
+    <p>
+        {% if event.confirmed_guests.count %}
+            {{ event.confirmed_guests.count }} confirmed<br />
+        {% endif %}
+        {% if event.maybe_attending.count %}
+            {{ event.maybe_attending.count }} maybe{{ event.maybe_attending.count|pluralize }}<br />
+        {% endif %}
+        {% if event.not_attending.count %}
+            {{ event.not_attending.count }} can't attend <br />
+        {% endif %}
+        {% if event.outstanding_invitations %}
+            {{ event.outstanding_invitations }} outstanding invitation{{ event.outstanding_invitations|pluralize }}
+        {% endif %}
+    </p>
+    <a class="guests_add_link button" href="{% url event-guests-invite event.id %}">Send Invites</a>
+</div>

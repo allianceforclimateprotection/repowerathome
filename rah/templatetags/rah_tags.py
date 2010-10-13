@@ -50,4 +50,22 @@ def deslug(value):
 @template.defaultfilters.stringfilter
 def jsonify(value):
     return value.replace("\n", " ").replace('"', '\\"')
+    
+@register.filter
+def truncate(value, length, killwords=False, end='...'):
+    value = unicode(value)
+    if len(value) <= length:
+        return value
+    elif killwords:
+        return value[:length] + end
+    words = value.split(' ')
+    result = []
+    m = 0
+    for word in words:
+        m += len(word) + 1
+        if m > length:
+            break
+        result.append(word)
+    result.append(end)
+    return u' '.join(result)
 

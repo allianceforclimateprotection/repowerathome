@@ -1,0 +1,8 @@
+<form action="" method="post">
+    <h1>Select Hosts</h1>
+    <div id="event_hosts_form">
+        {% include "events/_form.html" %}
+    </div>
+    {% csrf_token %}
+    <input type="submit" value="Save" /> | <a href="{{ event.get_absolute_url }}">cancel</a>
+</form>

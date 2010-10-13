@@ -1,0 +1,6 @@
+<form action="" method="post">
+    <h1>Invite Guests</h1>
+    {% include "events/_form.html" %}
+    {% csrf_token %}
+    <input type="submit" value="Send" /> | <a href="{{ event.get_absolute_url }}">cancel</a>
+</form>
