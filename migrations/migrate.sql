@@ -3,9 +3,9 @@ UPDATE messaging_message SET generic_relation_content_type_id=48 WHERE name='Eve
 UPDATE messaging_message SET generic_relation_content_type_id=30 WHERE name='Team invite';
 
 INSERT INTO `messaging_message` (`id`,`name`,`subject`,`body`,`sends`,`message_timing`,`x_value`,`recipient_function`,`send_as_batch`,`batch_window`,`time_snap`,`minimum_duration`,`generic_relation_content_type_id`,`created`,`updated`)
-VALUES	
-    (18,'Once you create an event','Your Repower at Home event','{% extends \'rah/base_email.html\' %}\r\n{% block email_content %}\r\n<p>Hi {{ recipient.first_name }},</p>\r\n\r\n<p>\r\nThanks for hosting a Repower at Home event on<br/>\r\n{{ content_object.when|date }} at {{ content_object.start|time }}.  Because of leaders like you,<br/>\r\nwe\'re on our way to meeting our energy savings goal of 7 million pounds of coal.\r\n</p>\r\n\r\n<p>\r\n<b>Your next step is to invite guests.  <a href=\"http://{{ domain }}{% url event-guests content_object.id %}\">Get started now.</a></b>\r\n</p>\r\n\r\n<p>\r\nUse <a href=\"{{ content_object.get_absolute_url }}\"> your event\'s page</a> to manage every aspect of<br/>\r\nyour event.  On the event\'s page, you can:\r\n<ul>\r\n<li>Check the status of your guests</li>\r\n<li>Make someone else a co-host</li>\r\n<li>Send reminder and announcement emails to your whole guest list</li>\r\n<li>Check off steps on your way to the event</li>\r\n</ul>\r\n</p>\r\n\r\n<p>\r\nAfter your event, you\'ll be able to enter your guests\' commitments on the events<br/>\r\npage.  This will pre-load their accounts, allowing them to start saving energy right<br/>\r\naway.\r\n</p>\r\n\r\n<p>\r\nOn this call you\'ll learn more about Repower at Home and how you can be part of the movement. <a href=\'http://bit.ly/clk2Kz\'>Click here to RSVP</a>. If you have questions about the call or how you can get involved, contact Brian Ward at brian.ward@climateprotect.org, or call (202) 567-6800.\r\n</p>\r\n\r\n<p>\r\nCheers,<br/>\r\nThe Repower at Home team\r\n</p>\r\n{% endblock %}',0,'send_immediately',0,'lambda x: x.creator',0,NULL,NULL,NULL,NULL,'2010-09-13 10:43:34','2010-09-13 16:10:40'),
-    (19,'1 week after after you create an event','Guest list update for your Repower at Home event','{% extends \'rah/base_email.html\' %}\r\n{% block email_content %}\r\n<p>\r\nHi {{ recipient.first_name }},\r\n</p>\r\n\r\n<p>\r\nSo far, {{ content_object.confirmed_guests.count }} {{ content_object.confirmed_guests.count|pluralize:\"person,people\" }} have responded to you event invitation, but your still waiting on<br/>\r\n{{ content_object.outstanding_invitations }} other{{ content_object.outstanding_invitations|pluralize}}:\r\n{% if content_object.outstanding_invitations %}\r\n<ul>\r\n{% for guest in content_object.guests_that_have_not_responded %}\r\n<li>{{ guest }}</li>\r\n{% endfor %}\r\n</ul>\r\n{% endif %}\r\nTime to give these holdouts a gentle nudge in the right direction. <a href=\"http://{{ domain }}{% url event-reminder content_object.id %}?guests={{ event.guests_no_response_id_list }}\">Click here to send them a reminder email</a>.\r\n</p>\r\n\r\n<p>\r\nSome people overlook emails in their inbox.  <strong>Calling these guests can go a long way</strong>.  If you\'ve already spoken to them, you can <a href=\"http://{{ domain }}{% url event-guests content_object.id %}\">update their RSVP status on your event\'s page.</a>\r\n</p>\r\n\r\n<p>\r\nCheers,<br/>\r\nThe Repower at Home team\r\n</p>\r\n{% endblock %}',0,'after_start',120,'lambda x: x.hosts()',0,NULL,'11:00:00',240,NULL,'2010-09-13 12:58:28','2010-09-13 16:10:16'),
+VALUES    
+    (18,'Once you create an event','Your Repower at Home event','{% extends \'rah/base_email.html\' %}\r\n{% block email_content %}\r\n<p>Hi {{ recipient.first_name }},</p>\r\n\r\n<p>\r\nThanks for hosting a Repower at Home event on<br/>\r\n{{ content_object.when|date }} at {{ content_object.start|time }}.  Because of leaders like you,<br/>\r\nwe\'re on our way to meeting our energy savings goal of 7 million pounds of coal.\r\n</p>\r\n\r\n<p>\r\n<b>Your next step is to invite guests.  <a href=\"http://{{ domain }}{{ content_object.get_absolute_url }}\">Get started now.</a></b>\r\n</p>\r\n\r\n<p>\r\nUse <a href=\"{{ content_object.get_absolute_url }}\"> your event\'s page</a> to manage every aspect of<br/>\r\nyour event.  On the event\'s page, you can:\r\n<ul>\r\n<li>Check the status of your guests</li>\r\n<li>Make someone else a co-host</li>\r\n<li>Send reminder and announcement emails to your whole guest list</li>\r\n<li>Check off steps on your way to the event</li>\r\n</ul>\r\n</p>\r\n\r\n<p>\r\nAfter your event, you\'ll be able to enter your guests\' commitments on the events<br/>\r\npage.  This will pre-load their accounts, allowing them to start saving energy right<br/>\r\naway.\r\n</p>\r\n\r\n<p>\r\nOn this call you\'ll learn more about Repower at Home and how you can be part of the movement. <a href=\'http://bit.ly/clk2Kz\'>Click here to RSVP</a>. If you have questions about the call or how you can get involved, contact Brian Ward at brian.ward@climateprotect.org, or call (202) 567-6800.\r\n</p>\r\n\r\n<p>\r\nCheers,<br/>\r\nThe Repower at Home team\r\n</p>\r\n{% endblock %}',0,'send_immediately',0,'lambda x: x.creator',0,NULL,NULL,NULL,NULL,'2010-09-13 10:43:34','2010-09-13 16:10:40'),
+    (19,'1 week after after you create an event','Guest list update for your Repower at Home event','{% extends \'rah/base_email.html\' %}\r\n{% block email_content %}\r\n<p>\r\nHi {{ recipient.first_name }},\r\n</p>\r\n\r\n<p>\r\nSo far, {{ content_object.confirmed_guests.count }} {{ content_object.confirmed_guests.count|pluralize:\"person,people\" }} have responded to you event invitation, but your still waiting on<br/>\r\n{{ content_object.outstanding_invitations }} other{{ content_object.outstanding_invitations|pluralize}}:\r\n{% if content_object.outstanding_invitations %}\r\n<ul>\r\n{% for guest in content_object.guests_that_have_not_responded %}\r\n<li>{{ guest }}</li>\r\n{% endfor %}\r\n</ul>\r\n{% endif %}\r\nTime to give these holdouts a gentle nudge in the right direction. <a href=\"http://{{ domain }}{% url event-reminder content_object.id %}?guests={{ event.guests_no_response_id_list }}\">Click here to send them a reminder email</a>.\r\n</p>\r\n\r\n<p>\r\nSome people overlook emails in their inbox.  <strong>Calling these guests can go a long way</strong>.  If you\'ve already spoken to them, you can <a href=\"http://{{ domain }}{{ content_object.get_absolute_url }}\">update their RSVP status on your event\'s page.</a>\r\n</p>\r\n\r\n<p>\r\nCheers,<br/>\r\nThe Repower at Home team\r\n</p>\r\n{% endblock %}',0,'after_start',120,'lambda x: x.hosts()',0,NULL,'11:00:00',240,NULL,'2010-09-13 12:58:28','2010-09-13 16:10:16'),
     (20,'1 week before the event','Finish your preparations for your Repower at Home event','{% extends \'rah/base_email.html\' %}\r\n{% block email_content %}\r\n<p>\r\nHi {{ recipient.first_name }},\r\n</p>\r\n\r\n<p>\r\nYour event is on {{ content_object.when|date }}, one week from today!  {{ content_object.confirmed_guests.count }} of your guests have<br/>\r\nconfirmed their attendance, but your still waiting to hear from {{ content_object.outstanding_invitations }} more.\r\n<ul>\r\n<li><a href=\"http://{{ domain }}{% url event-reminder content_object.id %}?guests={{ event.guests_no_response_id_list }}\">Send a reminder email to all the guests who are coming</a></li>\r\n<li><a href=\"http://{{ domain }}{% url event-announcement content_object.id %}?guests={{ event.guests_no_response_id_list }}\">Encourage holdouts to RSVP</a></li>\r\n</ul>\r\n</p>\r\n\r\n<p>\r\nCheers,<br/>\r\nThe Repower at Home team\r\n</p>\r\n{% endblock %}',0,'before_end',168,'lambda x: x.hosts()',0,NULL,'11:00:00',504,NULL,'2010-09-13 13:15:06','2010-09-13 16:11:14'),
     (21,'48 hours before the event','Your Repower at Home event is less than 2 days away!','{% extends \'rah/base_email.html\' %}\r\n{% block email_content %}\r\n<p>\r\nHi {{ content_object.first_name }},\r\n</p>\r\n\r\n<p>\r\nYour event is right around the corner! It\'s an exciting time,<br/>\r\nbut don\'t forget to nail down the final details.\r\n</p>\r\n\r\n<p>\r\nFirst, <a href=\"http://{{ domain }}{% url event-reminder content_object.id %}?guests={{ event.guests_no_response_id_list }}\">send one last reminder to your guests</a>.\r\n</p>\r\n\r\n<p>\r\nNext, make sure to print out all of your <a href=\"http://{{ domain }}/hosting/\">meeting materials</a>\r\n</p>\r\n\r\n<p>\r\nHave a great time at the event! We\'ll see you again soon after the event when you enter your guests\' commitments.\r\n</p>\r\n\r\n<p>\r\nCheers,<br/>\r\nThe Repower at Home team\r\n</p>\r\n{% endblock %}',0,'before_end',48,'lambda x: x.hosts()',0,NULL,'11:00:00',168,NULL,'2010-09-13 13:55:02','2010-09-13 16:11:33'),
     (22,'Day after the event','Enter your guests\' commitments','{% extends \'rah/base_email.html\' %}\r\n{% block email_content %}\r\n<p>\r\nHi {{ recipient.first_name }},\r\n</p>\r\n\r\n<p>\r\nGood work organizing your event yesterday! Because of your leadership, a whole<br/>\r\nbunch of new people are now engaged in the movement for a cleaner, better world.\r\n</p>\r\n\r\n<p>\r\nHelp your guests get to the next level.  <a href=\"http://{{ domain }}{% url event-commitments content_object.id %}\">Enter their commitments</a> from your<br/>\r\nevent.  This will remind them of their goals and get them motivated.  The sooner you <br/>\r\nenter the commitments, the sooner they can start saving energy.\r\n</p>\r\n\r\n<p>\r\nYou can also take this opportunity to <a href=\"http://{{ domain }}{% url group_list %}\">invite your guests to a team</a>.  <a href=\"http://{{ domain }}{% url group_list %}\">Teams</a> are<br/>\r\na great way to keep in touch with your guests and plan future projects as a group.\r\n</p>\r\n\r\n<p>\r\nCheers,<br/>\r\nThe Repower at Home team\r\n</p>\r\n{% endblock %}',0,'after_end',24,'lambda x: x.hosts()',0,NULL,'11:00:00',NULL,NULL,'2010-09-13 16:09:09','2010-09-13 16:09:09'),
@@ -13,12 +13,12 @@ VALUES
 
 INSERT INTO `messaging_abtest` (`id`,`message_id`,`test_message_id`,`test_percentage`,`is_enabled`,`stream_id`,`created`,`updated`)
 VALUES
-	(16,18,NULL,0,1,13,'2010-09-13 16:13:07','2010-09-13 16:13:07'),
-	(17,19,NULL,0,1,13,'2010-09-13 16:13:14','2010-09-13 16:13:14'),
-	(18,20,NULL,0,1,13,'2010-09-13 16:13:20','2010-09-13 16:13:20'),
-	(19,21,NULL,0,1,13,'2010-09-13 16:13:24','2010-09-13 16:13:24'),
-	(20,22,NULL,0,1,13,'2010-09-13 16:13:29','2010-09-13 16:13:29'),
-	(21,23,NULL,0,1,13,'2010-09-14 16:08:48','2010-09-14 16:08:48');
+    (16,18,NULL,0,1,13,'2010-09-13 16:13:07','2010-09-13 16:13:07'),
+    (17,19,NULL,0,1,13,'2010-09-13 16:13:14','2010-09-13 16:13:14'),
+    (18,20,NULL,0,1,13,'2010-09-13 16:13:20','2010-09-13 16:13:20'),
+    (19,21,NULL,0,1,13,'2010-09-13 16:13:24','2010-09-13 16:13:24'),
+    (20,22,NULL,0,1,13,'2010-09-13 16:13:29','2010-09-13 16:13:29'),
+    (21,23,NULL,0,1,13,'2010-09-14 16:08:48','2010-09-14 16:08:48');
 
 CREATE TABLE `messaging_message_content_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -34,45 +34,45 @@ CREATE TABLE `messaging_message_content_types` (
 
 INSERT INTO `messaging_message_content_types` (`id`,`message_id`,`contenttype_id`)
 VALUES
-	(1,1,43),
-	(2,1,51),
-	(3,2,43),
-	(4,2,51),
-	(5,3,43),
-	(6,3,51),
-	(7,4,43),
-	(8,4,51),
-	(9,5,43),
-	(10,5,51),
-	(11,6,3),
-	(12,7,3),
-	(13,8,46),
-	(14,9,32),
-	(15,10,32),
-	(16,11,32),
-	(17,12,49),
-	(18,13,49),
-	(19,14,49),
-	(20,15,34),
-	(21,16,34),
-	(22,17,34),
-	(23,18,48),
-	(24,19,48),
-	(25,20,48),
-	(26,21,48),
-	(27,22,48),
-	(28,23,48);
-	
+    (1,1,43),
+    (2,1,51),
+    (3,2,43),
+    (4,2,51),
+    (5,3,43),
+    (6,3,51),
+    (7,4,43),
+    (8,4,51),
+    (9,5,43),
+    (10,5,51),
+    (11,6,3),
+    (12,7,3),
+    (13,8,46),
+    (14,9,32),
+    (15,10,32),
+    (16,11,32),
+    (17,12,49),
+    (18,13,49),
+    (19,14,49),
+    (20,15,34),
+    (21,16,34),
+    (22,17,34),
+    (23,18,48),
+    (24,19,48),
+    (25,20,48),
+    (26,21,48),
+    (27,22,48),
+    (28,23,48);
+    
 UPDATE events_commitment c
 JOIN actions_action a ON c.action_id = a.id
 SET c.question = REPLACE(a.slug, '-', '_');
-	
+    
 CREATE TABLE dup_guests AS
-	SELECT MAX(g.id) AS id
-	FROM events_guest g
-	WHERE g.email <> ''
-	GROUP BY g.event_id, g.email
-	HAVING count(*) > 1;
+    SELECT MAX(g.id) AS id
+    FROM events_guest g
+    WHERE g.email <> ''
+    GROUP BY g.event_id, g.email
+    HAVING count(*) > 1;
 UPDATE events_guest
 SET email = ''
 WHERE id IN (SELECT id FROM dup_guests);
@@ -176,4 +176,9 @@ WHERE name = 'New Account';
 INSERT INTO actions_actionform (action_id, form_name, var_name, created, updated)
 SELECT a.id, "VampirePowerWorksheetForm2", "vampire_worksheet_form", NOW(), NOW()
 FROM actions_action a
-WHERE a.name = "Eliminate vampire power"
+WHERE a.name = "Eliminate vampire power";
+
+INSERT INTO events_eventtype (name, teaser, description, survey_id, created, updated)
+SELECT "Trick or Slay canvasing", "", "", s.id, NOW(), NOW()
+FROM commitments_survey s
+WHERE s.name = "Vampire Hunt Commitment Card";
