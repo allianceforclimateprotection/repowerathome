@@ -53,7 +53,6 @@ class Event(models.Model):
     limit = models.PositiveIntegerField(blank=True, null=True, help_text="Adding a limit sets a \
         cap on the number of guests that can RSVP. If the limit is reached, potential guests \
         will need to contact you first.")
-    # guests = models.ManyToManyField("commitments.contributor", through="Guest")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
