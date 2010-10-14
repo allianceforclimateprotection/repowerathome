@@ -40,39 +40,56 @@
         <div class="grid_3 omega">
             <div class="box_one_top"></div>
             <div class="box_one_middle">
-            {% if progress.date_committed and not progress.is_completed %}
-                <h2>Commitment</h2>
-                <p>
-                    You committed to complete this action by {{ progress.date_committed|date }}. 
-                    (<a href="#" class="commit_trigger">change date</a> or 
-                    <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
-                </p>
-            {% endif %}
-            <h3>Who's doing this?</h3>
-            <span class='total_users'>{{ action.users_completed }}</span> pe{{ action.users_completed|pluralize:"rson has,ople have" }} completed this action.<br/>
-            {% if action.users_completed %}
-                <ul class="plain_list">
-                    {% for user in users_completed %}
-                        <li>{% safe_user_link user %}</li>
-                    {% endfor %}
-                    {% if noshow_users_completed > 0 %}
-                        {{ noshow_users_completed }} additional user{{ noshow_users_completed|pluralize }}
-                    {% endif %}
-                </ul>
-            {% endif %}
-            <span class='total_users'>{{ total_users_committed }}</span> pe{{ total_users_committed|pluralize:"rson has,ople have" }} committed to this action.<br/>
-            {% if action.users_committed %}
-                <ul class="plain_list">
-                    {% for user in users_committed %}
-                        <li>{% safe_user_link user %}</li>
-                    {% endfor %}
-                    {% if noshow_users_committed > 0 %}
-                        {{ noshow_users_committed }} additional user{{ noshow_users_committed|pluralize }}
-                    {% endif %}
-                </ul>
-            {% endif %}
-            <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=standard&amp;show_faces=false&amp;width=189&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:189px; height:35px;" allowTransparency="true"></iframe>
-            <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+                <h2>{{action.points}} points</h2>
+                {# <b>{{ action.users_completed }}</b> people have completed this action and #}
+                {# <b>{{ total_users_committed }}</b> people have made a commitment to complete it. #}
+                <b>{{ action.users_completed }}</b> people have done this and
+                <b>{{ total_users_committed }}</b> people are committed to do it.
+
+            </div>
+            <div class="box_one_bottom"></div>
+            
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                {% if progress.date_committed and not progress.is_completed %}
+                    <h2>My Commitment</h2>
+                    <p>
+                        You committed to complete this action by {{ progress.date_committed|date }}. 
+                        (<a href="#" class="commit_trigger">change date</a> or 
+                        <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
+                    </p>
+                {% endif %}
+            
+                {% if action.users_completed %}
+                    <h3>Recently Completed</h3>
+                    <ul class="plain_list">
+                        {% for user in users_completed %}
+                            <li>
+                                {% safe_user_link user %}<br/>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            
+                {% if action.users_committed %}
+                    <h3>Recently Committed</h3>
+                    <ul class="plain_list">
+                        {% for user in users_committed %}
+                            <li>
+                                {% safe_user_link user %}<br/>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="box_one_bottom"></div>
+            
+            <div class="box_one_top"></div>
+            <div class="box_one_middle">
+                <h3>Share this action</h3>
+                <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=box_count&amp;show_faces=false&amp;width=60&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:60px; height:60px;" allowTransparency="true"></iframe>
+                <a href="http://twitter.com/share" class="twitter-share-button" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+                {# <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> #}
             </div>
             <div class="box_one_bottom"></div>
         </div>
