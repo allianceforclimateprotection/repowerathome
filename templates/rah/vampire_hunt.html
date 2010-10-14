@@ -80,9 +80,11 @@
                 <li class="social_button">
                     <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com%2Fvampire_hunt%2F&amp;layout=box_count&amp;show_faces=true&amp;width=120&amp;action=like&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:120px; height:60px;" allowTransparency="true"></iframe>
                 </li>
-                <li class="orange">
-                    <a href='{% url invite-invite %}' class='invite_friend_link button'>Invite via email</a>
-                </li>
+                {% if request.user.is_authenticated %}
+                    <li class="orange">
+                        <a href='{% url invite-invite %}' class='invite_friend_link button'>Invite via email</a>
+                    </li>
+                {% endif %}
                 <li class="social_button">
                     <a href="http://twitter.com/share" class="twitter-share-button" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
                 </li>
@@ -109,9 +111,6 @@
                 <h3>Your progress</h3>
                 <p>
                     You've recruited {{ my_contributors }} slayers.
-                    {% if my_contributors %}
-                        You're ranked Xth on the leader board.
-                    {% endif %}
                 </p>
             </div>
             <div class="box_one_bottom"></div>
