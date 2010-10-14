@@ -11,8 +11,8 @@ from models import Survey, Commitment, ContributorSurvey
 
 class ActionChoiceField(forms.ChoiceField):
     CHOICES = (
-        ("D", ""),
         ("C", ""),
+        ("D", ""),
     )
     
     def __init__(self, action, *args, **kwargs):
@@ -51,9 +51,8 @@ class SurveyForm(forms.ModelForm):
     
     def save(self, *args, **kwargs):
         for field, data in self.cleaned_data.items():
-            commitment, created = Commitment.objects.get_or_create(contributor=self.contributor, 
-                question=field)
-            commitment.answer = data
+            commitment, created = Commitment.objects.get_or_create(contributor=self.contributor, question=field)
+            commitment.answer = data if not data == [] else ""
             if hasattr(self.fields[field], "action"):
                 commitment.action = self.fields[field].action
                 if commitment.answer == "C":

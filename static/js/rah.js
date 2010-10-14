@@ -971,6 +971,7 @@ var rah = {
             */
             
             // Setup dialog when new commitment card button is pressed
+            $("#commitment_card_dialog").remove();
             $('body').append('<div id="commitment_card_dialog"></div>');
             $("#commitment_card_dialog").dialog({
                 modal:true,
@@ -1029,8 +1030,9 @@ var rah = {
             $("#commitment_card_form").attr("action", action);
             
             $("#commitment_card_select_form #id_form_name").change(function(){
-                var load_str = action + '?form_name=' + $(this).val() + ' #commitment_card_action_table table';
-                $("#commitment_card_action_table").load(load_str);
+                var load_url = action + '?form_name=' + $(this).val();
+                $("#commitment_card_action_table").load(load_url + ' #commitment_card_action_table table');
+                $("#commitment_card_form").attr("action", load_url);
             });
         }
     },
