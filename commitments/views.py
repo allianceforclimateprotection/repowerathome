@@ -56,6 +56,7 @@ def card(request, contrib_id=None, form_name=None):
     
     # If a survey_form was specified, use that, otherwise use a default
     form_name = request.GET.get("form_name", str(form_name))
+    
     try:
         survey_form = getattr(survey_forms, form_name)(contributor, request.user, (request.POST or None))
     except AttributeError:

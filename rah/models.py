@@ -7,6 +7,7 @@ import re
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.localflavor.us.models import USStateField
+from django.core.cache import cache
 
 from geo.models import Location
 from records.models import Record
@@ -154,10 +155,20 @@ class Profile(models.Model):
         return u'%s' % (self.user.email)
 
     def profile_picture(self, default_icon='identicon'):
-        facebook_picture = facebook_profile(self.user)
-        if facebook_picture:
-            return facebook_picture
-        return 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=52' % (self._email_hash(), default_icon)
+        key = "profile_picture_%s" % self.user.id
+        cache_hit = cache.get(key)
+        if cache_hit:
+            return cache_hit
+        else:
+            facebook_picture = facebook_profile(self.user)
+            if facebook_picture:
+                profile_picture = facebook_picture
+            else:
+                profile_picture = 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=52' % (self._email_hash(), default_icon)
+            
+            # Cache the profile picture url for 6 hours
+            cache.set(key, profile_picture, 60 * 60 * 6)
+            return profile_picture
     
     def profile_picture_large(self, default_icon='identicon'):
         facebook_picture = facebook_profile(self.user, "large")

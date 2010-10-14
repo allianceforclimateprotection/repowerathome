@@ -1,6 +1,7 @@
+<br/>
 <h2>
-    You have <span id="my_vampire_count">{{ vampire_worksheet_form.my_vampires|length }}</span> 
-    powerful vampires<br/> in your home
+    You have <span id="my_vampire_count" class="orange">{{ vampire_worksheet_form.my_vampires|length }}</span> 
+    powerful vampires
 </h2>
 
 <ul id="my_vampire_list">
@@ -10,8 +11,8 @@
 </ul>
 
 <p>
-    Slay these vampires by unplugging them or using a smart power strip. <a href="">Learn 
-    more about how to slay vampires</a>.
+    You can slay these vampires by using a <a class="tooltip" href="{% url smart_power_strip_help %}"><b>smart power strip</b></a> 
+    or simply unplugging when they're not in use.
 </p>
 
 {% action_form "I completed my plan!" "Commit to my plan" %}

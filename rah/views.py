@@ -133,7 +133,6 @@ def index(request):
     twitter_status_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com/"
     })
-    featured_actions = Action.objects.filter(id__in=[18,23]).order_by("-id")
     commitment_list = UserActionProgress.objects.commitments_for_user(request.user)
     my_groups = Group.objects.filter(users=request.user, is_geo_group=False)
     my_events = Event.objects.filter(guest__contributor__user=request.user)

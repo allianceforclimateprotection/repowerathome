@@ -27,12 +27,12 @@ class VampireField(forms.ChoiceField):
 
 class VampirePowerWorksheetForm2(forms.Form):
     computers = VampireField(required=False)
-    monitor = VampireField(required=False)
+    monitor = VampireField(required=False, label="Computer Monitor")
     computer_speakers = VampireField(required=False)
     televisions = VampireField(required=False)
     dvd_players = VampireField(required=False, label="DVD/VCR Players")
     cable_box = VampireField(required=False, label="Cable Box/DVR")
-    game_systems = VampireField(required=False, label="Game Systems")
+    game_systems = VampireField(required=False, label="Video game Systems")
     
     def home_office_fields(self):
         return [self['computers'], self['monitor'], self['computer_speakers']]

@@ -484,6 +484,18 @@ Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged Flagged 
 /* ---------------------------------------------------------------------------------------------------------------------
 Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire Vampire 
 --------------------------------------------------------------------------------------------------------------------- */
+/* Vampire landing page*/
+#vampire_decoration_block { 
+    background: transparent url(../images/vampires/decoration.jpg?0000000005) no-repeat top center;
+    height:287px;}
+#vampire_decoration_block p {color:#fff; margin-bottom:9px; padding-top:0px;}
+#vampire_decoration_block #home_page_slayer_count {margin-top:189px;}
+#vampire_bat_small {position:absolute; top:-20px; right:-11px; z-index:1000;}
+#vampire_bat_large {position:absolute; top:1090px; right:-130px; z-index:1000;}
+#vampire_bat_med {position:absolute; top:440px; right:450px; z-index:1000;}
+
+
+/* Vampire action */
 #vampire_worksheet { position: relative; }
 ul#vampire_worksheet_wizard_nav {
     display: none;
@@ -512,17 +524,21 @@ ul#vampire_worksheet_wizard_nav {
     position: absolute;
     margin-left: 0px; padding-left: 0px; padding-bottom:18px;}
 #vampire_directions li { list-style: disc; }
-#vampire_worksheet_wizard .worksheet { width: 432px; float: left; list-style: none; }
+#vampire_worksheet_wizard .worksheet { width: 432px; float: left; list-style: none; position:relative; height:320px;}
 #vampire_worksheet_wizard .transition_slide { text-align: center; }
 #vampire_worksheet_wizard .vampire_device_image { float: left; }
 #vampire_worksheet_wizard .vampire_savings_container { float: left; }
 #vampire_worksheet_wizard .vampire_savings {  font-weight: bold; }
 #vampire_worksheet_wizard .buttonset { margin-left: 0px; padding-bottom: 0px; padding-left: 0px; }
 #vampire_worksheet_wizard .device_button { list-style: none; font-size: 12px; float: left; }
-#vampire_worksheet_wizard .buttonset .ui-button-text { height: 35px; width: 76px; display: table-cell; vertical-align: middle; }
+#vampire_worksheet_wizard .buttonset .ui-button-text { width: 76px; padding-top:9px; padding-bottom:9px;}
+#vampire_worksheet_wizard .buttonset {position:absolute; bottom:26px; left:58px;}
 #vampire_worksheet_wizard .slayer_help_wrapper { font-weight: bold; text-align: center; }
 #vampire_worksheet_wizard .slayer_recommended { font-weight: bold; color: #92C139; text-align: center; }
 #vampire_plan .col-1 { width: 150px; }
+
+#vampire_worksheet_wizard .frame_shifter { width: 312px; padding-top:6px; padding-bottom:6px; position:absolute; bottom:44px; left:58px;}
+#vampire_worksheet_wizard .worksheet .action_forms .ui-button {padding:9px 24px;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events Events 
@@ -592,6 +608,7 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .post_body li,
 #flat_page li{ list-style: disc; }
 ul.plain_list {margin-left: 0px; padding-left: 0px; list-style: none;}
+.spaced_list li {margin-bottom:9px;}
 .shadow {
     -webkit-box-shadow: 0px 3px 6px #333;
     -moz-box-shadow: 0px 3px 6px #333;
