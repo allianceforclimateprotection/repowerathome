@@ -9,27 +9,6 @@
 <br class="clear"/>
     <div class="grid_6 alpha">
         {% include "rah/_sticker_block.html" %}
-        {% if featured_actions %}
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <h1>Featured Actions</h1>
-            <div class="action_nugget_wrapper_tw">
-                {% for action in featured_actions %}
-                <div class="action_nugget home_page_action_nugget" style="margin-left:0px; {% if forloop.first %}margin-right:27px;{% endif %} width:189px">
-                    <div class="action_nugget_points">{{ action.points }} Points</div>
-                    {% if action.has_illustration %}
-                        <a href="{% url action_detail action.slug %}">
-                            <img src="{{ action.get_nugget_illustration }}" alt="{{action.name}} illustration" height="48" width="189"/>
-                        </a>
-                    {% endif %}    
-                    <h3 class="action_nugget_title"><a class="blue" href="{% url action_detail action.slug %}">{{ action.name }}</a></h3>
-                    <div class="action_nugget_teaser">{{ action.teaser|safe|linebreaks }}</div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="box_two_bottom"></div>
-        {% endif %}
         
         {% if records %}
             <div class="box_two_top"></div>
