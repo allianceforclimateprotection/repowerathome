@@ -18,14 +18,22 @@ class CloudMaker(object):
             },
             "app_servers": {
                 "ami": "ami-ba54bed3",
-                "instance_type": "m1.small",
+                "instance_type": "c1.medium",
                 "user_data_script": "user_data_app_server.sh",
                 "number": 1,
-                "twit_key": "bfFELg3eHpBpku4NeGik4A",
-                "twit_secret": "GXclDdMAKmaaXaO8nnx1G6SKxtYqBOeefoKhaqLVy50",
-                "fb_appid": "125979060778877",
-                "fb_secret": "16b5593ed80686a835c9b0cb9e9fbaad",
-                "postmark_key": "eea375a8-32a2-4786-bce8-8f958ab79986"
+                "postmark_key": "eea375a8-32a2-4786-bce8-8f958ab79986",
+                
+                # Staging
+                # "twit_key": "bfFELg3eHpBpku4NeGik4A",
+                # "twit_secret": "GXclDdMAKmaaXaO8nnx1G6SKxtYqBOeefoKhaqLVy50",
+                # "fb_appid": "125979060778877",
+                # "fb_secret": "16b5593ed80686a835c9b0cb9e9fbaad",
+
+                # Prod settings
+                "twit_key": "haEAyyAy4WQZe6o8JScIlA",
+                "twit_secret": "Sx7i5kTzkdnatjGGLqL9G8u93yTmzZE6ZkckIQ",
+                "fb_appid": "132085630163980",
+                "fb_secret": "4beec8948183fb70c283bb6b0571d7a2"
             },
             "db_server": {
                 "instance_type": "db.m1.small",
@@ -35,14 +43,11 @@ class CloudMaker(object):
             },
             "udata": "snap-e61a578d",
             "zone": "us-east-1b",
-            "s3_bucket": "staging.static.repowerathome.com"
+            # "s3_bucket": "staging.static.repowerathome.com",
+            "s3_bucket": "prod.static.repowerathome.com"
         }
         
-        # Prod settings
-        # "twit_key": "haEAyyAy4WQZe6o8JScIlA",
-        # "twit_secret": "Sx7i5kTzkdnatjGGLqL9G8u93yTmzZE6ZkckIQ",
-        # "fb_appid": "132085630163980",
-        # "fb_secret": "4beec8948183fb70c283bb6b0571d7a2",
+
         
         # Connections
         self.ec2_conn = boto.connect_ec2()

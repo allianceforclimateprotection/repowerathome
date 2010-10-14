@@ -2,6 +2,13 @@
 {% load invites %}
 {% load dated_static %}
 
+{% block extrahead %}
+    <meta property="og:image" content="{% dated_static 'images/vampires/vampire_guy.jpg' %}" />
+    <meta property="og:type" content="activity" />
+    <meta property="og:title" content="Repower at Home Vampire Hunt" />
+    <meta property="og:description" content="Take action with Repower at Home to slay energy vampires, and recruit your friends to join your hunting party." />
+{% endblock %}
+
 {% block right_content %}
     <div class="grid_6 alpha">
         <img id="vampire_bat_small" alt="Vampire bat" src="{% dated_static 'images/vampires/bat_small.png' %}"/>
