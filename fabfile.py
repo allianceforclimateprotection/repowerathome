@@ -11,12 +11,8 @@ env.user = "ubuntu"
 env.disable_known_hosts = True
 
 env.roledefs = {
-    # "application": ["ec2-184-73-74-57.compute-1.amazonaws.com"],
-    # "loadbalancer": ["repowerathome.com"],
-    # "development": ["dev.repowerathome.com"],
-    # "staging": ["ec2-184-72-148-152.compute-1.amazonaws.com"],
     "application": ["ec2-184-73-88-77.compute-1.amazonaws.com"],
-    "loadbalancer": ["ec2-174-129-102-106.compute-1.amazonaws.com"],
+    "loadbalancer": ["repowerathome.com"],
     "development": ["dev.repowerathome.com"],
     "staging": ["ec2-184-72-148-152.compute-1.amazonaws.com"],
 }

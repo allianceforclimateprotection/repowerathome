@@ -1,6 +1,11 @@
 <div class="guest">
     <div class="guest_name">
-        {{ guest.contributor.name}}
+        
+        {% if guest.contributor.user %}
+            {% safe_user_link guest.contributor.user %}
+        {% else %}
+            {{ guest.contributor.name}}
+        {% endif %}
         {% if guest.is_host %}
             <span class="smaller event_host" title="{{ guest.contributor.name }} is a host">Host</span>
         {% endif %}
