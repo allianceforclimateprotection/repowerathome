@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 
 from geo.models import Location
 
-
 class Contributor(models.Model):
     first_name = models.CharField(blank=True, max_length=50)
     last_name = models.CharField(blank=True, max_length=50)
@@ -20,7 +19,6 @@ class Contributor(models.Model):
         unique_together = (("user",),("email",),)
         ordering = ['first_name', 'last_name']
         permissions = (("edit_any_contributor", "Can edit any contributor"),)
-        
         
     def __init__(self, *args, **kwargs):
         super(Contributor, self).__init__(*args, **kwargs)
@@ -113,6 +111,7 @@ class SurveyManager(models.Manager):
     
 class Survey(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    label = models.CharField(max_length=50)
     form_name = models.CharField(max_length=75)
     template_name = models.CharField(max_length=200)
     is_active = models.BooleanField(default=True)

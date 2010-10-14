@@ -4,11 +4,13 @@
         <label for="id_form_name">Select Commitment Card</label>
         <select name="form_name" id="id_form_name" onchange="">
         {% for survey in survey_types %}
-            <option value="{{survey.form_name}}" {% if current_form_name == survey.form_name %}selected="selected"{% endif %}>
-                {{survey.name}}
-            </option>
+            {% if perms.events.host_any_event_type or survey.name != "Volunteer Interest Form" %}
+                <option value="{{survey.form_name}}" {% if current_form_name == survey.form_name %}selected="selected"{% endif %}>
+                    {{survey.label}}
+                </option>
+            {% endif %}
         {% endfor %}
-        </select>        
+        </select>
     </div>
     <noscript>
         <div>

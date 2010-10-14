@@ -29,7 +29,7 @@ class SurveyForm(forms.ModelForm):
     
     class Meta:
         model = Survey
-        exclude = ("name", "event_type", "form_name", "template_name", "is_active", "contributors",)
+        exclude = ("name", "event_type", "form_name", "template_name", "is_active", "contributors", "label",)
         
     def __init__(self, contributor, entered_by, *args, **kwargs):
         super(SurveyForm, self).__init__(*args, **kwargs)
