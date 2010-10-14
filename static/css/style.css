@@ -564,7 +564,8 @@ Events Events Events Events Events Events Events Events Events Events Events Eve
 
 .guest_list_col { float: left; margin: 0 15px; width: 185px; }
 .guest { height: 70px; margin-bottom: 10px; }
-.guest .guest_name { font-weight: bold; color: #191919; }
+.guest .guest_name { font-weight: bold; color: #333333; }
+.guest .guest_name a { font-weight: bold; color: #333333; }
 .guest .notattending { color: #D3363F; }
 .guest .maybeattending { color: #F1BB3B; }
 .guest .guest_icon { display: inline-block; position: relative; top: 3px; cursor: pointer; }
