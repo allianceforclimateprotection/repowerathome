@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import F
 from django.utils.dateformat import DateFormat
 
 from models import EventType, Event, Guest
@@ -17,7 +18,7 @@ class EventAdminForm(EventForm):
         return super(EventForm, self).save(*args, **kwargs)
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("name", "_when", "city", "state", "hosts", "commitment_cards_entered", "is_private",)
+    list_display = ("name", "_when", "city", "state", "hosts", "guests", "guests_with_commitment_card", "is_private",)
     list_filter = ("event_type", "location",)
     date_hierarchy = "when"
     readonly_fields = ("limit",)
@@ -36,11 +37,14 @@ class EventAdmin(admin.ModelAdmin):
     def state(self, obj):
         return obj.location.st
         
-    def commitment_cards_entered(self, obj):
-        return Guest.objects.distinct().filter(event=obj, commitment__isnull=False).count()
+    def guests(self, obj):
+        return obj.guest_set.count()
+        
+    def guests_with_commitment_card(self, obj):
+        return Guest.objects.distinct().filter(event=obj, contributor__survey=F('event__default_survey')).count()
     
     def hosts(self, obj):
-        return ", ".join([u.get_full_name() for u in obj.hosts()])
+        return ", ".join([g.contributor.name for g in obj.hosts()])
     hosts.short_description = "Hosts"
 
 admin.site.register(EventType)
