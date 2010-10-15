@@ -545,10 +545,13 @@ class EventGuestsAddViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.event_guests_add_url, {"first_name": "Jon", "last_name": "Doe",
             "email": "jd@email.com", "phone": "", "rsvp_status": "A"}, follow=True)
-        self.failUnlessEqual(response.template[0].name, "events/guests_add.html")
-        errors = response.context["form"].errors
-        self.failUnlessEqual(len(errors), 1)
-        self.failUnless("email" in errors)
+        self.failUnlessEqual(response.template[0].name, "events/detail.html")
+        event = response.context["event"]
+        jon = event.guest_set.all()[0]
+        self.failUnlessEqual(jon.contributor.first_name, "Jon")
+        self.failUnlessEqual(jon.contributor.last_name, "Doe")
+        self.failUnlessEqual(jon.contributor.email, "jd@email.com")
+        self.failIfEqual(jon.created, jon.updated)
         
     def test_valid_post(self):
         self.client.login(username="test@test.com", password="test")

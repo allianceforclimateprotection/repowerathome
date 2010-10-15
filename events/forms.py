@@ -138,12 +138,6 @@ class GuestAddForm(forms.ModelForm):
             "rsvp_status": forms.RadioSelect,
         }
     
-    def clean_email(self):
-        data = self.cleaned_data["email"]
-        if data and Guest.objects.filter(event=self.instance.event, contributor__email=data).exists():
-            raise forms.ValidationError("A Guest with this email address already exists.")
-        return data
-    
     def clean_zipcode(self):
         data = self.cleaned_data["zipcode"]
         if data:
@@ -156,9 +150,21 @@ class GuestAddForm(forms.ModelForm):
         return data
     
     def save(self, *args, **kwargs):
-        contributor, created = Contributor.objects.get_or_create(email=self.cleaned_data["email"], defaults={
-            "first_name": self.cleaned_data["first_name"], "last_name": self.cleaned_data["last_name"],
-            "phone": self.cleaned_data["phone"], "location": self.location})
+        try:
+            contributor = Contributor.objects.get(email=self.cleaned_data["email"])
+        except Contributor.DoesNotExist:
+            contributor = Contributor(email=self.cleaned_data["email"])
+        contributor.first_name = self.cleaned_data["first_name"]
+        contributor.last_name = self.cleaned_data["last_name"]
+        contributor.phone = self.cleaned_data["phone"]
+        contributor.location = self.location
+        contributor.save()
+        try:
+            guest = Guest.objects.get(event=self.instance.event, contributor=contributor)
+            self.instance.pk = guest.pk
+            self.instance.created = guest.created
+        except Guest.DoesNotExist:
+            pass
         self.instance.contributor = contributor
         self.instance.added = datetime.date.today()
         return super(GuestAddForm, self).save(*args, **kwargs)
