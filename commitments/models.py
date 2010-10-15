@@ -131,8 +131,8 @@ class Survey(models.Model):
         
     def questions(self):
         import survey_forms
-        form = getattr(survey_forms, self.form_name)
-        return form.base_fields.keys()
+        form = getattr(survey_forms, self.form_name)(None, None)
+        return form.fields.keys()
         
 class ContributorSurvey(models.Model):
     contributor = models.ForeignKey(Contributor)
