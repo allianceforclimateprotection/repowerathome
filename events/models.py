@@ -106,7 +106,7 @@ class Event(models.Model):
         return Guest.objects.filter(event=self, rsvp_status="N")
         
     def attendees(self):
-        return Guest.objects.filter(event=self).exclude(rsvp_status="N")
+        return Guest.objects.filter(event=self, rsvp_status__in=["A", "M"])
         
     def invited(self):
          return Guest.objects.filter(event=self, invited__isnull=False).count()

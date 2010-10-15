@@ -93,7 +93,15 @@ class EventTest(TestCase):
         self.failUnlessEqual(self.event.not_attending().count(), 2)
         
     def test_attendees(self):
-        self.failUnlessEqual(len(self.event.attendees()), 5)
+        self.failUnlessEqual(len(self.event.attendees()), 2)
+        jon = Guest.objects.get(contributor__first_name="Jonathan")
+        jon.rsvp_status = "A"
+        jon.save()
+        self.failUnlessEqual(len(self.event.attendees()), 3)
+        mike = Guest.objects.get(contributor__first_name="Mike")
+        mike.rsvp_status = "N"
+        mike.save()
+        self.failUnlessEqual(len(self.event.attendees()), 2)
         
     def test_place(self):
         self.failUnlessEqual(self.event.place(), "123 Garden Street Ashaway, RI")
