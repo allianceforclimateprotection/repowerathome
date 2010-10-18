@@ -314,6 +314,11 @@ class Guest(models.Model):
 # 
 # Signals!!!
 #
+def send_message_to_directly_added_guest(sender, instance, created, **kwargs):
+    if created and instance.rsvp_status in ["A", "M"] and instance.contributor.email:
+        stream = Stream.objects.get(slug="event-guest-add")
+        stream.enqueue(content_object=instance, start=instance.created)
+models.signals.post_save.connect(send_message_to_directly_added_guest, sender=Guest)
 
 def set_default_survey(sender, instance, **kwargs):
     instance.default_survey = instance.event_type.survey
