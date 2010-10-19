@@ -22,5 +22,5 @@ class UserExportForm(forms.Form):
             guest_queryset = Guest.objects.guest_engagment(date_start=date_start, date_end=date_end)
             queryset = queryset + guest_queryset[1:]
         for row in queryset:
-            if not self.cleaned_data["filter_inactive"] or any(row[7:]):
+            if not self.cleaned_data["filter_inactive"] or any(row[8:]):
                 writer.writerow(['="%s"' % s if s and self.cleaned_data["excel_friendly"] else s for s in row])
