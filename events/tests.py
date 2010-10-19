@@ -567,6 +567,30 @@ class EventGuestsAddViewTest(TestCase):
         self.failUnlessEqual(jon.contributor.email, "jon@gmail.com")
         self.failUnlessEqual(jon.rsvp_status, "N")
         
+    def test_2_guests_no_email(self):
+        self.client.login(username="test@test.com", password="test")
+        self.failUnlessEqual(self.event.guest_set.all().count(), 7)
+        response = self.client.post(self.event_guests_add_url, {"first_name": "First", 
+            "last_name": "Noemail", "email": "", "phone": "", "rsvp_status": "N"}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/detail.html")
+        event = response.context["event"]
+        guests = event.guest_set.all()
+        self.failUnlessEqual(len(guests), 8)
+        first = guests[7]
+        self.failUnlessEqual(first.contributor.first_name, "First")
+        self.failUnlessEqual(first.contributor.email, None)
+        self.failUnlessEqual(first.rsvp_status, "N")
+        response = self.client.post(self.event_guests_add_url, {"first_name": "Duplicate", 
+            "last_name": "Noemail", "email": "", "phone": "", "rsvp_status": "A"}, follow=True)
+        self.failUnlessEqual(response.template[0].name, "events/detail.html")
+        event = response.context["event"]
+        guests = event.guest_set.all()
+        self.failUnlessEqual(len(guests), 9)
+        dup = guests[8]
+        self.failUnlessEqual(dup.contributor.first_name, "Duplicate")
+        self.failUnlessEqual(dup.contributor.email, None)
+        self.failUnlessEqual(dup.rsvp_status, "A")
+        
     def test_valid_post_duplicate_contributor(self):
         pass
         

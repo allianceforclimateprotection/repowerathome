@@ -137,6 +137,12 @@ class GuestAddForm(forms.ModelForm):
         widgets = {
             "rsvp_status": forms.RadioSelect,
         }
+        
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if email:
+            return email
+        return None
     
     def clean_zipcode(self):
         data = self.cleaned_data["zipcode"]
@@ -150,10 +156,13 @@ class GuestAddForm(forms.ModelForm):
         return data
     
     def save(self, *args, **kwargs):
-        try:
-            contributor = Contributor.objects.get(email=self.cleaned_data["email"])
-        except Contributor.DoesNotExist:
-            contributor = Contributor(email=self.cleaned_data["email"])
+        email = self.cleaned_data["email"]
+        contributor = Contributor(email=email)
+        if email:
+            try:
+                contributor = Contributor.objects.get(email=self.cleaned_data["email"])
+            except Contributor.DoesNotExist:
+                pass            
         contributor.first_name = self.cleaned_data["first_name"]
         contributor.last_name = self.cleaned_data["last_name"]
         contributor.phone = self.cleaned_data["phone"]

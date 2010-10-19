@@ -52,6 +52,7 @@ def clean():
     else:
         local("find . -name '*.pyc' -depth -exec rm {} \;")
 
+@runs_once
 def enable_maintenance_page():
     "Turns on the maintenance page"
     if env.environment == "production":
@@ -122,6 +123,7 @@ def restart_apache():
     require("hosts", provided_by=deployments)
     sudo("/etc/init.d/apache2 restart")
 
+@runs_once
 def disable_maintenance_page():
     "Turns off the maintenance page"
     if env.environment == "production":

@@ -74,12 +74,14 @@ class ProfileManager(models.Manager):
                 NULL AS phone, l.name AS city, l.st AS state, l.zipcode AS "zip code",
                 %(action_cases)s,
                 NULL AS 'organize',
+                NULL AS 'volunteer',
                 CASE
                     WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id AND gu.is_manager = 1
                         AND DATE(gu.updated) >= '%(date_start)s' AND DATE(gu.updated) <= '%(date_end)s') = 1 THEN "yes"
                 END AS "team manager",
                 CASE
-                    WHEN EXISTS(SELECT * FROM groups_groupusers gu WHERE u.id = gu.user_id
+                    WHEN EXISTS(SELECT * FROM groups_groupusers gu JOIN groups_group g ON gu.group_id = g.id
+                        WHERE u.id = gu.user_id AND g.is_geo_group = 0
                         AND DATE(gu.updated) >= '%(date_start)s' AND DATE(gu.updated) <= '%(date_end)s') = 1 THEN "yes"
                 END AS "team member",
                 CASE
