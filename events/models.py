@@ -229,6 +229,10 @@ class GuestManager(models.Manager):
                     WHEN `organize_commit`.answer = "True" THEN "yes"
                     WHEN `organize_commit`.answer = "False" THEN "no"
                 END AS 'organize',
+                CASE
+                    WHEN `volunteer_commit`.answer = "True" THEN "yes"
+                    WHEN `volunteer_commit`.answer = "False" THEN "no"
+                END AS 'volunteer',
                 NULL AS "team manager",
                 NULL AS "team member",
                 CASE 
@@ -263,6 +267,10 @@ class GuestManager(models.Manager):
                 AND `organize_commit`.contributor_id = cn.id
                 AND DATE(`organize_commit`.updated) >= '%(date_start)s'
                 AND DATE(`organize_commit`.updated) <= '%(date_end)s'
+            LEFT JOIN commitments_commitment `volunteer_commit` ON `volunteer_commit`.question = 'volunteer' 
+                AND `volunteer_commit`.contributor_id = cn.id
+                AND DATE(`volunteer_commit`.updated) >= '%(date_start)s'
+                AND DATE(`volunteer_commit`.updated) <= '%(date_end)s'
             %(action_joins)s
             WHERE cn.user_id IS NULL
             ORDER BY g.id
