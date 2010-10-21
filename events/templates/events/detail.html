@@ -29,17 +29,19 @@
         <div class="box_one_middle">
             {% if has_manager_privileges %}
                 <h3>Host Tools</h3>
-                <div><a href="{% url event-edit event.id %}">Edit Event Details</a></div>
-                <div><a class="guests_add_link" href="{% url event-guests-add event.id %}">Add Guest</a></div>
-                <div><a id="event_hosts_link" href="{% url event-hosts event.id %}">Select Hosts</a></div>
-                <div>
-                    <a href="{% url event-print event.id %}">Sign In Sheet</a>
-                    <span class="file_icon pdf_icon" title="PDF sign in sheet download"></span>
-                </div>
-                <div>
-                    <a href="{% url event-spreadsheet event.id %}">Guest List</a>
-                    <span class="file_icon excel_icon" title="Excel guest list download"></span>
-                </div>
+                <ul class="plain_list">
+                    <li><a href="{% url event-edit event.id %}">Edit Event Details</a></li>
+                    <li><a class="guests_add_link" href="{% url event-guests-add event.id %}">Add Guest</a></li>
+                    <li><a id="event_hosts_link" href="{% url event-hosts event.id %}">Select Hosts</a></li>
+                    <li>
+                        <a href="{% url event-print event.id %}">Sign In Sheet</a>
+                        <span class="file_icon pdf_icon" title="PDF sign in sheet download"></span>
+                    </li>
+                    <li>
+                        <a href="{% url event-spreadsheet event.id %}">Guest List</a>
+                        <span class="file_icon excel_icon" title="Excel guest list download"></span>
+                    </li>
+                </ul>
             {% else %}
                 <h3>RSVP</h3>
                 {% if guest.rsvp_status and not request.GET.reset %}
