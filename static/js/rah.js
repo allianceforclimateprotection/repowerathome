@@ -989,7 +989,7 @@ var rah = {
                     }
                 },
                 autoOpen: false,
-                width: 780
+                width: 781
             });
             
             // Attach functionality commitment card links
@@ -1013,7 +1013,7 @@ var rah = {
             // Make sure only one box is checked
             $("#commitment_card_form .commit_card_choice input").live("click", function(){
                 var id = $(this).attr("id");
-                var index = id.substr(-1);
+                var index = id.substr(id.length - 1, 1);
                 var other_index = (index == "1") ? "0" : "1";
                 var field_name = id.substr(0, id.length-1);
                 $("#" + field_name + other_index).attr("checked", false);
