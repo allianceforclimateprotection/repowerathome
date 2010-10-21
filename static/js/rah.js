@@ -719,8 +719,8 @@ var rah = {
     
     mod_thumbs_radio_widget: {
         init: function() {
-            $(".rateable_rate_form [type='submit']").remove();
-            $(".rateable_rate_form [name='next']").remove();
+            $(".rateable_rate_form input[type='submit']").remove();
+            $(".rateable_rate_form input[name='next']").remove();
             $(".rateable_rate_form .score_radio").change(function() {
                var form = $(this).parents("form");
                $.ajax({
@@ -742,7 +742,7 @@ var rah = {
     
     mod_flag: {
         init: function() {
-            $(".flagged_flag_form [name='next']").remove();
+            $(".flagged_flag_form input[name='next']").remove();
             $(".flagged_flag_form .flag_box").click(function() {
                 var box = $(this);
                 var form = box.parents("form");
@@ -782,15 +782,15 @@ var rah = {
     },
     
     page_event_show: {
-        init: function() {
+        init: function() {            
             rah.mod_comment_form.init();
             var address = $("#event_address").text();
             var location = $("#event_location").text();
             geocoder = new google.maps.Geocoder();
             var myOptions = {
-              zoom: 9,
-              mapTypeId: google.maps.MapTypeId.ROADMAP,
-              scrollwheel: false
+                zoom: 9,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                scrollwheel: false
             };
             var map = new google.maps.Map(document.getElementById("event_map"), myOptions);
             if(geocoder) {
