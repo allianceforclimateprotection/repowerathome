@@ -12,9 +12,6 @@ from geo.models import Location
 from invite.models import Invitation
 from messaging.models import Stream
 from commitments.models import Contributor, Commitment, Survey
-
-def yestarday():
-    return datetime.datetime.today() - datetime.timedelta(days=1)
     
 class EventTypeManager(models.Manager):
     def get_by_natural_key(self, name):

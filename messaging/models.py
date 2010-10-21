@@ -9,7 +9,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
-from django.core.validators import validate_email
 from django.db import models, transaction
 
 from utils import hash_val
@@ -269,6 +268,7 @@ class QueueManager(models.Manager):
             until = now + datetime.timedelta(minutes=process_minutes)
         sent = []
         deleted_pk = []
+        exceptions = []
         for queued_message in self.filter(send_time__lte=now).order_by("send_time"):
             if queued_message.pk in deleted_pk:
                 continue # previous batchable message has been sent, and this one has now been deleted
@@ -277,11 +277,23 @@ class QueueManager(models.Manager):
                 # TODO: should regenerate message, will need to make ABTest/Message One To One first
                 deleted_pk = deleted_pk + [bm.pk for bm in batchable_messages]
                 batchable_messages.delete()
-            sent = sent + queued_message.send()
-            queued_message.delete()
+            try:
+                sent = sent + queued_message.send()
+                queued_message.delete()
+            except Exception, e:
+                exceptions.append((queued_message, e))
             if process_minutes and until < datetime.datetime.now():
                 print "WARNING: %s min time limit has been exceeded" % process_minutes
                 break
+        if exceptions:
+            body = """
+There are %s messages in the queue that cannot be sent %s.
+
+-----
+%s
+""" % (len(exceptions), [m.id for m,e in exceptions], [e for m,e in exceptions])
+            msg = EmailMessage("Broken Message Queue", body, None, ["servererrors@repowerathome.com"])
+            msg.send()
         return sent
 
 class Queue(models.Model):
