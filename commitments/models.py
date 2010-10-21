@@ -5,6 +5,103 @@ from django.contrib.auth.models import User
 
 from geo.models import Location
 
+def yesterday():
+    return datetime.datetime.today() - datetime.timedelta(days=1)
+
+class ContributorManager(models.Manager):
+    def contirbutor_engagment(self, date_start=None, date_end=None):
+        from django.db import connection, transaction
+        from actions.models import Action
+        
+        if not date_start:
+            date_start = datetime.date.min
+        if not date_end:
+            date_end = datetime.date.max
+
+        actions = Action.objects.all()
+        action_cases = [
+            """
+            CASE
+                WHEN `%s_commit`.answer = "C" THEN "committed"
+                WHEN `%s_commit`.answer = "D" THEN "already done"
+            END AS '%s'
+            """ % (a.slug, a.slug, a.name.lower()) for a in actions]
+        action_joins = [
+            """
+            LEFT JOIN commitments_commitment `%s_commit` ON `%s_commit`.action_id = %s AND `%s_commit`.contributor_id = cn.id
+                AND DATE(`%s_commit`.updated) >= '%s' AND DATE(`%s_commit`.updated) <= '%s'
+            """ % (a.slug, a.slug, a.id, a.slug, a.slug, date_start, a.slug, date_end) for a in actions]
+            
+        query_dict = {
+            "action_cases": ", ".join(action_cases),
+            "action_joins": " ".join(action_joins),
+            "date_start": date_start,
+            "date_end": date_end,
+        }    
+        query = """
+            SELECT DISTINCT -1, cn.first_name AS "first name", cn.last_name AS "last name", cn.email,
+                cn.phone, l.name AS city, l.st AS state, l.zipcode AS "zip code",
+                %(action_cases)s,
+                CASE
+                    WHEN `organize_commit`.answer = "True" THEN "yes"
+                    WHEN `organize_commit`.answer = "False" THEN "no"
+                END AS 'organize',
+                CASE
+                    WHEN `volunteer_commit`.answer = "True" THEN "yes"
+                    WHEN `volunteer_commit`.answer = "False" THEN "no"
+                END AS 'volunteer',
+                NULL AS "team manager",
+                NULL AS "team member",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
+                        WHERE cn.id = g.contributor_id and g.is_host = 1
+                        AND DATE(e.when) >= '%(date_start)s' AND DATE(e.when) <= '%(date_end)s') = 1 
+                            THEN "completed"
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
+                        WHERE cn.id = g.contributor_id and g.is_host = 1
+                        AND DATE(e.created) >= '%(date_start)s' AND DATE(e.created) <= '%(date_end)s') = 1 
+                            THEN "yes"
+                END AS "event host",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
+                        WHERE cn.id = g.contributor_id and e.event_type_id IN (1,4,5)
+                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1 
+                            THEN "completed"
+                END AS "energy event guest",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
+                        WHERE cn.id = g.contributor_id and e.event_type_id IN (2)
+                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1 
+                            THEN "completed"
+                END AS "kickoff event guest",
+                CASE
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
+                        WHERE cn.id = g.contributor_id and e.event_type_id IN (3)
+                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1 
+                            THEN "completed"
+                END AS "field training guest"
+            FROM commitments_contributor cn
+            LEFT JOIN commitments_commitment cm ON cn.id = cm.contributor_id
+            LEFT JOIN geo_location l ON cn.location_id = l.id
+            LEFT JOIN commitments_commitment `organize_commit` ON `organize_commit`.question = 'organize' 
+                AND `organize_commit`.contributor_id = cn.id
+                AND DATE(`organize_commit`.updated) >= '%(date_start)s'
+                AND DATE(`organize_commit`.updated) <= '%(date_end)s'
+            LEFT JOIN commitments_commitment `volunteer_commit` ON `volunteer_commit`.question = 'volunteer' 
+                AND `volunteer_commit`.contributor_id = cn.id
+                AND DATE(`volunteer_commit`.updated) >= '%(date_start)s'
+                AND DATE(`volunteer_commit`.updated) <= '%(date_end)s'
+            %(action_joins)s
+            WHERE cn.user_id IS NULL
+            ORDER BY cn.id
+            """ % query_dict
+        cursor = connection.cursor()
+        cursor.execute(query)
+        header_row = tuple([d[0] for d in cursor.description])
+        queryset = [header_row] + list(cursor.fetchall())
+        cursor.close()
+        return queryset
+
 class Contributor(models.Model):
     first_name = models.CharField(blank=True, max_length=50)
     last_name = models.CharField(blank=True, max_length=50)
@@ -14,6 +111,7 @@ class Contributor(models.Model):
     user = models.ForeignKey("auth.User", blank=True, null=True, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    objects = ContributorManager() 
     
     class Meta:
         unique_together = (("user",),("email",),)
@@ -74,26 +172,26 @@ class ContributorProfile(object):
             models.Sum("action__points"))["action__points__sum"]
 
     def number_of_committed_actions(self):
-        return Commitment.object.pending_commitments(contributor=self.contributor).count()
+        return Commitment.objects.pending_commitments(contributor=self.contributor).count()
 
-    def commitments_made_yestarday(self):
-        start = datetime.datetime.combine(yestarday(), datetime.time.min)
-        end = datetime.datetime.combine(yestarday(), datetime.time.max)
+    def commitments_made_yesterday(self):
+        start = datetime.datetime.combine(yesterday(), datetime.time.min)
+        end = datetime.datetime.combine(yesterday(), datetime.time.max)
         return Commitment.objects.pending_commitments(contributor=self.contributor).filter(
             updated__gte=start, updated__lte=end)
 
-    def commitments_made_before_yestarday(self):
-        start = datetime.datetime.combine(yestarday(), datetime.time.min)
+    def commitments_made_before_yesterday(self):
+        start = datetime.datetime.combine(yesterday(), datetime.time.min)
         return Commitment.objects.pending_commitments(contributor=self.contributor).filter(
             updated__lt=start)
 
     def commitments_made_last_24_hours(self):
         return Commitment.objects.pending_commitments(contributor=self.contributor).filter(
-            updated__gte=yestarday())
+            updated__gte=yesterday())
 
     def commitments_made_more_than_24_hours(self):
         return Commitment.objects.pending_commitments(contributor=self.contributor).filter(
-            updated__lt=yestarday())
+            updated__lt=yesterday())
 
     def commitments_due_in_a_week(self):
         return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
