@@ -68,8 +68,8 @@ def _bootstrap(script):
     run("rm %s" % remote_script)
     
 def boot_test():
-    env.host_string = "ec2-184-72-172-68.compute-1.amazonaws.com"
-    _bootstrap("fabfile/server_user_data.sh")
+    env.host_string = "ec2-184-73-45-17.compute-1.amazonaws.com"
+    _bootstrap("fabfile/bootstrap.sh")
 
 def launch_server(name="test", instance_type="t1.micro", ami=AMIs["ubuntu-10.10-32"], 
         bootstrap_script="fabfile/bootstrap.sh"):

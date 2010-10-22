@@ -92,15 +92,16 @@ Y
 Y
 EOF
     s3cmd --configure < s3cmd_input
+    rm s3cmd_input
 }
 
 function configure_ssl {
-    s3cmd get s3://private.repowerathome.com/ssl/repowerathome.key /etc/ssl/repowerathome.key
-    s3cmd get s3://private.repowerathome.com/ssl/private/repowerathome.csr /etc/ssl/private/repowerathome.csr
-    s3cmd get s3://private.repowerathome.com/ssl/private/repowerathome.key /etc/ssl/private/repowerathome.key
-    s3cmd get s3://private.repowerathome.com/ssl/private/repowerathome_with_pass.key /etc/ssl/private/repowerathome_with_pass.key
-    s3cmd get s3://private.repowerathome.com/ssl/certs/repowerathome.crt /etc/ssl/certs/repowerathome.crt
-    s3cmd get s3://private.repowerathome.com/ssl/certs/repowerathome_with_gd_bundle.crt /etc/ssl/certs/repowerathome_with_gd_bundle.crt
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.key /etc/ssl/repowerathome.key
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.csr /etc/ssl/private/repowerathome.csr
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.key /etc/ssl/private/repowerathome.key
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome_with_pass.key /etc/ssl/private/repowerathome_with_pass.key
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.crt /etc/ssl/certs/repowerathome.crt
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome_with_gd_bundle.crt /etc/ssl/certs/repowerathome_with_gd_bundle.crt
 }
 
 function configure_htpasswd {
@@ -122,7 +123,10 @@ function install_appserver_libs {
 }
 
 function configure_apache2 {
-    rm /etc/apache/sites-available/default
+    rm /etc/apache2/sites-available/default
+    rm /etc/apache2/sites-available/default-ssl
+    rm /etc/apache2/sites-enabled/000-default
+    
     cat > '/etc/apache2/ports.conf' << EOF
 ::server_config_files/apache2/ports.conf::
 EOF
@@ -150,24 +154,28 @@ EOF
 
 function install_codebase_keys {
     USER_HOME=`get_user_home ubuntu`
-    sudo -u ubuntu cat > "$USER_HOME/.ssh/config" << EOF
-Host codebasehq-deploy
+    sudo -u "ubuntu" touch "$USER_HOME/.ssh/config"
+    sudo -u "ubuntu" cat > "$USER_HOME/.ssh/config" << EOF
+Host codebasehq.com
   HostName codebasehq.com
   User git
-  IdentityFile /home/ubuntu/.ssh/deploy-pk.pem 
+  IdentityFile /home/ubuntu/.ssh/deploy-pk.pem
+  StrictHostKeyChecking no
 EOF
-    sudo -u ubuntu s3cmd get s3://private.repowerathome.com/codebase/deploy.pem "$USER_HOME/.ssh/deploy.pem"
-    sudo -u ubuntu s3cmd get s3://private.repowerathome.com/codebase/deploy-pk.pem "$USER_HOME/.ssh/deploy-pk.pem"
+    s3cmd get --force s3://private.repowerathome.com/codebase/deploy.pem "$USER_HOME/.ssh/deploy.pem"
+    s3cmd get --force s3://private.repowerathome.com/codebase/deploy-pk.pem "$USER_HOME/.ssh/deploy-pk.pem"
+    chmod 0400 "$USER_HOME/.ssh/deploy.pem" "$USER_HOME/.ssh/deploy-pk.pem"
+    chown ubuntu:ubuntu "$USER_HOME/.ssh/deploy.pem" "$USER_HOME/.ssh/deploy-pk.pem"
 }
 
 function init_project {
     USER_HOME=`get_user_home ubuntu`
-    sudo -u ubuntu git clone git@codebasehq.com:rah/rah/rah.git "$USER_HOME/webapp/"
-    sudo -u ubuntu mkdir "$USER_HOME/requirements/"
+    sudo -u "ubuntu" git clone git@codebasehq.com:rah/rah/rah.git "$USER_HOME/webapp/"
+    sudo -u "ubuntu" mkdir "$USER_HOME/requirements/"
 }
 
 install_appserver_libs
-configure_apache
+configure_apache2
 install_send_messages_cron
 install_codebase_keys
 init_project
