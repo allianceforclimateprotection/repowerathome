@@ -143,6 +143,8 @@ def parse_args(args):
     parser = OptionParser(usage=usage)
     parser.add_option("-s", "--settings", dest="settings", default="settings",
         help="MODULE to load configurations from [settings]", metavar="MODULE")
+    parser.add_option("-a", "--all-tables", dest="all_tables", action="store_true", default=False,
+        help="copy all tables regardless ignoring the exclude setting")
     options, args = parser.parse_args()
     
     if len(args) != 2:
@@ -167,12 +169,14 @@ def parse_args(args):
         parser.print_help()
         sys.exit(2)
         
-    return settings, duplicate, replace
+    return settings, options, duplicate, replace
 
 def main():
-    settings, duplicate, replace = parse_args(sys.argv)
+    settings, options, duplicate, replace = parse_args(sys.argv)
     replace.backup_data()
-    exclude = settings.MYSQLDUPLICATE_EXCLUDE if hasattr(settings, "MYSQLDUPLICATE_EXCLUDE") else None
+    exclude = None
+    if not options.all_tables and hasattr(settings, "MYSQLDUPLICATE_EXCLUDE"):
+        exclude = settings.MYSQLDUPLICATE_EXCLUDE
     replace.drop_tables(exclude)
     print "Duplicating database..."
     duplicate_data(duplicate, replace, exclude)
