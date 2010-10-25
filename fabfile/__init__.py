@@ -24,7 +24,6 @@ def staging():
 def prod():
     env.roles = ["application"]
     env.environment = "production"
-deployments = [staging, prod]
 
 def test():
     "Run all tests"

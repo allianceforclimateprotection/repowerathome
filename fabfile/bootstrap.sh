@@ -44,79 +44,81 @@ system_update_locale_en_US_UTF_8
 system_set_timezone 'America/New_York'
 install_emacs
 
-function install_loadbalancer_libs {
-    apt-get -y install libssl-dev memcached nginx
+function mysql_install {
+    # $1 - the mysql root password
+    if [ ! -n "$1" ]; then
+        echo "mysql_install() requires the root pass as its first argument"
+        return 1;
+    fi
+
+    echo "mysql-server-5.1 mysql-server/root_password password $1" | debconf-set-selections
+    echo "mysql-server-5.1 mysql-server/root_password_again password $1" | debconf-set-selections
+    apt-get -y install mysql-server mysql-client
+
+    echo "Sleeping while MySQL starts up for the first time..."
+    sleep 5
 }
 
-function configure_nginx {
-    rm /etc/nginx/sites-available/default
-    cat > '/etc/nginx/nginx.conf' << EOF
-::server_config_files/nginx/nginx.conf::
-EOF
-    cat > '/etc/nginx/sites-available/maintenance' << EOF
-::server_config_files/nginx/maintenance::
-EOF
-    cat > '/etc/nginx/sites-available/maintenance_base' << EOF
-::server_config_files/nginx/maintenance_base::
-EOF
-    cat > '/etc/nginx/sites-available/maintenance_ssl' << EOF
-::server_config_files/nginx/maintenance_ssl::
-EOF
-    cat > '/etc/nginx/sites-available/rah' << EOF
-::server_config_files/nginx/rah::
-EOF
-    cat > '/etc/nginx/sites-available/rah_base' << EOF
-::server_config_files/nginx/rah_base::
-EOF
-    cat > '/etc/nginx/sites-available/rah_base_http' << EOF
-::server_config_files/nginx/rah_base_http::
-EOF
-    cat > '/etc/nginx/sites-available/rah_base_https' << EOF
-::server_config_files/nginx/rah_base_https::
-EOF
-    
-    sed -i "s/_public_dns_name/`echo $PUBLIC_DNS_NAME`/" /etc/nginx/sites-available/*
-    ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah
+function mysql_create_database {
+    # $1 - the mysql root password
+    # $2 - the db name to create
+    if [ ! -n "$1" ]; then
+        echo "mysql_create_database() requires the root pass as its first argument"
+        return 1;
+    fi
+    if [ ! -n "$2" ]; then
+        echo "mysql_create_database() requires the name of the database as the second argument"
+        return 1;
+    fi
+    echo "CREATE DATABASE $2;" | mysql -u root -p$1
 }
 
-function install_s3cmd {
-    apt-get -y install s3cmd
-    cat > s3cmd_input << EOF
-`echo $AWS_ACCESS_KEY`
-`echo $AWS_SECRET_KEY`
-
-
-Yes
-Y
-Y
-Y
-EOF
-    s3cmd --configure < s3cmd_input
-    rm s3cmd_input
+function mysql_create_user {
+    # $1 - the mysql root password
+    # $2 - the user to create
+    # $3 - their password
+    if [ ! -n "$1" ]; then
+        echo "mysql_create_user() requires the root pass as its first argument"
+        return 1;
+    fi
+    if [ ! -n "$2" ]; then
+        echo "mysql_create_user() requires username as the second argument"
+        return 1;
+    fi
+    if [ ! -n "$3" ]; then
+        echo "mysql_create_user() requires a password as the third argument"
+        return 1;
+    fi
+    echo "CREATE USER '$2'@'localhost' IDENTIFIED BY '$3';" | mysql -u root -p$1
 }
 
-function configure_ssl {
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.key /etc/ssl/repowerathome.key
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.csr /etc/ssl/private/repowerathome.csr
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.key /etc/ssl/private/repowerathome.key
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome_with_pass.key /etc/ssl/private/repowerathome_with_pass.key
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.crt /etc/ssl/certs/repowerathome.crt
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome_with_gd_bundle.crt /etc/ssl/certs/repowerathome_with_gd_bundle.crt
+function mysql_grant_user {
+    # $1 - the mysql root password
+    # $2 - the user to bestow privileges
+    # $3 - the database
+    if [ ! -n "$1" ]; then
+        echo "mysql_create_user() requires the root pass as its first argument"
+        return 1;
+    fi
+    if [ ! -n "$2" ]; then
+        echo "mysql_create_user() requires username as the second argument"
+        return 1;
+    fi
+    if [ ! -n "$3" ]; then
+        echo "mysql_create_user() requires a database as the third argument"
+        return 1;
+    fi
+    echo "GRANT ALL PRIVILEGES ON $3.* TO '$2'@'localhost';" | mysql -u root -p$1
+    echo "FLUSH PRIVILEGES;" | mysql -u root -p$1
 }
 
-function configure_htpasswd {
-    USER_HOME=`get_user_home ubuntu`
-    s3cmd get s3://private.repowerathome.com/htpasswd "$USER_HOME/htpasswd"
-}
-
-install_loadbalancer_libs
-configure_nginx
-install_s3cmd
-configure_ssl
-configure_htpasswd
+mysql_install "$DB_PASSWORD"
+mysql_create_database "$DB_PASSWORD" "rah"
+mysql_create_user "$DB_PASSWORD" "rah_db_user" "$DB_PASSWORD"
+mysql_grant_user "$DB_PASSWORD" "rah_db_user" "rah"
 
 function install_appserver_libs {
-    apt-get -y install apache2-prefork-dev memcached git-core mercurial default-jre
+    apt-get -y install apache2 libapache2-mod-wsgi apache2-prefork-dev memcached git-core mercurial
     apt-get -y install libjpeg62-dev libfreetype6-dev
     apt-get -y install python python-dev python-setuptools
     easy_install pip virtualenv yolk ipython
@@ -152,6 +154,22 @@ HOME=/home/ubuntu
 EOF
 }
 
+function install_s3cmd {
+    apt-get -y install s3cmd
+    cat > s3cmd_input << EOF
+`echo $AWS_ACCESS_KEY`
+`echo $AWS_SECRET_KEY`
+
+
+Yes
+Y
+Y
+Y
+EOF
+    s3cmd --configure < s3cmd_input
+    rm s3cmd_input
+}
+
 function install_codebase_keys {
     USER_HOME=`get_user_home ubuntu`
     sudo -u "ubuntu" touch "$USER_HOME/.ssh/config"
@@ -174,8 +192,139 @@ function init_project {
     sudo -u "ubuntu" mkdir "$USER_HOME/requirements/"
 }
 
+function s3_key_replacement {
+    # $1 - key to download
+    # $2 - file to replace in
+    # $3 - string to replace
+    KEY_NAME="$1"
+    FILE="$2"
+    PATTERN="$3"
+    s3cmd get --force "s3://private.repowerathome.com/$KEY_NAME" temp_key
+    sed -i 's/[\&]/\\&/g' temp_key # escape any special chars in the key
+    sed -i "s/$PATTERN/`cat temp_key`/g" "$FILE"
+    rm temp_key
+}
+
+function install_local_settings {
+    USER_HOME=`get_user_home ubuntu`
+    sudo -u "ubuntu" touch "$USER_HOME/webapp/local_settings.py"
+    sudo -u "ubuntu" cat > "$USER_HOME/webapp/local_settings.py" << EOF
+DEBUG = False
+TEMPLATE_DEBUG = DEBUG
+SEND_BROKEN_LINK_EMAILS = not DEBUG
+IGNORABLE_404_ENDS = ("ga.js/", "b.js/",)
+
+INTERNAL_IPS = ("127.0.0.1", "157.130.44.166")
+
+ADMINS = (
+    ('Server Errors', 'servererrors@repowerathome.com'),
+)
+MANAGERS = ADMINS
+
+DATABASE_ENGINE   = 'mysql'
+DATABASE_NAME     = 'rah'
+DATABASE_USER     = 'rah_db_user'
+DATABASE_PASSWORD = "$DB_PASSWORD"
+DATABASE_HOST     = "$DB_HOST"
+DATABASE_PORT     = "$DB_PORT"
+
+# Email Settings
+EMAIL_HOST = "localhost"
+DEFAULT_FROM_EMAIL = "Repower at Home <noreply@repowerathome.com>"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
+POSTMARK_API_KEY = '_postmark_api_key'
+
+MEDIA_URL = 'http://_s3_bucket_name/'
+MEDIA_URL_HTTPS = 'https://s3.amazonaws.com/_s3_bucket_name/'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+# Secrets and Keys
+SECRET_KEY = '_secret_key'
+AWS_BUCKET_NAME = '_s3_bucket_name'
+AWS_STORAGE_BUCKET_NAME = AWS_BUCKET_NAME
+AWS_ACCESS_KEY_ID = "$AWS_ACCESS_KEY"
+AWS_SECRET_ACCESS_KEY = "$AWS_SECRET_KEY"
+TWITTER_CONSUMER_KEY = '_twitter_consumer_key'
+TWITTER_CONSUMER_SECRET = '_twitter_consumer_secret'
+FACEBOOK_APPID = '_facebook_appid'
+FACEBOOK_SECRET = '_facebook_secret'
+EOF
+    sed -i "s/_s3_bucket_name/`echo $ENVIRONMENT`.static.repowerathome.com/" "$USER_HOME/webapp/local_settings.py"
+
+    s3_key_replacement "django/secret_key" "$USER_HOME/webapp/local_settings.py" "_secret_key"
+    s3_key_replacement "django/postmark_api_key" "$USER_HOME/webapp/local_settings.py" "_postmark_api_key"
+    s3_key_replacement "django/$ENVIRONMENT/twitter_consumer_key" "$USER_HOME/webapp/local_settings.py" "_twitter_consumer_key"
+    s3_key_replacement "django/$ENVIRONMENT/twitter_consumer_secret" "$USER_HOME/webapp/local_settings.py" "_twitter_consumer_secret"
+    s3_key_replacement "django/$ENVIRONMENT/facebook_appid" "$USER_HOME/webapp/local_settings.py" "_facebook_appid"
+    s3_key_replacement "django/$ENVIRONMENT/facebook_secret" "$USER_HOME/webapp/local_settings.py" "_facebook_secret"
+}
+
 install_appserver_libs
 configure_apache2
 install_send_messages_cron
+install_s3cmd
 install_codebase_keys
 init_project
+install_local_settings
+/etc/init.d/apache2 restart
+
+function install_loadbalancer_libs {
+    apt-get -y install libssl-dev memcached nginx
+}
+
+function configure_nginx {
+    rm /etc/nginx/sites-available/default
+    rm /etc/nginx/sites-enabled/default
+    
+    cat > '/etc/nginx/nginx.conf' << EOF
+::server_config_files/nginx/nginx.conf::
+EOF
+    cat > '/etc/nginx/sites-available/maintenance' << EOF
+::server_config_files/nginx/maintenance::
+EOF
+    cat > '/etc/nginx/sites-available/maintenance_base' << EOF
+::server_config_files/nginx/maintenance_base::
+EOF
+    cat > '/etc/nginx/sites-available/maintenance_ssl' << EOF
+::server_config_files/nginx/maintenance_ssl::
+EOF
+    cat > '/etc/nginx/sites-available/rah' << EOF
+::server_config_files/nginx/rah::
+EOF
+    cat > '/etc/nginx/sites-available/rah_base' << EOF
+::server_config_files/nginx/rah_base::
+EOF
+    cat > '/etc/nginx/sites-available/rah_base_http' << EOF
+::server_config_files/nginx/rah_base_http::
+EOF
+    cat > '/etc/nginx/sites-available/rah_base_https' << EOF
+::server_config_files/nginx/rah_base_https::
+EOF
+    
+    sed -i "s/_public_dns_name/`echo $PUBLIC_DNS_NAME`/" /etc/nginx/sites-available/*
+    sed -i "s/_upstream_servers/`echo $PRIVATE_IP_ADDRESS`:8080/" /etc/nginx/sites-available/*
+    ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah
+}
+
+function configure_ssl {
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.key /etc/ssl/repowerathome.key
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.csr /etc/ssl/private/repowerathome.csr
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.key /etc/ssl/private/repowerathome.key
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome_with_pass.key /etc/ssl/private/repowerathome_with_pass.key
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.crt /etc/ssl/certs/repowerathome.crt
+    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome_with_gd_bundle.crt /etc/ssl/certs/repowerathome_with_gd_bundle.crt
+}
+
+function configure_htpasswd {
+    USER_HOME=`get_user_home ubuntu`
+    s3cmd get s3://private.repowerathome.com/htpasswd "$USER_HOME/htpasswd"
+    chown ubuntu:ubuntu "$USER_HOME/htpasswd"
+}
+
+install_loadbalancer_libs
+configure_nginx
+configure_ssl
+configure_htpasswd
+/etc/init.d/nginx restart
