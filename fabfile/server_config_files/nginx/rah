@@ -1,5 +1,5 @@
 upstream app_servers {
-    _upstream_servers;
+    server _upstream_servers;
 }
 
 server {
