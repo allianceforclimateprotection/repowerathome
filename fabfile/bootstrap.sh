@@ -38,13 +38,11 @@ function install_emacs {
     sudo -u "ubuntu" echo '(setq backup-directory-alist `(("." . "~/.saves")))' >> "$USER_HOME/.emacs"
 }
 
-system_enable_universe
-system_update
-system_update_locale_en_US_UTF_8
-system_set_timezone 'America/New_York'
-install_emacs
+function mysql_client_install {
+    apt-get -y install mysql-client
+}
 
-function mysql_install {
+function mysql_server_install {
     # $1 - the mysql root password
     if [ ! -n "$1" ]; then
         echo "mysql_install() requires the root pass as its first argument"
@@ -53,7 +51,7 @@ function mysql_install {
 
     echo "mysql-server-5.1 mysql-server/root_password password $1" | debconf-set-selections
     echo "mysql-server-5.1 mysql-server/root_password_again password $1" | debconf-set-selections
-    apt-get -y install mysql-server mysql-client
+    apt-get -y install mysql-server
 
     echo "Sleeping while MySQL starts up for the first time..."
     sleep 5
@@ -112,16 +110,11 @@ function mysql_grant_user {
     echo "FLUSH PRIVILEGES;" | mysql -u root -p$1
 }
 
-mysql_install "$DB_PASSWORD"
-mysql_create_database "$DB_PASSWORD" "rah"
-mysql_create_user "$DB_PASSWORD" "rah_db_user" "$DB_PASSWORD"
-mysql_grant_user "$DB_PASSWORD" "rah_db_user" "rah"
-
 function install_appserver_libs {
     apt-get -y install apache2 libapache2-mod-wsgi apache2-prefork-dev memcached git-core mercurial
     apt-get -y install libjpeg62-dev libfreetype6-dev
     apt-get -y install python python-dev python-setuptools
-    easy_install pip virtualenv yolk ipython
+    easy_install pip virtualenv yolk http://pypi.python.org/packages/source/i/ipython/ipython-0.10.1.zip
 }
 
 function configure_apache2 {
@@ -261,15 +254,6 @@ EOF
     s3_key_replacement "django/$ENVIRONMENT/facebook_secret" "$USER_HOME/webapp/local_settings.py" "_facebook_secret"
 }
 
-install_appserver_libs
-configure_apache2
-install_send_messages_cron
-install_s3cmd
-install_codebase_keys
-init_project
-install_local_settings
-/etc/init.d/apache2 restart
-
 function install_loadbalancer_libs {
     apt-get -y install libssl-dev memcached nginx
 }
@@ -304,7 +288,12 @@ EOF
 EOF
     
     sed -i "s/_public_dns_name/`echo $PUBLIC_DNS_NAME`/" /etc/nginx/sites-available/*
-    sed -i "s/_upstream_servers/`echo $PRIVATE_IP_ADDRESS`:8080/" /etc/nginx/sites-available/*
+    APPSERVER_ADDRESSES=""
+    for server in $APP_SERVER_IPS
+    do
+        APPSERVER_ADDRESSES="$APPSERVER_ADDRESSES server $server:8080;"
+    done
+    sed -i "s/_upstream_servers/`echo $APPSERVER_ADDRESSES`/" /etc/nginx/sites-available/*
     ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah
 }
 
@@ -323,8 +312,39 @@ function configure_htpasswd {
     chown ubuntu:ubuntu "$USER_HOME/htpasswd"
 }
 
-install_loadbalancer_libs
-configure_nginx
-configure_ssl
-configure_htpasswd
-/etc/init.d/nginx restart
+function bootstrap_system {
+    system_enable_universe
+    system_update
+    system_update_locale_en_US_UTF_8
+    system_set_timezone 'America/New_York'
+    install_emacs
+}
+
+function bootstrap_database {
+    mysql_client_install
+    mysql_server_install "$DB_PASSWORD"
+    mysql_create_database "$DB_PASSWORD" "$DB_NAME"
+    mysql_create_user "$DB_PASSWORD" "$DB_USER" "$DB_PASSWORD"
+    mysql_grant_user "$DB_PASSWORD" "$DB_USER" "$DB_NAME"
+}
+
+function bootstrap_appserver {
+    install_appserver_libs
+    configure_apache2
+    mysql_client_install
+    install_send_messages_cron
+    install_s3cmd
+    install_codebase_keys
+    init_project
+    install_local_settings
+    /etc/init.d/apache2 restart
+}
+
+function bootstrap_loadbalancer {
+    install_loadbalancer_libs
+    configure_nginx
+    install_s3cmd
+    configure_ssl
+    configure_htpasswd
+    /etc/init.d/nginx restart
+}
