@@ -177,7 +177,7 @@ class Event(models.Model):
                 pass
             except Guest.DoesNotExist:
                 pass
-        return Guest(event=self)
+        return Guest(event=self, contributor=Contributor())
         
     def save_guest_in_session(self, request, guest):
         request.session[self._guest_key()] = guest
@@ -302,6 +302,7 @@ class Guest(models.Model):
         
     def save(self, *args, **kwargs):
         self.contributor.save()
+        self.contributor_id = self.contributor.id
         return super(Guest, self).save(*args, **kwargs)
     
     def status(self):
