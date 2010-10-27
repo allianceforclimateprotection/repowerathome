@@ -162,7 +162,7 @@ class Profile(models.Model):
         if cache_hit:
             return cache_hit
         else:
-            facebook_picture = facebook_profile(self.user)
+            facebook_picture = facebook_profile(self.user, "square")
             if facebook_picture:
                 profile_picture = facebook_picture
             else:

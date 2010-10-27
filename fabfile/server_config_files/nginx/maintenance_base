@@ -1,0 +1,10 @@
+root /home/ubuntu/www_root/;
+
+location / {
+    return 503;
+}
+
+error_page 503 @maintenance;
+location @maintenance {
+    rewrite ^(.*)$ /503.html break;
+}

@@ -1,0 +1,34 @@
+upstream app_servers {
+    _upstream_servers
+}
+
+server {
+    server_name staging.repowerathome.com;
+    include sites-available/rah_base_http;
+}
+server {
+    server_name staging.repowerathome.com;
+    include sites-available/rah_base_https;
+}
+
+server {
+    server_name repowerathome.com;
+    include sites-available/rah_base_http;
+}
+server {
+    server_name repowerathome.com;
+    include sites-available/rah_base_https;
+}
+server {
+    server_name www.repowerathome.com;
+    rewrite ^(.*)$ http://repowerathome.com$1 permanent;
+}
+
+server {
+    server_name _public_dns_name;
+    include sites-available/rah_base_http;
+}
+server {
+    server_name _public_dns_name;
+    include sites-available/rah_base_https;
+}
