@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     'export',
     'source_tracking',
     'commitments',
+    'codebase',
 )
 
 FIXTURE_DIR = ('fixtures',)
@@ -156,7 +157,7 @@ THUMBMNAIL_PROCESSORS = (
 )
 THUMBNAIL_EXTENSION = '.png'
 
-MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue", "geo_location")
+MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue",)
 
 POSTMARK_SENDER = 'noreply@repowerathome.com'
 
