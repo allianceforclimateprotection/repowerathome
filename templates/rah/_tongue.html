@@ -38,7 +38,7 @@
         <p>With an account you can track your progress and join teams!</p>
         <p><a href="{% url register %}" class="button">Sign Up</a></p>
         <h3>Log in</h3>
-        <form action="{% ifnotequal request.META.SERVER_PORT '8000' %}https://{{request.META.SERVER_NAME}}{%endifnotequal%}{% url login %}" method="post" id="login_form" autocomplete="off">
+        <form action="{% ifnotequal request.META.SERVER_PORT '8000' %}https://{{request.META.SERVER_NAME}}{%endifnotequal%}{% url login %}" method="post" id="login_form">
             <div class="form_row overset"> 
                 <label for="id_email">Email</label> 
                 <input type="text" name="email" id="id_email" /> 
