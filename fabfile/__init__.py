@@ -9,7 +9,7 @@ env.disable_known_hosts = True
 env.roledefs = {
     "application": ["ec2-184-73-88-77.compute-1.amazonaws.com"],
     "loadbalancer": ["repowerathome.com"],
-    "staging": ["ec2-184-72-148-152.compute-1.amazonaws.com"],
+    "staging": ["staging.repowerathome.com"],
 }
 
 env.deploy_to = "/home/%(user)s/webapp" % env
