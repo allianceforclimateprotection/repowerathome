@@ -2,7 +2,7 @@ import base64
 import re
 import urllib2
 
-from fabric.api import env, local, runs_once
+from fabric.api import env, local, runs_once, require
 
 def _send_codebase(path, data=None):
     "POST the given data message to the codebase API, if no data is provided GET"
@@ -21,7 +21,7 @@ def _send_codebase(path, data=None):
 @runs_once    
 def codebase_deployment():
     "Notify codebase that a new revision has been deployed"
-    require("deploy_to", provided_by=DEPLOY_SERVERS)
+    require("sha", "environment", "revision", provided_by=DEPLOY_SERVERS)
     repository = re.search("git\@codebasehq\.com:.*\/.*\/(.*)\.git", env.repository).group(1)
 
     xml = []
