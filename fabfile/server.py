@@ -40,7 +40,7 @@ def _security_groups():
 env.security_groups = _security_groups()
 
 def _generate_password(length=36):
-    ''.join([random.choice(string.ascii_letters + string.digits) for i in range(length)])
+    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(length)])
 
 def _associate_ip(instance, ip):
     address = boto.ec2.address.Address(instance.connection, ip)
@@ -95,7 +95,8 @@ def _print_mysqlduplicate_alias(environment, db_password, server, host="127.0.0.
             "CAN_REPLACE": True,
         },""" % (environment, env.user, server, env.db_name, host, env.db_user, db_password)))
     print(green("Add the above setting to your local_settings module and execute:"))
-    print(green("\t./mysqlduplicate.py -a prod %s" % environment))
+    print(green("\t./mysqlduplicate.py prod %s" % environment))
+    print(green("\tfab -H %s syncdb [this might not work yet]" % server))
     print(green("\tfab -H %s restart_apache" % server))
     
 def launch_server(environment="staging", instance_type="t1.micro", ami=AMIs["ubuntu-10.10-32"], 
