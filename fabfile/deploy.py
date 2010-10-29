@@ -1,3 +1,4 @@
+import fabric
 
 from fabric.api import env, settings, require, run, sudo, abort, runs_once
 from fabric.contrib.console import confirm
@@ -5,6 +6,9 @@ from fabric.colors import green, red
 
 from utils import query_revision
 from codebase import codebase_deployment
+
+def _truth_value(value):
+    return bool(value) and str(value).upper() != "FALSE"
 
 @runs_once
 def enable_maintenance_page():
@@ -63,7 +67,8 @@ def s3sync():
 def syncdb():
     "Sync the database with any new models"
     require("hosts", "deploy_to")
-    if confirm("This script cannot handle interactive shells, are you sure you want to run syncdb?"):
+    if fabric.version.VERSION[0] > 0 or \
+        confirm("This script cannot handle interactive shells, are you sure you want to run syncdb?"):
         run("cd %(deploy_to)s && python manage.py syncdb" % env)
 
 @runs_once
@@ -88,7 +93,7 @@ def disable_maintenance_page():
                 sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
                 sudo("/etc/init.d/nginx reload")
                 
-def deploy(revision=None, sync_media=True, code_only=False):
+def deploy(revision=None, code_only=False, sync_media=True):
     "Deploy a revision to server"
     if revision:
         env.revision = revision
@@ -96,13 +101,13 @@ def deploy(revision=None, sync_media=True, code_only=False):
     require("deploy_to", "hosts", "environment")
     enable_maintenance_page()
     code_deploy()
-    if not code_only:
+    if not _truth_value(code_only):
         install_requirements()
         minify()
-        if bool(sync_media) and str(sync_media).upper() != "FALSE":
+        if _truth_value(sync_media):
             s3sync()
-        #syncdb()
-        #migratedb()
+        syncdb()
+        migratedb()
     restart_apache()
     disable_maintenance_page()
     codebase_deployment()
