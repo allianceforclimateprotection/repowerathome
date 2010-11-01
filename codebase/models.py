@@ -5,6 +5,7 @@ import urllib2
 from xml.dom import minidom
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 
 def _send_codebase(path, data=None):
@@ -27,21 +28,32 @@ def _get_text(nodelist):
     
 class TicketManager(models.Manager):
     INSTRUCTIONS_PATTERN = re.compile("^instructions:")
+    FEEDBACK_PATTERN = re.compile("Initials.*Works.*Feedback.*", re.S)
+    
+    @classmethod
+    def _parse_ticket_node(cls, node):
+        ticket_id = _get_text(node.getElementsByTagName("ticket-id"))
+        summary = _get_text(node.getElementsByTagName("summary"))
+        notes_dom = minidom.parseString(_send_codebase("tickets/%s/notes" % ticket_id))
+        notes = notes_dom.getElementsByTagName("ticketing-note")
+        notes.reverse()
+        feedback_count = 0
+        for idx, note in enumerate(notes):
+            content = _get_text(note.getElementsByTagName("content"))
+            if TicketManager.FEEDBACK_PATTERN.search(content):
+                feedback_count += 1
+            if idx == len(notes)-1 or TicketManager.INSTRUCTIONS_PATTERN.search(content):
+                break
+        return Ticket(ticket_id=ticket_id, summary=summary, instructions=content, 
+            feedback_count=feedback_count)
     
     def qa_tickets(self):
-        tickets_dom = minidom.parseString(_send_codebase("tickets?query=status:QA"))
-        tickets = []
-        for node in tickets_dom.getElementsByTagName("ticket"):
-            ticket_id = _get_text(node.getElementsByTagName("ticket-id"))
-            summary = _get_text(node.getElementsByTagName("summary"))
-            notes_dom = minidom.parseString(_send_codebase("tickets/%s/notes" % ticket_id))
-            notes = notes_dom.getElementsByTagName("ticketing-note")
-            notes.reverse()
-            for idx, note in enumerate(notes):
-                content = _get_text(note.getElementsByTagName("content"))
-                if idx == len(notes)-1 or re.search(TicketManager.INSTRUCTIONS_PATTERN, content):
-                    break
-            tickets.append(Ticket(ticket_id=ticket_id, summary=summary, instructions=content))
+        cache_hit = cache.get("codebase_qa_tickets")
+        if cache_hit:
+            return cache_hit
+        dom = minidom.parseString(_send_codebase("tickets?query=status:QA"))
+        tickets = map(TicketManager._parse_ticket_node, dom.getElementsByTagName("ticket"))
+        cache.set("codebase_qa_tickets", tickets, 60 * 5)
         return tickets
         
     def add_feedback(self, ticket_id, message):
@@ -52,6 +64,7 @@ class Ticket(models.Model):
     ticket_id = models.IntegerField(blank=True, null=True)
     summary = models.CharField(blank=True, max_length=100)
     instructions = models.TextField(blank=True)
+    feedback_count = models.IntegerField(blank=True, null=True)
     objects = TicketManager()
     
     class Meta:

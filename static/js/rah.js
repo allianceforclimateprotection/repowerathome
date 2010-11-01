@@ -1078,50 +1078,52 @@ var rah = {
         init: function() {
             $("#testing_widget_tab").toggle(function() {
                 $(this).text("Hide Tests");
-                $("#testing_feedback_form").show();
+                $("#testing_feedback_form_container").show();
             }, function() {
                 $(this).text("Show Tests");
-                $("#testing_feedback_form").hide();
+                $("#testing_feedback_form_container").hide();
             });
-            $("#prev_ticket_control").click(function() {
-                var idx = $("#ticket_index");
-                idx.text(parseInt(idx.text()) - 1);
-                var current = $(".active", $("#tickets"));
-                var prev = current.prev();
-                var idx = $("#ticket_index");
-                if(prev.length > 0) {
-                    current.addClass("hidden");
-                    current.removeClass("active");
-                    prev.addClass("active");
-                    prev.removeClass("hidden");
-                }
+            $("#prev_ticket_control").live("click", function() {
+                rah.mod_testing_widget.move_ticket(-1);
                 return false;
             });
-            $("#next_ticket_control").click(function() {
-                var idx = $("#ticket_index");
-                idx.text(parseInt(idx.text()) + 1);
-                var current = $(".active", $("#tickets"));
-                var next = current.next();
-                if(next.length > 0) {
-                    current.addClass("hidden");
-                    current.removeClass("active");
-                    next.addClass("active");
-                    next.removeClass("hidden");
-                }
+            $("#next_ticket_control").live("click", function() {
+                rah.mod_testing_widget.move_ticket(1);
                 return false;
             });
-            $("#testing_feedback_form").submit(function() {
+            $("#testing_feedback_form").live("submit", function() {
                 var form = $(this);
                 $.ajax({
                     url: form.attr("action"),
                     type: form.attr("method"),
                     data: form.serialize(),
                     success: function (data) {
-
+                        rah.mod_messages.init(data["message_html"]);
+                        $("#testing_feedback_form_container").html(data["form_html"]);
                     }
-                });
+                }, "json");
                 return false;
             });
+        },
+        move_ticket: function(offset) {
+            // this only works with 3 values right now, +1, 0 or -1
+            if(offset > 1 || offset < -1) { return; }
+            var current = $(".active", $("#tickets"));
+            next = current;
+            if(offset > 0) {
+                var next = current.next();
+            } else if(offset < 0) {
+                var next = current.prev();
+            } else { return; }
+            if(next.length > 0) {
+                var idx = $("#ticket_index");
+                idx.text(parseInt(idx.text()) + offset);
+                current.addClass("hidden");
+                current.removeClass("active");
+                next.addClass("active");
+                next.removeClass("hidden");
+                $("#id_ticket_id").val($(".ticket_id", next).text());
+            }
         }
     }
 };

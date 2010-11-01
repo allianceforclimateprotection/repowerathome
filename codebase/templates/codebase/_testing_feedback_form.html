@@ -1,0 +1,23 @@
+<form id="testing_feedback_form" action="{% url testing_feedback %}" method="POST">
+    <div class="ticket_counter">
+        <span id="ticket_index">1</span> of {{ tickets|length }}
+    </div>
+    <div class="ticket_controls">
+        <a id="prev_ticket_control" href="#">&lt;prev</a> | <a id="next_ticket_control" href="#">next&gt;</a>
+    </div>
+    <br class="clear" />
+    <hr />
+    <div id="tickets">
+        {% for ticket in tickets %}
+            <div class="{% if forloop.first %}active{% else %}hidden{% endif %}">
+                <span class="ticket_id hidden">{{ ticket.ticket_id }}</span>
+                <span>Number of feedback notes: {{ ticket.feedback_count }}</span>
+                <h4>{{ ticket.summary }}</h4>
+                <div>{{ ticket.instructions }}</div>
+            </div>
+        {% endfor %}
+    </div>
+    {{ testing_feedback_form.as_p }}
+    <input type="submit" value="Submit"></input>
+    {% csrf_token %}
+</form>
