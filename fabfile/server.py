@@ -51,8 +51,7 @@ def _associate_ip(instance, ip):
     address.associate(instance.id)
     
 def _launch_ec2_ami(ami, *args, **kwargs):
-    if kwargs["instance_type"] != "t1.micro":
-        kwargs["placement_group"] = env.zone
+    kwargs["placement"] = env.zone
     user_data_file = kwargs.pop("user_data_file", None)
     if user_data_file:
         kwargs["user_data"] = open(user_data_file, "r").read()
