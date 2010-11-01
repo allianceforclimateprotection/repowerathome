@@ -620,6 +620,9 @@ TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWid
 #testing_feedback_form label {
     font-weight: bold;
 }
+#testing_feedback_form label {
+    font-weight: bold;
+}
 /* ---------------------------------------------------------------------------------------------------------------------
 TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget 
 --------------------------------------------------------------------------------------------------------------------- */
