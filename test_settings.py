@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'thumbnails',
     'source_tracking',
     'commitments',
+    'codebase',
 )
 
 LOGIN_URL = "/login/"

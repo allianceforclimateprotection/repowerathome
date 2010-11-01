@@ -127,6 +127,9 @@
         <div id="message_box">
             {% include '_messages.html' %}
         </div>
+        {% if testing_feedback_form %}
+            {% include 'codebase/_testing_widget.html' %}
+        {% endif %}
         <div id="fb-root"></div>
         <script type="text/javascript" charset="utf-8">
             var rah_name = "{% block js %}{% endblock %}";

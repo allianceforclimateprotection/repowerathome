@@ -95,6 +95,7 @@ urlpatterns += patterns('',
     url(r'^commitments/', include('commitments.urls')),
     url(r'^admin/export/', include('export.urls')),
     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}, name='sitemap'),
+    url(r'^codebase/', include('codebase.urls')),
     url(r'^admin/', include(admin.site.urls), name='admin_root'),
 )
 

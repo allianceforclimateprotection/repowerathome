@@ -80,6 +80,8 @@ var rah = {
             rah.mod_ajax_setup.init();
             rah.mod_validate_setup.init();
             rah.mod_chart_dialog.init();
+            
+            rah.mod_testing_widget.init();
         }
     },
     
@@ -1070,7 +1072,58 @@ var rah = {
         init: function () {
             rah.mod_invite_friend.init();
         }
-    }  
+    },
+    
+    mod_testing_widget: {
+        init: function() {
+            $("#testing_widget_tab").toggle(function() {
+                $(this).text("Hide Tests");
+                $("#testing_feedback_form").show();
+            }, function() {
+                $(this).text("Show Tests");
+                $("#testing_feedback_form").hide();
+            });
+            $("#prev_ticket_control").click(function() {
+                var idx = $("#ticket_index");
+                idx.text(parseInt(idx.text()) - 1);
+                var current = $(".active", $("#tickets"));
+                var prev = current.prev();
+                var idx = $("#ticket_index");
+                if(prev.length > 0) {
+                    current.addClass("hidden");
+                    current.removeClass("active");
+                    prev.addClass("active");
+                    prev.removeClass("hidden");
+                }
+                return false;
+            });
+            $("#next_ticket_control").click(function() {
+                var idx = $("#ticket_index");
+                idx.text(parseInt(idx.text()) + 1);
+                var current = $(".active", $("#tickets"));
+                var next = current.next();
+                if(next.length > 0) {
+                    current.addClass("hidden");
+                    current.removeClass("active");
+                    next.addClass("active");
+                    next.removeClass("hidden");
+                }
+                return false;
+            });
+            $("#testing_feedback_form").submit(function() {
+                var form = $(this);
+                $.ajax({
+                    url: form.attr("action"),
+                    type: form.attr("method"),
+                    data: form.serialize(),
+                    success: function (data) {
+
+                    }
+                });
+                return false;
+            });
+        }
+    }
 };
 
 $(document).ready(function () {

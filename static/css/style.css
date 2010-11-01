@@ -590,6 +590,31 @@ Commitments Commitments Commitments Commitments Commitments Commitments Commitme
 /*#commitment_card_select_form {position:absolute; top:0; right:0;}*/
 
 /* ---------------------------------------------------------------------------------------------------------------------
+TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget 
+--------------------------------------------------------------------------------------------------------------------- */
+#testing_widget {
+    position: fixed;
+    right: 0;
+    top: 100px;
+}
+#testing_widget_tab {
+    position: relative;
+    color: white;
+    background-color: grey;
+}
+#testing_widget .ticket_coutner { float: left; }
+#testing_widget .ticket_controls { float: right; }
+#testing_feedback_form {
+    width: 200px;
+    background-color: #E3EC9F;
+    border: 2px solid black;
+    padding: 5px;
+}
+/* ---------------------------------------------------------------------------------------------------------------------
+TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget 
+--------------------------------------------------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 --------------------------------------------------------------------------------------------------------------------- */
 .hidden { display: none;}

@@ -73,6 +73,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'facebook_app.context_processors.facebook_appid',
     'records.context_processors.ask_to_share',
+    'codebase.context_processors.testing_feedback_form',
 )
 
 TEMPLATE_DIRS = (
@@ -159,6 +160,8 @@ THUMBNAIL_EXTENSION = '.png'
 MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue",)
 
 POSTMARK_SENDER = 'noreply@repowerathome.com'
+
+CODEBASE_PROJECT_URL = 'https://rah.codebasehq.com/rah'
 
 # Date defaults
 DATETIME_FORMAT = "N j, Y, P"
