@@ -18,21 +18,13 @@ from facebook_app.models import facebook_profile
 def yestarday():
     return datetime.datetime.today() - datetime.timedelta(days=1)
 
-class DefaultModel(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        abstract = True
-
-    def __unicode__(self):
-        return u'%s' % (self.name)
-
-class Feedback(DefaultModel):
+class Feedback(models.Model):
     user = models.ForeignKey(User, null=True)
     url = models.CharField(max_length=255, default='')
     comment = models.TextField(default='')
     beta_group = models.BooleanField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return u'%s...' % (self.comment[:15])
