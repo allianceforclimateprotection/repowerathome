@@ -365,7 +365,7 @@ class RsvpAccountForm(forms.ModelForm):
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
         if not len(data):
-            self.instance.location = None
+            self.instance.contributor.location = None
             return
         if len(data) <> 5:
             raise forms.ValidationError("Please enter a 5 digit zipcode")
@@ -373,6 +373,8 @@ class RsvpAccountForm(forms.ModelForm):
             self.cleaned_data["location"] = Location.objects.get(zipcode=data)
         except Location.DoesNotExist, e:
             raise forms.ValidationError("Zipcode is invalid")
+        else:
+            self.instance.contributor.location = self.cleaned_data["location"]
     
     def save(self, request, *args, **kwargs):
         from rah.signals import logged_in
@@ -382,12 +384,14 @@ class RsvpAccountForm(forms.ModelForm):
         user.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
         user.save()
         
-        # TODO: I'm not sure if this user is in fact getting saved with the contributor - JL
+        # Connect the new user with the contributor
         self.instance.contributor.user = user
         
-        user = auth.authenticate(username=user.username, password=self.cleaned_data["password1"])
-        logged_in.send(sender=None, request=request, user=user, is_new_user=True)
-        auth.login(request, user)
+        # Set the location on the new user's profile
+        profile = user.get_profile()
+        profile.location = self.instance.contributor.location
+        profile.save()
+        
         guest = super(RsvpAccountForm, self).save(*args, **kwargs)
         guest.event.save_guest_in_session(request=request, guest=guest)
         return guest
