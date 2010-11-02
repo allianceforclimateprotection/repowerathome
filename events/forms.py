@@ -376,12 +376,15 @@ class RsvpAccountForm(forms.ModelForm):
     
     def save(self, request, *args, **kwargs):
         from rah.signals import logged_in
-        user = User(first_name=self.instance.first_name, last_name=self.instance.last_name,
-            email=self.instance.email)
-        user.username = hashlib.md5(self.instance.email).hexdigest()[:30]
+        user = User(first_name=self.instance.contributor.first_name, last_name=self.instance.contributor.last_name,
+            email=self.instance.contributor.email)
+        user.username = hashlib.md5(self.instance.contributor.email).hexdigest()[:30]
         user.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
         user.save()
-        self.instance.user = user
+        
+        # TODO: I'm not sure if this user is in fact getting saved with the contributor - JL
+        self.instance.contributor.user = user
+        
         user = auth.authenticate(username=user.username, password=self.cleaned_data["password1"])
         logged_in.send(sender=None, request=request, user=user, is_new_user=True)
         auth.login(request, user)
