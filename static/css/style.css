@@ -620,6 +620,8 @@ TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWid
 #testing_feedback_form label {
     font-weight: bold;
 }
+#testing_feedback_form #id_initials, #testing_feedback_form #id_feedback { width: 167px; }
+#testing_feedback_form .form_row li { float: left; }
 #testing_feedback_form label {
     font-weight: bold;
 }
