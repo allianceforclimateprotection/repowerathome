@@ -1,4 +1,4 @@
-/*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true */
+/*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
 /*global $: false, FB: false, rah_name: false, WebFont: false, rah_nav_select: false, jQuery: false, window: false, google: false */
 
 // Object containing all javascript necessary for Repower at Home
@@ -122,7 +122,7 @@ var rah = {
             // $(".buttonset", container).buttonset();
             $("#ask_to_share").submit(function () {
                 var form = $(this);
-                if (!($("#id_has_facebook_access", form).val() == "True")) {
+                if ($("#id_has_facebook_access", form).val() !== "True") {
                     FB.login(function (response) {
                         if (response.session) {
                             $.get("/facebook/authorize/", function (data) {
@@ -328,7 +328,7 @@ var rah = {
             });
             if (undefined !== window.rich_action_name) {
                 try {
-                    rah["rich_actions"][rich_action_name].init();
+                    rah["rich_actions"][window.rich_action_name].init();
                 } catch (err) {
                     console.error(err);
                 }
@@ -377,7 +377,7 @@ var rah = {
                     nav.slideDown("fast");
                     return false;
                 });
-                if (!(typeof(vampire_worksheet_started) == "undefined") && vampire_worksheet_started) {
+                if (undefined !== window.vampire_worksheet_started && window.vampire_worksheet_started) {
                     nav.show();
                     scroller.end(0);
                 }
@@ -1017,7 +1017,7 @@ var rah = {
             $(".commitment_card_open").click(function () {
                 var href = $(this).attr('href');
                 
-                $("#commitment_card_dialog").load(href, function () {                    
+                $("#commitment_card_dialog").load(href, function () {
                     rah.mod_commitment_card_form_setup.init(href);
                     $("#commitment_card_dialog").dialog("open");
                 });
