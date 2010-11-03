@@ -600,21 +600,23 @@ TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWid
 #testing_widget_tab {
     position: relative;
     color: white;
-    background-color: #92C139;
+    background-color: #6EC3D1;
     font-size: 1.2em;
     font-weight: bold;
-    padding: 2px;
+    padding: 2px 2px 2px 0;
 }
 #testing_widget .ticket_counter { float: left; }
 #testing_widget .ticket_controls { float: right; }
 #testing_feedback_form {
-    width: 200px;
-    background-color: #E3EC9F;
-    border-top: 2px solid black;
-    border-left: 2px solid black;
-    border-bottom: 2px solid black;
-    padding: 5px;
+    width: 189px;
+    background-color: #6EC3D1;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 18px;
 }
+#testing_feedback_form #id_initials, #testing_feedback_form #id_feedback { width: 167px; }
+#testing_feedback_form .form_row li { float: left; }
 #testing_feedback_form label {
     font-weight: bold;
 }

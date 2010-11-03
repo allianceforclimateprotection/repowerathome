@@ -94,6 +94,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sitemaps',
     'django.contrib.flatpages',
+    'django.contrib.markup',
     'rah',
     'rateable',
     'records',

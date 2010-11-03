@@ -9,7 +9,7 @@ from django.core.cache import cache
 from django.db import models
 
 def _send_codebase(path, data=None):
-    "POST the given data message to the codebase API, if no data is provided GET"    
+    "POST the given data message to the codebase API, if no data is provided GET"
     url = "%s/%s" % (settings.CODEBASE_PROJECT_URL, path)
     headers = {"Content-type": "application/xml", "Accept": "application/xml", 
         "Authorization": "Basic %s" % base64.b64encode("%s:%s" % 
