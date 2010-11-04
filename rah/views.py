@@ -1,6 +1,7 @@
 import json
 import logging
 import locale
+import re
 from datetime import datetime
 
 from django.conf import settings
@@ -9,7 +10,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.comments.views import comments
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import Site, RequestSite
 from django.core.mail import send_mail, EmailMessage
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
@@ -33,6 +34,7 @@ from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
 from commitments.models import Contributor, Commitment, Survey
+from commitments.survey_forms import PledgeCard
 from events.models import Event, Guest
 from messaging.models import Stream
 from messaging.forms import StreamNotificationsForm
@@ -140,6 +142,11 @@ def index(request):
     
     locals().update(_vampire_power_slayers())
     
+    try:
+        contributor = Contributor.objects.get(user=request.user)
+    except Contributor.DoesNotExist:
+        contributor = None
+    pledge_card_form = PledgeCard(contributor)
     return render_to_response('rah/home_logged_in.html', locals(), context_instance=RequestContext(request))
 
 def logged_out_home(request):
@@ -147,7 +154,7 @@ def logged_out_home(request):
     # pop_actions = Action.objects.get_popular(count=5)
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:4]
     locals().update(_vampire_power_slayers())
-    
+    pledge_card_form = PledgeCard(None)
     return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))
 
 @cache_page(60 * 60)
@@ -157,7 +164,7 @@ def user_list(request):
     return render_to_response("rah/user_list.html", {'users': users}, context_instance=RequestContext(request))
 
 def logout(request):
-    response = auth.logout(request)
+    auth.logout(request)
     messages.success(request, "You have successfully logged out.", extra_tags="sticky")
     return redirect("index")
     
@@ -244,7 +251,7 @@ def login(request, template_name='registration/login.html',
         form = authentication_form(request)
     
     request.session.set_test_cookie()
-    
+
     if Site._meta.installed:
         current_site = Site.objects.get_current()
     else:

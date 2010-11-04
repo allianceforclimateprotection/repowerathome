@@ -1,0 +1,5 @@
+<form id="pledge_card_form" action="{% url take_pledge %}" method="POST">
+    {{ pledge_card_form.as_p }}
+    <input type="submit" value="Submit" />
+    {% csrf_token %}
+</form>
