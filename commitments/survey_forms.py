@@ -107,7 +107,7 @@ class PledgeCard(SurveyForm):
     
     def __init__(self, contributor, *args, **kwargs):
         super(PledgeCard, self).__init__(contributor, None, *args, **kwargs)
-        self.location = None        
+        self.location = None
         if contributor:
             self.fields["first_name"].initial = contributor.user.first_name
             self.fields["last_name"].initial = contributor.user.last_name
