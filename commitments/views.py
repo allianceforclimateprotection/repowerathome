@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -5,6 +7,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext, loader
 from django.http import HttpResponse
+from django.views.decorators.http import require_POST
 
 from utils import forbidden
 from models import Commitment, Contributor, ContributorSurvey, Survey
@@ -96,3 +99,13 @@ def card(request, contrib_id=None, form_name=None):
         "survey_types": survey_types,
         "current_form_name": survey_form.__class__.__name__
     }, context_instance=RequestContext(request))
+
+@require_POST
+# when available add an ajax required decorator
+def take_pledge(request):
+    form = survey_forms.PledgeCard(None, data=request.POST)
+    valid = form.is_valid()
+    if valid:
+        form.save()
+    pledge_card = loader.render_to_string("commitments/_pledge_card.html", {"form": form}, RequestContext(request))
+    return HttpResponse(json.dumps({"errors": not valid, "msg": "", "payload": pledge_card}), mimetype="text/json")
