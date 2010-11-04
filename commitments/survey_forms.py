@@ -1,13 +1,12 @@
 # coding: utf-8
 
 from django import forms
-from django.core.urlresolvers import reverse
-from django.template.loader import render_to_string
 
 from actions.models import Action
 from messaging.models import Stream
+from geo.models import Location
 
-from models import Survey, Commitment, ContributorSurvey
+from models import Survey, Commitment, Contributor, ContributorSurvey
 
 class ActionChoiceField(forms.ChoiceField):
     CHOICES = (
@@ -41,10 +40,8 @@ class SurveyForm(forms.ModelForm):
             self.fields[action.slug.replace('-', '_')] = ActionChoiceField(action=action,
                 choices=ActionChoiceField.CHOICES, widget=forms.CheckboxSelectMultiple,
                 required=False, label=action.name)
-
         for commitment in Commitment.objects.filter(contributor=contributor):
             field = self.fields.get(commitment.question, None)
-
             if field:
                 field.initial = field.to_python(commitment.answer)
 
@@ -101,3 +98,38 @@ class VolunteerInterestForm(SurveyForm):
     neighborhood = forms.BooleanField(required=False)
     faith = forms.BooleanField(required=False)
     
+class PledgeCard(SurveyForm):
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=False)
+    email = forms.EmailField(required=True)
+    zipcode = forms.CharField(max_length=10, required=False, help_text="Leave blank if not a US resident")
+    pledge = forms.BooleanField(required=False, widget=forms.HiddenInput)
+    
+    def __init__(self, contributor, *args, **kwargs):
+        super(PledgeCard, self).__init__(contributor, None, *args, **kwargs)
+        if contributor:
+            self.fields["first_name"].initial = contributor.user.first_name
+            self.fields["last_name"].initial = contributor.user.last_name
+            self.fields["email"].initial = contributor.user.email
+    
+    def clean_zipcode(self):
+        data = self.cleaned_data['zipcode'].strip()
+        if data:
+            if len(data) <> 5:
+                raise forms.ValidationError("Please enter a 5 digit zipcode")
+            try:
+                self.location = Location.objects.get(zipcode=data)
+            except Location.DoesNotExist, e:
+                raise forms.ValidationError("Zipcode is invalid")
+        return data
+        
+    def save(self, *args, **kwargs):
+        try:
+            contributor = Contributor.objects.get(email=self.cleaned_data["email"])
+        except Contributor.DoesNotExist:
+            contributor = Contributor.objects.create(first_name=self.cleaned_data["first_name"], 
+                last_name=self.cleaned_data["last_name"], email=self.cleaned_data["email"],
+                location=self.location) 
+        commitment, created = Commitment.objects.get_or_create(contributor=contributor, question="pledge")
+        commitment.answer = True
+        commitment.save()
