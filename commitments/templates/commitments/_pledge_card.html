@@ -1,5 +1,9 @@
-<form id="pledge_card_form" action="{% url take_pledge %}" method="POST">
-    {{ pledge_card_form.as_p }}
-    <input type="submit" value="Submit" />
-    {% csrf_token %}
-</form>
+{% if pledge_card_form.pledge.field.initial %}
+    <div>YOU'VE MADE THE PLEDGE</div>
+{% else %}
+    <form id="pledge_card_form" action="{% url take_pledge %}" method="POST">
+        {{ pledge_card_form.as_p }}
+        <input type="submit" value="Submit" />
+        {% csrf_token %}
+    </form>
+{% endif %}
