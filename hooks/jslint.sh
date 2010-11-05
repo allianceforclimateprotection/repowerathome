@@ -9,7 +9,7 @@ else
 fi
 for file in `git diff --cached --name-only | grep .js$`
 do
-    if ! rhino "$THIS_DIR/../static/lint/jslint.js" "$file"
+    if ! java -jar "$THIS_DIR/../static/tools/js.jar" "$THIS_DIR/../static/tools/jslint.js" "$THIS_DIR/../$file"
     then
         echo "$file did not pass the jslint tests"
         exit 1
