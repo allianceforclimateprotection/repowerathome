@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     'export',
     'source_tracking',
     'commitments',
+    'codebase',
 )
 
 FIXTURE_DIR = ('fixtures',)
