@@ -1,0 +1,64 @@
+<div class="box_three_top"></div>
+<div id="home_page_header" class="box_three_middle">
+    <div>
+        <h1>Take the Trendsetter Pledge</h1>
+        <div id="registration_left_col">
+            <p>
+                <object width="360" height="227">
+                    <param name="movie" value="https://repowerathome.com/youtube/v/kPm9wMhIcJs&amp;hl=en_US&amp;fs=1?rel=0"></param>
+                    <param name="allowFullScreen" value="true"></param>
+                    <param name="allowscriptaccess" value="always"></param>
+                    <embed src="https://repowerathome.com/youtube/v/kPm9wMhIcJs&amp;hl=en_US&amp;fs=1?rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="360" height="227"></embed>
+                </object>
+            </p>
+            <p>
+                A clean energy future starts with us. Across the country, Trendsetters are working to transform the way
+                our homes and communities use energy. Join us by signing the Energy Trendsetter Pledge and committing to
+                take action.
+            </p>
+            
+        </div>
+        <div id="registration_right_col">
+            {% if pledge_card_form.pledge.field.initial %}
+                {% include "commitments/_post_pledge_actions.html" %}
+            {% else %}
+                <div id="home_pledge_slide">
+                    <p id="home_page_pledge_text">
+                        &#8220;I pledge to save energy <br/>&nbsp;in my home and set the <br/>&nbsp;trend in my community.&#8221;
+                    </p>
+                    <form id="pledge_card_form" action="{% url take_pledge %}" method="post">              
+                        {% for error in pledge_card_form.non_field_errors %}
+                            <div class="overset_form_message error">{{ error }}</div>
+                        {% endfor %}
+                        {% for field in pledge_card_form.visible_fields %}
+                            <div class="form_row {% if field.errors %}error{% endif %} {% if field.name == 'first_name' %}form_row_float form_row_float_left_field{% endif%} {% if field.name == 'last_name' %}form_row_float{% endif%}">
+                                {% if "CheckboxInput" in field.field.widget|pprint %}
+                                    {{ field }}{{ field.label_tag }}
+                                {% else %}
+                                    {{ field.label_tag }}{{ field }}
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+                                {% endfor %}
+                            </div>
+                            {% if field.name == 'last_name' %}<br class="clear"/>{% endif%}
+                        {% endfor %}
+                        <div class="hidden">
+                            {% for field in pledge_card_form.hidden_fields %}
+                                {{ field }}
+                            {% endfor %}
+                            {% csrf_token %}
+                        </div>
+                        <div>
+                            <button type="submit" name="submit" class="home_page_join_button">Take the Pledge</button>
+                        </div>
+                    </form>                    
+                </div>
+                <div id="home_pledge_actions_slide" class="hidden">
+                    {% include "commitments/_post_pledge_actions.html" %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="box_three_bottom"></div>
