@@ -204,10 +204,6 @@ var rah = {
     page_home_logged_in: {
         init: function () {
             rah.mod_pledge_submit.init();
-<<<<<<< HEAD
-=======
-            rah.mod_action_nugget.init();
->>>>>>> Adding HTML and JS for pledge collection. [Completed: 521]
             rah.mod_invite_friend.init();
             
             // Setup twitter update form, link, and dialog
