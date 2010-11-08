@@ -5,7 +5,9 @@ from forms import TestingFeedbackForm
 
 def testing_feedback_form(request):
     context = {}
-    if settings.DEBUG:
+    
+    if (hasattr(settings, 'USE_TESTING_WIDGET') and settings.USE_TESTING_WIDGET) or \
+    request.META['SERVER_NAME'] == "staging.repowerathome.com":
         tickets = Ticket.objects.qa_tickets()
         context["tickets"] = tickets
         context["testing_feedback_form"] = TestingFeedbackForm(
