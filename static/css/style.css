@@ -222,21 +222,28 @@ Navigation Navigation Navigation Navigation Navigation Navigation Navigation Nav
 #nav{ position:absolute; top:55px; left:140px; }
 #nav a{ display:block; height:55px; font-size:0px; float:left; color: #e3ec9f;}
 #nav a:hover{color:#e3ec9f;}
-#nav_home{width:125px; background: url(../images/theme/nav_sprite.png?0000000005) 0px 110px;}
+#nav_home{width:125px; background: url(../images/theme/nav_sprite_v2.png?0000000005) 0px 110px;}
 #nav_home:hover{background-position: 0px 0px;}
 #nav_home.selected{background-position: 0px 55px;}
-#nav_actions{width:160px; background: url(../images/theme/nav_sprite.png?0000000005) -125px 110px;}
+#nav_actions{width:160px; background: url(../images/theme/nav_sprite_v2.png?0000000005) -125px 110px;}
 #nav_actions:hover{background-position: -125px 0px;}
 #nav_actions.selected{background-position: -125px 55px;}
-#nav_teams{width:137px; background: url(../images/theme/nav_sprite.png?0000000005) -285px 110px;}
+#nav_teams{width:137px; background: url(../images/theme/nav_sprite_v2.png?0000000005) -285px 110px;}
 #nav_teams:hover{background-position: -285px 0px;}
 #nav_teams.selected{background-position: -285px 55px;}
-#nav_events{width:152px; background: url(../images/theme/nav_sprite.png?0000000005) -422px 110px;}
+
+#nav_community{width:209px; background: url(../images/theme/nav_sprite_v2.png?0000000005) -422px 110px;}
+#nav_community:hover{background-position: -422px 0px;}
+#nav_community.selected{background-position: -422px 55px;}
+
+/*
+#nav_events{width:152px; background: url(../images/theme/nav_sprite_v2.png?0000000005) -422px 110px;}
 #nav_events:hover{background-position: -422px 0px;}
 #nav_events.selected{background-position: -422px 55px;}
-#nav_blog{width:117px; background: url(../images/theme/nav_sprite.png?0000000005) -574px 110px;}
-#nav_blog:hover{background-position: -574px 0px;}
-#nav_blog.selected{background-position: -574px 55px;}
+*/
+#nav_blog{width:117px; background: url(../images/theme/nav_sprite_v2.png?0000000005) -631px 110px;}
+#nav_blog:hover{background-position: -631px 0px;}
+#nav_blog.selected{background-position: -631px 55px;}
 
 
 /* ---------------------------------------------------------------------------------------------------------------------
