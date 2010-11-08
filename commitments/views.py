@@ -107,5 +107,7 @@ def take_pledge(request):
     valid = form.is_valid()
     if valid:
         form.save()
-    pledge_card = loader.render_to_string("commitments/_pledge_card.html", {"form": form}, RequestContext(request))
-    return HttpResponse(json.dumps({"errors": not valid, "msg": "", "payload": pledge_card}), mimetype="text/json")
+        messages.success(request, "Thanks for taking the pledge!")
+    pledge_card = loader.render_to_string("commitments/_pledge_card_form.html", {"pledge_card_form": form}, RequestContext(request))
+    message = loader.render_to_string("_messages.html", {}, RequestContext(request))
+    return HttpResponse(json.dumps({"errors": not valid, "msg": message, "payload": pledge_card}), mimetype="text/json")
