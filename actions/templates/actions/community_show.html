@@ -1,12 +1,12 @@
-{% extends "base.html" %}
-{% block rah_nav_select %}nav_actions{% endblock %}
+{% extends "actions/base.html" %}
+{% block rah_nav_select %}nav_community{% endblock %}
 {% load dated_static %}
 {% block title %}Community Actions to Repower at Home{% endblock %}
 {% block right_content %}
     <div class="box_three_top"></div>
     <div class="box_three_middle">
         <h1>Set the trend in your community</h1>
-        <img src="{% dated_static 'images/theme/actions.jpg' %}" alt="benefits" width="675" height="287"/>
+        {# <img src="{% dated_static 'images/theme/actions.jpg' %}" alt="benefits" width="675" height="287"/> #}
         <p>
             Every new Trendsetter you reach brings us one person closer to an enormous transformation in how we use
             energy. Because of you, these new Trendsetters will start saving money, improving their homes and bringing a
@@ -38,16 +38,16 @@
             </div>
             <div class="box_one_bottom"></div>
         </div>
-        <div class="action_nugget">
-            <div class="box_one_top"></div>
-            <div class="box_one_middle">            
-                <div class="action_nugget_title"><a class="blue" href="#">Share the Pledge online</a></div>
-                <div>
-                    Your online friends use real-world energy. Invite them to take the Trendsetter Pledge and start
-                    saving energy.
-                </div>
-            </div>
-            <div class="box_one_bottom"></div>
-        </div>
+        {# <div class="action_nugget"> #}
+        {#     <div class="box_one_top"></div> #}
+        {#     <div class="box_one_middle">             #}
+        {#         <div class="action_nugget_title"><a class="blue" href="#">Share the Pledge online</a></div> #}
+        {#         <div> #}
+        {#             Your online friends use real-world energy. Invite them to take the Trendsetter Pledge and start #}
+        {#             saving energy. #}
+        {#         </div> #}
+        {#     </div> #}
+        {#     <div class="box_one_bottom"></div> #}
+        {# </div> #}
     </div>
 {% endblock %}
