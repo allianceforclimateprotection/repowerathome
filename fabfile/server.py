@@ -22,6 +22,7 @@ env.db_user = "rah_db_user"
 
 AMIs = {
     "ubuntu-10.10-32": "ami-b61de9df",
+    "ubuntu-10.10-64": "ami-548c783d",
 }
 
 env.aws_key = local("echo $RAH_AWS_ACCESS_KEY")
@@ -98,7 +99,7 @@ def _print_mysqlduplicate_alias(environment, db_password, server, host="127.0.0.
     print(green("\tfab -H %s syncdb [this might not work yet]" % server))
     print(green("\tfab -H %s restart_apache" % server))
     
-def launch_server(environment="staging", instance_type="t1.micro", ami=AMIs["ubuntu-10.10-32"], 
+def launch_server(environment="staging", instance_type="t1.micro", ami=AMIs["ubuntu-10.10-64"], 
         bootstrap_script=DEFAULT_BOOTSTRAP_SCRIPT):
     "launch a new server"
     instance = _launch_ec2_ami(ami, instance_type=instance_type, security_groups=(
@@ -118,7 +119,7 @@ def launch_server(environment="staging", instance_type="t1.micro", ami=AMIs["ubu
     _print_mysqlduplicate_alias(environment, db_password, instance.public_dns_name)
 
 def launch_cloud(environment="staging", count=1, lb_type="t1.micro", app_type="t1.micro", 
-        rds_type="db.m1.small", ami=AMIs["ubuntu-10.10-32"], 
+        rds_type="db.m1.small", ami=AMIs["ubuntu-10.10-64"], 
         bootstrap_script=DEFAULT_BOOTSTRAP_SCRIPT):
     "launch a new cloud (loadbalancer, appserver(s) and RDS)"
     db_password = _generate_password()
@@ -153,12 +154,12 @@ def _launch_rds(db_password, id="staging", instance_type="db.m1.small", size="5"
         param_group="rah", availability_zone=env.zone, preferred_maintenance_window="Sun:10:00-Sun:14:00",
         preferred_backup_window="08:00-10:00", backup_retention_period=7)
         
-def _launch_appservers(count=1, instance_type="c1.medium", ami=AMIs["ubuntu-10.10-32"]):
+def _launch_appservers(count=1, instance_type="c1.medium", ami=AMIs["ubuntu-10.10-64"]):
     "Start up a set of new app servers"
     return _launch_ec2_ami(ami, min_count=count, max_count=count, instance_type=instance_type,
         security_groups=(env.security_groups["ssh_access"], env.security_groups["app_servers"])).instances
     
-def _launch_loadbalancer(instance_type="m1.small", ami=AMIs["ubuntu-10.10-32"]):
+def _launch_loadbalancer(instance_type="m1.small", ami=AMIs["ubuntu-10.10-64"]):
     "Start up a new load balancer server"
     return _launch_ec2_ami(ami, instance_type=instance_type, security_groups=(
         env.security_groups["ssh_access"], env.security_groups["load_balancers"])).instances[0]
