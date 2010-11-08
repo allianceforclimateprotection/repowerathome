@@ -112,6 +112,8 @@ class PledgeCard(SurveyForm):
             self.fields["first_name"].initial = contributor.user.first_name
             self.fields["last_name"].initial = contributor.user.last_name
             self.fields["email"].initial = contributor.user.email
+            if contributor.user.get_profile().location:
+                self.fields["zipcode"].initial = contributor.user.get_profile().location.zipcode
     
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
