@@ -4,18 +4,55 @@
 {% block right_content %}
 <div class="box_two_top"></div>
 <div class="box_two_middle">
-    <h1>Manage Commitment Cards</h1>
+    <h1>Collect Pledge Cards</h1>
     <p>
-        Have you inspired someone to fill out a commitment card? Nice work! Click the button to enter the information
-        from the commitment card. Your new Trendsetters will be able to update their progress and commit to new actions.
+        Pledge Cards are a great way to start a conversation about saving energy. The card invites the recipient to take
+        the Trendsetter Pledge, and get started on that pledge by committing to energy actions. You can download the
+        Pledge Card and print out as many copies as you need.
     </p>
     <p>
-        Want to learn more about what commitment cards are and how they’re collected? Visit the 
-        <a href="{% url event-show %}">events page</a>, or 
-        <a href="mailto:field@repowerathome.com?subject=Commitment%20Cards">email a field organizer</a>.
+        <a href="http://rahstatic.s3.amazonaws.com/meeting_materials/general_pledge_card.pdf" class="button">
+            Download the Pledge Card <span class="file_icon pdf_icon" title="PDF sign in sheet download"></span>
+        </a>
     </p>
+
+    <h2>Pick your place</h2>
     <p>
-        <a href="{% url commitments_card_create %}" class="button commitment_card_open">Enter a new commitment card</a>
+        In your community, there are tons of opportunities for you to get creative, meet new people and help others
+        start saving energy. Here are a few ideas for good recruitment venues:
+    </p>
+    <ul class="spaced_list">
+        <li>
+            <b>In your child’s school:</b> Engage parents by bringing Pledge Cards to PTA meetings or green fairs at your
+            school.
+        </li>
+        <li>
+            <b>At your college or high school:</b> Work with your environmental club to collect Trendsetter Pledges in place
+            like the dining hall and other venues around campus.
+        </li>
+        <li>
+            <b>In your office:</b> Hold a “lunch n’ learn” about energy efficiency and hand out Pledge Cards. You can invite a
+            member of the facilities staff to give a brief presentation about how energy is used in your office
+            building. You may want to consider using the Energy Meeting tool for this kind of event.
+        </li>
+        <li>
+            <b>At your place of worship:</b> Hand out Pledge Cards during a potluck or field day. 
+        </li>
+        <li>
+            <b>Around your neighborhood:</b> Set up a table at your block party. Organize a group of your neighbors to get
+            together and knock on doors with a Pledge Card in hand. This is a great way to meet your neighbors!
+        </li>
+    </ul>
+    <h2>Level up</h2>
+    <p>
+        Set a recruitment goal for yourself or <a href="{% url group_list %}">your team</a>. Challenge a friend to see
+        who can recruit the most Trendsetters. A little friendly competition can go a long way towards inspiring people
+        to keep at it.
+    </p>
+    
+    <h2>Your pledge cards</h2>
+    <p>
+        <a href="{% url commitments_card_create %}" class="button commitment_card_open">Enter a new pledge card</a>
     </p>
     <div id="commitments_show_table">
     {% if actions %}

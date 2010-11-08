@@ -36,6 +36,10 @@ def action_show(request, tag_slug=None):
     return render_to_response("actions/action_show.html", locals(), 
         context_instance=RequestContext(request))
 
+        
+def community_show(request):
+    return render_to_response("actions/community_show.html", {}, context_instance=RequestContext(request))
+
 @csrf_protect
 def action_detail(request, action_slug):
     """Detail page for an action"""
