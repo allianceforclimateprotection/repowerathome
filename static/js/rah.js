@@ -202,7 +202,6 @@ var rah = {
     page_home_logged_in: {
         init: function () {
             rah.mod_pledge_submit.init();
-            rah.mod_action_nugget.init();
             rah.mod_invite_friend.init();
             
             // Setup twitter update form, link, and dialog
@@ -321,12 +320,8 @@ var rah = {
     **/
     page_action_detail: {
         init: function () {
-            var checkboxes = $(".action_task_submitter :checkbox");
-            checkboxes.parents('form').find(':submit').remove();
-            rah.set_task_completion_submission.init(checkboxes);
             rah.mod_comment_form.init();
             
-            // $("#house_party_form").validate({ rules: { phone_number: { required: true }}});
             $(".date_commit_field").parent().hide();
             $(".commit_trigger").click(function () {
                 $("#commit_widget").dialog("open");
@@ -507,54 +502,11 @@ var rah = {
     },
     
     /**
-    * Action Show page
-    **/
-    page_action_show: {
-        init: function () {
-            rah.mod_action_nugget.init();
-        }
-    },
-    
-    /**
     * Post (Blog) Detail page
     **/
     page_post_detail: {
         init: function () {
             rah.mod_comment_form.init();
-        }
-    },
-    
-    /**
-    * Action Nugget
-    */
-    mod_action_nugget: {
-        init: function () {
-            this.set_tasks_list_toggle();
-            rah.set_task_completion_submission.init($('.action_task_submitter :checkbox'));
-        },
-        
-        set_tasks_list_toggle: function () {
-            $('.action_nugget .tasks_link').click(function () {
-                $(this).parents('.action_nugget').find('.task_list').slideToggle();
-                return false;
-            });
-        }
-    },
-   
-    set_task_completion_submission: {
-        init: function (checkboxes) {
-            checkboxes.click(function () {
-                var form = $(this).parents('form');
-                $.post(form.attr('action'), form.serialize(), function (data) {
-                    rah.mod_messages.init(data['message_html']);
-                    try {
-                        form.parents('.action_nugget').find('.user_completes').text(data['completed_tasks']);
-                    } catch (err) {}
-                    var box = form.find(':checkbox');
-                    box.attr('checked', !box.attr('checked'));
-                }, 'json');
-                return false;
-            });
         }
     },
     
