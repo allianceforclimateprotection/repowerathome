@@ -1,7 +1,6 @@
 /*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
 /*global $: false, FB: false, rah_name: false, WebFont: false, rah_nav_select: false, jQuery: false, window: false, google: false */
 
-
 // Object containing all javascript necessary for Repower at Home
 var rah = {
     /**
@@ -204,6 +203,7 @@ var rah = {
     **/
     page_home_logged_in: {
         init: function () {
+            rah.mod_pledge_submit.init();
             rah.mod_action_nugget.init();
             rah.mod_invite_friend.init();
             
@@ -241,6 +241,48 @@ var rah = {
                 return false;
             });
         }
+    },
+    
+    page_home_logged_out: {
+        init: function () {
+            if($.cookie('repowerathomepledge')){
+                rah.mod_pledge_slide_advance();
+            } else {
+                rah.mod_pledge_submit.init();
+            }
+        }
+    },
+    
+    mod_pledge_submit: {
+        init: function () {
+            $("#pledge_card_form").validate({
+                rules: {
+                    zipcode:    { required: false, minlength: 5, digits: true },
+                    email:      { required: true, email: true },
+                    first_name: { required: true, minlength: 2 }
+                },
+                submitHandler: function(form) {
+                    $(form).ajaxSubmit({
+                        dataType: "json",
+                        success: function(rsp){
+                            if (rsp.errors === false){
+                                rah.mod_pledge_slide_advance();
+                                $.cookie('repowerathomepledge', true);
+                            } else {
+                                $("#pledge_card_form").html(rsp.payload);
+                            }
+                        }
+                    });
+                    return false;
+                }
+            });
+        }
+    },
+    
+    mod_pledge_slide_advance: function(transition) {
+        $("#home_pledge_slide").fadeOut(200, function(){
+            $("#home_pledge_actions_slide").fadeIn(200);
+        });
     },
     
     /**
