@@ -139,7 +139,7 @@ MESSAGE_TAGS = {
 }
 
 # sync media s3
-FILTER_LIST = ['.DS_Store', '.svn', '.hg', '.git', 'Thumbs.db', 'minify', 'group_images', '*.psd', '*.eps']
+FILTER_LIST = ['.DS_Store', '.svn', '.hg', '.git', 'Thumbs.db', 'tools', 'group_images', '*.psd', '*.eps']
 GZIP_CONTENT_TYPES = (
     'text/css',
     'application/javascript',
