@@ -1,7 +1,6 @@
 /*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
 /*global $: false, FB: false, rah_name: false, WebFont: false, rah_nav_select: false, jQuery: false, window: false, google: false */
 
-
 // Object containing all javascript necessary for Repower at Home
 var rah = {
     /**
@@ -205,6 +204,10 @@ var rah = {
     page_home_logged_in: {
         init: function () {
             rah.mod_pledge_submit.init();
+<<<<<<< HEAD
+=======
+            rah.mod_action_nugget.init();
+>>>>>>> Adding HTML and JS for pledge collection. [Completed: 521]
             rah.mod_invite_friend.init();
             
             // Setup twitter update form, link, and dialog
