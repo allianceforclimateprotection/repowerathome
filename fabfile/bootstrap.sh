@@ -115,6 +115,7 @@ function install_appserver_libs {
     apt-get -y install libjpeg62-dev libfreetype6-dev
     apt-get -y install python python-dev python-setuptools
     easy_install pip virtualenv yolk http://pypi.python.org/packages/source/i/ipython/ipython-0.10.1.zip
+    apt-get -y install default-jre # needed for running yui-compressor during deploy process
 }
 
 function configure_apache2 {
