@@ -243,6 +243,7 @@ TWITTER_CONSUMER_KEY = '_twitter_consumer_key'
 TWITTER_CONSUMER_SECRET = '_twitter_consumer_secret'
 FACEBOOK_APPID = '_facebook_appid'
 FACEBOOK_SECRET = '_facebook_secret'
+CODEBASE_APIKEY = '_codebase_apikey'
 EOF
     sed -i "s/_s3_bucket_name/`echo $ENVIRONMENT`.static.repowerathome.com/" "$USER_HOME/webapp/local_settings.py"
 
@@ -252,6 +253,7 @@ EOF
     s3_key_replacement "django/$ENVIRONMENT/twitter_consumer_secret" "$USER_HOME/webapp/local_settings.py" "_twitter_consumer_secret"
     s3_key_replacement "django/$ENVIRONMENT/facebook_appid" "$USER_HOME/webapp/local_settings.py" "_facebook_appid"
     s3_key_replacement "django/$ENVIRONMENT/facebook_secret" "$USER_HOME/webapp/local_settings.py" "_facebook_secret"
+    s3_key_replacement "django/codebase_apikey" "$USER_HOME/webapp/local_settings.py" "_codebase_apikey"
 }
 
 function install_loadbalancer_libs {
