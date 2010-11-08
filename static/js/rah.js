@@ -262,11 +262,14 @@ var rah = {
                     $(form).ajaxSubmit({
                         dataType: "json",
                         success: function(rsp){
+                            rah.mod_messages.init(rsp.msg);
                             if (rsp.errors === false){
                                 rah.mod_pledge_slide_advance();
                                 $.cookie('repowerathomepledge', true);
                             } else {
-                                $("#pledge_card_form").html(rsp.payload);
+                                var form = $("#pledge_card_form");
+                                form.html(rsp.payload);
+                                $("button", form).button();
                             }
                         }
                     });
