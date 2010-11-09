@@ -17,6 +17,7 @@ def feedback(request):
     if testing_feedback_form.is_valid():
         testing_feedback_form.save()
         messages.success(request, "Thanks for the feedback")
+        testing_feedback_form = TestingFeedbackForm()
     message_html = render_to_string("_messages.html", {}, RequestContext(request))
     form_html= render_to_string("codebase/_testing_feedback_form.html", locals(), RequestContext(request))
     return HttpResponse(json.dumps({"message_html": message_html, "form_html": form_html}), 
