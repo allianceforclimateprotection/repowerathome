@@ -58,7 +58,7 @@ class TicketManager(models.Manager):
             return cache_hit
         dom = minidom.parseString(_send_codebase("tickets?query=status:QA"))
         tickets = map(TicketManager._parse_ticket_node, dom.getElementsByTagName("ticket"))
-        cache.set("codebase_qa_tickets", tickets, 60 * 1)
+        cache.set("codebase_qa_tickets", tickets, 60 * 5)
         return tickets
         
     def add_feedback(self, ticket_id, message):
