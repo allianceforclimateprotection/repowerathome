@@ -51,6 +51,7 @@
     </p>
     
     <h2>Your pledge cards</h2>
+    {% if request.user.is_authenticated %}
     <p>
         <a href="{% url commitments_card_create %}" class="button commitment_card_open">Enter a new pledge card</a>
     </p>
@@ -73,9 +74,10 @@
                     <td class="top">
                         <span class="ui-icon ui-icon-triangle-1-e commit_tick"></span>
             	        <a href="#" class="commit_action" id="commit_action__{{ action.id }}">{{ action.name }}</a>
-            	        <ul class="commit_list_ul commit_list_ul_{{ action.id }} hidden">
+            	        <ul class="plain_list commit_list_ul commit_list_ul_{{ action.id }} hidden">
             	            {% for commitment in tuple.0 %}
                 			    <li class="contributor__{{ commitment.contributor.id }}">
+                			        &nbsp;&nbsp;&nbsp;
                 			        {{ commitment.contributor.first_name }} 
                 			        {{ commitment.contributor.last_name }}
                 			        <span class="commit_user_list_edit_link hidden">
@@ -110,6 +112,13 @@
         </table>
     {% endif %}
     </div>
+    {% else %}
+    <p>
+        <a href="{% url login %}?next={{ request.path }}">Login</a> or 
+        <a href="{% url register %}?next={{ request.path }}">Register</a> 
+        to enter pledge cards.
+    </p>
+    {% endif %}
 </div>
 <div class="box_two_bottom"></div>
 {% endblock %}

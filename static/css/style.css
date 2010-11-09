@@ -576,8 +576,7 @@ Commitments Commitments Commitments Commitments Commitments Commitments Commitme
 .commit_check {display:inline-block !important;}
 .commit_totals {font-size:18px; font-weight:bold;}
 .commit_card_choice {width:128px;}
-.commit_card_choice ul li{float:left; width:50%; text-align:center;}
-/*#commitment_card_select_form {position:absolute; top:0; right:0;}*/
+.commit_card_choice ul li{float:left; width:50%; text-align:center; list-style-type: none;}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget 
