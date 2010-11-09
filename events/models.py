@@ -12,6 +12,8 @@ from geo.models import Location
 from invite.models import Invitation
 from messaging.models import Stream
 from commitments.models import Contributor, Commitment, Survey
+
+from filterspec import HasHappenedFilterSpec
     
 class EventTypeManager(models.Manager):
     def get_by_natural_key(self, name):
@@ -42,6 +44,7 @@ class Event(models.Model):
     location = models.ForeignKey("geo.Location", null=True)
     location.state_filter = True
     when = models.DateField()
+    when.has_happened = True
     start = models.TimeField()
     duration = models.PositiveIntegerField(blank=True, null=True)
     details = models.TextField(help_text="For example, where should people park,\
