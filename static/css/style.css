@@ -74,11 +74,9 @@ th { padding: 3px; font-weight: normal; color: #444; background: #eee; border-ri
 p { color: #333; margin-bottom: 18px; }
 strong, b { font-weight:bold; }
 em, i { font-style: italic; }
-ol li{ list-style: decimal; margin-left: 18px;}
-ul{
-    margin-left: 18px;
-    padding-left: 18px;
-    margin-bottom: 18px;}
+ol li{ list-style: decimal; margin-left: 18px; }
+ul li { list-style-type: disc; }
+ul{ margin-left: 18px; margin-bottom: 18px; }
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms Forms 
