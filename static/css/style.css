@@ -613,12 +613,10 @@ TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWid
 }
 #testing_feedback_form #id_initials, #testing_feedback_form #id_feedback { width: 167px; }
 #testing_feedback_form .form_row li { float: left; }
-#testing_feedback_form label {
-    font-weight: bold;
-}
-/* ---------------------------------------------------------------------------------------------------------------------
-TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget 
---------------------------------------------------------------------------------------------------------------------- */
+#testing_feedback_form label {color:#FFF;}
+#tickets .ticket { background-color:#FFFFFF; padding: 9px; }
+#tickets .ticket div { max-height:162px; overflow:auto; }
+
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
