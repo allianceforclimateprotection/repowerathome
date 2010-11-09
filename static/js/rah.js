@@ -244,7 +244,7 @@ var rah = {
     
     page_home_logged_out: {
         init: function () {
-            if($.cookie('repowerathomepledge')){
+            if ($.cookie('repowerathomepledge')) {
                 rah.mod_pledge_slide_advance();
             } else {
                 rah.mod_pledge_submit.init();
@@ -260,12 +260,12 @@ var rah = {
                     email:      { required: true, email: true },
                     first_name: { required: true, minlength: 2 }
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     $(form).ajaxSubmit({
                         dataType: "json",
-                        success: function(rsp){
+                        success: function (rsp) {
                             rah.mod_messages.init(rsp.msg);
-                            if (rsp.errors === false){
+                            if (rsp.errors === false) {
                                 rah.mod_pledge_slide_advance();
                                 $.cookie('repowerathomepledge', true);
                             } else {
@@ -281,8 +281,8 @@ var rah = {
         }
     },
     
-    mod_pledge_slide_advance: function(transition) {
-        $("#home_pledge_slide").fadeOut(200, function(){
+    mod_pledge_slide_advance: function (transition) {
+        $("#home_pledge_slide").fadeOut(200, function () {
             $("#home_pledge_actions_slide").fadeIn(200);
         });
     },
@@ -1073,23 +1073,23 @@ var rah = {
     },
     
     mod_testing_widget: {
-        init: function() {
-            $("#testing_widget_tab").toggle(function() {
+        init: function () {
+            $("#testing_widget_tab").toggle(function () {
                 $(this).text("Close Tasks");
                 $("#testing_feedback_form_container").show();
-            }, function() {
+            }, function () {
                 $(this).text("Open Tasks");
                 $("#testing_feedback_form_container").hide();
             });
-            $("#prev_ticket_control").live("click", function() {
+            $("#prev_ticket_control").live("click", function () {
                 rah.mod_testing_widget.move_ticket(-1);
                 return false;
             });
-            $("#next_ticket_control").live("click", function() {
+            $("#next_ticket_control").live("click", function () {
                 rah.mod_testing_widget.move_ticket(1);
                 return false;
             });
-            $("#testing_feedback_form").live("submit", function() {
+            $("#testing_feedback_form").live("submit", function () {
                 var form = $(this);
                 $.ajax({
                     url: form.attr("action"),
@@ -1097,25 +1097,31 @@ var rah = {
                     data: form.serialize(),
                     success: function (data) {
                         rah.mod_messages.init(data["message_html"]);
-                        $("#testing_feedback_form_container").html(data["form_html"]);
+                        var container = $("#testing_feedback_form_container");
+                        container.html(data["form_html"]);
+                        $("input:submit", container).button();
                     }
                 }, "json");
                 return false;
             });
         },
-        move_ticket: function(offset) {
+        move_ticket: function (offset) {
             // this only works with 3 values right now, +1, 0 or -1
-            if(offset > 1 || offset < -1) { return; }
+            if (offset > 1 || offset < -1) {
+                return;
+            }
             var current = $(".active", $("#tickets"));
-            next = current;
-            if(offset > 0) {
-                var next = current.next();
-            } else if(offset < 0) {
-                var next = current.prev();
-            } else { return; }
-            if(next.length > 0) {
+            var next = current;
+            if (offset > 0) {
+                next = current.next();
+            } else if (offset < 0) {
+                next = current.prev();
+            } else {
+                return;
+            }
+            if (next.length > 0) {
                 var idx = $("#ticket_index");
-                idx.text(parseInt(idx.text()) + offset);
+                idx.text(parseInt(idx.text(), 10) + offset);
                 current.addClass("hidden");
                 current.removeClass("active");
                 next.addClass("active");
