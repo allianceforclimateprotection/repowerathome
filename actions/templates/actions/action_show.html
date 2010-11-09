@@ -1,15 +1,6 @@
 {% extends "actions/base.html" %}
 {% load dated_static %}
 {% block title %}Actions to Repower at Home{% endblock %}
-{% block breadcrumbs %}
-    <a href="{% url index %}">Home</a> &rsaquo;
-    {% if tag_filter %}
-        <a href="{% url action_show %}">Actions</a> &rsaquo;
-        {{ tag_filter.name|deslug }}
-    {% else %}
-        Actions
-    {% endif %}
-{% endblock %}
 {% block right_content %}
     <div class="box_three_top"></div>
     <div class="box_three_middle">

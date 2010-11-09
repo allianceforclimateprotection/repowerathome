@@ -628,7 +628,8 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .blog_byline {}
 .post_body li,
 #flat_page li{ list-style: disc; }
-ul.plain_list {margin-left: 0px; padding-left: 0px; list-style: none;}
+ul.plain_list {margin-left: 0px; padding-left: 0px;}
+ul.plain_list li {list-style-type: none;}
 .spaced_list li {margin-bottom:9px;}
 .shadow {
     -webkit-box-shadow: 0px 3px 6px #333;
