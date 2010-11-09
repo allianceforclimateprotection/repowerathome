@@ -27,7 +27,7 @@ def _get_text(nodelist):
     return ''.join(rc)
     
 class TicketManager(models.Manager):
-    INSTRUCTIONS_PATTERN = re.compile("^instructions:")
+    INSTRUCTIONS_PATTERN = re.compile("^instructions.?\n\n")
     FEEDBACK_PATTERN = re.compile("Initials.*Works.*Feedback.*", re.S)
     
     @classmethod
@@ -42,8 +42,13 @@ class TicketManager(models.Manager):
             content = _get_text(note.getElementsByTagName("content"))
             if TicketManager.FEEDBACK_PATTERN.search(content):
                 feedback_count += 1
-            if idx == len(notes)-1 or TicketManager.INSTRUCTIONS_PATTERN.search(content):
+            if TicketManager.INSTRUCTIONS_PATTERN.search(content):
+                # Remove the instruction pattern
+                content = TicketManager.INSTRUCTIONS_PATTERN.sub("", content)
                 break
+            if idx == len(notes)-1:
+                break
+                
         return Ticket(ticket_id=ticket_id, summary=summary, instructions=content, 
             feedback_count=feedback_count)
     
@@ -53,7 +58,7 @@ class TicketManager(models.Manager):
             return cache_hit
         dom = minidom.parseString(_send_codebase("tickets?query=status:QA"))
         tickets = map(TicketManager._parse_ticket_node, dom.getElementsByTagName("ticket"))
-        cache.set("codebase_qa_tickets", tickets, 60 * 5)
+        cache.set("codebase_qa_tickets", tickets, 60 * 1)
         return tickets
         
     def add_feedback(self, ticket_id, message):

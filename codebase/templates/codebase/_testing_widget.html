@@ -1,6 +1,9 @@
 <div id="testing_widget">
-    <a id="testing_widget_tab" href="#">Show Tests</a>
+    <div class="right">
+        <a id="testing_widget_tab" class="white" href="#">Open Task{{ ticket_count|pluralize }}</a>
+    </div>
     <div id="testing_feedback_form_container" class="hidden">
+        <br/>
         {% include "codebase/_testing_feedback_form.html" %}
     </div>
 </div>

@@ -1077,10 +1077,10 @@ var rah = {
     mod_testing_widget: {
         init: function() {
             $("#testing_widget_tab").toggle(function() {
-                $(this).text("Hide Tests");
+                $(this).text("Close Tasks");
                 $("#testing_feedback_form_container").show();
             }, function() {
-                $(this).text("Show Tests");
+                $(this).text("Open Tasks");
                 $("#testing_feedback_form_container").hide();
             });
             $("#prev_ticket_control").live("click", function() {

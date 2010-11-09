@@ -9,6 +9,7 @@ def testing_feedback_form(request):
     request.META['SERVER_NAME'] == "staging.repowerathome.com":
         tickets = Ticket.objects.qa_tickets()
         context["tickets"] = tickets
+        context["ticket_count"] = len(tickets)
         context["testing_feedback_form"] = TestingFeedbackForm(
             initial={"ticket_id": tickets[0].ticket_id if tickets else 0})
     return context

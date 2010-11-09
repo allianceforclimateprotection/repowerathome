@@ -1,24 +1,24 @@
 {% load markup %}
 
 <form id="testing_feedback_form" action="{% url testing_feedback %}" method="POST">
-    <div class="ticket_counter">
-        <span id="ticket_index">1</span> of {{ tickets|length }}
-    </div>
-    <div class="ticket_controls">
-        <a id="prev_ticket_control" href="#">&lt;prev</a> | <a id="next_ticket_control" href="#">next&gt;</a>
-    </div>
-    <br class="clear" />
-    <hr />
+    {% if ticket_count >= 1 %}
+        <div class="ticket_controls">
+            <a id="prev_ticket_control" href="#" class="white">&laquo; prev</a>
+            <b class="white"><span id="ticket_index">1</span> of {{ tickets|length }}</b>
+            <a id="next_ticket_control" href="#" class="white">next &raquo;</a>
+        </div>
+    {% endif %}
     <div id="tickets">
         {% for ticket in tickets %}
-            <div class="{% if forloop.first %}active{% else %}hidden{% endif %}">
+            <div class="{% if forloop.first %}active{% else %}hidden{% endif %} ticket">
                 <span class="ticket_id hidden">{{ ticket.ticket_id }}</span>
-                <span>Number of feedback notes: {{ ticket.feedback_count }}</span>
-                <h4>{{ ticket.summary }}</h4>
-                <div>{{ ticket.instructions|markdown:"safe" }}</div>
+                {# <span>Number of feedback notes: {{ ticket.feedback_count }}</span> #}
+                <b>{{ ticket.summary }}</b>
+                <div class="smaller">{{ ticket.instructions|markdown:"safe" }}</div>
             </div>
         {% endfor %}
     </div>
+    <br/>
     {% for field in testing_feedback_form.visible_fields %}
         <div class="form_row {% if field.errors %}error{% endif %}{% if 'TextInput' in field.field.widget|pprint or 'Textarea' in field.field.widget|pprint %} overset{% endif %}">
             {{ field.label_tag }}{{ field }}
@@ -32,6 +32,8 @@
             {{ field }}
         {% endfor %}
     </div>
-    <input type="submit" value="Submit"></input>
+    <p class="right">
+        <input type="submit" value="Submit" id="ticket_submit"/>
+    </p>
     {% csrf_token %}
 </form>
