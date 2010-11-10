@@ -35,6 +35,8 @@ def show(request):
             completes = len([x for x in c if x.answer == 'D'])
             total_completes += completes
             actions[a] = (c, commitments, completes)
+        
+        pledge_card_count = ContributorSurvey.objects.filter(entered_by=request.user).count()
     return render_to_response('commitments/show.html', locals(), context_instance=RequestContext(request))
     
 def card(request, contrib_id=None, form_name=None):
