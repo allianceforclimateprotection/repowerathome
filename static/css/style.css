@@ -279,6 +279,9 @@ Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage Homepage
 #home_page_sticker_copy h1 {font-size: 24px;}
 #home_page_sticker_copy .button {padding-top: 3px; padding-bottom:3px;}
 
+#progress_stats { text-align: center; }
+#progress_stats h2 { margin-bottom: 0; }
+
 /* ---------------------------------------------------------------------------------------------------------------------
 Register Register Register Register Register Register Register Register Register Register Register Register Register 
 --------------------------------------------------------------------------------------------------------------------- */

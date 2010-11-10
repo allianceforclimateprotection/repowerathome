@@ -33,7 +33,7 @@ from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
-from commitments.models import Contributor, Commitment, Survey
+from commitments.models import Contributor, Commitment, Survey, ContributorSurvey
 from commitments.forms import ContributorForm
 from commitments.survey_forms import PledgeCard
 from events.models import Event, Guest
@@ -42,33 +42,46 @@ from messaging.forms import StreamNotificationsForm
 
 from decorators import save_queued_POST
 from signals import logged_in
-
-def _coal_challenge_stats():
-    coal_challenge_stats = cache.get('coal_challenge_stats')
-    if coal_challenge_stats:
-        return coal_challenge_stats
-    else:
-        coal_challenge_stats = {}  
-        locale.setlocale(locale.LC_ALL, "en_US")
-        coal_challenge_stats['total_people'] = locale.format('%d', _total_users(), True)
-        coal_challenge_stats['total_actions'] = locale.format('%d', _total_actions(), True)
-        coal_challenge_stats['total_coal'] = locale.format('%d', _total_coal(), True)
-        cache.set('coal_challenge_stats', coal_challenge_stats, 60 * 5)
-        return coal_challenge_stats
     
-def _total_users():
-    return (Profile.objects.filter(total_points__gt=0).count() or 0) + \
-        (Contributor.objects.filter(commitment__answer='D', commitment__action__isnull=False, user__isnull=True).distinct().count() or 0)
+def _total_trendsetters():
+    return (Profile.objects.all().count()) + \
+        (Contributor.objects.filter(user__isnull=True).count() or 0)
+        
+def _total_points():
+    return (Profile.objects.all().aggregate(Sum("total_points"))["total_points__sum"] or 0) + \
+        (Action.objects.filter(commitment__answer="D", commitment__contributor__user__isnull=True).aggregate(
+            Sum("points"))["points__sum"] or 0) 
     
 def _total_actions():
     return (Record.objects.filter(void=False, activity=1).count() or 0) + \
         (Commitment.objects.filter(answer="D", action__isnull=False, contributor__user__isnull=True).count() or 0)
         
-def _total_coal():
-    return (Profile.objects.all().aggregate(Sum("total_points"))["total_points__sum"] or 0) + \
-        (Action.objects.filter(commitment__answer="D", commitment__contributor__user__isnull=True).aggregate(
-            Sum("points"))["points__sum"] or 0)
+def _total_commitment_cards():
+    return (ContributorSurvey.objects.all().count())
+    
+def _total_teams():
+    return (Group.objects.filter(is_geo_group=False).count() or 0)
+    
+def _total_events():
+    return (Event.objects.filter(when__lte=datetime.now()).count() or 0)
+    
 
+def _progress_stats():
+    progress_stats = cache.get('progress_stats')
+    if progress_stats:
+        return progress_stats
+    else:
+        progress_stats = {}  
+        locale.setlocale(locale.LC_ALL, "en_US")
+        progress_stats['total_trendsetters'] = locale.format('%d', _total_trendsetters(), True)
+        progress_stats['total_points'] = locale.format('%d', _total_points(), True)
+        progress_stats['total_actions'] = locale.format('%d', _total_actions(), True)
+        progress_stats['total_commitment_cards'] = locale.format('%d', _total_commitment_cards(), True)
+        progress_stats['total_teams'] = locale.format('%d', _total_teams(), True)
+        progress_stats['total_events'] = locale.format('%d', _total_events(), True)
+        cache.set('progress_stats', progress_stats, 60 * 5)
+        return progress_stats
+    
 def _vampire_power_leaderboards():
     key = 'vampire_hunt_leaderboards'
     vamp_stats = cache.get(key, {})
@@ -80,9 +93,9 @@ def _vampire_power_leaderboards():
         vamp_stats['team_leaders'] = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
             groupusers__user__contributorsurvey__contributor__commitment__action=vampire_action).annotate(
             contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
-        
+
         cache.set(key, vamp_stats, 60 * 5)
-    
+
     return vamp_stats
 
 def _vampire_power_slayers():
@@ -90,24 +103,24 @@ def _vampire_power_slayers():
     vamp_stats = cache.get(key, {})
     if not vamp_stats:
         locale.setlocale(locale.LC_ALL, "en_US")
-        
+
         # This is wrapped in a try catch so tests which do not instantiate the vampire action will still pass
         try:
             vampire_action = Action.objects.get(slug="eliminate-standby-vampire-power")
         except ObjectDoesNotExist:
             return vamp_stats
-        
+
         # Get the number of slayers
         slayer_count = (User.objects.filter(useractionprogress__action=vampire_action, useractionprogress__is_completed=True).count() or 0) + \
             (Contributor.objects.filter(commitment__action=vampire_action, commitment__answer='D', user__isnull=True).distinct().count() or 0)
         vamp_stats['slayers'] = locale.format('%d', slayer_count, True)
-        
+
         # Figure out who the last slayer is
         last_user = UserActionProgress.objects.filter(action=vampire_action, is_completed=True).order_by("-updated").select_related("user")[:1]
         last_user_date = last_user[0].updated if last_user else datetime(1, 1, 1, 0, 0, 0)
         last_contributor = Commitment.objects.filter(question=vampire_action.slug.replace('-', '_'), answer='D', contributor__user__isnull=True).order_by("-updated").select_related("contributor")[:1]
         last_contributor_date = last_contributor[0].updated if last_contributor else datetime(1, 1, 1, 0, 0, 0)
-        
+
         # Compare the latest contributor and user, then set some slayer vars
         if last_user_date > last_contributor_date:
             vamp_stats['last_slayer_is_user'] = True
@@ -117,7 +130,7 @@ def _vampire_power_slayers():
             vamp_stats['last_slayer_is_user'] = False
             vamp_stats['last_slayer'] = last_contributor[0].contributor
             vamp_stats['last_slayer_loc'] = last_contributor[0].contributor.location
-        
+
         cache.set(key, vamp_stats, 60 * 5)
 
     return vamp_stats
@@ -141,7 +154,7 @@ def index(request):
     my_events = Event.objects.filter(guest__contributor__user=request.user)
     records = Record.objects.user_records(request.user, 10)
     
-    locals().update(_vampire_power_slayers())
+    locals().update(_progress_stats())
     
     try:
         contributor = Contributor.objects.get(user=request.user)
@@ -157,7 +170,7 @@ def logged_out_home(request):
     # blog_posts = Post.objects.filter(status=2)[:3]
     # pop_actions = Action.objects.get_popular(count=5)
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:4]
-    locals().update(_vampire_power_slayers())
+    locals().update(_progress_stats())
     contributor_form = ContributorForm()
     pledge_card_form = PledgeCard(None, None)
     return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))

@@ -11,16 +11,8 @@
 <div class="grid_3 omega">
     <div class="box_one_top"></div>
     <div class="box_one_middle">
-        <h3>Top Teams</h3>
-        {% for team in top_teams %}
-            <p>
-                <a href="{{ team.get_absolute_url }}">{{team.name}}</a><br/>
-                <span class="smaller">{{team.member_count}} team members</span>
-            </p>
-        {% endfor %}
-        <div class="more_link">
-            <a href="{% url group_list %}">More Teams</a>
-        </div>
+        <h3>Progress</h3>
+        {% include "rah/_progress_stats.html" %}
     </div>
     <div class="box_one_bottom"></div>
 </div>
