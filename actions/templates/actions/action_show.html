@@ -1,19 +1,14 @@
 {% extends "actions/base.html" %}
 {% load dated_static %}
 {% block title %}Actions to Repower at Home{% endblock %}
-{% block breadcrumbs %}
-    <a href="{% url index %}">Home</a> &rsaquo;
-    {% if tag_filter %}
-        <a href="{% url action_show %}">Actions</a> &rsaquo;
-        {{ tag_filter.name|deslug }}
-    {% else %}
-        Actions
-    {% endif %}
-{% endblock %}
 {% block right_content %}
     <div class="box_three_top"></div>
     <div class="box_three_middle">
-        <img src="{% dated_static 'images/theme/actions.jpg' %}" alt="benefits" width="675" height="287"/>
+        <h1>Set the trend in your home</h1>
+        <p>
+            The actions you’ll find here will cut energy waste, lower your monthly bills and put your home on the
+            leading edge of the energy efficiency transformation.
+        </p>
     </div>
     <div class="box_three_bottom"></div>
     

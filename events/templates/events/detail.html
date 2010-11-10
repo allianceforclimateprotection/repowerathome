@@ -3,6 +3,7 @@
 {% block title %}{{ event }}{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url action_community_show %}">Community</a> &rsaquo;
     <a href="{% url event-show %}">Events</a> &rsaquo;
     {{ event }}
 {% endblock %}

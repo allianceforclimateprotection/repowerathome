@@ -12,16 +12,18 @@
                 </p>
                 <h3>Solve the climate crisis from the ground up.</h3>
                 <p>
-                    Join the Repower at Home Coal Challenge today and see the many simple ways to conserve energy in
-                    your home. Start saving money on your energy bills and join our grassroots effort to keep the
-                    equivalent of 7,000,000 pounds of dirty coal out of our air by October 10.
+                    Repower at Home Trendsetters pledge to save energy in their own home, and support their friends,
+                    neighbors and community members as they work to eliminate energy waste.
                 </p>
                 <p>
-                    <b>
-                        Join the Challenge using the form to the right or the Facebook button below so we can count your
-                        savings toward our goal.
-                    </b>
+                    Join us! Become a Trendsetter by creating an account. With an account, you can:
                 </p>
+                <ul>
+                    <li>Learn how you can save energy and money in your home.</li>
+                    <li>Share your energy-saving achievements with your friends.</li>
+                    <li>Access tools for spreading the word about saving energy in your community.</li>
+                    <li>Connect with other Trendsetters in your neighborhood and across the country.</li>
+                </ul>
                 <p>
                     <div class="fb_button" id="fb-login">
                         <a href="#" class="fb_button fb_button_medium">
@@ -30,7 +32,7 @@
                     </div>
                 </p>
             </div>
-            <div id="registration_right_col">
+            <div id="registration_right_col">                
                 <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
                     <div class="form_row overset form_row_float form_row_float_left_field">
                         <label for="id_first_name">First name</label>
@@ -73,7 +75,7 @@
                         <input type="hidden" name="next" value="{{ next|escape }}" />
                     </div>
                     {% csrf_token %}
-                </form>
+                </form>                
             </div>
         </div>
         <div class="box_three_bottom"></div>
