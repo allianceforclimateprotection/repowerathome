@@ -45,6 +45,8 @@ class SurveyForm(forms.ModelForm):
             if field:
                 field.initial = field.to_python(commitment.answer)
 
+    def has_actions(self):
+        return len(self.action_slugs) > 0
     
     def save(self, *args, **kwargs):
         for field, data in self.cleaned_data.items():
@@ -102,10 +104,16 @@ class VolunteerInterestForm(SurveyForm):
 class PledgeCard(SurveyForm):
     pledge = forms.BooleanField(required=False, widget=forms.HiddenInput)
     volunteer = forms.BooleanField(required=False, label="I want to volunteer with Repower at Home")
-    action_slugs = ("eliminate-standby-vampire-power", "change-air-conditioning-heater-filters",
-        "programmable-thermostat", "have-home-energy-audit")
         
     def save(self, *args, **kwargs):
         self.is_valid()
         self.cleaned_data["pledge"] = True
         return super(PledgeCard, self).save(*args, **kwargs)
+        
+class HomePledgeCard(PledgeCard):
+    action_slugs = ("eliminate-standby-vampire-power", "change-air-conditioning-heater-filters",
+        "programmable-thermostat", "have-home-energy-audit")
+        
+class ApartmentPledgeCard(PledgeCard):
+    action_slugs = ("eliminate-standby-vampire-power", "replace-your-incandescent-light-bulbs-with-cfls",
+        "programmable-thermostat", "wash-clothes-cold-water")

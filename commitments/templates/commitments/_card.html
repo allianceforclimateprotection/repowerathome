@@ -1,7 +1,7 @@
 <h1 style="float:left;">Pledge Card</h1>
 <form style="float:right; margin-right:85px;" action="" method="get" id="commitment_card_select_form">
     <div class="form_row">
-        <label for="id_form_name">Select Commitment Card</label>
+        <label for="id_form_name">Select Pledge Card</label>
         <select name="form_name" id="id_form_name" onchange="">
         {% for survey in survey_types %}
             {% if perms.events.host_any_event_type or survey.name != "Volunteer Interest Form" %}
@@ -14,13 +14,13 @@
     </div>
     <noscript>
         <div>
-            <button type="submit" id="commitment_card_select_submit">Change commitment card</button>
+            <button type="submit" id="commitment_card_select_submit">Change pledge card</button>
         </div>
     </noscript>
 </form>
 <br class="clear"/>
 <form action="" method="post" id="commitment_card_form">
-    <div style="width:350px; float:left;">    
+    <div style="width:350px; float:left;">
         {% for error in contrib_form.non_field_errors %}
             <div class="overset_form_message error">{{ error }}</div>
         {% endfor %}
@@ -45,33 +45,43 @@
     </div>
     <div id="commitment_card_action_table" style="width:400px; float:left; margin-top:18px;">
         <table>
-            <thead>
-                <tr>
-                    <th>Actions</th>
-                    <th class="commit_card_choice">
-                        <ul>
-                            <li>Committed</li>
-                            <li>Done</li>
-                        </ul>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for field in survey_form.visible_fields %}
-                    {% if field.field.action %}
-                        <tr>
-                            <td>{{ field.label }}</td>
-                            <td class="commit_card_choice">{{ field }}</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-            <thead>
-                <tr>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
+            {% if survey_form.has_actions %}
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th class="commit_card_choice">
+                            <ul>
+                                <li>Committed</li>
+                                <li>Done</li>
+                            </ul>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for field in survey_form.visible_fields %}
+                        {% if field.field.action %}
+                            <tr>
+                                <td>{{ field.label }}</td>
+                                <td class="commit_card_choice">{{ field }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            {% else %}
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th class="commit_card_choice">
+                        </th>
+                    </tr>
+                </thead>
+            {% endif %}
             <tbody>
                 {% for field in survey_form.visible_fields %}
                     {% if not field.field.action %}
