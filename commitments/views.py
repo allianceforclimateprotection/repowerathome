@@ -62,7 +62,7 @@ def card(request, contrib_id=None, form_name=None):
     try:
         survey_form = getattr(survey_forms, form_name)(contributor, request.user, (request.POST or None))
     except AttributeError:
-        survey_form = survey_forms.EnergyMeetingCommitmentCardVersion2(contributor, request.user, (request.POST or None))
+        survey_form = survey_forms.PledgeCard(contributor, request.user, (request.POST or None))
     
     if request.method == 'POST' and contrib_form.is_valid() and survey_form.is_valid():
                 
