@@ -59,7 +59,6 @@ def card(request, contrib_id=None, form_name=None):
     
     # If a survey_form was specified, use that, otherwise use a default
     form_name = request.GET.get("form_name", str(form_name))
-    
     try:
         survey_form = getattr(survey_forms, form_name)(contributor, request.user, (request.POST or None))
     except AttributeError:
@@ -103,10 +102,11 @@ def card(request, contrib_id=None, form_name=None):
 @require_POST
 # when available add an ajax required decorator
 def take_pledge(request):
-    form = survey_forms.PledgeCard(None, data=request.POST)
+    form = ContributorForm(data=request.POST)
     valid = form.is_valid()
     if valid:
-        form.save()
+        contributor = form.save()
+        survey_forms.PledgeCard(contributor, None, data=request.POST).save()
         messages.success(request, "Thanks for taking the pledge!")
     pledge_card = loader.render_to_string("commitments/_pledge_card_form.html", {"pledge_card_form": form}, RequestContext(request))
     message = loader.render_to_string("_messages.html", {}, RequestContext(request))

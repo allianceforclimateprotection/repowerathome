@@ -34,6 +34,7 @@ from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
 from commitments.models import Contributor, Commitment, Survey
+from commitments.forms import ContributorForm
 from commitments.survey_forms import PledgeCard
 from events.models import Event, Guest
 from messaging.models import Stream
@@ -146,7 +147,10 @@ def index(request):
         contributor = Contributor.objects.get(user=request.user)
     except Contributor.DoesNotExist:
         contributor = None
-    pledge_card_form = PledgeCard(contributor)
+    profile = request.user.get_profile()
+    zipcode = profile.location.zipcode if profile.location else ""
+    contributor_form = ContributorForm(instance=contributor, initial={"zipcode": zipcode})
+    pledge_card_form = PledgeCard(contributor, None)
     return render_to_response('rah/home_logged_in.html', locals(), context_instance=RequestContext(request))
 
 def logged_out_home(request):
@@ -154,7 +158,8 @@ def logged_out_home(request):
     # pop_actions = Action.objects.get_popular(count=5)
     top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:4]
     locals().update(_vampire_power_slayers())
-    pledge_card_form = PledgeCard(None)
+    contributor_form = ContributorForm()
+    pledge_card_form = PledgeCard(None, None)
     return render_to_response("rah/home_logged_out.html", locals(), context_instance=RequestContext(request))
 
 @cache_page(60 * 60)

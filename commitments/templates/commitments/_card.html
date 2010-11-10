@@ -52,12 +52,12 @@
                         <ul>
                             <li>Committed</li>
                             <li>Done</li>
-                        </ul>    
+                        </ul>
                     </th>
                 </tr>
             </thead>
             <tbody>
-                {% for field in survey_form %}
+                {% for field in survey_form.visible_fields %}
                     {% if field.field.action %}
                         <tr>
                             <td>{{ field.label }}</td>
@@ -73,7 +73,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for field in survey_form %}
+                {% for field in survey_form.visible_fields %}
                     {% if not field.field.action %}
                         <tr>
                             <td>{{ field.label }}</td>

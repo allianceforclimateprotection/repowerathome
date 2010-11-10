@@ -1,25 +1,31 @@
-{% for error in pledge_card_form.non_field_errors %}
+{% for error in contributor_form.non_field_errors %}
     <div class="overset_form_message error">{{ error }}</div>
 {% endfor %}
-{% for field in pledge_card_form.visible_fields %}
-    <div class="form_row {% if field.errors %}error{% endif %} {% if field.name == 'first_name' %}form_row_float form_row_float_left_field{% endif%} {% if field.name == 'last_name' %}form_row_float{% endif%}">
-        {% if "CheckboxInput" in field.field.widget|pprint %}
-            {{ field }}{{ field.label_tag }}
-        {% else %}
-            {{ field.label_tag }}{{ field }}
-        {% endif %}
-        {% for error in field.errors %}
-            <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
-        {% endfor %}
-    </div>
-    {% if field.name == 'last_name' %}<br class="clear"/>{% endif%}
+{% for field in contributor_form.visible_fields %}
+    {% if field.name != 'phone' %}
+        <div class="form_row {% if field.errors %}error{% endif %} {% if field.name == 'first_name' %}form_row_float form_row_float_left_field{% endif%} {% if field.name == 'last_name' %}form_row_float{% endif%}">
+            {% if "CheckboxInput" in field.field.widget|pprint %}
+                {{ field }}{{ field.label_tag }}
+            {% else %}
+                {{ field.label_tag }}{{ field }}
+            {% endif %}
+            <span class="help_text">{{ field.help_text }}</span>
+            {% for error in field.errors %}
+                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+            {% endfor %}
+        </div>
+        {% if field.name == 'last_name' %}<br class="clear"/>{% endif%}
+    {% endif %}
 {% endfor %}
 <div class="hidden">
-    {% for field in pledge_card_form.hidden_fields %}
+    {% for field in contributor_form.hidden_fields %}
         {{ field }}
     {% endfor %}
-    {% csrf_token %}
 </div>
+<div class="hidden">
+    {{ pledge_card_form.pledge }}
+</div>
+{% csrf_token %}
 <div>
     <button type="submit" name="submit" class="home_page_join_button">Take the Pledge</button>
 </div>

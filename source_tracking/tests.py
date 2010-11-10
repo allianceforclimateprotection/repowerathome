@@ -7,6 +7,7 @@ from django.test.client import Client
 from models import UserSource
 
 class SourceTrackingTests(TestCase):
+    fixtures = ["actions.json"]
     
     def setUp(self):
         self.client = Client()

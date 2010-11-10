@@ -64,8 +64,9 @@ class SurveyForm(forms.ModelForm):
                 else:
                     Stream.objects.get(slug="commitment").dequeue(content_object=commitment)
             commitment.save()
-        ContributorSurvey.objects.get_or_create(contributor=self.contributor, survey=self.instance,
-            entered_by=self.entered_by)
+        if self.entered_by:
+            ContributorSurvey.objects.get_or_create(contributor=self.contributor,
+                survey=self.instance, entered_by=self.entered_by)
 
 class EnergyMeetingCommitmentCard(SurveyForm):
     host_event = forms.BooleanField(required=False, label="Host an event")
@@ -99,40 +100,12 @@ class VolunteerInterestForm(SurveyForm):
     faith = forms.BooleanField(required=False)
     
 class PledgeCard(SurveyForm):
-    first_name = forms.CharField(required=True)
-    last_name = forms.CharField(required=False)
-    email = forms.EmailField(required=True)
-    zipcode = forms.CharField(max_length=10, required=False, help_text="Leave blank if not a US resident")
     pledge = forms.BooleanField(required=False, widget=forms.HiddenInput)
-    
-    def __init__(self, contributor, *args, **kwargs):
-        super(PledgeCard, self).__init__(contributor, None, *args, **kwargs)
-        self.location = None
-        if contributor:
-            self.fields["first_name"].initial = contributor.user.first_name
-            self.fields["last_name"].initial = contributor.user.last_name
-            self.fields["email"].initial = contributor.user.email
-            if contributor.user.get_profile().location:
-                self.fields["zipcode"].initial = contributor.user.get_profile().location.zipcode
-    
-    def clean_zipcode(self):
-        data = self.cleaned_data['zipcode'].strip()
-        if data:
-            if len(data) <> 5:
-                raise forms.ValidationError("Please enter a 5 digit zipcode")
-            try:
-                self.location = Location.objects.get(zipcode=data)
-            except Location.DoesNotExist, e:
-                raise forms.ValidationError("Zipcode is invalid")
-        return data
+    volunteer = forms.BooleanField(required=False, label="I want to volunteer with Repower at Home")
+    action_slugs = ("eliminate-standby-vampire-power", "change-air-conditioning-heater-filters",
+        "programmable-thermostat", "have-home-energy-audit")
         
     def save(self, *args, **kwargs):
-        try:
-            contributor = Contributor.objects.get(email=self.cleaned_data["email"])
-        except Contributor.DoesNotExist:
-            contributor = Contributor.objects.create(first_name=self.cleaned_data["first_name"], 
-                last_name=self.cleaned_data["last_name"], email=self.cleaned_data["email"],
-                location=self.location) 
-        commitment, created = Commitment.objects.get_or_create(contributor=contributor, question="pledge")
-        commitment.answer = True
-        commitment.save()
+        self.is_valid()
+        self.cleaned_data["pledge"] = True
+        return super(PledgeCard, self).save(*args, **kwargs)
