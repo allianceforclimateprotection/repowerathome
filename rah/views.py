@@ -33,7 +33,7 @@ from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
-from commitments.models import Contributor, Commitment, Survey
+from commitments.models import Contributor, Commitment, Survey, ContributorSurvey
 from commitments.forms import ContributorForm
 from commitments.survey_forms import PledgeCard
 from events.models import Event, Guest
@@ -140,6 +140,7 @@ def index(request):
     my_groups = Group.objects.filter(users=request.user, is_geo_group=False)
     my_events = Event.objects.filter(guest__contributor__user=request.user)
     records = Record.objects.user_records(request.user, 10)
+    pledge_card_count = ContributorSurvey.objects.filter(entered_by=request.user).count()
     
     locals().update(_vampire_power_slayers())
     
