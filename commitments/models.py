@@ -235,7 +235,7 @@ class Survey(models.Model):
 class ContributorSurvey(models.Model):
     contributor = models.ForeignKey(Contributor)
     survey = models.ForeignKey(Survey)
-    entered_by = models.ForeignKey("auth.user")
+    entered_by = models.ForeignKey("auth.user", null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
         

@@ -66,9 +66,8 @@ class SurveyForm(forms.ModelForm):
                 else:
                     Stream.objects.get(slug="commitment").dequeue(content_object=commitment)
             commitment.save()
-        if self.entered_by:
-            ContributorSurvey.objects.get_or_create(contributor=self.contributor,
-                survey=self.instance, entered_by=self.entered_by)
+        ContributorSurvey.objects.get_or_create(contributor=self.contributor,
+            survey=self.instance, entered_by=self.entered_by)
 
 class EnergyMeetingCommitmentCard(SurveyForm):
     host_event = forms.BooleanField(required=False, label="Host an event")
