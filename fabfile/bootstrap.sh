@@ -38,6 +38,10 @@ function install_emacs {
     sudo -u "ubuntu" echo '(setq backup-directory-alist `(("." . "~/.saves")))' >> "$USER_HOME/.emacs"
 }
 
+function install_htop {
+    apt-get -y install htop
+}
+
 function mysql_client_install {
     apt-get -y install mysql-client
 }
@@ -111,30 +115,74 @@ function mysql_grant_user {
 }
 
 function install_appserver_libs {
-    apt-get -y install apache2 libapache2-mod-wsgi apache2-prefork-dev memcached git-core mercurial
-    apt-get -y install libjpeg62-dev libfreetype6-dev
+    apt-get -y install memcached git-core mercurial
+    apt-get -y install libjpeg62-dev libfreetype6-dev # Needed for PIL
+    apt-get -y install libxml2-dev # Needed to make uWSGI
+    apt-get -y install libmysqlclient-dev # Needed for MySQL-python
     apt-get -y install python python-dev python-setuptools
     easy_install pip virtualenv yolk http://pypi.python.org/packages/source/i/ipython/ipython-0.10.1.zip
     apt-get -y install default-jre # needed for running yui-compressor during deploy process
 }
 
-function configure_apache2 {
-    rm /etc/apache2/sites-available/default
-    rm /etc/apache2/sites-available/default-ssl
-    rm /etc/apache2/sites-enabled/000-default
+function install_nginx {
+    # $1 <string> version of nginx to be installed
+    mkdir /var/lib/nginx/
+    mkdir /var/lib/nginx/body
+    mkdir /var/lib/nginx/uwsgi
+    mkdir /var/lib/nginx/proxy
     
-    cat > '/etc/apache2/ports.conf' << EOF
-::server_config_files/apache2/ports.conf::
-EOF
-    cat > '/etc/apache2/httpd.conf' << EOF
-::server_config_files/apache2/httpd.conf::
-EOF
-    cat > '/etc/apache2/sites-available/rah' << EOF
-::server_config_files/apache2/rah::
-EOF
+    nginx_version="$1"
+    nginx_tarball="nginx-$nginx_version.tar.gz"
+    nginx_folder="nginx-$nginx_version"
+    nginx_config="--conf-path=/etc/nginx/nginx.conf \
+    --sbin-path=/usr/sbin \
+    --error-log-path=/var/log/nginx/error.log \
+    --http-client-body-temp-path=/var/lib/nginx/body \
+    --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
+    --http-log-path=/var/log/nginx/access.log \
+    --http-proxy-temp-path=/var/lib/nginx/proxy \
+    --lock-path=/var/lock/nginx.lock \
+    --pid-path=/var/run/nginx.pid \
+    --with-http_realip_module \
+    --with-http_ssl_module \
+    --without-http_ssi_module \
+    --without-http_scgi_module \
+    --without-http_autoindex_module \
+    --without-http_fastcgi_module \
+    "
+    
+    wget "http://sysoev.ru/nginx/$nginx_tarball"
+    tar -xf $nginx_tarball
+    cd $nginx_folder
+    ./configure $nginx_config
+    make
+    make install
+    cd ..
+    rm $nginx_tarball
+    rm -rf $nginx_folder    
+}
 
-    sed -i "s/_public_dns_name/`echo $PUBLIC_DNS_NAME`/" /etc/apache2/sites-available/*
-    ln -s /etc/apache2/sites-available/rah /etc/apache2/sites-enabled/rah
+function install_uwsgi {
+    # $1 <string> version of uWSGI to be installed
+    
+    uwsgi_version="$1"
+    uwsgi_tarball="uwsgi-$uwsgi_version.tar.gz"
+    uwsgi_folder="uwsgi-$uwsgi_version"
+    
+    # Download and compile uWSGI
+    wget "http://projects.unbit.it/downloads/$uwsgi_tarball"
+    tar -xf $uwsgi_tarball
+    cd $uwsgi_folder
+    make
+    mv uwsgi /usr/local/bin
+    cd ..
+    rm $uwsgi_tarball
+    rm -rf $uwsgi_folder
+    
+    # Install an Upstart item for uwsgi
+    cat > '/etc/init/uwsgi.conf' << EOF
+::server_config_files/uwsgi.conf::
+EOF
 }
 
 function install_send_messages_cron {
@@ -184,6 +232,11 @@ function init_project {
     USER_HOME=`get_user_home ubuntu`
     sudo -u "ubuntu" git clone git@codebasehq.com:rah/rah/rah.git "$USER_HOME/webapp/"
     sudo -u "ubuntu" mkdir "$USER_HOME/requirements/"
+    
+    # Install requirements
+    cd "$USER_HOME/requirements/"
+    pip install -r ../webapp/requirements.txt
+    cd
 }
 
 function s3_key_replacement {
@@ -258,12 +311,12 @@ EOF
 }
 
 function install_loadbalancer_libs {
-    apt-get -y install libssl-dev memcached nginx
+    apt-get -y install libssl-dev memcached libpcre3-dev
 }
 
 function configure_nginx {
-    rm /etc/nginx/sites-available/default
-    rm /etc/nginx/sites-enabled/default
+    mkdir /etc/nginx/sites-available
+    mkdir /etc/nginx/sites-enabled
     
     cat > '/etc/nginx/nginx.conf' << EOF
 ::server_config_files/nginx/nginx.conf::
@@ -289,12 +342,22 @@ EOF
     cat > '/etc/nginx/sites-available/rah_base_https' << EOF
 ::server_config_files/nginx/rah_base_https::
 EOF
+    cat > '/etc/nginx/uwsgi_params' << EOF
+::server_config_files/nginx/uwsgi_params::
+EOF
+    cat > '/etc/init.d/nginx' << EOF
+::server_config_files/nginx/initd_startup::
+EOF
+    chmod 744 /etc/init.d/nginx
+    
+    # Install a start up item for nginx
+    update-rc.d nginx defaults
     
     sed -i "s/_public_dns_name/`echo $PUBLIC_DNS_NAME`/" /etc/nginx/sites-available/*
     APPSERVER_ADDRESSES=""
     for server in $APP_SERVER_IPS
     do
-        APPSERVER_ADDRESSES="$APPSERVER_ADDRESSES server $server:8080;"
+        APPSERVER_ADDRESSES="$APPSERVER_ADDRESSES server $server:3031;"
     done
     sed -i "s/_upstream_servers/`echo $APPSERVER_ADDRESSES`/" /etc/nginx/sites-available/*
     ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah
@@ -321,6 +384,7 @@ function bootstrap_system {
     system_update_locale_en_US_UTF_8
     system_set_timezone 'America/New_York'
     install_emacs
+    install_htop
 }
 
 function bootstrap_database {
@@ -333,18 +397,19 @@ function bootstrap_database {
 
 function bootstrap_appserver {
     install_appserver_libs
-    configure_apache2
+    install_uwsgi "0.9.6.5"
     mysql_client_install
     install_send_messages_cron
     install_s3cmd
     install_codebase_keys
     init_project
     install_local_settings
-    /etc/init.d/apache2 restart
+    start uwsgi
 }
 
 function bootstrap_loadbalancer {
     install_loadbalancer_libs
+    install_nginx "0.8.53"
     configure_nginx
     install_s3cmd
     configure_ssl

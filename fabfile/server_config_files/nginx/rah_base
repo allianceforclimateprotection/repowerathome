@@ -10,7 +10,9 @@ gzip_types text/css application/x-javascript application/json;
 
 # proxy to Apache listening on 127.0.0.1:8080
 location / {
-    proxy_pass http://app_servers;
+    uwsgi_pass app_servers;
+    # The uwsgi_params file needs to be copied from the source distribution
+    include uwsgi_params;
 }
 
 location ^~ /media {
@@ -30,11 +32,3 @@ if ($request_uri ~* /youtube){
 }
 
 client_max_body_size 10M;
-EOF
-
-    cat > '/etc/nginx/sites-available/rah_base_http' << EOF
-include sites-available/rah_base;
-listen 80;
-if ($request_uri ~* (/login|/password_change|/admin|/register|/user/edit|/validate)){
-    rewrite (.*) https://$server_name$1 permanent;
-}

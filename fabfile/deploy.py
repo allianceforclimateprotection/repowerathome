@@ -55,7 +55,7 @@ def install_requirements():
 def minify():
     "Minify the js and css files"
     require("hosts", "deploy_to")
-    run("cd %(deploy_to)s/static/tools && ./minify.sh" % env)
+    run("cd %(deploy_to)s/static/minify && ./minify.sh" % env)
     
 @runs_once
 def s3sync():
@@ -78,10 +78,11 @@ def migratedb():
     if confirm("Would you like to migrate the database?"):
         run("cd %(deploy_to)s && python manage.py migrate" % env)
     
-def restart_apache():
-    "Reboot Apache2 server."
+def restart_app_server():
+    "Restart uWSGI processes"
     require("hosts")
-    sudo("/etc/init.d/apache2 restart")
+    sudo("stop uwsgi")
+    sudo("start uwsgi")
 
 @runs_once
 def disable_maintenance_page():
@@ -108,7 +109,7 @@ def deploy(revision=None, code_only=False, sync_media=True):
             s3sync()
         syncdb()
         migratedb()
-    restart_apache()
+    restart_app_server()
     disable_maintenance_page()
     codebase_deployment()
     print(green("%(revision)s has been deployed to %(hosts)s" % env))
