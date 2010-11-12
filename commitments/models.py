@@ -9,6 +9,19 @@ def yesterday():
     return datetime.datetime.today() - datetime.timedelta(days=1)
 
 class ContributorManager(models.Manager):
+    def get_or_create_from_user(self, user):
+        try:
+            return self.get(user=user), True
+        except Contributor.DoesNotExist:
+            try:
+                contributor = self.get(email=user.email)
+                contributor.user = user
+                contributor.save()
+                return contributor, True
+            except Contributor.DoesNotExist:
+                return self.create(first_name=user.first_name, last_name=user.last_name,
+                    email=user.email, location=user.get_profile().location, user=user), False
+    
     def contirbutor_engagment(self, date_start=None, date_end=None):
         from django.db import connection, transaction
         from actions.models import Action

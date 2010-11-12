@@ -454,3 +454,12 @@ def send_registration_emails(sender, request, user, is_new_user, **kwargs):
     if is_new_user:
         Stream.objects.get(slug="registration").enqueue(content_object=user, start=user.date_joined)
 logged_in.connect(send_registration_emails)
+
+def take_the_pledge(sender, request, user, is_new_user, **kwargs):
+    if is_new_user:
+        contributor, created = Contributor.objects.get_or_create_from_user(user=user)
+        Commitment.objects.get_or_create(contributor=contributor, question="pledge",
+            defaults={"answer":True})
+        ContributorSurvey.objects.get_or_create(contributor=contributor,
+            survey=Survey.objects.get(form_name="PledgeCard"), entered_by=None)
+logged_in.connect(take_the_pledge)
