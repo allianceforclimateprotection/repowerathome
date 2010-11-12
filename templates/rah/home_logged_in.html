@@ -25,9 +25,12 @@
     <div class="grid_3 omega">
         <div class="box_one_top"></div>
         <div class="box_one_middle">
-            <h3>Commitment Cards</h3>
-            <a href="{% url commitments_card_create %}" class="button commitment_card_open">Enter a card</a><br/>
-            <a href="{% url commitments_show %}">Manage commitment cards</a>
+            <h3>Pledge Cards</h3>
+            <p>
+                You've collected <b>{{ pledge_card_count }}</b> pledge card{{ pledge_card_count|pluralize }}. Learn more
+                about <a href="{% url commitments_show %}">pledge cards</a>.
+            </p>
+            <a href="{% url commitments_card_create %}" class="button commitment_card_open">Enter a pledge card</a>
         </div>
         <div class="box_one_bottom"></div>
         <div class="box_one_top"></div>

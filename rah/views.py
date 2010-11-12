@@ -153,6 +153,7 @@ def index(request):
     my_groups = Group.objects.filter(users=request.user, is_geo_group=False)
     my_events = Event.objects.filter(guest__contributor__user=request.user)
     records = Record.objects.user_records(request.user, 10)
+    pledge_card_count = ContributorSurvey.objects.filter(entered_by=request.user).count()
     
     locals().update(_progress_stats())
     
