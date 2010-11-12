@@ -174,7 +174,7 @@ def _launch_appservers(db_password, db_host, name="staging", environment="stagin
         server.add_tag(key="Cloud", value=name)
     servers = [server]
     if count > 1:
-        servers = servers + _duplicate_appserver(id=server.id, count=count-1)
+        servers = servers + _duplicate_appserver(id=server.id, name, count=count-1)
     return servers
     
 def _duplicate_appserver(id, name, count=1):
