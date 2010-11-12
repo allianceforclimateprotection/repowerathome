@@ -144,7 +144,6 @@ def index(request):
     if not request.user.is_authenticated():
         return logged_out_home(request)
     
-    total_points = request.user.get_profile().total_points
     recommended, committed, completed = Action.objects.actions_by_status(request.user)[1:4]
     twitter_status_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com/"
