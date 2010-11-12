@@ -97,10 +97,10 @@ def _print_mysqlduplicate_alias(name, db_password, servers, host="127.0.0.1"):
     print(green("Add the above setting to your local_settings module and execute:"))
     print(green("\t./mysqlduplicate.py prod %s" % name))
     print(green("Add the following to your fabfile/__init__.py:"))
-    print(green('\t "%s": %s,' % (name, servers)))
+    print(green('\t "%s": %s,' % (name, servers[0])))
     print(green("Finally, execute:"))
-    print(green("\tfab -H %s syncdb [this might not work yet]" % server))
-    print(green("\tfab -H %s restart_app_server" % server))
+    print(green("\tfab -H %s syncdb [this might not work yet]" % servers[0]))
+    print(green("\tfab -H %s restart_app_server" % servers[0]))
     
 def launch_server(environment="staging", instance_type="t1.micro", ami=AMIs["ubuntu-10.10-64"], 
     tag_name=None):
@@ -135,7 +135,7 @@ def launch_cloud(environment="staging", count=1, lb_type="t1.micro", app_type="t
         environment=environment, instance_type=lb_type, ami=ami)
     _print_mysqlduplicate_alias(name, db_password, [a.public_dns_name for a in app_servers], host=rds_endpoint)
     
-def grow_cloud(cloud_name):
+def grow_cloud(cloud_name, count=1):
     server = None;
     for r in env.ec2_conn.get_all_instances():
         i = r.instances[0]
@@ -144,7 +144,8 @@ def grow_cloud(cloud_name):
             break
     if not server:
         abort(red("No master app server in %s can be found." % cloud_name))
-    return _duplicate_appserver(id=server.id, name=cloud_name, count=1)
+    
+    return _duplicate_appserver(id=server.id, name=cloud_name, count=1, instance_type=server.instance_type)
     
 def _launch_rds(id="staging", instance_type="db.m1.small", size="5"):
     "Start up a new RDS, returns a 3-tuple - (RDS, RDS Endpoint, DB Password)"
@@ -174,10 +175,10 @@ def _launch_appservers(db_password, db_host, name="staging", environment="stagin
         server.add_tag(key="Cloud", value=name)
     servers = [server]
     if count > 1:
-        servers = servers + _duplicate_appserver(id=server.id, name=name, count=count-1)
+        servers = servers + _duplicate_appserver(id=server.id, name=name, count=count-1, instance_type=instance_type)
     return servers
     
-def _duplicate_appserver(id, name, count=1):
+def _duplicate_appserver(id, name, count=1, instance_type="t1.micro"):
     image_id = env.ec2_conn.create_image(id, "%s appserver" % name, no_reboot=True)
     image = env.ec2_conn.get_image(image_id)
     _wait_for_resources([image], up_state="available", test_ssh=False)
