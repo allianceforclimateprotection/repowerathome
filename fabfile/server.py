@@ -95,12 +95,8 @@ def _print_mysqlduplicate_alias(name, db_password, servers, host="127.0.0.1"):
             "CAN_REPLACE": True,
         },""" % (name, env.user, servers[0], env.db_name, host, env.db_user, db_password)))
     print(green("Add the above setting to your local_settings module and execute:"))
-    print(green("\t./mysqlduplicate.py prod %s" % name))
-    print(green("Add the following to your fabfile/__init__.py:"))
-    print(green('\t "%s": %s,' % (name, servers[0])))
-    print(green("Finally, execute:"))
+    print(green("\t./mysqlduplicate.py prod %s [if this is a prod environment your creating, remember to copy ALL tables]" % name))
     print(green("\tfab -H %s syncdb [this might not work yet]" % servers[0]))
-    print(green("\tfab -H %s restart_app_server" % servers[0]))
     
 def launch_server(environment="staging", instance_type="t1.micro", ami=AMIs["ubuntu-10.10-64"], 
     tag_name=None):
@@ -183,11 +179,12 @@ def _launch_appservers(db_password, db_host, name="staging", environment="stagin
         server.add_tag(key="Cloud", value=name)
     servers = [server]
     if count > 1:
-        servers = servers + _duplicate_appserver(id=server.id, name=name, count=count-1, instance_type=instance_type)
+        servers = servers + _duplicate_appserver(id=server.id, name=name, count=count-1, 
+            instance_type=instance_type, no_reboot=False)
     return servers
     
-def _duplicate_appserver(id, name, count=1, instance_type="t1.micro"):
-    image_id = env.ec2_conn.create_image(id, "%s appserver" % name, no_reboot=True)
+def _duplicate_appserver(id, name, count=1, instance_type="t1.micro", no_reboot=True):
+    image_id = env.ec2_conn.create_image(id, "%s appserver" % name, no_reboot=no_reboot)
     image = env.ec2_conn.get_image(image_id)
     _wait_for_resources([image], up_state="available", test_ssh=False)
     servers = _launch_ec2_ami(image_id, min_count=count, max_count=count, 
