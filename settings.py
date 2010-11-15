@@ -161,7 +161,7 @@ THUMBNAIL_EXTENSION = '.png'
 
 CODEBASE_USERNAME = 'macgruber'
 
-MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue",)
+MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue", "messaging_sent")
 
 POSTMARK_SENDER = 'noreply@repowerathome.com'
 
