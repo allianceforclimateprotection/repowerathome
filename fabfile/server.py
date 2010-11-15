@@ -136,16 +136,24 @@ def launch_cloud(environment="staging", count=1, lb_type="t1.micro", app_type="t
     _print_mysqlduplicate_alias(name, db_password, [a.public_dns_name for a in app_servers], host=rds_endpoint)
     
 def grow_cloud(cloud_name, count=1):
-    server = None;
+    master_app, loadbalancer = None, None;
     for r in env.ec2_conn.get_all_instances():
         i = r.instances[0]
         if "Master App Server" in i.tags and "Cloud" in i.tags and i.tags["Cloud"] == cloud_name:
-            server = i
+            master_app = i
+        if "Loadbalancer" in i.tags and "Cloud" in i.tags and i.tags["Cloud"] == cloud_name:
+            loadbalancer = i
+        if master_app and loadbalancer:
             break
-    if not server:
+    if not master_app:
         abort(red("No master app server in %s can be found." % cloud_name))
-    
-    return _duplicate_appserver(id=server.id, name=cloud_name, count=1, instance_type=server.instance_type)
+    if not loadbalancer:
+        abort(red("No loadbalancer in %s can be found." % cloud_name))
+    server = _duplicate_appserver(id=master_app.id, name=cloud_name, count=count, instance_type=master_app.instance_type)
+    with settings(host_string=loadbalancer.public_dns_name):
+        sudo("cd /etc/nginx/sites-available && \
+            sed -i -e '/upstream app_servers/{p;s/.*/    server %s:3031;/;}' rah" % master_app.private_ip_address)
+        sudo("/etc/init.d/nginx restart")
     
 def _launch_rds(id="staging", instance_type="db.m1.small", size="5"):
     "Start up a new RDS, returns a 3-tuple - (RDS, RDS Endpoint, DB Password)"
