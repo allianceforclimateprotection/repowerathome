@@ -3,24 +3,6 @@ upstream app_servers {
 }
 
 server {
-    server_name staging.repowerathome.com;
-    include sites-available/rah_base_http;
-    satisfy  any;
-    allow 157.130.44.166;
-    auth_basic            "Restricted";
-    auth_basic_user_file  /home/ubuntu/htpasswd;
-    
-}
-server {
-    server_name staging.repowerathome.com;
-    include sites-available/rah_base_https;
-    satisfy  any;
-    allow 157.130.44.166;
-    auth_basic            "Restricted";
-    auth_basic_user_file  /home/ubuntu/htpasswd;
-}
-
-server {
     server_name repowerathome.com;
     include sites-available/rah_base_http;
 }
@@ -40,4 +22,22 @@ server {
 server {
     server_name _public_dns_name;
     include sites-available/rah_base_https;
+}
+
+server {
+    server_name staging.repowerathome.com;
+    include sites-available/rah_base_http;
+    satisfy  any;
+    allow 157.130.44.166;
+    auth_basic            "Restricted";
+    auth_basic_user_file  /home/ubuntu/htpasswd;
+    
+}
+server {
+    server_name staging.repowerathome.com;
+    include sites-available/rah_base_https;
+    satisfy  any;
+    allow 157.130.44.166;
+    auth_basic            "Restricted";
+    auth_basic_user_file  /home/ubuntu/htpasswd;
 }
