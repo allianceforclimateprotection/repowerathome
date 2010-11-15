@@ -93,5 +93,6 @@ class Command(NoArgsCommand):
             else:
                 transaction.commit(using=db)
         else:
+            transaction.rollback(using=db)
             if verbosity >= 2:
                 print "No SQL migrations to run"
