@@ -55,7 +55,7 @@ def install_requirements():
 def minify():
     "Minify the js and css files"
     require("hosts", "deploy_to")
-    run("cd %(deploy_to)s/static/minify && ./minify.sh" % env)
+    run("cd %(deploy_to)s/static/tools && ./minify.sh" % env)
     
 @runs_once
 def s3sync():
