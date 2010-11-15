@@ -88,7 +88,7 @@
             <div class="box_one_middle">
                 <h3>Share this action</h3>
                 <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=box_count&amp;show_faces=false&amp;width=60&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:60px; height:60px;" allowTransparency="true"></iframe>
-                <a href="http://twitter.com/share" class="twitter-share-button" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+                <a href="http://twitter.com/share" class="twitter-share-button" data-text="{{ action.name }}" data-url="http://repowerathome.com/{{ action.get_absolute_url }}" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
                 {# <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> #}
             </div>
             <div class="box_one_bottom"></div>
