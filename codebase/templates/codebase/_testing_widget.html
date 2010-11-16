@@ -1,8 +1,11 @@
 <div id="testing_widget">
     <div class="right">
-        <a id="testing_widget_tab" class="white" href="#">Open Task{{ ticket_count|pluralize }}</a>
+        <a class="testing_widget_tab white {% if request.session.testing_widget_opened %}hidden{% endif %}" 
+            href="{% url testing_widget_opened %}">Open Task{{ ticket_count|pluralize }}</a>
+        <a class="testing_widget_tab white {% if not request.session.testing_widget_opened %}hidden{% endif %}" 
+            href="{% url testing_widget_closed %}">Close Task{{ ticket_count|pluralize }}</a>
     </div>
-    <div id="testing_feedback_form_container" class="hidden">
+    <div id="testing_feedback_form_container" class="{% if not request.session.testing_widget_opened %}hidden{% endif %}">
         <br/>
         {% include "codebase/_testing_feedback_form.html" %}
     </div>

@@ -3,7 +3,6 @@ from django import forms
 from models import Ticket
 
 class TestingFeedbackForm(forms.Form):
-    # ticket = forms.ChoiceField(choices=[(t.ticket_id, t.summary) for t in Ticket.objects.qa_tickets()])
     ticket_id = forms.IntegerField(widget=forms.HiddenInput)
     works = forms.ChoiceField(choices=(("yes", "yes"), ("no", "no")), widget=forms.RadioSelect, label="Did it work?")
     initials = forms.CharField(label="What's your name?")

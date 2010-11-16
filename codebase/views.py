@@ -22,4 +22,9 @@ def feedback(request):
     form_html= render_to_string("codebase/_testing_feedback_form.html", locals(), RequestContext(request))
     return HttpResponse(json.dumps({"message_html": message_html, "form_html": form_html}), 
         mimetype="text/json")
-    
+
+@require_POST
+@ajax_required
+def set_wiget_state(request, opened=False):
+    request.session["testing_widget_opened"] = opened
+    return HttpResponse(json.dumps({"valid": True}), mimetype="text/json")

@@ -1074,12 +1074,12 @@ var rah = {
     
     mod_testing_widget: {
         init: function () {
-            $("#testing_widget_tab").toggle(function () {
-                $(this).text("Close Tasks");
-                $("#testing_feedback_form_container").show();
-            }, function () {
-                $(this).text("Open Tasks");
-                $("#testing_feedback_form_container").hide();
+            $(".testing_widget_tab").click(function() {
+                var link = $(this);
+                link.hide().siblings().show();
+                $("#testing_feedback_form_container").toggle();
+                $.post(link.attr("href"));
+                return false;
             });
             $("#prev_ticket_control").live("click", function () {
                 rah.mod_testing_widget.move_ticket(-1);
