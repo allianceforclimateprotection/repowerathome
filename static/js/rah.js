@@ -1074,7 +1074,7 @@ var rah = {
     
     mod_testing_widget: {
         init: function () {
-            $(".testing_widget_tab").click(function() {
+            $(".testing_widget_tab").click(function () {
                 var link = $(this);
                 link.hide().siblings().show();
                 $("#testing_feedback_form_container").toggle();
