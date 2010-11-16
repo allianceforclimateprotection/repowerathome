@@ -63,7 +63,7 @@ class TicketManager(models.Manager):
         
     def add_feedback(self, ticket_id, message):
         data = "<ticket-note><content>%s</content></ticket-note>" % message
-        _send_codebase("tickets/%s/notes" % ticket_id, data)
+        return _send_codebase("tickets/%s/notes" % ticket_id, data)
         
 class Ticket(models.Model):
     ticket_id = models.IntegerField(blank=True, null=True)

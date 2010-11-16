@@ -9,12 +9,14 @@ class TestingFeedbackForm(forms.Form):
     initials = forms.CharField(label="What's your name?")
     feedback = forms.CharField(label="Any feedback?", widget=forms.Textarea(attrs={"cols": "25", "rows": "4"}))
     
-    def save(self):
+    def save(self, request):
         ticket_id = self.cleaned_data["ticket_id"]
+        self.cleaned_data["useragent"] = request.META['HTTP_USER_AGENT']
         message = """
 **Initials**:   %(initials)s  
 **Works**:      %(works)s  
 **Feedback**:   %(feedback)s  
+**User Agent**: %(useragent)s  
 """ % self.cleaned_data
-        Ticket.objects.add_feedback(ticket_id, message)
+        return Ticket.objects.add_feedback(ticket_id, message)
     
