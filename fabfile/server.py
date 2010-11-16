@@ -16,6 +16,7 @@ env.disable_known_hosts = True
 
 env.zone = "us-east-1b"
 env.key_name = "acp-ec2"
+env.owner_id = "469777026267"
 
 env.db_name = "rah"
 env.db_user = "rah_db_user"
@@ -145,10 +146,12 @@ def grow_cloud(cloud_name, count=1):
         abort(red("No master app server in %s can be found." % cloud_name))
     if not loadbalancer:
         abort(red("No loadbalancer in %s can be found." % cloud_name))
-    server = _duplicate_appserver(id=master_app.id, name=cloud_name, count=count, instance_type=master_app.instance_type)
+    servers = _duplicate_appserver(id=master_app.id, name=cloud_name, count=count, 
+        instance_type=master_app.instance_type)
     with settings(host_string=loadbalancer.public_dns_name):
-        sudo("cd /etc/nginx/sites-available && \
-            sed -i -e '/upstream app_servers/{p;s/.*/    server %s:3031;/;}' rah" % master_app.private_ip_address)
+        for s in servers:
+            sudo("cd /etc/nginx/sites-available && \
+                sed -i -e '/upstream app_servers/{p;s/.*/    server %s:3031;/;}' rah" % s.private_ip_address)
         sudo("/etc/init.d/nginx restart")
     
 def _launch_rds(id="staging", instance_type="db.m1.small", size="5"):
@@ -184,7 +187,13 @@ def _launch_appservers(db_password, db_host, name="staging", environment="stagin
     return servers
     
 def _duplicate_appserver(id, name, count=1, instance_type="t1.micro", no_reboot=True):
-    image_id = env.ec2_conn.create_image(id, "%s appserver" % name, no_reboot=no_reboot)
+    image_names = [i.name for i in env.ec2_conn.get_all_images(owners=[env.owner_id])]
+    counter = 1
+    while True:
+        if not any("%s-%s appserver" % (name, counter) == n for n in image_names):
+            break;
+        counter += 1
+    image_id = env.ec2_conn.create_image(id, "%s-%s appserver" % (name, counter), no_reboot=no_reboot)
     image = env.ec2_conn.get_image(image_id)
     _wait_for_resources([image], up_state="available", test_ssh=False)
     servers = _launch_ec2_ami(image_id, min_count=count, max_count=count, 
@@ -207,6 +216,7 @@ def _launch_loadbalancer(app_server_ips, name="staging", environment="staging", 
             "PUBLIC_DNS_NAME": server.public_dns_name, 
             "APP_SERVER_IPS": " ".join([ip for ip in app_server_ips]) }
         _bootstrap(shell_vars, command="bootstrap_system; bootstrap_loadbalancer;")
+    server.add_tag(key="Loadbalancer", value="True")
     server.add_tag(key="Name", value="%s loadbalancer" % name)
     server.add_tag(key="Cloud", value=name)
     return server
