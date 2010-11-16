@@ -65,7 +65,7 @@ class EventForm(forms.ModelForm):
             self.fields["zipcode"].initial = self.instance.location.zipcode
         self.fields["start"].initial = datetime.time(18,0)
         self.user = user
-        if not self.user.has_perm("events.host_any_event_type"):
+        if user and not user.has_perm("events.host_any_event_type"):
             self.fields["event_type"].initial = EventType.objects.get(name="Energy Meeting").pk
             self.fields["event_type"].widget = forms.HiddenInput()
     

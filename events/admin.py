@@ -7,7 +7,7 @@ from forms import EventForm
 
 class EventAdminForm(EventForm):
     def __init__(self, *args, **kwargs):
-        super(EventAdminForm, self).__init__(*args, **kwargs)
+        super(EventAdminForm, self).__init__(None, *args, **kwargs)
         if self.instance.location:
             self.fields["city"].initial = self.instance.location.name
             self.fields["state"].initial = self.instance.location.st
@@ -23,6 +23,10 @@ class EventAdmin(admin.ModelAdmin):
     date_hierarchy = "when"
     readonly_fields = ("limit",)
     form = EventAdminForm
+    
+    def save_form(self, request, form, change):
+        form.user = request.user
+        return super(EventAdmin, self).save_form(request, form, change)
     
     def name(self, obj):
         return obj.place_name or obj.__unicode__()
