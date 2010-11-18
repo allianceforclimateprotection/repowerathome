@@ -18,10 +18,10 @@ def _send_codebase(path, data=None):
     request = urllib2.Request(url, data, headers)
     return urllib2.urlopen(request).read()
 
-@runs_once    
+@runs_once
 def codebase_deployment():
     "Notify codebase that a new revision has been deployed"
-    require("sha", "environment", "revision", provided_by=DEPLOY_SERVERS)
+    require("sha", "environment", "revision")
     repository = re.search("git\@codebasehq\.com:.*\/.*\/(.*)\.git", env.repository).group(1)
 
     xml = []
