@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}Message Previews{% endblock %}
+
+{% block extrahead %}
+    <script type="text/javascript" src="/media/js/jquery.min.js"></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="../../">Home</a>
+        &rsaquo;
+        <a href="../">Messaging</a>
+        &rsaquo;
+        <a href="">Messages</a>
+        &rsaquo;
+        Previews
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div id="content-main">
+        <h1>Message Previews</h1>
+        {% for name, message in previews %}
+            <h3>{{ name }}</h3>
+            <div class="message" style="width: 600px;">{{ message|safe }}</div>
+            <hr/>
+        {% endfor %}
+    </div>
+{% endblock %}

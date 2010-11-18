@@ -93,6 +93,7 @@ class Message(models.Model):
     @transaction.commit_manually
     def clean(self):
         from django.core.exceptions import ValidationError
+        examples = []
         for ct in self.content_types.all():
             for eco in ExampleContentObject.objects.filter(content_type=ct):
                 if hasattr(eco.content_object, "content_object"):
@@ -101,13 +102,15 @@ class Message(models.Model):
                     if generic_relation != self.generic_relation_content_type:
                         continue
                 try:
-                    for email, user_object in self.recipients(eco.content_object):
-                        self.render_message(eco.content_object, email, user_object)
+                    for address, user_object in self.recipients(eco.content_object):
+                        email = self.render_message(eco.content_object, address, user_object)
+                        examples.append(Sent(message=self, recipient=address, email=email))
                 except Exception, e:
                     transaction.rollback()
                     raise ValidationError(str(e))
                 else:
                     transaction.rollback()
+        return examples
     
     def natural_key(self):
         return [self.name]
