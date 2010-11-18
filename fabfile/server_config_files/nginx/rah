@@ -2,6 +2,7 @@ upstream app_servers {
     _upstream_servers
 }
 
+# repowerathome.com
 server {
     server_name repowerathome.com;
     include sites-available/rah_base_http;
@@ -15,6 +16,7 @@ server {
     rewrite ^(.*)$ http://repowerathome.com$1 permanent;
 }
 
+# ec2 public dns name
 server {
     server_name _public_dns_name;
     include sites-available/rah_base_http;
@@ -24,6 +26,7 @@ server {
     include sites-available/rah_base_https;
 }
 
+# staging.repowerathome.com
 server {
     server_name staging.repowerathome.com;
     include sites-available/rah_base_http;
@@ -40,4 +43,10 @@ server {
     allow 157.130.44.166;
     auth_basic            "Restricted";
     auth_basic_user_file  /home/ubuntu/htpasswd;
+}
+
+# Redirects for net and org
+server {
+    server_name .repowerathome.net .repowerathome.org;
+    rewrite ^(.*)$ http://repowerathome.com$1 permanent;
 }
