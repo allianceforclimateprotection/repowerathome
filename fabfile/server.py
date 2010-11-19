@@ -32,26 +32,17 @@ if not (env.aws_key and env.aws_secret):
     abort(red("You must set RAH_AWS_ACCESS_KEY and RAH_AWS_SECRET_KEY in your environment."))
 env.ec2_conn = boto.connect_ec2(env.aws_key, env.aws_secret)
 env.rds_conn = boto.connect_rds(env.aws_key, env.aws_secret)
+env.security_groups = dict([(sg.name, sg) for sg in env.ec2_conn.get_all_security_groups()])
 
 DEFAULT_BOOTSTRAP_SCRIPT = "fabfile/bootstrap.sh"
 DEFAULT_USER_DATA_FILE = "fabfile/user_data.sh"
 
-def _security_groups():
-    "Add a list of available security groups to the environment"
-    return dict([(sg.name, sg) for sg in env.ec2_conn.get_all_security_groups()])
-env.security_groups = _security_groups()
-
 def _generate_password(length=36):
     return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(length)])
-
-def _associate_ip(instance, ip):
-    address = boto.ec2.address.Address(instance.connection, ip)
-    if address.instance_id:
-        if not confirm("%s is already associated with %s, are you sure you want to do this?"):
-            return
-        address.disassociate()
-    address.associate(instance.id)
-    
+   
+def _slugify(value):
+    return value.replace(" ", "-")
+ 
 def _launch_ec2_ami(ami, *args, **kwargs):
     kwargs["placement"] = env.zone
     user_data_file = kwargs.pop("user_data_file", None)
@@ -85,7 +76,8 @@ def _bootstrap(shell_vars=None, command="bootstrap_system;", script=DEFAULT_BOOT
     sudo("%s && echo '. %s; %s' | bash" % (var_exports, remote_script, command))
     run("rm %s" % remote_script)
     
-def _print_mysqlduplicate_alias(name, db_password, servers, host="127.0.0.1"):
+def _print_mysqlduplicate_alias(cloud_name, db_password, host):
+    appserver_master_ip = get_cloud_instances(cloud_name, "appserver_master")[0].public_dns_name
     print(green("""
         "%s": {
             "SERVER": "%s@%s",
@@ -94,106 +86,139 @@ def _print_mysqlduplicate_alias(name, db_password, servers, host="127.0.0.1"):
             "USER": "%s",
             "PASSWORD": "%s",
             "CAN_REPLACE": True,
-        },""" % (name, env.user, servers[0], env.db_name, host, env.db_user, db_password)))
+        },""" % (cloud_name, env.user, appserver_master_ip, env.db_name, host, env.db_user, db_password)))
     print(green("Add the above setting to your local_settings module and execute:"))
-    print(green("\t./mysqlduplicate.py prod %s [if this is a prod environment your creating, remember to copy ALL tables]" % name))
-    print(green("\tfab -H %s syncdb [this might not work yet]" % servers[0]))
+    print(green("\t./mysqlduplicate.py prod %s [if this is a prod environment your creating, remember to copy ALL tables]" % cloud_name))
+    print(green("\tfab -H %s syncdb" % appserver_master_ip))
     
-def launch_server(environment="staging", instance_type="t1.micro", ami=AMIs["ubuntu-10.10-64"], 
-    tag_name=None):
+def launch_server(cloud_name, environment="staging", instance_type="t1.micro", ami=AMIs["ubuntu-10.10-64"]):
     "launch a new server"
-    tag_name = tag_name.replace(" ", "-") if tag_name else None
-    name = tag_name or environment
+    cloud_name = _slugify(cloud_name)
     instance = _launch_ec2_ami(ami, instance_type=instance_type, security_groups=(
-        env.security_groups["ssh_access"], env.security_groups["load_balancers"],
+        env.security_groups["ssh_access"], 
+        env.security_groups["load_balancers"],
         env.security_groups["app_servers"])).instances[0]
     _wait_for_resources([instance])
-    instance.add_tag(key="Name", value="%s" % tag_name if tag_name else environment)
+    instance.add_tag(key="cloud_name", value=cloud_name)
+    instance.add_tag(key="roles", value="appserver,appserver_master,loadbalancer")
     with settings(host_string=instance.public_dns_name):
         db_password = _generate_password()
-        shell_vars = { "AWS_ACCESS_KEY": env.aws_key, "AWS_SECRET_KEY": env.aws_secret, 
-            "PUBLIC_DNS_NAME": instance.public_dns_name, "APP_SERVER_IPS": instance.private_ip_address,
-            "DB_PASSWORD": db_password, "ENVIRONMENT": environment, "DB_NAME": env.db_name,
-            "DB_USER": env.db_user }
+        shell_vars = { 
+            "AWS_ACCESS_KEY": env.aws_key, 
+            "AWS_SECRET_KEY": env.aws_secret, 
+            "PUBLIC_DNS_NAME": instance.public_dns_name, 
+            "APP_SERVER_IPS": instance.private_ip_address,
+            "DB_PASSWORD": db_password, 
+            "ENVIRONMENT": environment, 
+            "DB_NAME": env.db_name,
+            "DB_USER": env.db_user
+        }
         _bootstrap(shell_vars=shell_vars, 
             command="bootstrap_system; bootstrap_database; bootstrap_appserver; bootstrap_loadbalancer;")
         install_requirements()
-    _print_mysqlduplicate_alias(name, db_password, [instance.public_dns_name])
+    _print_mysqlduplicate_alias(name, db_password, "127.0.0.1")
 
-def launch_cloud(environment="staging", count=1, lb_type="t1.micro", app_type="t1.micro", 
-        rds_type="db.m1.small", ami=AMIs["ubuntu-10.10-64"], tag_name=None):
+def launch_cloud(cloud_name, environment="staging", count=1, lb_type="t1.micro", app_type="t1.micro", 
+        rds_type="db.m1.small", ami=AMIs["ubuntu-10.10-64"]):
     "launch a new cloud (loadbalancer, appserver(s) and RDS)"
-    tag_name = tag_name.replace(" ", "-") if tag_name else None
-    name = tag_name or environment
-    rds, rds_endpoint, db_password = _launch_rds(id=name, instance_type=rds_type)
-    app_servers = _launch_appservers(db_password, rds_endpoint, name=name, environment=environment,
-        count=count, instance_type=app_type, ami=ami)
-    lb_server = _launch_loadbalancer([s.private_ip_address for s in app_servers], name=name, 
-        environment=environment, instance_type=lb_type, ami=ami)
-    _print_mysqlduplicate_alias(name, db_password, [a.public_dns_name for a in app_servers], host=rds_endpoint)
+    cloud_name = _slugify(cloud_name)
+    db_host, db_password = _launch_rds(cloud_name, rds_type)
+    _launch_appservers(cloud_name, db_password, db_host, environment, count, app_type, ami)
+    _launch_loadbalancer(cloud_name, ami, lb_type)
+    nginx_upsteam_update(cloud_name)
+    memcached_pool_update(cloud_name)
+    _print_mysqlduplicate_alias(cloud_name, db_password, db_host)
     
 def grow_cloud(cloud_name, count=1):
-    master_app, loadbalancer = None, None;
-    for r in env.ec2_conn.get_all_instances():
-        i = r.instances[0]
-        if "Master App Server" in i.tags and "Cloud" in i.tags and i.tags["Cloud"] == cloud_name:
-            master_app = i
-        if "Loadbalancer" in i.tags and "Cloud" in i.tags and i.tags["Cloud"] == cloud_name:
-            loadbalancer = i
-        if master_app and loadbalancer:
-            break
-    if not master_app:
-        abort(red("No master app server in %s can be found." % cloud_name))
-    if not loadbalancer:
-        abort(red("No loadbalancer in %s can be found." % cloud_name))
-    servers = _duplicate_appserver(id=master_app.id, name=cloud_name, count=count, 
-        instance_type=master_app.instance_type)
-    with settings(host_string=loadbalancer.public_dns_name):
-        for s in servers:
-            sudo("cd /etc/nginx/sites-available && \
-                sed -i -e '/upstream app_servers/{p;s/.*/    server %s:3031;/;}' rah" % s.private_ip_address)
-        sudo("/etc/init.d/nginx restart")
+    appserver_master = get_cloud_instances(cloud_name, "appserver_master")[0]
+    _duplicate_appserver(appserver_master.id, cloud_name, appserver_master.instance_type, count)
+    nginx_upsteam_update(cloud_name)
+    memcached_pool_update(cloud_name)
     
-def _launch_rds(id="staging", instance_type="db.m1.small", size="5"):
+def get_cloud_instances(cloud_name, role):
+    """
+    Get a list of attributes from instances in a given cloud.
+    attr: some attribute of an instance. e.g.: id, ip_address, public_dns_name, private_ip_address, private_dns_name
+    role: specify a role defined in roles. e.g.: "loadbalancer", "appserver", "appserver_master"
+    """
+    instances = []
+    reservations = env.ec2_conn.get_all_instances()
+        
+    for res in reservations:
+        instance = res.instances[0]
+        tags = instance.tags
+        if "cloud_name" in tags and tags["cloud_name"] == cloud_name \
+            and "roles" in tags and role in tags["roles"].split(","):
+            instances.append(instance)
+    
+    if not instances:
+        abort(red("No instances found in %s." % cloud_name))
+    
+    return instances
+
+def nginx_upsteam_update(cloud_name):
+    loadbalancers = get_cloud_instances(cloud_name, "loadbalancer")
+    app_servers = get_cloud_instances(cloud_name, "appserver")
+    app_ips = " ".join(["server %s:3031;" % inst.private_ip_address for inst in app_servers])
+    
+    for loadbalancer in loadbalancers:
+        with settings(host_string=loadbalancer.public_dns_name):
+            sudo("sed -i 's/server .*;/%s/' /etc/nginx/sites-available/rah" % app_ips)
+            sudo("/etc/init.d/nginx reload")
+                
+def memcached_pool_update(cloud_name):
+    app_servers = get_cloud_instances(cloud_name, "appserver")
+    memcached_ips = ";".join(["%s:11211" % inst.private_ip_address for inst in app_servers])
+    
+    for appserver in app_servers:
+        with settings(host_string=appserver.public_dns_name):
+            run("sed -i 's/\(CACHE_BACKEND.*\/\/\).*\(\/.*\)/\\1%s\\2/' /home/ubuntu/webapp/settings.py" % memcached_ips)
+            run("echo 'flush_all' | nc localhost 11211")
+            sudo("stop uwsgi")
+            sudo("start uwsgi")
+    
+def _launch_rds(id, instance_type, size="5"):
     "Start up a new RDS, returns a 3-tuple - (RDS, RDS Endpoint, DB Password)"
-    db_password = _generate_password()
-    rds_endpoint = rds_endpoint = "%s.co6ulcbqxe1u.us-east-1.rds.amazonaws.com" % id
+    password = _generate_password()
+    host = "%s.co6ulcbqxe1u.us-east-1.rds.amazonaws.com" % id
     rds = env.rds_conn.create_dbinstance(id=id, allocated_storage=size, instance_class=instance_type,
-        master_username=env.db_user, master_password=db_password, db_name=env.db_name, security_groups=["default"],
+        master_username=env.db_user, master_password=password, db_name=env.db_name, security_groups=["default"],
         param_group="rah", availability_zone=env.zone, preferred_maintenance_window="Sun:10:00-Sun:14:00",
         preferred_backup_window="08:00-10:00", backup_retention_period=7)
-    return (rds, rds_endpoint, db_password)
+    return (host, password)
         
-def _launch_appservers(db_password, db_host, name="staging", environment="staging", count=1, 
-    instance_type="t1.micro", ami=AMIs["ubuntu-10.10-64"]):
+def _launch_appservers(cloud_name, db_password, db_host, environment, count, instance_type, ami):
     "Start up a set of new app servers"
     count = int(count)
     server = _launch_ec2_ami(ami, min_count=1, max_count=1, instance_type=instance_type,
         security_groups=(env.security_groups["ssh_access"], env.security_groups["app_servers"])).instances[0]
     _wait_for_resources([server])
+    server.add_tag(key="roles", value="appserver,appserver_master")
+    server.add_tag(key="cloud_name", value=cloud_name)
     with settings(host_string=server.public_dns_name):
-        shell_vars = { "AWS_ACCESS_KEY": env.aws_key, "AWS_SECRET_KEY": env.aws_secret, 
+        shell_vars = { 
+            "AWS_ACCESS_KEY": env.aws_key, 
+            "AWS_SECRET_KEY": env.aws_secret, 
             "PUBLIC_DNS_NAME": server.public_dns_name, 
-            "DB_PASSWORD": db_password, "ENVIRONMENT": environment, "DB_NAME": env.db_name,
-            "DB_USER": env.db_user, "DB_HOST": db_host }
+            "DB_PASSWORD": db_password, 
+            "ENVIRONMENT": environment, 
+            "DB_NAME": env.db_name,
+            "DB_USER": env.db_user, 
+            "DB_HOST": db_host 
+        }
         _bootstrap(shell_vars=shell_vars, command="bootstrap_system; bootstrap_appserver;")
-        server.add_tag(key="Master App Server", value="True")
-        server.add_tag(key="Name", value="%s appserver" % name)
-        server.add_tag(key="Cloud", value=name)
-    servers = [server]
+
     if count > 1:
-        servers = servers + _duplicate_appserver(id=server.id, name=name, count=count-1, 
-            instance_type=instance_type, no_reboot=False)
-    return servers
+        _duplicate_appserver(server.id, cloud_name, instance_type, count-1, no_reboot=False)
     
-def _duplicate_appserver(id, name, count=1, instance_type="t1.micro", no_reboot=True):
+def _duplicate_appserver(id, cloud_name, instance_type, count, no_reboot=True):
     image_names = [i.name for i in env.ec2_conn.get_all_images(owners=[env.owner_id])]
     counter = 1
     while True:
-        if not any("%s-%s appserver" % (name, counter) == n for n in image_names):
+        if not any("%s-%s appserver" % (cloud_name, counter) == n for n in image_names):
             break;
         counter += 1
-    image_id = env.ec2_conn.create_image(id, "%s-%s appserver" % (name, counter), no_reboot=no_reboot)
+    image_id = env.ec2_conn.create_image(id, "%s-%s appserver" % (cloud_name, counter), no_reboot=no_reboot)
     image = env.ec2_conn.get_image(image_id)
     _wait_for_resources([image], up_state="available", test_ssh=False)
     servers = _launch_ec2_ami(image_id, min_count=count, max_count=count, 
@@ -201,22 +226,23 @@ def _duplicate_appserver(id, name, count=1, instance_type="t1.micro", no_reboot=
         env.security_groups["app_servers"])).instances
     _wait_for_resources(servers)
     for s in servers:
-        s.add_tag(key="Name", value="%s appserver" % name)
-        s.add_tag(key="Cloud", value=name)
+        s.add_tag(key="roles", value="appserver")
+        s.add_tag(key="cloud_name", value=cloud_name)
     return servers
     
-def _launch_loadbalancer(app_server_ips, name="staging", environment="staging", instance_type="t1.micro",
-    ami=AMIs["ubuntu-10.10-64"]):
-    "Start up a new load balancer server"
+def _launch_loadbalancer(cloud_name, ami, instance_type):
+    "Start up a new load balancer server"    
     server = _launch_ec2_ami(ami, instance_type=instance_type, security_groups=(
         env.security_groups["ssh_access"], env.security_groups["load_balancers"])).instances[0]
     _wait_for_resources([server])
+    server.add_tag(key="roles", value="loadbalancer")
+    server.add_tag(key="cloud_name", value=cloud_name)
+    
     with settings(host_string=server.public_dns_name):
-        shell_vars = { "AWS_ACCESS_KEY": env.aws_key, "AWS_SECRET_KEY": env.aws_secret, 
-            "PUBLIC_DNS_NAME": server.public_dns_name, 
-            "APP_SERVER_IPS": " ".join([ip for ip in app_server_ips]) }
+        shell_vars = { 
+            "AWS_ACCESS_KEY": env.aws_key, 
+            "AWS_SECRET_KEY": env.aws_secret, 
+            "PUBLIC_DNS_NAME": server.public_dns_name
+        }
         _bootstrap(shell_vars, command="bootstrap_system; bootstrap_loadbalancer;")
-    server.add_tag(key="Loadbalancer", value="True")
-    server.add_tag(key="Name", value="%s loadbalancer" % name)
-    server.add_tag(key="Cloud", value=name)
-    return server
+    
