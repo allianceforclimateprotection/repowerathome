@@ -256,50 +256,14 @@ function install_local_settings {
     USER_HOME=`get_user_home ubuntu`
     sudo -u "ubuntu" touch "$USER_HOME/webapp/local_settings.py"
     sudo -u "ubuntu" cat > "$USER_HOME/webapp/local_settings.py" << EOF
-DEBUG = False
-TEMPLATE_DEBUG = DEBUG
-SEND_BROKEN_LINK_EMAILS = not DEBUG
-IGNORABLE_404_ENDS = ("ga.js/", "b.js/",)
-
-INTERNAL_IPS = ("127.0.0.1", "157.130.44.166")
-
-ADMINS = (
-    ('Server Errors', 'servererrors@repowerathome.com'),
-)
-MANAGERS = ADMINS
-
-DATABASE_ENGINE   = 'mysql'
-DATABASE_NAME     = 'rah'
-DATABASE_USER     = 'rah_db_user'
-DATABASE_PASSWORD = "$DB_PASSWORD"
-DATABASE_HOST     = "$DB_HOST"
-DATABASE_PORT     = "$DB_PORT"
-
-# Email Settings
-EMAIL_HOST = "localhost"
-DEFAULT_FROM_EMAIL = "Repower at Home <noreply@repowerathome.com>"
-SERVER_EMAIL = DEFAULT_FROM_EMAIL
-EMAIL_USE_TLS = True
-EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
-POSTMARK_API_KEY = '_postmark_api_key'
-
-MEDIA_URL = 'http://_s3_bucket_name/'
-MEDIA_URL_HTTPS = 'https://s3.amazonaws.com/_s3_bucket_name/'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-# Secrets and Keys
-SECRET_KEY = '_secret_key'
-AWS_BUCKET_NAME = '_s3_bucket_name'
-AWS_STORAGE_BUCKET_NAME = AWS_BUCKET_NAME
-AWS_ACCESS_KEY_ID = "$AWS_ACCESS_KEY"
-AWS_SECRET_ACCESS_KEY = "$AWS_SECRET_KEY"
-TWITTER_CONSUMER_KEY = '_twitter_consumer_key'
-TWITTER_CONSUMER_SECRET = '_twitter_consumer_secret'
-FACEBOOK_APPID = '_facebook_appid'
-FACEBOOK_SECRET = '_facebook_secret'
-CODEBASE_APIKEY = '_codebase_apikey'
+::server_config_files/local_settings_template.py::
 EOF
-    sed -i "s/_s3_bucket_name/`echo $ENVIRONMENT`.static.repowerathome.com/" "$USER_HOME/webapp/local_settings.py"
+    sed -i "s/_s3_bucket_name/`echo $ENVIRONMENT`.static.repowerathome.com/g" "$USER_HOME/webapp/local_settings.py"
+    sed -i "s|_aws_secret_key|`echo $AWS_SECRET_KEY`|g" "$USER_HOME/webapp/local_settings.py"
+    sed -i "s/_aws_access_key/`echo $AWS_ACCESS_KEY`/g" "$USER_HOME/webapp/local_settings.py"
+    sed -i "s/_db_password/`echo $DB_PASSWORD`/g" "$USER_HOME/webapp/local_settings.py"
+    sed -i "s/_db_host/`echo $DB_HOST`/g" "$USER_HOME/webapp/local_settings.py"
+    sed -i "s/_db_port/`echo $DB_PORT`/g" "$USER_HOME/webapp/local_settings.py"
 
     s3_key_replacement "django/secret_key" "$USER_HOME/webapp/local_settings.py" "_secret_key"
     s3_key_replacement "django/postmark_api_key" "$USER_HOME/webapp/local_settings.py" "_postmark_api_key"
@@ -354,12 +318,6 @@ EOF
     update-rc.d nginx defaults
     
     sed -i "s/_public_dns_name/`echo $PUBLIC_DNS_NAME`/" /etc/nginx/sites-available/*
-    APPSERVER_ADDRESSES=""
-    for server in $APP_SERVER_IPS
-    do
-        APPSERVER_ADDRESSES="$APPSERVER_ADDRESSES server $server:3031;"
-    done
-    sed -i "s/_upstream_servers/`echo $APPSERVER_ADDRESSES`/" /etc/nginx/sites-available/*
     ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah
 }
 
