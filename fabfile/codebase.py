@@ -6,9 +6,9 @@ from fabric.api import env, local, runs_once, require
 
 def _send_codebase(path, data=None):
     "POST the given data message to the codebase API, if no data is provided GET"
-    match = re.search("git\@codebasehq\.com:(.*)\/(.*)\/.*\.git", env.repository)
-    domain = "%s.codebasehq.com" % match.group(1)
-    project = match.group(2)
+    match = re.search("git\@(codebasehq.*):(.*)\/(.*)\/.*\.git", env.repository)
+    domain = "%s.%s" % (match.group(2), match.group(1))
+    project = match.group(3)
     username = local("git config codebase.username").strip()
     api_key = local("git config codebase.apikey").strip()
     
@@ -22,11 +22,11 @@ def _send_codebase(path, data=None):
 def codebase_deployment():
     "Notify codebase that a new revision has been deployed"
     require("sha", "environment", "revision")
-    repository = re.search("git\@codebasehq\.com:.*\/.*\/(.*)\.git", env.repository).group(1)
+    repository = re.search("git\@codebasehq.*:.*\/.*\/(.*)\.git", env.repository).group(1)
 
     xml = []
     xml.append("<deployment>")
-    xml.append("<servers>%s</servers>" % ",".join(env.hosts))
+    xml.append("<servers>%s</servers>" % ",".join(env.all_hosts))
     xml.append("<revision>%(sha)s</revision>" % env)
     xml.append("<environment>%(environment)s</environment>" % env)
     xml.append("<branch>%(revision)s</branch>" % env)
