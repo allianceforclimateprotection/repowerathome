@@ -1,0 +1,84 @@
+.white     { color: #FFFFFF !important;}
+a { color: #388ca0; text-decoration: none; }
+a:hover { text-decoration:underline; }
+a:active { color: #6EC3D1; text-decoration:underline; }
+.right {text-align:right;}
+.smaller {font-size:12px;}
+.hidden { display: none;}
+.error   { color: #D8000C; background-color: #FFBABA; }
+.form_row {
+    padding: 18px 0;
+    width: 320px;
+    position: relative; }
+.form_row input, .form_row textarea {
+    width: 100%;
+    border: 1px #A1D3E4 solid;
+    padding: 4px;
+    font-size: 14px;
+    color: #333;
+    background: #fff url(../images/theme/input_text_background.png?0000000006) repeat-x;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px; }
+.form_row li label { position: relative; }
+.form_row li input { width: inherit; }
+.form_row input[type="file"] { height: 24px; }
+.form_row input[type="checkbox"] { width: 15px; }
+.form_row input[type="checkbox"] + label { 
+    position: relative;
+    margin-left: 5px;
+    top: -4px;
+}
+.form_row li { margin-left: 15px; }
+.form_row[class~="error"] { background: transparent; }
+.form_row input.error, 
+.form_row[class~="error"] input,
+.form_row textarea.error,
+.form_row[class~="error"] textarea {
+    color: #DE6060;
+    background: #FEDEDE url(../images/theme/input_text_error_background.png?0000000006) repeat-x; }
+.form_row label {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    position: absolute;
+    font-weight:bold;
+    color: #555;
+    top: 0;
+    left: 0; }
+.form_row .help_text { font-size: 12px; color: grey; }
+.form_row label.error {
+    color: #DE6060;
+    position: static;
+    background-color: transparent; }
+.overset { position: relative;}
+.overset_form_message[class~="error"] {
+    color: #DE6060;
+    background-color: transparent;
+    width: 320px;}
+
+.form_row_float {float:left; width:148px;}
+.form_row_float_left_field {margin-right:24px;}
+#testing_widget {
+    position: fixed;
+    right: 0;
+    top: 0px;
+    padding: 0 18px;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.6);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+}
+#testing_widget .ticket_controls { position:relative; text-align:center; }
+#prev_ticket_control {float:left;}
+#next_ticket_control {float:right;}
+#testing_feedback_form {width: 189px;}
+#testing_feedback_form #id_initials, #testing_feedback_form #id_feedback { width: 178px; }
+#ticket_submit { width: 100% }
+#testing_feedback_form .form_row li { float: left; }
+#testing_feedback_form label {
+    font-weight: bold;
+}
+#testing_feedback_form #id_initials, #testing_feedback_form #id_feedback { width: 167px; }
+#testing_feedback_form .form_row li { float: left; }
+#testing_feedback_form label {color:#FFF;}
+#tickets .ticket { background-color:#FFFFFF; padding: 9px; }
+#tickets .ticket div { max-height:162px; overflow:auto; }
