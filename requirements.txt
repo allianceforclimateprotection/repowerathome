@@ -1,10 +1,10 @@
 BeautifulSoup==3.1.0.1
 Django==1.2.3
-Fabric==0.9.1
+Fabric==0.9.3
 Markdown==2.0.3
 MySQL-python==1.2.3
 PIL==1.1.7
-boto==2.0b1
+boto==2.0b3
 django-tagging==0.3.1
 easy-thumbnails==1.0-alpha-8
 -e git+http://github.com/django-extensions/django-extensions.git#egg=django_extensions
