@@ -112,4 +112,4 @@ def deploy(revision=None, code_only=False, sync_media=True):
     restart_app_server()
     disable_maintenance_page()
     codebase_deployment()
-    print(green("%(revision)s has been deployed to %(hosts)s" % env))
+    print(green("%(revision)s has been deployed to %(environment)s" % env))

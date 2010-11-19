@@ -1,4 +1,5 @@
 {% extends "admin/base.html" %}
+{% load dated_static %}
 
 {% block title %}{{ title }} | Repower at Home site admin{% endblock %}
 
@@ -7,3 +8,13 @@
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
+
+{% block footer %}
+    {{ super }}
+    <link rel="stylesheet" href="{% dated_static 'css/testing_widget.css' %}" type="text/css" media="screen" charset="utf-8"/>
+    {% if testing_feedback_form %}
+        {% include 'codebase/_testing_widget.html' %}
+    {% endif %}
+    <script type="text/javascript" src="/media/js/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/testing_widget.js' %}"></script>
+{% endblock %}
