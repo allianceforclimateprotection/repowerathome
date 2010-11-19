@@ -103,8 +103,9 @@ class Message(models.Model):
                         continue
                 try:
                     for address, user_object in self.recipients(eco.content_object):
-                        email = self.render_message(eco.content_object, address, user_object)
-                        examples.append(Sent(message=self, recipient=address, email=email))
+                        if address:
+                            email = self.render_message(eco.content_object, address, user_object)
+                            examples.append(Sent(message=self, recipient=address, email=email))
                 except Exception, e:
                     transaction.rollback()
                     raise ValidationError(str(e))
