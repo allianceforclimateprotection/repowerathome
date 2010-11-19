@@ -1,5 +1,5 @@
 upstream app_servers {
-    _upstream_servers
+    server 127.0.0.1:3031;
 }
 
 # repowerathome.com
