@@ -16,7 +16,7 @@ env.deploy_to = "/home/%(user)s/webapp" % env
 env.parent = "origin"
 env.revision = "HEAD"
 env.sha = query_revision(env.revision)
-env.repository = "git@codebasehq-deploy:rah/rah/rah.git"
+env.repository = "git@codebasehq.com:rah/rah/rah.git"
 
 def staging():
     env.roles = ["staging"]
