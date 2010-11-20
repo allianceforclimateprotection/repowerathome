@@ -73,7 +73,7 @@ def _bootstrap(shell_vars=None, command="bootstrap_system;", script=DEFAULT_BOOT
     put(temp.name, remote_script)
     temp.close()
     var_exports = " && ".join(['export %s="%s"' % (k,v) for k,v in shell_vars.items()])
-    sudo("%s && echo '. %s; %s' | bash" % (var_exports, remote_script, command))
+    sudo("%s && source %s && %s" % (var_exports, remote_script, command))
     run("rm %s" % remote_script)
     
 def _print_mysqlduplicate_alias(cloud_name, db_password, host):
@@ -116,7 +116,7 @@ def launch_server(cloud_name, environment="staging", instance_type="t1.micro", a
         _bootstrap(shell_vars=shell_vars, 
             command="bootstrap_system; bootstrap_database; bootstrap_appserver; bootstrap_loadbalancer;")
         install_requirements()
-    _print_mysqlduplicate_alias(name, db_password, "127.0.0.1")
+    _print_mysqlduplicate_alias(cloud_name, db_password, "127.0.0.1")
 
 def launch_cloud(cloud_name, environment="staging", count=1, lb_type="t1.micro", app_type="t1.micro", 
         rds_type="db.m1.small", ami=AMIs["ubuntu-10.10-64"]):
