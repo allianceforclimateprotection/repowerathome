@@ -66,6 +66,7 @@ a:active { color: #6EC3D1; text-decoration:underline; }
     background-color: rgba(0, 0, 0, 0.6);
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+    z-index: 2000;
 }
 #testing_widget .ticket_controls { position:relative; text-align:center; }
 #prev_ticket_control {float:left;}
