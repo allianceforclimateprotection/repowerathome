@@ -54,8 +54,9 @@ class ContributorAdmin(GenericFilterAdmin):
             choices = [(selected is None,
                    cl.get_query_string({}, ['contributorsurvey__entered_by']),
                    'All')]
-            collectors = ContributorSurvey.objects.distinct().filter(entered_by__isnull=False).values_list(
-                "entered_by_id", "entered_by__first_name", "entered_by__last_name")
+            collectors = ContributorSurvey.objects.distinct().filter(entered_by__isnull=False,
+                contributor__in=cl.query_set).values_list("entered_by_id", 
+                "entered_by__first_name", "entered_by__last_name")
             for id, first_name, last_name in collectors:
                 choices.append((selected == str(id),
                        cl.get_query_string({'contributorsurvey__entered_by': id}),
