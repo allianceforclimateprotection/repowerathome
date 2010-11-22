@@ -6,7 +6,7 @@ from geo.models import Location
 
 class ContributorForm(forms.ModelForm):
     
-    zipcode = forms.CharField(max_length=10, required=False, help_text="Leave blank if not a US resident", label="Zipcode (US residents only)")
+    zipcode = forms.CharField(max_length=10, required=False, help_text="Leave blank if you're not a US resident", label="Zipcode")
     email = forms.EmailField(label='Email', widget=forms.TextInput, required=False)
     first_name = forms.CharField(min_length=2)
     
