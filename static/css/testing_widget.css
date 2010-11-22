@@ -1,3 +1,5 @@
+/* Forms and misc */
+
 .white     { color: #FFFFFF !important;}
 a { color: #388ca0; text-decoration: none; }
 a:hover { text-decoration:underline; }
@@ -28,7 +30,7 @@ a:active { color: #6EC3D1; text-decoration:underline; }
     margin-left: 5px;
     top: -4px;
 }
-.form_row li { margin-left: 15px; }
+.form_row li { margin-right: 12px; margin-left: 0px; }
 .form_row[class~="error"] { background: transparent; }
 .form_row input.error, 
 .form_row[class~="error"] input,
@@ -57,6 +59,10 @@ a:active { color: #6EC3D1; text-decoration:underline; }
 
 .form_row_float {float:left; width:148px;}
 .form_row_float_left_field {margin-right:24px;}
+.form_row ul li {list-style-type: none !important;}
+
+/* Testing Widget Specific*/
+
 #testing_widget {
     position: fixed;
     right: 0;
@@ -68,17 +74,18 @@ a:active { color: #6EC3D1; text-decoration:underline; }
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
     z-index: 2000;
 }
+
 #testing_widget .ticket_controls { position:relative; text-align:center; }
 #prev_ticket_control {float:left;}
 #next_ticket_control {float:right;}
 #testing_feedback_form {width: 189px;}
-#testing_feedback_form #id_initials, #testing_feedback_form #id_feedback { width: 178px; }
-#ticket_submit { width: 100% }
+#testing_feedback_form #id_name, #testing_feedback_form #id_feedback { width: 190px; }
+#ticket_submit { width: 190px; }
 #testing_feedback_form .form_row li { float: left; }
 #testing_feedback_form label {
     font-weight: bold;
 }
-#testing_feedback_form #id_initials, #testing_feedback_form #id_feedback { width: 167px; }
+#testing_feedback_form #id_name, #testing_feedback_form #id_feedback { width: 179px; }
 #testing_feedback_form .form_row li { float: left; }
 #testing_feedback_form label {color:#FFF;}
 #tickets .ticket { background-color:#FFFFFF; padding: 9px; }

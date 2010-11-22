@@ -574,35 +574,6 @@ Commitments Commitments Commitments Commitments Commitments Commitments Commitme
 .commit_card_choice {width:128px;}
 .commit_card_choice ul li{float:left; width:50%; text-align:center; list-style-type: none;}
 
-/* ---------------------------------------------------------------------------------------------------------------------
-TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget TestingWidget 
---------------------------------------------------------------------------------------------------------------------- */
-#testing_widget {
-    position: fixed;
-    right: 0;
-    top: 0px;
-    padding: 0 18px;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.6);
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
-}
-#testing_widget .ticket_controls { position:relative; text-align:center; }
-#prev_ticket_control {float:left;}
-#next_ticket_control {float:right;}
-#testing_feedback_form {width: 189px;}
-#testing_feedback_form #id_initials, #testing_feedback_form #id_feedback { width: 178px; }
-#ticket_submit { width: 100% }
-#testing_feedback_form .form_row li { float: left; }
-#testing_feedback_form label {
-    font-weight: bold;
-}
-#testing_feedback_form #id_initials, #testing_feedback_form #id_feedback { width: 167px; }
-#testing_feedback_form .form_row li { float: left; }
-#testing_feedback_form label {color:#FFF;}
-#tickets .ticket { background-color:#FFFFFF; padding: 9px; }
-#tickets .ticket div { max-height:162px; overflow:auto; }
-
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 

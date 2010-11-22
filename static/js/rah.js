@@ -80,8 +80,6 @@ var rah = {
             rah.mod_ajax_setup.init();
             rah.mod_validate_setup.init();
             rah.mod_chart_dialog.init();
-            
-            rah.mod_testing_widget.init();
         }
     },
     
@@ -1069,65 +1067,6 @@ var rah = {
     page_vampire_hunt_landing: {
         init: function () {
             rah.mod_invite_friend.init();
-        }
-    },
-    
-    mod_testing_widget: {
-        init: function () {
-            $(".testing_widget_tab").click(function () {
-                var link = $(this);
-                link.hide().siblings().show();
-                $("#testing_feedback_form_container").toggle();
-                $.post(link.attr("href"));
-                return false;
-            });
-            $("#prev_ticket_control").live("click", function () {
-                rah.mod_testing_widget.move_ticket(-1);
-                return false;
-            });
-            $("#next_ticket_control").live("click", function () {
-                rah.mod_testing_widget.move_ticket(1);
-                return false;
-            });
-            $("#testing_feedback_form").live("submit", function () {
-                var form = $(this);
-                $.ajax({
-                    url: form.attr("action"),
-                    type: form.attr("method"),
-                    data: form.serialize(),
-                    success: function (data) {
-                        rah.mod_messages.init(data["message_html"]);
-                        var container = $("#testing_feedback_form_container");
-                        container.html(data["form_html"]);
-                        $("input:submit", container).button();
-                    }
-                }, "json");
-                return false;
-            });
-        },
-        move_ticket: function (offset) {
-            // this only works with 3 values right now, +1, 0 or -1
-            if (offset > 1 || offset < -1) {
-                return;
-            }
-            var current = $(".active", $("#tickets"));
-            var next = current;
-            if (offset > 0) {
-                next = current.next();
-            } else if (offset < 0) {
-                next = current.prev();
-            } else {
-                return;
-            }
-            if (next.length > 0) {
-                var idx = $("#ticket_index");
-                idx.text(parseInt(idx.text(), 10) + offset);
-                current.addClass("hidden");
-                current.removeClass("active");
-                next.addClass("active");
-                next.removeClass("hidden");
-                $("#id_ticket_id").val($(".ticket_id", next).text());
-            }
         }
     }
 };
