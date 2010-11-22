@@ -41,6 +41,9 @@
             _gaq.push(['_trackPageview']);
         </script>
         {% block extrahead %}{% endblock %}
+        {% if testing_feedback_form %}
+            <link rel="stylesheet" href="{% dated_static 'css/testing_widget.css' %}" type="text/css" media="screen" charset="utf-8"/>
+        {% endif %}
     </head>
     <body>
         <!-- ClickTale Top part -->
@@ -146,6 +149,9 @@
             FB.init({appId: '{{ FACEBOOK_APPID }}', status: true, cookie: true, xfbml: true});
         </script>
         {% block extrajs %}{% endblock %}
+        {% if testing_feedback_form %}
+            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/testing_widget.js' %}"></script>
+        {% endif %}
         {% if debug %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/rah.js' %}"></script>
         {% else %}

@@ -25,7 +25,7 @@ function move_ticket(offset) {
         $("#id_ticket_id").val($(".ticket_id", next).text());
     }
 }
-$(function () {
+$(document).ready(function() {
     $(".testing_widget_tab").click(function () {
         var link = $(this);
         link.hide().siblings().show();

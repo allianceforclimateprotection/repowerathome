@@ -9,12 +9,17 @@
 
 {% block nav-global %}{% endblock %}
 
+{% block extrahead %}
+    {% if testing_feedback_form %}
+        <link rel="stylesheet" href="{% dated_static 'css/testing_widget.css' %}" type="text/css" media="screen" charset="utf-8"/>
+    {% endif %}
+{% endblock %}
+
 {% block footer %}
     {{ super }}
-    <link rel="stylesheet" href="{% dated_static 'css/testing_widget.css' %}" type="text/css" media="screen" charset="utf-8"/>
+    <script type="text/javascript" src="/media/js/jquery.min.js"></script>
     {% if testing_feedback_form %}
         {% include 'codebase/_testing_widget.html' %}
+        <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/testing_widget.js' %}"></script>
     {% endif %}
-    <script type="text/javascript" src="/media/js/jquery.min.js"></script>
-    <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/testing_widget.js' %}"></script>
 {% endblock %}
