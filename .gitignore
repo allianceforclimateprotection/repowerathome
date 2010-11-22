@@ -10,3 +10,4 @@ static/group_images/*
 static/images/theme/geo_group_*
 static/images/theme/default_group_*
 lib/src/*
+*.swp
