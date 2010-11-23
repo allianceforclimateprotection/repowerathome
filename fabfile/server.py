@@ -173,7 +173,7 @@ def memcached_pool_update(cloud_name):
     for appserver in app_servers:
         with settings(host_string=appserver.public_dns_name):
             run("sed -i 's/\(CACHE_BACKEND.*\/\/\).*\(\/.*\)/\\1%s\\2/' /home/ubuntu/webapp/settings.py" % memcached_ips)
-            run("echo 'flush_all' | nc localhost 11211")
+            run("echo 'flush_all' | nc %s 11211" % appserver.private_ip_address)
             sudo("stop uwsgi")
             sudo("start uwsgi")
     
