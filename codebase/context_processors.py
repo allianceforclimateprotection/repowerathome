@@ -10,7 +10,7 @@ def testing_feedback_form(request):
         tickets = Ticket.objects.qa_tickets()
         context["tickets"] = tickets
         context["ticket_count"] = len(tickets)
-        initial = {"ticket_id": tickets[0].ticket_id if tickets else 0}
+        initial = {}
         if request.user.is_authenticated():
             initial["name"] = request.user.get_full_name()
         context["testing_feedback_form"] = TestingFeedbackForm(initial=initial)

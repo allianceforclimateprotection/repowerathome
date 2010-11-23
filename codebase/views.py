@@ -14,14 +14,14 @@ from forms import TestingFeedbackForm
 @ajax_required
 def feedback(request):
     testing_feedback_form = TestingFeedbackForm(request.POST)
-    if testing_feedback_form.is_valid():
+    form_valid = testing_feedback_form.is_valid()    
+    if form_valid:
         testing_feedback_form.save(request)
-        messages.success(request, "Thanks for the feedback")
-        initial = {"name": request.user.get_full_name()} if request.user.is_authenticated() else {}
-        testing_feedback_form = TestingFeedbackForm(initial=initial)
-    message_html = render_to_string("_messages.html", {}, RequestContext(request))
-    form_html= render_to_string("codebase/_testing_feedback_form.html", locals(), RequestContext(request))
-    return HttpResponse(json.dumps({"message_html": message_html, "form_html": form_html}), 
+    
+    return HttpResponse(json.dumps({
+            "errors": testing_feedback_form.errors, 
+            "valid": form_valid
+        }), 
         mimetype="text/json")
 
 @require_POST
