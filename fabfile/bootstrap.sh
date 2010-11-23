@@ -185,6 +185,12 @@ function install_uwsgi {
 EOF
 }
 
+function configure_memcached {
+    cat > '/etc/memcached.conf' << EOF
+::server_config_files/memcached.conf::
+EOF
+}
+
 function install_send_messages_cron {
     cat > '/etc/cron.d/send_read_messages' << EOF
 SHELL=/bin/bash
@@ -355,6 +361,7 @@ function bootstrap_database {
 
 function bootstrap_appserver {
     install_appserver_libs
+    configure_memcached
     install_uwsgi "0.9.6.5"
     mysql_client_install
     install_send_messages_cron
@@ -367,6 +374,7 @@ function bootstrap_appserver {
 
 function bootstrap_loadbalancer {
     install_loadbalancer_libs
+    configure_memcached
     install_nginx "0.8.53"
     configure_nginx
     install_s3cmd
