@@ -1,8 +1,9 @@
 import csv
 
+from django.contrib import admin
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
-from django.contrib import admin
+from django.utils.encoding import smart_str
 
 def admin_list_export(modeladmin, request, queryset):
     model = queryset.model
@@ -25,14 +26,14 @@ def admin_list_export(modeladmin, request, queryset):
         for field in headers:
             if field in headers:
                 try:
-                    val = getattr(obj, field)
-                    if callable(val):
-                        val = val()
-                except AttributeError:
                     val = getattr(admin.site._registry[model], field)
                     if callable(val):
                         val = val(obj)
-                row.append(val)
+                except AttributeError:
+                    val = getattr(obj, field)
+                    if callable(val):
+                        val = val()
+                row.append(smart_str(val))
         writer.writerow(row)
     # Return CSV file to browser as download
     return response
