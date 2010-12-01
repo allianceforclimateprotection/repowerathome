@@ -1,3 +1,4 @@
+{% load dated_static %}
 <div id="testing_widget">
     <div class="right">
         <a class="testing_widget_tab white {% if request.session.testing_widget_opened %}hidden{% endif %}" 
@@ -5,8 +6,26 @@
         <a class="testing_widget_tab white {% if not request.session.testing_widget_opened %}hidden{% endif %}" 
           href="{% url testing_widget_closed %}">Close Task{{ ticket_count|pluralize }}</a>
     </div>
+    <script type="text/javascript" charset="utf-8">
+    RAH_TICKET_INDEX = 0;
+    RAH_TESTING_TICKETS = Array();
+    RAH_TESTING_SPINNER = "{% dated_static 'images/theme/ajax_spinner.gif' %}";
+    {% for ticket in tickets %}
+        RAH_TESTING_TICKETS.push({{ticket.ticket_id}});
+    {% endfor %}
+    </script>
     <div id="testing_feedback_form_container" class="{% if not request.session.testing_widget_opened %}hidden{% endif %}">
         <br/>
+        {% if ticket_count >= 1 %}
+            <div class="ticket_controls">
+                <a id="prev_ticket_control" href="#" class="white">&laquo; prev</a>
+                <b class="white"><span id="ticket_index">1</span> of {{ ticket_count }}</b>
+                <a id="next_ticket_control" href="#" class="white">next &raquo;</a>
+            </div>
+        {% endif %}
         {% include "codebase/_testing_feedback_form.html" %}
+    </div>
+    <div id="testing_spinner" class="hidden">
+        <img src="{% dated_static 'images/theme/testing_widget_spinner.gif' %}" alt="loading spinner"/>
     </div>
 </div>

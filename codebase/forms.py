@@ -6,7 +6,7 @@ class TestingFeedbackForm(forms.Form):
     ticket_id = forms.IntegerField(widget=forms.HiddenInput)
     works = forms.ChoiceField(choices=(("yes", "yes"), ("no", "no")), widget=forms.RadioSelect, label="Did it work?")
     name = forms.CharField(label="What's your name?")
-    feedback = forms.CharField(label="Any feedback?", widget=forms.Textarea(attrs={"cols": "25", "rows": "4"}))
+    feedback = forms.CharField(label="Any feedback?", required=False, widget=forms.Textarea(attrs={"cols": "25", "rows": "4"}))
     
     def save(self, request):
         ticket_id = self.cleaned_data["ticket_id"]
