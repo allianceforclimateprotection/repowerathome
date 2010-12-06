@@ -25,6 +25,11 @@ class BlogPostsFeed(Feed):
     def item_pubdate(self, obj):
         return obj.publish
 
+    def item_description(self, post):
+        return post.body
+
+    def item_link(self, post):
+        return post.get_absolute_url()
 
 class BlogPostsByCategory(Feed):
     _site = Site.objects.get_current()

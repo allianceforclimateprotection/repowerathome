@@ -2,7 +2,7 @@ from django.contrib import admin
 from models import Group, GroupUsers
 
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ("name", "managers", "total_members", "committed_actions", "completed_actions", "total_points",)
+    list_display = ("name", "managers", "total_members", "committed_actions", "completed_actions", "total_points", "created",)
     readonly_fields = ("is_geo_group", "location_type", "sample_location", "parent",)
     
     def queryset(self, request):
