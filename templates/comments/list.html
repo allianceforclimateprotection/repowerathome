@@ -6,7 +6,7 @@
 {% if comments %}
     <h2 id="comments_heading">What people are saying</h2>
     {% for comment in comments %}
-        <div class="grid_6 alpha comment_wrapper">
+        <div class="grid_6 alpha comment_wrapper" id="c{{ comment.id }}">
             <div class="box_two_top"></div>
             <div class="box_two_middle comment">
                 {{ comment.comment|linebreaksbr }}
