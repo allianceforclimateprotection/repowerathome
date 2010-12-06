@@ -25,4 +25,6 @@
         </p>
         {% csrf_token %}
     </form>
+    {% empty %}
+    <p class="white">There's nothing to test right now!</p>
 {% endfor %}
