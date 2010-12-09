@@ -1,12 +1,14 @@
-define(["libs/jquery.ui", "mods/messages", "libs/jquery.validate", 
-    function(ui, messages, validate) {
+/*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
+/*global $: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
+define(["libs/jquery.ui", "mods/messages", "libs/jquery.validate"], 
+    function (ui, messages, validate) {
         return {
             link_setup: function () {
                 $(".commit_action").click(function () {
                     var elem = $(this);
-                    elem.siblings("span.commit_tick").
-                        toggleClass("ui-icon-triangle-1-e").
-                        toggleClass("ui-icon-triangle-1-s");
+                    elem.siblings("span.commit_tick")
+                        .toggleClass("ui-icon-triangle-1-e")
+                        .toggleClass("ui-icon-triangle-1-s");
                     $("td .commit_list_ul_" + elem.attr("id").split("__")[1]).toggle();
                 });
                 $(".commit_list_ul li").hover(function () {
@@ -71,5 +73,5 @@ define(["libs/jquery.ui", "mods/messages", "libs/jquery.validate",
                     $("#commitment_card_form").attr("action", load_url);
                 });
             }
-        }
-});
+        };
+    });
