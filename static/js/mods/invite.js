@@ -1,3 +1,5 @@
+/*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
+/*global $: false, RAH: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
 define(["libs/jquery.validate", "libs/jquery.ui", "mods/messages"],
     function (validate, ui, messages) {
         // Add a validator method for checking the comma separated email list
@@ -38,7 +40,7 @@ define(["libs/jquery.validate", "libs/jquery.ui", "mods/messages"],
                             $("#invite_form").ajaxSubmit({
                                 success: function (messages_html) {
                                     $("#invite_friend_dialog").dialog("close");
-                                    rah.mod_messages.init(messages_html);
+                                    messages.init(messages_html);
                                     $("#id_emails, #id_note").val("");
                                 }
                             });
@@ -46,5 +48,5 @@ define(["libs/jquery.validate", "libs/jquery.ui", "mods/messages"],
                     }
                 });
             }
-        }
-});
+        };
+    });

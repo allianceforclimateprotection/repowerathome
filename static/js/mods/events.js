@@ -1,7 +1,9 @@
-define(["libs/jquery.qtip", "libs/jquery.editable", "libs/jquery.ui", "mods/messages"], function () {
+/*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
+/*global $: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
+define(["libs/jquery.qtip", "libs/jquery.editable", "libs/jquery.ui", "mods/messages"], function (qtip, editable, ui, messages) {
     return {
         date: function () {
-             $(".future_date_warning").change(function () {
+            $(".future_date_warning").change(function () {
                 var now = new Date();
                 var when = new Date(this.value);
                 if (when - now < 0) {
@@ -22,7 +24,9 @@ define(["libs/jquery.qtip", "libs/jquery.editable", "libs/jquery.ui", "mods/mess
         guests: function () {
             var namespace = this;
             var editables = $(".editable");
-            editables.each(function(idx, elem) { this.make_editable(elem); });
+            editables.each(function (idx, elem) { 
+                this.make_editable(elem);
+            });
             editables.delegate(".guest_icon", "mouseover", function () {
                 $(this).addClass("ui-icon-circle-triangle-s");
                 $(this).removeClass("ui-icon-triangle-1-s");
@@ -90,5 +94,5 @@ define(["libs/jquery.qtip", "libs/jquery.editable", "libs/jquery.ui", "mods/mess
                 return value;
             }, args);
         }
-    }
+    };
 });

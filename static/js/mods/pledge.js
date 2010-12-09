@@ -1,3 +1,5 @@
+/*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
+/*global $: false, RAH: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
 define(["libs/jquery.validation", "libs/jquery.cookie", "mods/messages", "libs/jquery.ui"],
     function (validate, cookies, messages, ui) {
         return {
@@ -32,5 +34,5 @@ define(["libs/jquery.validation", "libs/jquery.cookie", "mods/messages", "libs/j
                     $("#home_pledge_actions_slide").fadeIn(200);
                 });
             }
-        }
-});
+        };
+    });
