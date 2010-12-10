@@ -21,7 +21,7 @@ define(function () {
         },
         add_message: function (html) {
             if (html) {
-                $("#message_box").hide.append(html).slideDown();
+                $("#message_box").hide().append(html).slideDown();
             }
             this.auto_remove_messages();
         }
