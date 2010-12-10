@@ -1,6 +1,8 @@
 /*
  * URLify javascript lifted from Django v1.2.3 (django/contrib/admin/media/js/urlify.js)
  */
+/*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
+/*global $: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
 define(function () {
     var LATIN_MAP = {
         'À': 'A', 'Á': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A', 'Å': 'A', 'Æ': 'AE', 'Ç':
@@ -77,7 +79,7 @@ define(function () {
     ALL_DOWNCODE_MAPS[8]=LATVIAN_MAP
 
     var Downcoder = new Object();
-    Downcoder.Initialize = function()
+    Downcoder.Initialize = function ()
     {
         if (Downcoder.map) // already made
             return ;
@@ -95,7 +97,7 @@ define(function () {
         Downcoder.regex = new RegExp('[' + Downcoder.chars + ']|[^' + Downcoder.chars + ']+','g') ;
     }
 
-    var downcode = function( slug ) {
+    var downcode = function (slug) {
         Downcoder.Initialize() ;
         var downcoded =""
         var pieces = slug.match(Downcoder.regex);
@@ -123,7 +125,7 @@ define(function () {
     }
 
     return {
-        function URLify(s, num_chars) {
+        function URLify (s, num_chars) {
             // changes, e.g., "Petty theft" to "petty_theft"
             // remove all these words from the string before urlifying
             s = downcode(s);
