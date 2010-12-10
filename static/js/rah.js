@@ -7,283 +7,283 @@ var rah = {
     * Base contains code that needs to be excecuted with every 
     * page request. e.g., navigation with drop down menus
     **/
-    base: {
-        init: function () {
-            // Setup TypeKit for non IE browsers
-            var browser = $.browser;
-            if (!browser.msie && !(browser.mozilla && browser.version.substr(0, 5) === "1.9.0")) {
-                WebFont.load({ typekit: { id: 'vbg1eri'}});
-            }
+    //base: {
+        //init: function () {
+            //// Setup TypeKit for non IE browsers
+            //var browser = $.browser;
+            //if (!browser.msie && !(browser.mozilla && browser.version.substr(0, 5) === "1.9.0")) {
+                //WebFont.load({ typekit: { id: 'vbg1eri'}});
+            //}
             
-            // setup buttons
-            $("button, input:submit, a.button, input.button").button();
-            $(".buttonset").buttonset();
+            //// setup buttons
+            //$("button, input:submit, a.button, input.button").button();
+            //$(".buttonset").buttonset();
             
-            // Setup datepicker
-            $(".datepicker").datepicker();
+            //// Setup datepicker
+            //$(".datepicker").datepicker();
             
-            // setup tabs
-            $(".tabs").tabs();
+            //// setup tabs
+            //$(".tabs").tabs();
             
-            // Highlight the right nav option if specified
-            if (typeof(rah_nav_select) !== 'undefined' && rah_nav_select !== '') {
-                $("#" + rah_nav_select).addClass("selected");
-            }
+            //// Highlight the right nav option if specified
+            //if (typeof(rah_nav_select) !== 'undefined' && rah_nav_select !== '') {
+                //$("#" + rah_nav_select).addClass("selected");
+            //}
             
-            // style some submit buttons as links
-            $(".as_link[type='submit']").each(function () {
-                var button = $(this);
-                var form = button.parents("form");
-                button.hide();
-                var link = $("<a></a>");
-                link.text(button.val());
-                link.attr("href", "#");
-                link.click(function () { 
-                    form.submit();
-                    return false;
-                });
-                button.replaceWith(link);
-            });
+            //// style some submit buttons as links
+            //$(".as_link[type='submit']").each(function () {
+                //var button = $(this);
+                //var form = button.parents("form");
+                //button.hide();
+                //var link = $("<a></a>");
+                //link.text(button.val());
+                //link.attr("href", "#");
+                //link.click(function () { 
+                    //form.submit();
+                    //return false;
+                //});
+                //button.replaceWith(link);
+            //});
             
-            // Hide the nav text content
-            $("#nav a").text("");
+            //// Hide the nav text content
+            //$("#nav a").text("");
             
-            // Setup Feedback dialog
-            $("#feedback_dialog").dialog({
-                modal: true,
-                buttons: {
-                    "Submit Feedback": function () { 
-                        $("#feedback_form").ajaxSubmit({
-                            success: function (messages_html) {
-                                $("#feedback_dialog").dialog("close");
-                                rah.mod_messages.init(messages_html);
-                            }
-                        });
-                    }
-                },
-                title: "Feedback",
-                autoOpen: false,
-                width: 400
-            });
-            // Attach functionality to feedback links
-            $(".feedback_link").click(function () {
-                $("#feedback_dialog").load("/feedback/", function () { // Load the feedback form via ajax
-                    $("#loading").hide();
-                    $("#feedback_submit").hide(); // We don't need this button when viewed inside dialog
-                    $("#id_url").val(location.href); // Set the url to the current url
-                    $("#feedback_dialog").dialog("open"); // Open the dialog with feedback form
-                });
-                return false;
-            });
-            rah.mod_messages.init();
-            rah.mod_facebook_connect.init();
-            rah.mod_ajax_setup.init();
-            rah.mod_validate_setup.init();
-            rah.mod_chart_dialog.init();
-        }
-    },
+            //// Setup Feedback dialog
+            //$("#feedback_dialog").dialog({
+                //modal: true,
+                //buttons: {
+                    //"Submit Feedback": function () { 
+                        //$("#feedback_form").ajaxSubmit({
+                            //success: function (messages_html) {
+                                //$("#feedback_dialog").dialog("close");
+                                //rah.mod_messages.init(messages_html);
+                            //}
+                        //});
+                    //}
+                //},
+                //title: "Feedback",
+                //autoOpen: false,
+                //width: 400
+            //});
+            //// Attach functionality to feedback links
+            //$(".feedback_link").click(function () {
+                //$("#feedback_dialog").load("/feedback/", function () { // Load the feedback form via ajax
+                    //$("#loading").hide();
+                    //$("#feedback_submit").hide(); // We don't need this button when viewed inside dialog
+                    //$("#id_url").val(location.href); // Set the url to the current url
+                    //$("#feedback_dialog").dialog("open"); // Open the dialog with feedback form
+                //});
+                //return false;
+            //});
+            //rah.mod_messages.init();
+            //rah.mod_facebook_connect.init();
+            //rah.mod_ajax_setup.init();
+            //rah.mod_validate_setup.init();
+            //rah.mod_chart_dialog.init();
+        //}
+    //},
     
-    mod_facebook_connect: {
-        init: function () {
-            $("#fb-login").click(function () {
-                FB.login(function (response) {
-                    if (response.session) {
-                        var next_elem = $("input[type='hidden'][name='next']");
-                        var next = next_elem ? next_elem.val() : window.location;
-                        window.location = "/facebook/login/?next=" + next;
-                    }
-                }, { perms: "email,publish_stream,offline_access"});
-            });
-        },
-        authorize: function () {
-            FB.login(function (response) {
-                if (response.session) {
-                    var next_elem = $("input[type='hidden'][name='next']");
-                    var next = next_elem.length ? next_elem.val() : window.location;
-                    window.location = "/facebook/authorize/?next=" + next;
-                }
-            }, { perms: "email,publish_stream,offline_access"});
-            return false;
-        }
-    },
+    //mod_facebook_connect: {
+        //init: function () {
+            //$("#fb-login").click(function () {
+                //FB.login(function (response) {
+                    //if (response.session) {
+                        //var next_elem = $("input[type='hidden'][name='next']");
+                        //var next = next_elem ? next_elem.val() : window.location;
+                        //window.location = "/facebook/login/?next=" + next;
+                    //}
+                //}, { perms: "email,publish_stream,offline_access"});
+            //});
+        //},
+        //authorize: function () {
+            //FB.login(function (response) {
+                //if (response.session) {
+                    //var next_elem = $("input[type='hidden'][name='next']");
+                    //var next = next_elem.length ? next_elem.val() : window.location;
+                    //window.location = "/facebook/authorize/?next=" + next;
+                //}
+            //}, { perms: "email,publish_stream,offline_access"});
+            //return false;
+        //}
+    //},
     
-    mod_ask_to_share: {
-        init: function (url) {
-            $.get(url, function (data) {
-                rah.mod_ask_to_share.build_dialog(data);
-            });
-        },
-        build_dialog: function (data) {
-            var container = $("<div />");
-            container.html(data);
-            container.dialog({ autoOpen: false, modal: true, height: 312, width: 386,
-                title: "Repower at Home &hearts; Facebook"});
-            $("input:submit, .button, button", container).button();
-            // $(".buttonset", container).buttonset();
-            $("#ask_to_share").submit(function () {
-                var form = $(this);
-                if ($("#id_has_facebook_access", form).val() !== "True") {
-                    FB.login(function (response) {
-                        if (response.session) {
-                            $.get("/facebook/authorize/", function (data) {
-                                rah.mod_ask_to_share.share(form);
-                            });   
-                        }
-                    }, { perms: "email,publish_stream,offline_access"});
-                } else {
-                    rah.mod_ask_to_share.share(form);
-                }
-                container.dialog("close");
-                return false;
-            });
-            $("#ask_to_share_cancel", container).click(function () {
-                container.dialog("close");
-                return false;
-            });
-            $("#id_dont_ask", container).click(function () {
-                $(this).parents("form").submit();
-            });
-            container.dialog("open");
-        },
-        share: function (form) {
-            $.ajax({
-                url: form.attr("action"),
-                type: form.attr("method"),
-                data: form.serialize(),
-                success: function (data) {
-                    if ($(".messages", data).size() > 0) {
-                        rah.mod_messages.init(data);
-                    } else {
-                        rah.mod_ask_to_share.build_dialog(data);
-                    }
-                },
-                dataType: "html"
-            });
-        }
-    },
+    //mod_ask_to_share: {
+        //init: function (url) {
+            //$.get(url, function (data) {
+                //rah.mod_ask_to_share.build_dialog(data);
+            //});
+        //},
+        //build_dialog: function (data) {
+            //var container = $("<div />");
+            //container.html(data);
+            //container.dialog({ autoOpen: false, modal: true, height: 312, width: 386,
+                //title: "Repower at Home &hearts; Facebook"});
+            //$("input:submit, .button, button", container).button();
+            //// $(".buttonset", container).buttonset();
+            //$("#ask_to_share").submit(function () {
+                //var form = $(this);
+                //if ($("#id_has_facebook_access", form).val() !== "True") {
+                    //FB.login(function (response) {
+                        //if (response.session) {
+                            //$.get("/facebook/authorize/", function (data) {
+                                //rah.mod_ask_to_share.share(form);
+                            //});   
+                        //}
+                    //}, { perms: "email,publish_stream,offline_access"});
+                //} else {
+                    //rah.mod_ask_to_share.share(form);
+                //}
+                //container.dialog("close");
+                //return false;
+            //});
+            //$("#ask_to_share_cancel", container).click(function () {
+                //container.dialog("close");
+                //return false;
+            //});
+            //$("#id_dont_ask", container).click(function () {
+                //$(this).parents("form").submit();
+            //});
+            //container.dialog("open");
+        //},
+        //share: function (form) {
+            //$.ajax({
+                //url: form.attr("action"),
+                //type: form.attr("method"),
+                //data: form.serialize(),
+                //success: function (data) {
+                    //if ($(".messages", data).size() > 0) {
+                        //rah.mod_messages.init(data);
+                    //} else {
+                        //rah.mod_ask_to_share.build_dialog(data);
+                    //}
+                //},
+                //dataType: "html"
+            //});
+        //}
+    //},
     
     /**
     * Registration page
     **/
-    page_register: {
-        init: function () {
-            $("#registration_form").validate({
-                rules: {
-                    zipcode:        { required: false, remote: { url: "/validate/", type: "post" } },
-                    email: { required: true, email: true, remote: { url: "/validate/", type: "post" } },
-                    first_name:     { required: true, minlength: 2 },
-                    password1:      { required: true, minlength: 5 },
-                    password2:      { required: true, minlength: 5, equalTo: "#id_password1" }
-                },
-                messages: {
-                    email: { remote: "That email is already registered" },
-                    zipcode: { remote: "We couldn't locate this zipcode" }
-                }
-            });
-        }
-    },
+    //page_register: {
+        //init: function () {
+            //$("#registration_form").validate({
+                //rules: {
+                    //zipcode:        { required: false, remote: { url: "/validate/", type: "post" } },
+                    //email: { required: true, email: true, remote: { url: "/validate/", type: "post" } },
+                    //first_name:     { required: true, minlength: 2 },
+                    //password1:      { required: true, minlength: 5 },
+                    //password2:      { required: true, minlength: 5, equalTo: "#id_password1" }
+                //},
+                //messages: {
+                    //email: { remote: "That email is already registered" },
+                    //zipcode: { remote: "We couldn't locate this zipcode" }
+                //}
+            //});
+        //}
+    //},
     
     /**
     * Log in page
     **/
-    page_login: {
-        init: function () {
-            $("#login_form").validate({
-                rules: {
-                    email:      { required: true, email: true },
-                    password:  { required: true, minlength: 5 }
-                }
-            });
-        }
-    },    
+    //page_login: {
+        //init: function () {
+            //$("#login_form").validate({
+                //rules: {
+                    //email:      { required: true, email: true },
+                    //password:  { required: true, minlength: 5 }
+                //}
+            //});
+        //}
+    //},    
     /**
     * Logged in Home Page
     **/
-    page_home_logged_in: {
-        init: function () {
-            rah.mod_pledge_submit.init();
-            rah.mod_invite_friend.init();
+    //page_home_logged_in: {
+        //init: function () {
+            //rah.mod_pledge_submit.init();
+            //rah.mod_invite_friend.init();
             
-            // Setup twitter update form, link, and dialog
-            $("#twitter_status_form").validate({ rules: { status: { required: true }}});
-            $('#twitter_status_link').click(function () {
-                $('#twitter_post_dialog').dialog('open'); 
-                return false;
-            });
+            //// Setup twitter update form, link, and dialog
+            //$("#twitter_status_form").validate({ rules: { status: { required: true }}});
+            //$('#twitter_status_link').click(function () {
+                //$('#twitter_post_dialog').dialog('open'); 
+                //return false;
+            //});
             
-            // Create an object for the buttons
-            var buttons = { };
-            if ($('#twitter_status_form').size() > 0) {
-                buttons["Update status"] = function () { 
-                    $('#twitter_status_form').submit(); 
-                };
-            }
+            //// Create an object for the buttons
+            //var buttons = { };
+            //if ($('#twitter_status_form').size() > 0) {
+                //buttons["Update status"] = function () { 
+                    //$('#twitter_status_form').submit(); 
+                //};
+            //}
             
-            $('#twitter_post_dialog').dialog({
-                title: 'Tell your tweeps about us', 
-                modal: true, 
-                autoOpen: false,
-                buttons: buttons
-            });
+            //$('#twitter_post_dialog').dialog({
+                //title: 'Tell your tweeps about us', 
+                //modal: true, 
+                //autoOpen: false,
+                //buttons: buttons
+            //});
             
-            // Setup the commitment card open link
-            rah.mod_commitment_card_open_link_setup.init();
-        }
-    },
+            //// Setup the commitment card open link
+            //rah.mod_commitment_card_open_link_setup.init();
+        //}
+    //},
         
-    mod_chart_dialog: {
-        init: function () {
-            $(".chart_link").click(function () {
-                $.getScript($(this).attr("href"));
-                return false;
-            });
-        }
-    },
+    //mod_chart_dialog: {
+        //init: function () {
+            //$(".chart_link").click(function () {
+                //$.getScript($(this).attr("href"));
+                //return false;
+            //});
+        //}
+    //},
     
-    page_home_logged_out: {
-        init: function () {
-            if ($.cookie('repowerathomepledge')) {
-                rah.mod_pledge_slide_advance();
-            } else {
-                rah.mod_pledge_submit.init();
-            }
-        }
-    },
+    //page_home_logged_out: {
+        //init: function () {
+            //if ($.cookie('repowerathomepledge')) {
+                //rah.mod_pledge_slide_advance();
+            //} else {
+                //rah.mod_pledge_submit.init();
+            //}
+        //}
+    //},
     
-    mod_pledge_submit: {
-        init: function () {
-            $("#pledge_card_form").validate({
-                rules: {
-                    zipcode:    { required: false, minlength: 5, digits: true },
-                    email:      { required: true, email: true },
-                    first_name: { required: true, minlength: 2 }
-                },
-                submitHandler: function (form) {
-                    $(form).ajaxSubmit({
-                        dataType: "json",
-                        success: function (rsp) {
-                            rah.mod_messages.init(rsp.msg);
-                            if (rsp.errors === false) {
-                                rah.mod_pledge_slide_advance();
-                                $.cookie('repowerathomepledge', true);
-                            } else {
-                                var form = $("#pledge_card_form");
-                                form.html(rsp.payload);
-                                $("button", form).button();
-                            }
-                        }
-                    });
-                    return false;
-                }
-            });
-        }
-    },
+    //mod_pledge_submit: {
+        //init: function () {
+            //$("#pledge_card_form").validate({
+                //rules: {
+                    //zipcode:    { required: false, minlength: 5, digits: true },
+                    //email:      { required: true, email: true },
+                    //first_name: { required: true, minlength: 2 }
+                //},
+                //submitHandler: function (form) {
+                    //$(form).ajaxSubmit({
+                        //dataType: "json",
+                        //success: function (rsp) {
+                            //rah.mod_messages.init(rsp.msg);
+                            //if (rsp.errors === false) {
+                                //rah.mod_pledge_slide_advance();
+                                //$.cookie('repowerathomepledge', true);
+                            //} else {
+                                //var form = $("#pledge_card_form");
+                                //form.html(rsp.payload);
+                                //$("button", form).button();
+                            //}
+                        //}
+                    //});
+                    //return false;
+                //}
+            //});
+        //}
+    //},
     
-    mod_pledge_slide_advance: function (transition) {
-        $("#home_pledge_slide").fadeOut(200, function () {
-            $("#home_pledge_actions_slide").fadeIn(200);
-        });
-    },
+    //mod_pledge_slide_advance: function (transition) {
+        //$("#home_pledge_slide").fadeOut(200, function () {
+            //$("#home_pledge_actions_slide").fadeIn(200);
+        //});
+    //},
     
     /**
     * Profile Edit Page
@@ -513,66 +513,66 @@ var rah = {
         }
     },
     
-    mod_comment_form: {
-        init: function () {
-            $("#comment_form").validate({
-                rules: {
-                    comment:    { required: true, maxlength: 3000 }
-                },
-                messages: {
-                    comment: { maxlength: "comment must be less than 3000 characters" }
-                }
-            });
-            rah.mod_thumbs_radio_widget.init();
-            rah.mod_flag.init();
-            $("#comments .tooltip").qtip({
-                position: {
-                    corner: {
-                        target: 'topMiddle',
-                        tooltip: 'bottomMiddle'
-                    }
-                },
-                style: {
-                    name: 'green',
-                    tip: 'bottomMiddle',
-                    background: '#E3EC9F',
-                    color: '#00AAD8',
-                    border: {
-                        width: 3,
-                        radius: 2,
-                        color: '#92C139'
-                    }
-                },
-                show: 'mouseover',
-                hide: 'mouseout'
-            });
-        }
-    },
+    //mod_comment_form: {
+        //init: function () {
+            //$("#comment_form").validate({
+                //rules: {
+                    //comment:    { required: true, maxlength: 3000 }
+                //},
+                //messages: {
+                    //comment: { maxlength: "comment must be less than 3000 characters" }
+                //}
+            //});
+            //rah.mod_thumbs_radio_widget.init();
+            //rah.mod_flag.init();
+            //$("#comments .tooltip").qtip({
+                //position: {
+                    //corner: {
+                        //target: 'topMiddle',
+                        //tooltip: 'bottomMiddle'
+                    //}
+                //},
+                //style: {
+                    //name: 'green',
+                    //tip: 'bottomMiddle',
+                    //background: '#E3EC9F',
+                    //color: '#00AAD8',
+                    //border: {
+                        //width: 3,
+                        //radius: 2,
+                        //color: '#92C139'
+                    //}
+                //},
+                //show: 'mouseover',
+                //hide: 'mouseout'
+            //});
+        //}
+    //},
     
     /**
     * mod_messages: call this method to attach message html, if no html is passed it will just set a timer on any existing messages
     **/
-    mod_messages: {
-        init: function (html) {
-            if (html) { 
-                $('#message_box').hide().append(html).slideDown();
-            }
-            $(".messages .dismiss").live("click", function () { 
-                $(this).parents(".messages").slideUp(400, function () {
-                    $(this).remove();
-                });
-                return false;
-            });
-            $(".messages:not(.sticky)").each(function () {
-                var elem = $(this);
-                setTimeout(function () {
-                    elem.slideUp(400, function () { 
-                        elem.remove(); 
-                    });
-                }, 5000);
-            });
-        }
-    },
+    //mod_messages: {
+        //init: function (html) {
+            //if (html) { 
+                //$('#message_box').hide().append(html).slideDown();
+            //}
+            //$(".messages .dismiss").live("click", function () { 
+                //$(this).parents(".messages").slideUp(400, function () {
+                    //$(this).remove();
+                //});
+                //return false;
+            //});
+            //$(".messages:not(.sticky)").each(function () {
+                //var elem = $(this);
+                //setTimeout(function () {
+                    //elem.slideUp(400, function () { 
+                        //elem.remove(); 
+                    //});
+                //}, 5000);
+            //});
+        //}
+    //},
     
     page_password_change: {
         init: function () {
@@ -599,19 +599,19 @@ var rah = {
         }
     },
     
-    mod_ajax_setup: {
-        init: function () {
-            $.ajaxSetup({
-                beforeSend: function () { },
-                complete: function () { },
-                error: function (XMLHttpRequest, textStatus) { 
-                    var error_html = "<ul class='messages'><li class='messages error sticky'>" + textStatus;
-                    error_html += "<a href='#' class='dismiss'>close</a></li></ul>";
-                    rah.mod_messages.init(error_html);
-                }
-            });
-        }
-    },
+    //mod_ajax_setup: {
+        //init: function () {
+            //$.ajaxSetup({
+                //beforeSend: function () { },
+                //complete: function () { },
+                //error: function (XMLHttpRequest, textStatus) { 
+                    //var error_html = "<ul class='messages'><li class='messages error sticky'>" + textStatus;
+                    //error_html += "<a href='#' class='dismiss'>close</a></li></ul>";
+                    //rah.mod_messages.init(error_html);
+                //}
+            //});
+        //}
+    //},
     
     page_group_create: {
         init: function () {
@@ -635,86 +635,86 @@ var rah = {
         }
     },
     
-    mod_invite_friend: {
-        init: function () {
-            // Add a validator method for checking the comma separated email list
-            jQuery.validator.addMethod("multiemail", function (value, element) {
-                // return true on optional element
-                if (this.optional(element)) {
-                    return true;
-                }
-                var emails = value.split(new RegExp("\\s*,\\s*", "gi"));
-                var valid = true;
+    //mod_invite_friend: {
+        //init: function () {
+            //// Add a validator method for checking the comma separated email list
+            //jQuery.validator.addMethod("multiemail", function (value, element) {
+                //// return true on optional element
+                //if (this.optional(element)) {
+                    //return true;
+                //}
+                //var emails = value.split(new RegExp("\\s*,\\s*", "gi"));
+                //var valid = true;
                 
-                for (var i = 0; i < emails.length; i = i + 1) {
-                    valid = jQuery.validator.methods.email.call(this, emails[i], element);
-                }
-                return valid;
-            }, "The format for one or more emails doesn't look right.");
+                //for (var i = 0; i < emails.length; i = i + 1) {
+                    //valid = jQuery.validator.methods.email.call(this, emails[i], element);
+                //}
+                //return valid;
+            //}, "The format for one or more emails doesn't look right.");
             
-            // Setup invite friend form, link, and dialog
-            $('.invite_form_submit').remove();
-            $("#invite_form").validate({ rules: { emails: { required: true, multiemail: true }}});
-            $('.invite_friend_link').click(function () { 
-                $('#invite_friend_dialog').dialog('open'); 
-                return false; 
-            });
-            $('#invite_friend_dialog').dialog({
-                title: 'Invite a friend', 
-                modal: true,
-                autoOpen: false, 
-                resizable: false, 
-                draggable: false, 
-                width: 360,
-                buttons: { 
-                    "Send Invitation": function () {
-                        if (!$("#invite_form").valid()) {
-                            return;
-                        }
-                        $("#invite_form").ajaxSubmit({
-                            success: function (messages_html) {
-                                $("#invite_friend_dialog").dialog("close");
-                                rah.mod_messages.init(messages_html);
-                                $("#id_emails, #id_note").val("");
-                            }
-                        });
-                    }
-                }
-            });
+            //// Setup invite friend form, link, and dialog
+            //$('.invite_form_submit').remove();
+            //$("#invite_form").validate({ rules: { emails: { required: true, multiemail: true }}});
+            //$('.invite_friend_link').click(function () { 
+                //$('#invite_friend_dialog').dialog('open'); 
+                //return false; 
+            //});
+            //$('#invite_friend_dialog').dialog({
+                //title: 'Invite a friend', 
+                //modal: true,
+                //autoOpen: false, 
+                //resizable: false, 
+                //draggable: false, 
+                //width: 360,
+                //buttons: { 
+                    //"Send Invitation": function () {
+                        //if (!$("#invite_form").valid()) {
+                            //return;
+                        //}
+                        //$("#invite_form").ajaxSubmit({
+                            //success: function (messages_html) {
+                                //$("#invite_friend_dialog").dialog("close");
+                                //rah.mod_messages.init(messages_html);
+                                //$("#id_emails, #id_note").val("");
+                            //}
+                        //});
+                    //}
+                //}
+            //});
             
             
-        }
-    },
+        //}
+    //},
     
-    mod_search_widget: {
-        init: function () {
-            $(".search_widget").submit(function () {
-                var form = $(this);
-                $.ajax({
-                    url: form.attr("action"),
-                    type: form.attr("method"),
-                    data: form.serialize(),
-                    success: function (data) {
-                        data = jQuery.trim(data);
-                        if (data.length > 0) {
-                            $(".search_results").removeClass("hidden");
-                            $(".search_results", form).html(data);
-                        } else {
-                            $(".search_results").addClass("hidden");
-                        }
-                    }
-                });
-                return false;
-            });
-            $(".search_more").live("click", function () {
-                var link = $(this);
-                $.get(link.attr("href"), function (data) {
-                    link.replaceWith(data);
-                });
-                return false;
-            });
-        }
-    },
+    //mod_search_widget: {
+        //init: function () {
+            //$(".search_widget").submit(function () {
+                //var form = $(this);
+                //$.ajax({
+                    //url: form.attr("action"),
+                    //type: form.attr("method"),
+                    //data: form.serialize(),
+                    //success: function (data) {
+                        //data = jQuery.trim(data);
+                        //if (data.length > 0) {
+                            //$(".search_results").removeClass("hidden");
+                            //$(".search_results", form).html(data);
+                        //} else {
+                            //$(".search_results").addClass("hidden");
+                        //}
+                    //}
+                //});
+                //return false;
+            //});
+            //$(".search_more").live("click", function () {
+                //var link = $(this);
+                //$.get(link.attr("href"), function (data) {
+                    //link.replaceWith(data);
+                //});
+                //return false;
+            //});
+        //}
+    //},
     
     page_group_edit: {
         init: function () {
@@ -727,57 +727,57 @@ var rah = {
         }
     },
     
-    mod_thumbs_radio_widget: {
-        init: function () {
-            $(".rateable_rate_form input[type='submit']").remove();
-            $(".rateable_rate_form input[name='next']").remove();
-            $(".rateable_rate_form .score_radio").change(function () {
-                var form = $(this).parents("form");
-                $.ajax({
-                    url: form.attr("action"),
-                    type: form.attr("method"),
-                    data: form.serialize(),
-                    dataType: "json",
-                    success: function (data) {
-                        var container = form.parent("div");
-                        // rah.mod_messages.init(data["messages"]);
-                        $(".users_voted_stats", container).html(data["users_voted_stats"]).effect("highlight", {"backgroundColor": "#B0D8F2"}, 1500);
-                    }
-                });
-                return false;
-            });
-        }
-    },
+    //mod_thumbs_radio_widget: {
+        //init: function () {
+            //$(".rateable_rate_form input[type='submit']").remove();
+            //$(".rateable_rate_form input[name='next']").remove();
+            //$(".rateable_rate_form .score_radio").change(function () {
+                //var form = $(this).parents("form");
+                //$.ajax({
+                    //url: form.attr("action"),
+                    //type: form.attr("method"),
+                    //data: form.serialize(),
+                    //dataType: "json",
+                    //success: function (data) {
+                        //var container = form.parent("div");
+                        //// rah.mod_messages.init(data["messages"]);
+                        //$(".users_voted_stats", container).html(data["users_voted_stats"]).effect("highlight", {"backgroundColor": "#B0D8F2"}, 1500);
+                    //}
+                //});
+                //return false;
+            //});
+        //}
+    //},
     
-    mod_flag: {
-        init: function () {
-            $(".flagged_flag_form input[name='next']").remove();
-            $(".flagged_flag_form .flag_box").click(function () {
-                var box = $(this);
-                var form = box.parents("form");
-                $.ajax({
-                    url: form.attr("action"),
-                    type: form.attr("method"),
-                    data: form.serialize(),
-                    success: function (data) {
-                        rah.mod_messages.init(data);
-                        box.button("disable");
-                    }
-                });
-                return false;
-            });
-        }
-    },
+    //mod_flag: {
+        //init: function () {
+            //$(".flagged_flag_form input[name='next']").remove();
+            //$(".flagged_flag_form .flag_box").click(function () {
+                //var box = $(this);
+                //var form = box.parents("form");
+                //$.ajax({
+                    //url: form.attr("action"),
+                    //type: form.attr("method"),
+                    //data: form.serialize(),
+                    //success: function (data) {
+                        //rah.mod_messages.init(data);
+                        //box.button("disable");
+                    //}
+                //});
+                //return false;
+            //});
+        //}
+    //},
     
-    mod_validate_setup: {
-        init: function () {
-            $.validator.setDefaults({
-                submitHandler: function (form) { 
-                    form.submit(); 
-                }
-            });
-        }
-    },
+    //mod_validate_setup: {
+        //init: function () {
+            //$.validator.setDefaults({
+                //submitHandler: function (form) { 
+                    //form.submit(); 
+                //}
+            //});
+        //}
+    //},
     
     page_event_list: {
         init: function () {
@@ -834,27 +834,27 @@ var rah = {
         }
     },
     
-    mod_event_date: {
-        init: function () {
-            $(".future_date_warning").change(function () {
-                var now = new Date();
-                var when = new Date(this.value);
-                if (when - now < 0) {
-                    if (!confirm("Has this event really already taken place?")) {
-                        this.value = "";
-                    }
-                }
-            });
-            $(".form_row:has(.datepicker)").change(function () {
-                var row = $(this);
-                if ($(".datepicker", row).val() !== "") {
-                    $("label.inside", row).removeClass("inside");
-                } else {
-                    $("label:first", row).addClass("inside");
-                }
-            });
-        }
-    },
+    //mod_event_date: {
+        //init: function () {
+            //$(".future_date_warning").change(function () {
+                //var now = new Date();
+                //var when = new Date(this.value);
+                //if (when - now < 0) {
+                    //if (!confirm("Has this event really already taken place?")) {
+                        //this.value = "";
+                    //}
+                //}
+            //});
+            //$(".form_row:has(.datepicker)").change(function () {
+                //var row = $(this);
+                //if ($(".datepicker", row).val() !== "") {
+                    //$("label.inside", row).removeClass("inside");
+                //} else {
+                    //$("label:first", row).addClass("inside");
+                //}
+            //});
+        //}
+    //},
     
     page_event_create: {
         init: function () {
@@ -868,106 +868,106 @@ var rah = {
         }
     },
     
-    mod_event_guests: {
-        init: function () {
-            var namespace = this;
-            var editables = $(".editable");
-            editables.each(rah.mod_event_guests.make_editable);
-            $(".guest_icon", editables).live("mouseover", function () {
-                $(this).addClass("ui-icon-circle-triangle-s");
-                $(this).removeClass("ui-icon-triangle-1-s");
-            }).live("mouseout", function () {
-                $(this).addClass("ui-icon-triangle-1-s");
-                $(this).removeClass("ui-icon-circle-triangle-s");
-            });
-            $("#guest_list .tooltip").qtip({
-                position: {
-                    corner: {
-                        target: 'rightMiddle',
-                        tooltip: 'leftMiddle'
-                    }
-                },
-                style: {
-                    name: 'green',
-                    tip: 'leftMiddle',
-                    background: '#E3EC9F',
-                    color: '#00AAD8',
-                    border: {
-                        width: 3,
-                        radius: 2,
-                        color: '#92C139'
-                    }
-                },
-                show: 'mouseover',
-                hide: 'mouseout'
-            });
-            $(".guests_add_link, #event_hosts_link").each(function () {
-                var link = $(this);
-                var container = $("<div class='hidden'></div>");
-                $("body").append(container);
-                container.load(link.attr("href"), function () {
-                    $("button, input:submit, a.button, input.button", container).button();
-                    $("form", container).attr("action", link.attr("href"));
-                    container.dialog({ 
-                        autoOpen: false,
-                        modal: true,
-                        height: 575,
-                        width: 360
-                    });
-                });
-                link.click(function () {
-                    container.dialog("open");
-                    return false;
-                });
-            });
-        },
-        make_editable: function () {
-            var element = $(this);
-            var args = {
-                placeholder: '<span class="event_inline_placeholder">click to add</span>',
-                cancel: 'Cancel',
-                submit: '<br/><button type="submit">Ok</button>'
-            };
-            if (element.hasClass("rsvp_select")) {
-                args.type = "select";
-                args.loadurl = "/events/rsvp_statuses/";
-            }
-            element.editable(function (value, settings) {
-                $.post(element.attr("id"), {"value": value}, function (data) {
-                    rah.mod_messages.init(data["message_html"]);
-                    element.html(data["guest_status"]);
-                    // added editable event back to element
-                }, "json");
+    //mod_event_guests: {
+        //init: function () {
+            //var namespace = this;
+            //var editables = $(".editable");
+            //editables.each(rah.mod_event_guests.make_editable);
+            //$(".guest_icon", editables).live("mouseover", function () {
+                //$(this).addClass("ui-icon-circle-triangle-s");
+                //$(this).removeClass("ui-icon-triangle-1-s");
+            //}).live("mouseout", function () {
+                //$(this).addClass("ui-icon-triangle-1-s");
+                //$(this).removeClass("ui-icon-circle-triangle-s");
+            //});
+            //$("#guest_list .tooltip").qtip({
+                //position: {
+                    //corner: {
+                        //target: 'rightMiddle',
+                        //tooltip: 'leftMiddle'
+                    //}
+                //},
+                //style: {
+                    //name: 'green',
+                    //tip: 'leftMiddle',
+                    //background: '#E3EC9F',
+                    //color: '#00AAD8',
+                    //border: {
+                        //width: 3,
+                        //radius: 2,
+                        //color: '#92C139'
+                    //}
+                //},
+                //show: 'mouseover',
+                //hide: 'mouseout'
+            //});
+            //$(".guests_add_link, #event_hosts_link").each(function () {
+                //var link = $(this);
+                //var container = $("<div class='hidden'></div>");
+                //$("body").append(container);
+                //container.load(link.attr("href"), function () {
+                    //$("button, input:submit, a.button, input.button", container).button();
+                    //$("form", container).attr("action", link.attr("href"));
+                    //container.dialog({ 
+                        //autoOpen: false,
+                        //modal: true,
+                        //height: 575,
+                        //width: 360
+                    //});
+                //});
+                //link.click(function () {
+                    //container.dialog("open");
+                    //return false;
+                //});
+            //});
+        //},
+        //make_editable: function () {
+            //var element = $(this);
+            //var args = {
+                //placeholder: '<span class="event_inline_placeholder">click to add</span>',
+                //cancel: 'Cancel',
+                //submit: '<br/><button type="submit">Ok</button>'
+            //};
+            //if (element.hasClass("rsvp_select")) {
+                //args.type = "select";
+                //args.loadurl = "/events/rsvp_statuses/";
+            //}
+            //element.editable(function (value, settings) {
+                //$.post(element.attr("id"), {"value": value}, function (data) {
+                    //rah.mod_messages.init(data["message_html"]);
+                    //element.html(data["guest_status"]);
+                    //// added editable event back to element
+                //}, "json");
                 
-                return value;
-            }, args);
-        }
-    },
+                //return value;
+            //}, args);
+        //}
+    //},
     
     page_commitments_show: {
         init: function () {
             // When show or hide a list of users when the action is clicked
-            $(".commit_action").toggle(
-                function () {
-                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-e");
-                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-s");
-                    $("td .commit_list_ul_" + $(this).attr("id").split("__")[1]).show();
-                },
-                function () {
-                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-e");
-                    $(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-s");
-                    $("td .commit_list_ul_" + $(this).attr("id").split("__")[1]).hide();
-                }
-            );
-            // Show an edit link when the user hovers over a name
-            $(".commit_list_ul li").hover(
-                function () {
-                    $(this).children(".commit_user_list_edit_link").show();
-                },
-                function () {
-                    $(this).children(".commit_user_list_edit_link").hide();
-                }
-            );
+            //$(".commit_action").toggle(
+                //function () {
+                    //$(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-e");
+                    //$(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-s");
+                    //$("td .commit_list_ul_" + $(this).attr("id").split("__")[1]).show();
+                //},
+                //function () {
+                    //$(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-e");
+                    //$(this).siblings("span.commit_tick").toggleClass("ui-icon-triangle-1-s");
+                    //$("td .commit_list_ul_" + $(this).attr("id").split("__")[1]).hide();
+                //}
+            //);
+            //// Show an edit link when the user hovers over a name
+            //$(".commit_list_ul li").hover(
+                //function () {
+                    //$(this).children(".commit_user_list_edit_link").show();
+                //},
+                //function () {
+                    //$(this).children(".commit_user_list_edit_link").hide();
+                //}
+            //);
             
             rah.mod_commitment_card_open_link_setup.init();
         }
@@ -979,82 +979,82 @@ var rah = {
         }
     },
     
-    mod_commitment_card_open_link_setup: {
-        init: function () {
-            /*
-                Must apply the class commitment_card_open to a link pointing to a commitment card
-                e.g.:  <a href="/commitments/card/" class="commitment_card_open">New Card</a>
-                e.g.:  <a href="/commitments/card/70/" class="commitment_card_open">Edit Joe Smith's card</a>
-                e.g.:  <a href="/commitments/card/70/someform/" class="commitment_card_open">Edit Joe someform Card</a>
+    //mod_commitment_card_open_link_setup: {
+        //init: function () {
+            //[>
+                //Must apply the class commitment_card_open to a link pointing to a commitment card
+                //e.g.:  <a href="/commitments/card/" class="commitment_card_open">New Card</a>
+                //e.g.:  <a href="/commitments/card/70/" class="commitment_card_open">Edit Joe Smith's card</a>
+                //e.g.:  <a href="/commitments/card/70/someform/" class="commitment_card_open">Edit Joe someform Card</a>
             
-            */
+            //*/
             
-            // Setup dialog when new commitment card button is pressed
-            $("#commitment_card_dialog").remove();
-            $('body').append('<div id="commitment_card_dialog"></div>');
-            $("#commitment_card_dialog").dialog({
-                modal: true,
-                buttons: {
-                    "Save and close": function () { 
-                        $("#commitment_card_form").ajaxSubmit({
-                            success: function (messages_html) {
-                                $("#commitment_card_dialog").dialog("close");
-                                rah.mod_messages.init(messages_html);
-                                $("#commitments_show_table").load('/commitments/ #commitments_show_table table', function () {
-                                    rah.page_commitments_show.init();
-                                });
-                            }
-                        });
-                    }
-                },
-                autoOpen: false,
-                width: 781
-            });
+            //// Setup dialog when new commitment card button is pressed
+            //$("#commitment_card_dialog").remove();
+            //$('body').append('<div id="commitment_card_dialog"></div>');
+            //$("#commitment_card_dialog").dialog({
+                //modal: true,
+                //buttons: {
+                    //"Save and close": function () { 
+                        //$("#commitment_card_form").ajaxSubmit({
+                            //success: function (messages_html) {
+                                //$("#commitment_card_dialog").dialog("close");
+                                //rah.mod_messages.init(messages_html);
+                                //$("#commitments_show_table").load('/commitments/ #commitments_show_table table', function () {
+                                    //rah.page_commitments_show.init();
+                                //});
+                            //}
+                        //});
+                    //}
+                //},
+                //autoOpen: false,
+                //width: 781
+            //});
             
-            // Attach functionality commitment card links
-            $(".commitment_card_open").click(function () {
-                var href = $(this).attr('href');
+            //// Attach functionality commitment card links
+            //$(".commitment_card_open").click(function () {
+                //var href = $(this).attr('href');
                 
-                $("#commitment_card_dialog").load(href, function () {
-                    rah.mod_commitment_card_form_setup.init(href);
-                    $("#commitment_card_dialog").dialog("open");
-                });
-                return false;
-            });
-        }
-    },
+                //$("#commitment_card_dialog").load(href, function () {
+                    //rah.mod_commitment_card_form_setup.init(href);
+                    //$("#commitment_card_dialog").dialog("open");
+                //});
+                //return false;
+            //});
+        //}
+    //},
     
-    mod_commitment_card_form_setup: {
-        /*
-            param action: The path where the commitment card form should POST to
-        */
-        init: function (action) {
-            // Make sure only one box is checked
-            $("#commitment_card_form .commit_card_choice input").live("click", function () {
-                var id = $(this).attr("id");
-                var index = id.substr(id.length - 1, 1);
-                var other_index = (index === "1") ? "0" : "1";
-                var field_name = id.substr(0, id.length - 1);
-                $("#" + field_name + other_index).attr("checked", false);
-            });
+    //mod_commitment_card_form_setup: {
+        //[>
+            //param action: The path where the commitment card form should POST to
+        //*/
+        //init: function (action) {
+            //// Make sure only one box is checked
+            //$("#commitment_card_form .commit_card_choice input").live("click", function () {
+                //var id = $(this).attr("id");
+                //var index = id.substr(id.length - 1, 1);
+                //var other_index = (index === "1") ? "0" : "1";
+                //var field_name = id.substr(0, id.length - 1);
+                //$("#" + field_name + other_index).attr("checked", false);
+            //});
             
-            $("#commitment_card_form").validate({
-                rules: {
-                    zipcode:    { required: false, minlength: 5, digits: true },
-                    email:      { required: false, email: true },
-                    first_name: { required: true, minlength: 2 }
-                }
-            });
+            //$("#commitment_card_form").validate({
+                //rules: {
+                    //zipcode:    { required: false, minlength: 5, digits: true },
+                    //email:      { required: false, email: true },
+                    //first_name: { required: true, minlength: 2 }
+                //}
+            //});
             
-            $("#commitment_card_form").attr("action", action);
+            //$("#commitment_card_form").attr("action", action);
             
-            $("#commitment_card_select_form #id_form_name").change(function () {
-                var load_url = action + '?form_name=' + $(this).val();
-                $("#commitment_card_action_table").load(load_url + ' #commitment_card_action_table table');
-                $("#commitment_card_form").attr("action", load_url);
-            });
-        }
-    },
+            //$("#commitment_card_select_form #id_form_name").change(function () {
+                //var load_url = action + '?form_name=' + $(this).val();
+                //$("#commitment_card_action_table").load(load_url + ' #commitment_card_action_table table');
+                //$("#commitment_card_form").attr("action", load_url);
+            //});
+        //}
+    //},
     
     page_event_commitments: {
         init: function () {

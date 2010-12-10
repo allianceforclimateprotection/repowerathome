@@ -135,28 +135,36 @@
         {% endif %}
         <div id="fb-root"></div>
         <script type="text/javascript" charset="utf-8">
-            var rah_name = "{% block js %}{% endblock %}";
+            <!--var rah_name = "{% block js %}{% endblock %}";-->
             var media_url = "{{ MEDIA_URL }}"; // contains trailing slash
-            var rah_nav_select = "{% block rah_nav_select %}{% endblock %}";
+            
+            var RAH = RAH || {};
+            RAH.ENV = {};
+            (function () {
+                this.nav_select = "{% block rah_nav_select %}{% endblock %}";
+                this.facebook_appid = {{ FACEBOOK_APPID }};
+            }).apply(RAH.ENV);
         </script>
         {% if debug %}
-            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/js_libs.js' %}"></script>
+            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/jquery.js' %}"></script>
+            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/require.js' %}" data-main="pages/base"></script>
         {% else %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/js_libs_min.js' %}"></script>
         {% endif %}
-        <script  type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>
-        <script type="text/javascript">
-            FB.init({appId: '{{ FACEBOOK_APPID }}', status: true, cookie: true, xfbml: true});
-        </script>
+        <!--<script  type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>-->
+        <!--<script type="text/javascript">-->
+            <!--FB.init({appId: '{{ FACEBOOK_APPID }}', status: true, cookie: true, xfbml: true});-->
+        <!--</script>-->
+        {% block pagejs %}{% endblock %}
         {% block extrajs %}{% endblock %}
-        {% if testing_feedback_form %}
-            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/testing_widget.js' %}"></script>
-        {% endif %}
-        {% if debug %}
-            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/rah.js' %}"></script>
-        {% else %}
-            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/rah_min.js' %}"></script>
-        {% endif %}
+        <!--{% if testing_feedback_form %}-->
+            <!--<script type="text/javascript" charset="utf-8" src="{% dated_static 'js/testing_widget.js' %}"></script>-->
+        <!--{% endif %}-->
+        <!--{% if debug %}-->
+            <!--<script type="text/javascript" charset="utf-8" src="{% dated_static 'js/rah.js' %}"></script>-->
+        <!--{% else %}-->
+            <!--<script type="text/javascript" charset="utf-8" src="{% dated_static 'js/rah_min.js' %}"></script>-->
+        <!--{% endif %}-->
         {% if ask_to_share %}
             <script type="text/javascript">rah.mod_ask_to_share.init("{% url records_ask_to_share %}");</script>
             <div id="ask_to_share_container"></div>
