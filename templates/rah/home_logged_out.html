@@ -51,4 +51,10 @@
 {# </div> #}
 
 {% endblock %}
-{% block js %}page_home_logged_out{% endblock %}
+{% block pagejs %}
+    <script>
+        require({
+            "priority": ["libs/jquery.cookies"],
+        }, ["pages/rah.home_logged_out"]);
+    </script>
+{% endblock %}
