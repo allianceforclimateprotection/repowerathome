@@ -25,6 +25,9 @@ def prod():
     env.roles = ["application"]
     env.environment = "production"
 
+def environment(environment):
+    env.environment = environment
+
 def test():
     "Run all tests"
     with settings(warn_only=True):
