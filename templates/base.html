@@ -147,7 +147,7 @@
         </script>
         {% if debug %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/jquery.js' %}"></script>
-            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/require.js' %}" data-main="pages/base"></script>
+            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/require.js' %}"></script>
         {% else %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/js_libs_min.js' %}"></script>
         {% endif %}
@@ -155,7 +155,11 @@
         <!--<script type="text/javascript">-->
             <!--FB.init({appId: '{{ FACEBOOK_APPID }}', status: true, cookie: true, xfbml: true});-->
         <!--</script>-->
-        {% block pagejs %}{% endblock %}
+        {% block pagejs %}
+            <script>
+                require({}, ["{% dated_static 'js/pages/base.js' %}"]);
+            </script>
+        {% endblock %}
         {% block extrajs %}{% endblock %}
         <!--{% if testing_feedback_form %}-->
             <!--<script type="text/javascript" charset="utf-8" src="{% dated_static 'js/testing_widget.js' %}"></script>-->

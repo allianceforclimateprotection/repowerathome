@@ -54,7 +54,7 @@
 {% block pagejs %}
     <script>
         require({
-            "priority": ["libs/jquery.cookies"],
-        }, ["pages/rah.home_logged_out"]);
+            priority: ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.home_logged_out.js' %}"]
+        }, ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.home_logged_out.js' %}"]);
     </script>
 {% endblock %}
