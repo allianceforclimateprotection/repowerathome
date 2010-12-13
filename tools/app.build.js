@@ -2,6 +2,7 @@
     appDir: "../static",
     baseUrl: "js",
     dir: "../static_build",
+    optimizeCss: "standard",
     modules: [
         {
             name: "pages/base",
@@ -15,4 +16,3 @@
         }
     ]
 })
-

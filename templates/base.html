@@ -27,11 +27,7 @@
         <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" /> 
         <link rel="alternate" type="application/atom+xml"  href="{% url blog_feed %}" title="Repower at Home Blog" />
         <link rel="shortcut icon" href="{% dated_static 'images/theme/favicon.ico' %}"/>
-        {% if debug %}
-            <link rel="stylesheet" href="{% dated_static 'css/style.css' %}" type="text/css" media="screen" charset="utf-8"/>
-        {% else %}
-            <link rel="stylesheet" href="{% dated_static 'css/style_min.css' %}" type="text/css" media="screen" charset="utf-8"/>
-        {% endif %}
+        <link rel="stylesheet" href="{% dated_static 'css/style.css' %}" type="text/css" media="screen" charset="utf-8"/>
         <!--[if IE]>
         	<link rel="stylesheet" type="text/css" href="{% dated_static 'css/style_ie.css' %}" media="screen" charset="utf-8"/>
         <![endif]-->
@@ -145,12 +141,8 @@
                 this.facebook_appid = {{ FACEBOOK_APPID }};
             }).apply(RAH.ENV);
         </script>
-        {% if debug %}
-            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/jquery.js' %}"></script>
-            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/require.js' %}"></script>
-        {% else %}
-            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/js_libs_min.js' %}"></script>
-        {% endif %}
+        <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/jquery.js' %}"></script>
+        <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/require.js' %}"></script>
         <!--<script  type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>-->
         <!--<script type="text/javascript">-->
             <!--FB.init({appId: '{{ FACEBOOK_APPID }}', status: true, cookie: true, xfbml: true});-->
