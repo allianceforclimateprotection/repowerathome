@@ -96,7 +96,6 @@ define(function () {
          }
         Downcoder.regex = new RegExp('[' + Downcoder.chars + ']|[^' + Downcoder.chars + ']+','g') ;
     }
-
     var downcode = function (slug) {
         Downcoder.Initialize() ;
         var downcoded =""
