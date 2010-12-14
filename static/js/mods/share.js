@@ -1,7 +1,7 @@
 /*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
 /*global $: false, RAH: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
-define(["libs/jquery.ui", "libs/facebook", "libs/jquery.validate", "mods/messagses"],
-    function (ui, facebook, validate, messages) {
+define(["libs/jquery", "libs/jquery.ui", "libs/facebook", "libs/jquery.validate", "mods/messagses"],
+    function (jquery, ui, facebook, validate, messages) {
         return {
             init: function (url) {
                 $.get(url, function (data) {
