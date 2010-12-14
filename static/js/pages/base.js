@@ -1,7 +1,7 @@
 /*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
 /*global $: false, RAH: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
-require(["libs/jquery", "libs/webfont", "libs/jquery.ui", "libs/jquery.form", "mods/feedback", "mods/messages", "mods/facebook"],
-    function (jquery, webfont, ui, form, feedback, messages, facebook) {
+require(["libs/webfont", "libs/jquery.ui", "libs/jquery.form", "mods/feedback", "mods/messages", "mods/facebook"],
+    function (webfont, ui, form, feedback, messages, facebook) {
         // Setup TypeKit for non IE browsers
         var browser = $.browser;
         if (!browser.msie && !(browser.mozilla && browser.version.substr(0, 5) === "1.9.0")) {

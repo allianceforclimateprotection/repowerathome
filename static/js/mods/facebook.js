@@ -1,6 +1,6 @@
 /*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
 /*global $: false, RAH: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
-define(["libs/jquery", "https://connect.facebook.net/en_US/all.js"], function () {
+define(["https://connect.facebook.net/en_US/all.js"], function (facebook) {
     FB.init({appId: RAH.ENV.facebook_appid, status: true, cookie: true, xfbml: true});
     return {
         setup: function () {
