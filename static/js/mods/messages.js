@@ -14,9 +14,11 @@ define(["libs/jquery"], function () {
         auto_remove_messages: function () {
             $(".messages:not(.sticky)").each(function () {
                 var elem = $(this);
-                elem.delay(5000).slideUp(400, function () {
-                    elem.remove();
-                });
+                setTimeout(function () {
+                    elem.slideUp(400, function () {
+                        elem.remove();
+                    });
+                }, 5000);
             });
         },
         add_message: function (html) {
