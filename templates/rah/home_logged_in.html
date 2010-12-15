@@ -100,4 +100,10 @@
         
     </div>
 {% endblock %}
-{% block js %}page_home_logged_in{% endblock %}
+{% block pagejs %}
+    <script>
+        require({
+            priority: ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.home_logged_out.js' %}", "https://connect.facebook.net/en_US/all.js"]
+        }, ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.home_logged_in.js' %}"]);
+    </script>
+{% endblock %}
