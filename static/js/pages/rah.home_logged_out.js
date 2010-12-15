@@ -4,6 +4,6 @@ require(["libs/jquery.cookie", "mods/pledge"], function (cookies, pledge) {
     if ($.cookie("repowerathomepledge")) {
         pledge.advance_slide();
     } else {
-        pledge.submit_setup();
+        pledge.setup();
     }
 });

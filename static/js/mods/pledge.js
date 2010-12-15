@@ -3,7 +3,7 @@
 define(["libs/jquery.validation", "libs/jquery.form", "libs/jquery.cookie", "mods/messages", "libs/jquery.ui"],
     function (validate, form, cookies, messages, ui) {
         return {
-            submit_setup: function () {
+            setup: function () {
                 var pledge_mod = this;
                 $("#pledge_card_form").validate({
                     rules: {
