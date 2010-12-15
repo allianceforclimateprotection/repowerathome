@@ -146,11 +146,13 @@
         {% block pagejs %}
             <script>
                 (function() {
-                    var page_script = ["{% block pagescript %}{% endblock %}"];
+                    var page_script = "{% block pagescript %}{% endblock %}";
+                        page_scripts = page_script.length ? [page_script] : [];
+                    console.log(page_scripts);
                     require({
                         priority: ["{%dated_static 'js/pages/base.js' %}",
-                                    "https://connect.facebook.net/en_US/all.js"].concat(page_script)
-                    }, ["{% dated_static 'js/pages/base.js' %}"].concat(page_script));
+                        "https://connect.facebook.net/en_US/all.js"].concat(page_scripts)
+                    }, ["{% dated_static 'js/pages/base.js' %}"].concat(page_scripts));
                 })();
             </script>
         {% endblock %}
