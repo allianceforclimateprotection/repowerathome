@@ -22,6 +22,16 @@
             name: "pages/rah.login",
             exclude: ["pages/base"],
             include: ["libs/jquery.validation"]
+        },
+        {
+            name: "pages/rah.register",
+            exclude: ["pages/base"],
+            include: ["libs/jquery.validation"]
+        },
+        {
+            name: "pages/rah.profile.edit",
+            exclude: ["pages/base"],
+            include: ["libs/jquery.validation"]
         }
     ]
 })

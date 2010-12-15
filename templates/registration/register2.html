@@ -1,4 +1,5 @@
 {% extends "rah/base.html" %}
+{% load dated_static %}
 {% block tongue %}{% endblock tongue %}
 {% block title %}Register for Repower at Home{% endblock %}
 {% block right_content %}
@@ -83,4 +84,4 @@
         <div class="box_three_bottom"></div>
     </div>
 {% endblock %}
-{% block js %}page_register{% endblock %}
+{% block pagescript %}{% dated_static 'js/pages/rah.register.js' %}{% endblock %}
