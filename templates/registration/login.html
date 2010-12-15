@@ -1,4 +1,5 @@
 {% extends "rah/base.html" %}
+{% load dated_static %}
 {% block tongue %}{% endblock tongue %}
 {% block title %}Log in to Repower at Home{% endblock %}
 {% block right_content %}
@@ -29,4 +30,10 @@
         <div class="box_two_bottom"></div>
     </div>
 {% endblock %}
-{% block js %}page_login{% endblock %}
+{% block pagejs %}
+    <script>
+        require({
+            priority: ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.login.js' %}", "https://connect.facebook.net/en_US/all.js"]
+        }, ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.login.js' %}"]);
+    </script>
+{% endblock %}
