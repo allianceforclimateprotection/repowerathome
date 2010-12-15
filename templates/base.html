@@ -145,7 +145,13 @@
         <!--<script  type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>-->
         {% block pagejs %}
             <script>
-                require({}, ["{% dated_static 'js/pages/base.js' %}"]);
+                (function() {
+                    var page_script = ["{% block pagescript %}{% endblock %}"];
+                    require({
+                        priority: ["{%dated_static 'js/pages/base.js' %}",
+                                    "https://connect.facebook.net/en_US/all.js"].concat(page_script)
+                    }, ["{% dated_static 'js/pages/base.js' %}"].concat(page_script));
+                })();
             </script>
         {% endblock %}
         {% block extrajs %}{% endblock %}

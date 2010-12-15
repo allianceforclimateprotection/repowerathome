@@ -165,17 +165,17 @@ var rah = {
     /**
     * Registration page
     **/
-    page_register: {
-        init: function () {
-            $("#registration_form").validate({
-                rules: {
-                    zipcode:        { required: false, remote: { url: "/validate/", type: "post" } },
-                    email: { required: true, email: true, remote: { url: "/validate/", type: "post" } },
-                    first_name:     { required: true, minlength: 2 },
-                    password1:      { required: true, minlength: 5 },
-                    password2:      { required: true, minlength: 5, equalTo: "#id_password1" }
-                },
-                messages: {
+    //page_register: {
+        //init: function () {
+            //$("#registration_form").validate({
+                //rules: {
+                    //zipcode:        { required: false, remote: { url: "/validate/", type: "post" } },
+                    //email: { required: true, email: true, remote: { url: "/validate/", type: "post" } },
+                    //first_name:     { required: true, minlength: 2 },
+                    //password1:      { required: true, minlength: 5 },
+                    //password2:      { required: true, minlength: 5, equalTo: "#id_password1" }
+                //},
+                //messages: {
                     //email: { remote: "That email is already registered" },
                     //zipcode: { remote: "We couldn't locate this zipcode" }
                 //}

@@ -30,10 +30,4 @@
         <div class="box_two_bottom"></div>
     </div>
 {% endblock %}
-{% block pagejs %}
-    <script>
-        require({
-            priority: ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.login.js' %}", "https://connect.facebook.net/en_US/all.js"]
-        }, ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.login.js' %}"]);
-    </script>
-{% endblock %}
+{% block pagescript %}{% dated_static 'js/pages/rah.login.js' %}{% endblock %}
