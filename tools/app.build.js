@@ -13,6 +13,7 @@
             exclude: ["pages/base"],
             include: ["libs/jquery.cookie", "mods/pledge"]
         },
+        {
             name: "pages/rah.home_logged_in",
             exclude: ["pages/base"],
             include: ["mods/pledge", "libs/jquery.validate", "mods/invite", "mods/commitments"]
