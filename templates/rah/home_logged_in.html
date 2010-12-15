@@ -103,7 +103,7 @@
 {% block pagejs %}
     <script>
         require({
-            priority: ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.home_logged_out.js' %}", "https://connect.facebook.net/en_US/all.js"]
+            priority: ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.home_logged_in.js' %}", "https://connect.facebook.net/en_US/all.js"]
         }, ["{% dated_static 'js/pages/base.js' %}", "{% dated_static 'js/pages/rah.home_logged_in.js' %}"]);
     </script>
 {% endblock %}
