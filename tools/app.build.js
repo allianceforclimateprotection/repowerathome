@@ -16,7 +16,7 @@
         {
             name: "pages/rah.home_logged_in",
             exclude: ["pages/base"],
-            include: ["mods/pledge", "libs/jquery.validate", "mods/invite", "mods/commitments"]
+            include: ["mods/pledge", "libs/jquery.validation", "mods/invite", "mods/commitments"]
         }
     ]
 })

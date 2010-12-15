@@ -165,24 +165,23 @@ var rah = {
     /**
     * Registration page
     **/
-    //page_register: {
-        //init: function () {
-            //$("#registration_form").validate({
-                //rules: {
-                    //zipcode:        { required: false, remote: { url: "/validate/", type: "post" } },
-                    //email: { required: true, email: true, remote: { url: "/validate/", type: "post" } },
-                    //first_name:     { required: true, minlength: 2 },
-                    //password1:      { required: true, minlength: 5 },
-                    //password2:      { required: true, minlength: 5, equalTo: "#id_password1" }
-                //},
-                //messages: {
+    page_register: {
+        init: function () {
+            $("#registration_form").validate({
+                rules: {
+                    zipcode:        { required: false, remote: { url: "/validate/", type: "post" } },
+                    email: { required: true, email: true, remote: { url: "/validate/", type: "post" } },
+                    first_name:     { required: true, minlength: 2 },
+                    password1:      { required: true, minlength: 5 },
+                    password2:      { required: true, minlength: 5, equalTo: "#id_password1" }
+                },
+                messages: {
                     //email: { remote: "That email is already registered" },
                     //zipcode: { remote: "We couldn't locate this zipcode" }
                 //}
             //});
         //}
     //},
-    
     /**
     * Log in page
     **/
@@ -513,41 +512,41 @@ var rah = {
         }
     },
     
-    //mod_comment_form: {
-        //init: function () {
-            //$("#comment_form").validate({
-                //rules: {
-                    //comment:    { required: true, maxlength: 3000 }
-                //},
-                //messages: {
-                    //comment: { maxlength: "comment must be less than 3000 characters" }
-                //}
-            //});
-            //rah.mod_thumbs_radio_widget.init();
-            //rah.mod_flag.init();
-            //$("#comments .tooltip").qtip({
-                //position: {
-                    //corner: {
-                        //target: 'topMiddle',
-                        //tooltip: 'bottomMiddle'
-                    //}
-                //},
-                //style: {
-                    //name: 'green',
-                    //tip: 'bottomMiddle',
-                    //background: '#E3EC9F',
-                    //color: '#00AAD8',
-                    //border: {
-                        //width: 3,
-                        //radius: 2,
-                        //color: '#92C139'
-                    //}
-                //},
-                //show: 'mouseover',
-                //hide: 'mouseout'
-            //});
-        //}
-    //},
+    mod_comment_form: {
+        init: function () {
+            $("#comment_form").validate({
+                rules: {
+                    comment:    { required: true, maxlength: 3000 }
+                },
+                messages: {
+                    comment: { maxlength: "comment must be less than 3000 characters" }
+                }
+            });
+            rah.mod_thumbs_radio_widget.init();
+            rah.mod_flag.init();
+            $("#comments .tooltip").qtip({
+                position: {
+                    corner: {
+                        target: 'topMiddle',
+                        tooltip: 'bottomMiddle'
+                    }
+                },
+                style: {
+                    name: 'green',
+                    tip: 'bottomMiddle',
+                    background: '#E3EC9F',
+                    color: '#00AAD8',
+                    border: {
+                        width: 3,
+                        radius: 2,
+                        color: '#92C139'
+                    }
+                },
+                show: 'mouseover',
+                hide: 'mouseout'
+            });
+        }
+    },
     
     /**
     * mod_messages: call this method to attach message html, if no html is passed it will just set a timer on any existing messages
@@ -1049,12 +1048,12 @@ var rah = {
             //$("#commitment_card_form").attr("action", action);
             
             //$("#commitment_card_select_form #id_form_name").change(function () {
-                //var load_url = action + '?form_name=' + $(this).val();
-                //$("#commitment_card_action_table").load(load_url + ' #commitment_card_action_table table');
-                //$("#commitment_card_form").attr("action", load_url);
-            //});
-        //}
-    //},
+                var load_url = action + '?form_name=' + $(this).val();
+                $("#commitment_card_action_table").load(load_url + ' #commitment_card_action_table table');
+                $("#commitment_card_form").attr("action", load_url);
+            });
+        }
+    },
     
     page_event_commitments: {
         init: function () {
