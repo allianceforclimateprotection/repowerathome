@@ -34,7 +34,7 @@
             </li>
             <li>
                 <b>At your college or high school:</b> Work with your environmental club to collect Trendsetter Pledges
-                in place like the dining hall and other venues around campus.
+                in places like the dining hall and other venues around campus.
             </li>
             <li>
                 <b>In your office:</b> Hold a “lunch n’ learn” about energy efficiency and hand out Pledge Cards. You
@@ -57,7 +57,7 @@
             people to keep at it.
         </p>
     
-        <h2 id="managecards">Your pledge commitments</h2>
+        <h2 id="managecards">Your collected Pledge Cards</h2>
         {% if request.user.is_authenticated %}
         {# <p> #}
         {#     <a href="{% url commitments_card_create %}" class="button commitment_card_open">Enter a new pledge card</a> #}
@@ -136,7 +136,7 @@
         <h3>Collected pledges</h3>
         <p>
             You've collected <b>{{ pledge_card_count }}</b> pledge card{{ pledge_card_count|pluralize }}. 
-            See all your <a href="#managecards">pledge commitments</a>.
+            See all your <a href="#managecards">collected Pledge Cards</a>.
         </p>
     </div>
     <div class="box_one_bottom"></div>        
