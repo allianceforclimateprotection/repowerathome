@@ -10,6 +10,7 @@ from geo import admin as geo_admin
 from groups import admin as groups_admin
 from tagging import admin as tagging_admin
 from events import admin as event_admin
+from media_widget import admin as media_widget_admin
 from django.contrib.flatpages import admin as flatpages_admin
 from messaging import admin as messaging_admin
 from commitments import admin as commitments_admin

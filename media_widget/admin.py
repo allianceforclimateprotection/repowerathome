@@ -2,7 +2,8 @@ from django.contrib import admin
 from models import StickerImage
 
 class StickerImageAdmin(admin.ModelAdmin):
-    search_fields = ("name",)
-    ordering = ("name",)
+    search_fields = ("name", "description", "email",)
+    ordering = ("-created",)
+    list_display = ("name", "email", "description", "created",)
 
 admin.site.register(StickerImage, StickerImageAdmin)

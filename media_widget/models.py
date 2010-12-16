@@ -14,3 +14,5 @@ class StickerImage(models.Model):
         verbose_name = "Sticker image"
         verbose_name_plural = "Sticker images"
 
+    def __unicode__(self):
+        return u"%s" % (self.name)
