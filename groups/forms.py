@@ -15,7 +15,7 @@ from models import Group, GroupUsers, Discussion
 
 class GroupForm(forms.ModelForm):
     IMAGE_FORMATS = {"PNG": "png", "JPEG": "jpeg", "GIF": "gif"}
-    
+
     name = forms.CharField(label="Team name", help_text="Enter a name for your new team")
     slug = forms.SlugField(label="Team address", help_text="This will be your team's web address")
     description = forms.CharField(label="Team description", help_text="What is the team all about?",
@@ -27,7 +27,7 @@ class GroupForm(forms.ModelForm):
         "nh", "nj", "nm", "nv", "ny", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", 
         "va", "vt", "wa", "wi", "wv", "wy"]
     group_name_blacklist = ["user", "users", "admin", "event", "team"]
-    
+
     class Meta:
         model = Group
         exclude = ("is_featured", "is_geo_group", "location_type", "sample_location", "member_count",
@@ -35,7 +35,7 @@ class GroupForm(forms.ModelForm):
         widgets = {
             "membership_type": forms.RadioSelect
         }
-        
+
     def clean_image(self):
         data = self.cleaned_data["image"]
         if data:
@@ -45,24 +45,24 @@ class GroupForm(forms.ModelForm):
             if not self.image_format in GroupForm.IMAGE_FORMATS:
                 raise forms.ValidationError("Images cannot be of type %s" % data.content_type)
         return data
-        
+
     def clean_slug(self):
         data = self.cleaned_data["slug"]
         if data in GroupForm.states or any([data.startswith("%s-" % state) for state in GroupForm.states]):
             raise forms.ValidationError("Team addresses cannot begin with a state name.")
-        
+
         # Make sure the name is not in the blacklist or a resolvable URL
         try:
             if data in GroupForm.group_name_blacklist or resolve(reverse("group_detail", args=[data]))[0].__name__ != "group_detail":
                 raise forms.ValidationError("This team address is not available.")
         except:
             raise forms.ValidationError("This team address is not available.")
-        
+
         # Make sure there isn't a flatpage with this slug
         if FlatPage.objects.filter(url="/%s/" % data):
             raise forms.ValidationError("This team address is not available.")
         return data
-        
+
     def save(self):
         group = super(GroupForm, self).save()
         current_image = self.cleaned_data["image"]
@@ -74,7 +74,7 @@ class GroupForm(forms.ModelForm):
             group.image.save(image_name, original_file, save=True)
             group.image.storage.delete(original_name)
         return group
-        
+
 class MembershipForm(forms.Form):
     MEMBERSHIP_ROLES = (
         ('', '--Set Membership Role--'),
@@ -85,12 +85,12 @@ class MembershipForm(forms.Form):
     role = forms.ChoiceField(label="", choices=MEMBERSHIP_ROLES, error_messages={"required": "You must select a membership action."})
     memberships = forms.ModelMultipleChoiceField(queryset=GroupUsers.objects.all(), widget=forms.CheckboxSelectMultiple,
         error_messages={"required": "You must select at least one member from the team."})
-    
+
     def __init__(self, group, *args, **kwargs):
         super(MembershipForm, self).__init__(*args, **kwargs)
         self.group = group
         self.fields["memberships"].queryset = GroupUsers.objects.filter(group=group)
-        
+
     def clean(self):
         data = self.cleaned_data
         role = data["role"] if "role" in data else ""
@@ -99,7 +99,7 @@ class MembershipForm(forms.Form):
             self._errors["memberships"] = forms.util.ErrorList(["You must leave at least one manager in the team."])
             del self.cleaned_data["memberships"]
         return self.cleaned_data
-        
+
     def save(self):
         role = self.cleaned_data["role"]
         memberships = self.cleaned_data["memberships"]
@@ -126,14 +126,14 @@ class DiscussionCreateForm(forms.Form):
     body = forms.CharField(widget=forms.Textarea, label="Comment")
     parent_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
     parent_id_sig = forms.CharField(widget=forms.HiddenInput, required=False)
-    
+
     def __init__(self, *args, **kwargs):
         super(DiscussionCreateForm, self).__init__(*args, **kwargs)
         # If a parent_id was passed in, sign it
         if 'parent_id' in self.initial:
             self.fields['parent_id_sig'].initial = hash_val(self.initial.get('parent_id'))
             self.fields['subject'].widget = forms.HiddenInput()
-    
+
     def clean_parent_id(self):
         """Verify the parent_id_sig"""
         parent_id = self.cleaned_data['parent_id']
@@ -150,7 +150,7 @@ class DiscussionApproveForm(forms.ModelForm):
         widgets = {
             "is_public": forms.HiddenInput
         }
-    
+
     def __init__(self, *args, **kwargs):
         super(DiscussionApproveForm, self).__init__(*args, **kwargs)
         self.fields['is_public'].initial = True

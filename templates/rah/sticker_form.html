@@ -6,35 +6,21 @@
         <div class="box_three_top"></div>
         <div class="box_three_middle">
             <div id="registration_left_col">
-                <h1>We did it!</h1>
+                <h1>You’ve earned it</h1>
                 <p>
-                    We set an ambitious goal: Inspire Americans to prevent the equivalent of 7 million pounds of coal
-                    from being burned. Thanks to Trendsetters like you, we met that goal.
+                    By taking the Energy Trendsetter Pledge, you’ve committed to do your part to move us toward a clean energy future. Now, show off that commitment by getting your free Energy Trendsetter sticker. 
                 </p>
 
                 <p>
-                    On 10/10/10, a global day of action, we joined thousands of people in sending a clear message: We’re
-                    not waiting for others to solve the climate crisis — we’re getting to work now.
+                    Fill out the form, and we’ll send your sticker to you. Put it up on your laptop, your recycling bin, your car or anywhere it will be visible. The Trendsetter sticker is a great way to start a conversation with your friends and neighbors about how your community can eliminate waste, save money and clean up our environment.
                 </p>
-
+                <h2>Share your sticker</h2>
                 <p>
-                    To commemorate our achievement, <b>we’re giving all of our trendsetters a free sticker</b>,
-                    identifying you as someone who is committed to a clean energy future.
+                    Energy Trendsetters are popping up all over the country. Snap a picture of your sticker in its new location and upload it using the form below. We love seeing the creative places that Trendsetters are using to get the message out.
                 </p>
-
-                <p>
-                    Together, we have laid the groundwork for an enormous transformation in how we as a society consume
-                    energy. But we’re just at the beginning of this movement, and the Trendsetter sticker is a powerful
-                    way to encourage others to join us.
-                </p>
-
-                <p>
-                    Put your sticker someplace visible. Great places to show off your Trendsetter status include your
-                    laptop, your recycling bin or your car. Once you put up the sticker, take a picture of it and <a
-                    href="mailto:feedback@repowerathome.com?subject=My%20Trendsetter%20Sticker">email it back to us</a>.
-                    We love seeing the creative places that Trendsetters are using to get the message out.
-                </p>
-            </div>
+                {% include 'media_widget/_media_widget_gallery.html' %}
+           
+           </div>
             <div id="registration_right_col">
                 <p class="center">
                     <img src="{% dated_static 'images/theme/trendsetter_sticker.png' %}" width="275px" height="275px"/>
@@ -64,10 +50,11 @@
                         {% endfor %}
                     </div>
                     {% csrf_token %}
-                    <input type="submit" value="Submit" />
+                    <button type="submit">Claim your sticker</button>
                 </form>
             </div>
         </div>
         <div class="box_three_bottom"></div>
     </div>
 {% endblock %}
+{% block js %}page_trendsetter_sticker{% endblock %}

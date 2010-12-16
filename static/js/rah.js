@@ -1068,6 +1068,33 @@ var rah = {
         init: function () {
             rah.mod_invite_friend.init();
         }
+    },
+
+    page_trendsetter_sticker: {
+        init: function () {
+            $("#media_widget_upload_form").validate({
+                rules: {
+                    name: { required: true },
+                    image: { required: true },
+                    email: { required: true, email: true }
+                }
+            });
+            $("#registration_form").validate({
+                rules: {
+                    first_name: { required: true },
+                    last_name: { required: true },
+                    address: { required: true },
+                    state: { required: true },
+                    city: { required: true },
+                    zipcode: { required: true },
+                    image: { required: true },
+                    email: { required: true, email: true }
+                }
+            });
+            $("a.lightbox").slimbox({}, null, function(el) {
+                return (this == el) || ((this.rel.length > 0) && (this.rel == el.rel));
+            });
+        }
     }
 };
 

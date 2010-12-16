@@ -1,0 +1,41 @@
+{% for image in image_gallery %}
+<a class="lightbox" rel="gallery" title="{{image.description}}&mdash;{{image.name}}"
+    href="{{ MEDIA_URL }}{{ image.image.thumbnail_colorspace_640x480smartcrop }}">
+    <img src="{{ MEDIA_URL }}{{ image.image.thumbnail_colorspace_175x127smartcrop }}"
+    alt="{{image.name}}" />
+</a>
+{% endfor %}
+
+     {% with image_upload_form as form %}
+                <form id="media_widget_upload_form" enctype="multipart/form-data" action="{% url sticker_upload %}" method="post" >
+                    {% for error in form.non_field_errors %}
+                        <div class="overset_form_message error">{{ error }}</div>
+                    {% endfor %}
+                    {% for field in form.visible_fields %}
+                        <div class="form_row {% if field.errors %}error{% endif %} {% if field.name == 'first_name' %}form_row_float form_row_float_left_field{% endif%} {% if field.name == 'last_name' %}form_row_float{% endif%}">
+                            {% if "CheckboxInput" in field.field.widget|pprint %}
+                                {{ field }}{{ field.label_tag }}
+                            {% else %}
+                                {{ field.label_tag }}{{ field }}
+                            {% endif %}
+                            <span class="help_text">{{ field.help_text }}</span>
+                            {% for error in field.errors %}
+                                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+                            {% endfor %}
+                        </div>
+                        {% if field.name == 'last_name' %}<br class="clear"/>{% endif%}
+                    {% endfor %}
+                    <div class="hidden">
+                        {% for field in form.hidden_fields %}
+                            {{ field }}
+                        {% endfor %}
+                    </div>
+                    {% csrf_token %}
+                    <p class="smaller">
+                        By uploading a photo you affirm your 
+                        acceptance of and compliance with the Repower at Home
+                        <a href="/terms/">Terms of Use</a> and <a href="/privacy/">Privacy Policy</a>.
+                    </p>
+                    <button type="submit">Upload photo</button>
+                </form>
+                {% endwith %}
