@@ -7,6 +7,7 @@ static/js/js_libs_min.js
 static/js/rah_min.js
 static/css/style_min.css
 static/group_images/*
+static/sticker_images/*
 static/images/theme/geo_group_*
 static/images/theme/default_group_*
 lib/src/*

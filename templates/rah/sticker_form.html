@@ -18,6 +18,8 @@
                 <p>
                     Energy Trendsetters are popping up all over the country. Snap a picture of your sticker in its new location and upload it using the form below. We love seeing the creative places that Trendsetters are using to get the message out.
                 </p>
+                {% include 'media_widget/_media_widget_gallery.html' %}
+           
            </div>
             <div id="registration_right_col">
                 <p class="center">
@@ -48,10 +50,11 @@
                         {% endfor %}
                     </div>
                     {% csrf_token %}
-                    <input type="submit" value="Submit" />
+                    <button type="submit">Claim your sticker</button>
                 </form>
             </div>
         </div>
         <div class="box_three_bottom"></div>
     </div>
 {% endblock %}
+{% block js %}page_trendsetter_sticker{% endblock %}

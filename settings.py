@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'source_tracking',
     'commitments',
     'codebase',
+    'media_widget',
 )
 
 FIXTURE_DIR = ('fixtures',)
