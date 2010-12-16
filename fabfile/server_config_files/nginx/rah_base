@@ -15,7 +15,7 @@ location / {
     include uwsgi_params;
 }
 
-location ^~ /media {
+location ^~ /media/ {
     rewrite ^/media(.*)$ http://s3.amazonaws.com/rah_django_admin_media$1 permanent;
 }
 
