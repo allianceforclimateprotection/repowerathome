@@ -7,7 +7,7 @@ class StickerImage(models.Model):
     description =models.CharField(max_length=255, blank=True, null=True,
         help_text="Tell us about where you stuck your sticker.")
     image = ImageAndThumbsField(upload_to="sticker_images",
-        help_text="Image must be smaller than 1MB")
+        help_text="Image must be smaller than 5MB")
     approved = models.BooleanField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
