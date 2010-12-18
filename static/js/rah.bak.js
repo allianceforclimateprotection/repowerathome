@@ -287,221 +287,221 @@ var rah = {
     /**
     * Profile Edit Page
     **/
-    page_profile_edit: {
-        init: function () {
-            $("#profile_edit_tabs").bind("tabsselect", function (event, ui) {
-                $("form", this).attr("action", $(ui.tab).attr("href"));
-            });
-            // Validate the registration form
-            $("#profile_edit_form").validate({
-                rules: {
-                    zipcode:    { required: false, remote: { url: "/validate/", type: "post" } },
-                    email:      { required: true, email: true, remote: { url: "/validate/", type: "post" } },
-                    first_name: { required: true, minlength: 2 },
-                    password1:  { required: false, minlength: 5 },
-                    password2:  { required: false, minlength: 5, equalTo: "#id_password1" }
-                },
-                messages: {
-                    email: { remote: "That email is already registered" },
-                    zipcode: { remote: "We couldn't locate this zipcode" }
-                }
-            });
-            $(".selector").click(function () {
-                var selector = $(this);
-                var checked = selector.hasClass("select_all");
-                $("input[type='checkbox']", selector.parents(".form_row")).attr("checked", checked);
-                return false;
-            });
-            $("#team_selectors").removeClass("hidden");
-            $("#link_with_facebook").click(rah.mod_facebook_connect.authorize);
-        }
-    },
+    //page_profile_edit: {
+        //init: function () {
+            //$("#profile_edit_tabs").bind("tabsselect", function (event, ui) {
+                //$("form", this).attr("action", $(ui.tab).attr("href"));
+            //});
+            //// Validate the registration form
+            //$("#profile_edit_form").validate({
+                //rules: {
+                    //zipcode:    { required: false, remote: { url: "/validate/", type: "post" } },
+                    //email:      { required: true, email: true, remote: { url: "/validate/", type: "post" } },
+                    //first_name: { required: true, minlength: 2 },
+                    //password1:  { required: false, minlength: 5 },
+                    //password2:  { required: false, minlength: 5, equalTo: "#id_password1" }
+                //},
+                //messages: {
+                    //email: { remote: "That email is already registered" },
+                    //zipcode: { remote: "We couldn't locate this zipcode" }
+                //}
+            //});
+            //$(".selector").click(function () {
+                //var selector = $(this);
+                //var checked = selector.hasClass("select_all");
+                //$("input[type='checkbox']", selector.parents(".form_row")).attr("checked", checked);
+                //return false;
+            //});
+            //$("#team_selectors").removeClass("hidden");
+            //$("#link_with_facebook").click(rah.mod_facebook_connect.authorize);
+        //}
+    //},
     
     /**
     * Action Detail page
     **/
-    page_action_detail: {
-        init: function () {
-            rah.mod_comment_form.init();
+    //page_action_detail: {
+        //init: function () {
+            //rah.mod_comment_form.init();
             
-            $(".date_commit_field").parent().hide();
-            $(".commit_trigger").click(function () {
-                $("#commit_widget").dialog("open");
-                return false;
-            });
-            $(".undo_trigger").click(function () {
-                $(".action_undo_form").submit();
-            });
-            $("#commit_widget").dialog({
-                title: "Make a Commitment", 
-                modal: true, 
-                resizable: false, 
-                draggable: false, 
-                autoOpen: false, 
-                width: 550,
-                height: 450,
-                open: function () {
-                    var widget = $(this);
-                    widget.find(".commit_calendar").datepicker({
-                        dateFormat: 'yy-mm-dd', 
-                        maxDate: '+2y', 
-                        minDate: '0', 
-                        numberOfMonths: 2,
-                        onSelect: function (dateText, inst) { 
-                            $(".date_commit_field").val(dateText);
-                        }
-                    });
-                },
-                buttons: { 
-                    "Commit": function () {
-                        $("#commit_widget").dialog("close");
-                        var form = $(".action_commit_form");
-                        form.submit();
-                    }
-                }
-            });
-            $(".commit_cancel").click(function () {
-                if (confirm("Are you sure you want to cancel your commitment?")) {
-                    $(".action_cancel_form").submit();
-                }
-                return false; 
-            });
-            if (undefined !== window.rich_action_name) {
-                try {
-                    rah["rich_actions"][window.rich_action_name].init();
-                } catch (err) {
-                    console.error(err);
-                }
-            }
-            $(".action_forms .tooltip").qtip({
-                position: {
-                    corner: {
-                        target: 'bottomMiddle',
-                        tooltip: 'topMiddle'
-                    }
-                },
-                style: {
-                    name: 'green',
-                    tip: 'topMiddle',
-                    background: '#E3EC9F',
-                    color: '#00AAD8',
-                    border: {
-                        width: 3,
-                        radius: 2,
-                        color: '#92C139'
-                    }
-                },
-                show: 'mouseover',
-                hide: 'mouseout'
-            });
-        }
-    },
+            //$(".date_commit_field").parent().hide();
+            //$(".commit_trigger").click(function () {
+                //$("#commit_widget").dialog("open");
+                //return false;
+            //});
+            //$(".undo_trigger").click(function () {
+                //$(".action_undo_form").submit();
+            //});
+            //$("#commit_widget").dialog({
+                //title: "Make a Commitment", 
+                //modal: true, 
+                //resizable: false, 
+                //draggable: false, 
+                //autoOpen: false, 
+                //width: 550,
+                //height: 450,
+                //open: function () {
+                    //var widget = $(this);
+                    //widget.find(".commit_calendar").datepicker({
+                        //dateFormat: 'yy-mm-dd', 
+                        //maxDate: '+2y', 
+                        //minDate: '0', 
+                        //numberOfMonths: 2,
+                        //onSelect: function (dateText, inst) { 
+                            //$(".date_commit_field").val(dateText);
+                        //}
+                    //});
+                //},
+                //buttons: { 
+                    //"Commit": function () {
+                        //$("#commit_widget").dialog("close");
+                        //var form = $(".action_commit_form");
+                        //form.submit();
+                    //}
+                //}
+            //});
+            //$(".commit_cancel").click(function () {
+                //if (confirm("Are you sure you want to cancel your commitment?")) {
+                    //$(".action_cancel_form").submit();
+                //}
+                //return false; 
+            //});
+            //if (undefined !== window.rich_action_name) {
+                //try {
+                    //rah["rich_actions"][window.rich_action_name].init();
+                //} catch (err) {
+                    //console.error(err);
+                //}
+            //}
+            //$(".action_forms .tooltip").qtip({
+                //position: {
+                    //corner: {
+                        //target: 'bottomMiddle',
+                        //tooltip: 'topMiddle'
+                    //}
+                //},
+                //style: {
+                    //name: 'green',
+                    //tip: 'topMiddle',
+                    //background: '#E3EC9F',
+                    //color: '#00AAD8',
+                    //border: {
+                        //width: 3,
+                        //radius: 2,
+                        //color: '#92C139'
+                    //}
+                //},
+                //show: 'mouseover',
+                //hide: 'mouseout'
+            //});
+        //}
+    //},
     
-    rich_actions: {
-        vampire_power: {
-            init: function () {
-                var scroller = $("#vampire_worksheet").scrollable({ 
-                    size: 1, 
-                    clickable: false,
-                    item: "* .worksheet",
-                    api: true
-                });
-                $("#vampire_worksheet").navigator({
-                    navi: "#vampire_worksheet_wizard_nav",
-                    naviItem: "li"
-                });
-                var nav = $("#vampire_worksheet_wizard_nav");
-                $(".frame_shifter").click(function () {
-                    var worksheet = $(this).parents(".worksheet");
-                    rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 0, scroller);
-                    nav.slideDown("fast");
-                    return false;
-                });
-                if (undefined !== window.vampire_worksheet_started && window.vampire_worksheet_started) {
-                    nav.show();
-                    scroller.end(0);
-                }
-                $(".vampire_slayer").click(function () {
-                    var form = $(this).parents("form");
-                    /* save the worksheet data */
-                    $.ajax({
-                        url: form.attr("action"),
-                        type: form.attr("method"),
-                        data: form.serialize(),
-                        success: function (data) {},
-                        error: function () {},
-                        dataType: "json"
-                    });
+    //rich_actions: {
+        //vampire_power: {
+            //init: function () {
+                //var scroller = $("#vampire_worksheet").scrollable({ 
+                    //size: 1, 
+                    //clickable: false,
+                    //item: "* .worksheet",
+                    //api: true
+                //});
+                //$("#vampire_worksheet").navigator({
+                    //navi: "#vampire_worksheet_wizard_nav",
+                    //naviItem: "li"
+                //});
+                //var nav = $("#vampire_worksheet_wizard_nav");
+                //$(".frame_shifter").click(function () {
+                    //var worksheet = $(this).parents(".worksheet");
+                    //rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 0, scroller);
+                    //nav.slideDown("fast");
+                    //return false;
+                //});
+                //if (undefined !== window.vampire_worksheet_started && window.vampire_worksheet_started) {
+                    //nav.show();
+                    //scroller.end(0);
+                //}
+                //$(".vampire_slayer").click(function () {
+                    //var form = $(this).parents("form");
+                    //[> save the worksheet data <]
+                    //$.ajax({
+                        //url: form.attr("action"),
+                        //type: form.attr("method"),
+                        //data: form.serialize(),
+                        //success: function (data) {},
+                        //error: function () {},
+                        //dataType: "json"
+                    //});
                     
-                    /* set the slay method in the plan sheet */
-                    var input_selected = $(this);
-                    var device = input_selected.parents("form").find(".device_label").val();
-                    if (input_selected.val() === "y") {
-                        $("#my_vampire_list").append("<li>" + device + "</li>");
-                    } else {
-                        $("#my_vampire_list li:contains('" + device + "')").remove();
-                    }
-                    $("#my_vampire_count").text($("#my_vampire_list li").length);
+                    //[> set the slay method in the plan sheet <]
+                    //var input_selected = $(this);
+                    //var device = input_selected.parents("form").find(".device_label").val();
+                    //if (input_selected.val() === "y") {
+                        //$("#my_vampire_list").append("<li>" + device + "</li>");
+                    //} else {
+                        //$("#my_vampire_list li:contains('" + device + "')").remove();
+                    //}
+                    //$("#my_vampire_count").text($("#my_vampire_list li").length);
                     
-                    /* skip to the next incomplete worksheet */
-                    var worksheet = input_selected.parents(".worksheet");
-                    rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 500, scroller);
-                });
+                    //[> skip to the next incomplete worksheet <]
+                    //var worksheet = input_selected.parents(".worksheet");
+                    //rah.rich_actions.vampire_power.skip_to_next_sheet(worksheet, 500, scroller);
+                //});
                 
-                $(".slay_link a").click(function () {
-                    var page = $(this).attr("href");
-                    nav.find("a[href='" + page + "']").click();
-                    return false;
-                });
-                $(".slayer_help").button("destroy");
-                $("#vampire_worksheet a.tooltip").each(function () {
-                    var link = $(this);
-                    var location = link.attr("href");
-                    link.qtip({
-                        content: {
-                            url: location
-                        },
-                        position: {
-                            corner: {
-                                target: 'rightMiddle',
-                                tooltip: 'leftTop'
-                            }
-                        },
-                        style: {
-                            name: 'green',
-                            tip: 'leftTop',
-                            background: '#E3EC9F',
-                            color: '#00AAD8',
-                            border: {
-                                width: 3,
-                                radius: 2,
-                                color: '#92C139'
-                            }
-                        },
-                        show: 'mouseover',
-                        hide: 'mouseout'
-                    });
-                    link.click(function () { 
-                        return false; 
-                    });
-                });
-            },
-            skip_to_next_sheet: function (worksheet, delay, scroller) {
-                var offset = 1;
-                worksheet.nextAll().each(function () {
-                    if ($(this).find(".vampire_slayer:checked").length === 0) {
-                        return false;
-                    }
-                    /* increment the offset, as we want to skip ahead and find
-                    a worksheet that hasn't been filled out */
-                    offset = offset + 1; 
-                });
-                setTimeout(function () {
-                    scroller.move(offset);
-                }, delay);
-            }
-        }
-    },
+                //$(".slay_link a").click(function () {
+                    //var page = $(this).attr("href");
+                    //nav.find("a[href='" + page + "']").click();
+                    //return false;
+                //});
+                //$(".slayer_help").button("destroy");
+                //$("#vampire_worksheet a.tooltip").each(function () {
+                    //var link = $(this);
+                    //var location = link.attr("href");
+                    //link.qtip({
+                        //content: {
+                            //url: location
+                        //},
+                        //position: {
+                            //corner: {
+                                //target: 'rightMiddle',
+                                //tooltip: 'leftTop'
+                            //}
+                        //},
+                        //style: {
+                            //name: 'green',
+                            //tip: 'leftTop',
+                            //background: '#E3EC9F',
+                            //color: '#00AAD8',
+                            //border: {
+                                //width: 3,
+                                //radius: 2,
+                                //color: '#92C139'
+                            //}
+                        //},
+                        //show: 'mouseover',
+                        //hide: 'mouseout'
+                    //});
+                    //link.click(function () { 
+                        //return false; 
+                    //});
+                //});
+            //},
+            //skip_to_next_sheet: function (worksheet, delay, scroller) {
+                //var offset = 1;
+                //worksheet.nextAll().each(function () {
+                    //if ($(this).find(".vampire_slayer:checked").length === 0) {
+                        //return false;
+                    //}
+                    //[> increment the offset, as we want to skip ahead and find
+                    //a worksheet that hasn't been filled out */
+                    //offset = offset + 1; 
+                //});
+                //setTimeout(function () {
+                    //scroller.move(offset);
+                //}, delay);
+            //}
+        //}
+    //},
     
     /**
     * Post (Blog) Detail page
@@ -512,41 +512,41 @@ var rah = {
         }
     },
     
-    mod_comment_form: {
-        init: function () {
-            $("#comment_form").validate({
-                rules: {
-                    comment:    { required: true, maxlength: 3000 }
-                },
-                messages: {
-                    comment: { maxlength: "comment must be less than 3000 characters" }
-                }
-            });
-            rah.mod_thumbs_radio_widget.init();
-            rah.mod_flag.init();
-            $("#comments .tooltip").qtip({
-                position: {
-                    corner: {
-                        target: 'topMiddle',
-                        tooltip: 'bottomMiddle'
-                    }
-                },
-                style: {
-                    name: 'green',
-                    tip: 'bottomMiddle',
-                    background: '#E3EC9F',
-                    color: '#00AAD8',
-                    border: {
-                        width: 3,
-                        radius: 2,
-                        color: '#92C139'
-                    }
-                },
-                show: 'mouseover',
-                hide: 'mouseout'
-            });
-        }
-    },
+    //mod_comment_form: {
+        //init: function () {
+            //$("#comment_form").validate({
+                //rules: {
+                    //comment:    { required: true, maxlength: 3000 }
+                //},
+                //messages: {
+                    //comment: { maxlength: "comment must be less than 3000 characters" }
+                //}
+            //});
+            //rah.mod_thumbs_radio_widget.init();
+            //rah.mod_flag.init();
+            //$("#comments .tooltip").qtip({
+                //position: {
+                    //corner: {
+                        //target: 'topMiddle',
+                        //tooltip: 'bottomMiddle'
+                    //}
+                //},
+                //style: {
+                    //name: 'green',
+                    //tip: 'bottomMiddle',
+                    //background: '#E3EC9F',
+                    //color: '#00AAD8',
+                    //border: {
+                        //width: 3,
+                        //radius: 2,
+                        //color: '#92C139'
+                    //}
+                //},
+                //show: 'mouseover',
+                //hide: 'mouseout'
+            //});
+        //}
+    //},
     
     /**
     * mod_messages: call this method to attach message html, if no html is passed it will just set a timer on any existing messages
