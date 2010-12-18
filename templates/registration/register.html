@@ -81,4 +81,8 @@
         <div class="box_three_bottom"></div>
     </div>
 {% endblock %}
-{% block pagescript %}{% dated_static 'js/pages/rah.register.js' %}{% endblock %}
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/rah.register.js' %}");
+</script>

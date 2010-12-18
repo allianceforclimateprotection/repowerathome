@@ -30,4 +30,8 @@
         <div class="box_two_bottom"></div>
     </div>
 {% endblock %}
-{% block pagescript %}{% dated_static 'js/pages/rah.login.js' %}{% endblock %}
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/rah.login.js' %}");
+</script>

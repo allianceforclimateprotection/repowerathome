@@ -51,4 +51,8 @@
 {# </div> #}
 
 {% endblock %}
-{% block pagescript %}{% dated_static 'js/pages/rah.home_logged_out.js' %}{% endblock %}
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/rah.home_logged_out.js' %}");
+</script>
