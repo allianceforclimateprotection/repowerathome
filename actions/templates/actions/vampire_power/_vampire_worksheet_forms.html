@@ -50,12 +50,16 @@
     </div>
     {% csrf_token %}
 </div>
-<script type="text/javascript" charset="utf-8">
-    var rich_action_name = "vampire_power";
+{% load dated_static %}
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/action.detail.vampire.js' %}");
 </script>
 {% if vampire_worksheet_form.data or progress.is_completed or progress.date_committed %}
     <script type="text/javascript" charset="utf-8">
-        var vampire_worksheet_started = true;
+        var RAH = RAH || {};
+        RAH.vampire_worksheet_start = true;
     </script>
 {% endif %}
 
@@ -64,4 +68,3 @@
     
 <div class="box_two_top"></div>
 <div class="box_two_middle">
-    
