@@ -2,7 +2,7 @@
 /*global $: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
 define(["libs/jquery.qtip", "mods/messages"], function (qtip, messages) {
     return {
-        init: function () {
+        setup: function () {
             $("#comment_form").validate({
                 rules: {
                     comment:    { required: true, maxlength: 3000 }
