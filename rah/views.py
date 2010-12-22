@@ -412,27 +412,11 @@ def vampire_hunt(request):
     return render_to_response('rah/vampire_hunt.html', locals(), context_instance=RequestContext(request))
     
 def trendsetter_sticker(request):
-    if request.user.is_authenticated():
-        instance = StickerRecipient(first_name=request.user.first_name,
-            last_name=request.user.last_name, email=request.user.email)
-    else:
-        fields = dict([(k,v) for k,v in request.GET.items() if k in
-            ['address', 'city', 'email', 'first_name', 'last_name', 'state', 'zipcode']])
-        instance = StickerRecipient(**fields)
-
     from media_widget.forms import StickerImageUpload
     from media_widget.models import StickerImage
     image_gallery = StickerImage.objects.filter(approved=True)
     image_upload_form = StickerImageUpload()
 
-    form = StickerRecipientForm(instance=instance, data=(request.POST or None))
-    if form.is_valid():
-        recipient = form.save()
-        if recipient.user:
-            messages.add_message(request, messages.SUCCESS, "Thanks for requesting a sticker, you should recieve it in a few weeks")
-        else:
-            messages.add_message(request, messages.SUCCESS, "Your sticker will arrive shortly, in the mean time have you considered <a href='/register/'>registering</a>", extra_tags="sticky")
-        return redirect('index')
     return render_to_response('rah/sticker_form.html', locals(), context_instance=RequestContext(request))
 
 def search(request):

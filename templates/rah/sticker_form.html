@@ -8,11 +8,11 @@
             <div id="registration_left_col">
                 <h1>You’ve earned it</h1>
                 <p>
-                    By taking the Energy Trendsetter Pledge, you’ve committed to do your part to move us toward a clean energy future. Now, show off that commitment by getting your free Energy Trendsetter sticker. 
+                    By taking the Energy Trendsetter Pledge, you’ve committed to do your part to move us toward a clean energy future. Now, show off that commitment with your Energy Trendsetter sticker. 
                 </p>
 
                 <p>
-                    Fill out the form, and we’ll send your sticker to you. Put it up on your laptop, your recycling bin, your car or anywhere it will be visible. The Trendsetter sticker is a great way to start a conversation with your friends and neighbors about how your community can eliminate waste, save money and clean up our environment.
+                    Put it up on your laptop, your recycling bin, your car or anywhere it will be visible. The Trendsetter sticker is a great way to start a conversation with your friends and neighbors about how your community can eliminate waste, save money and clean up our environment.
                 </p>
                 <h2>Share your sticker</h2>
                 <p>
@@ -25,33 +25,7 @@
                 <p class="center">
                     <img src="{% dated_static 'images/theme/trendsetter_sticker.png' %}" width="275px" height="275px"/>
                 </p>
-                <h2>Claim your free sticker</h2>
-                <form id="registration_form" action="" method="post" >
-                    {% for error in form.non_field_errors %}
-                        <div class="overset_form_message error">{{ error }}</div>
-                    {% endfor %}
-                    {% for field in form.visible_fields %}
-                        <div class="form_row {% if field.errors %}error{% endif %} {% if field.name == 'first_name' %}form_row_float form_row_float_left_field{% endif%} {% if field.name == 'last_name' %}form_row_float{% endif%}">
-                            {% if "CheckboxInput" in field.field.widget|pprint %}
-                                {{ field }}{{ field.label_tag }}
-                            {% else %}
-                                {{ field.label_tag }}{{ field }}
-                            {% endif %}
-                            <span class="help_text">{{ field.help_text }}</span>
-                            {% for error in field.errors %}
-                                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
-                            {% endfor %}
-                        </div>
-                        {% if field.name == 'last_name' %}<br class="clear"/>{% endif%}
-                    {% endfor %}
-                    <div class="hidden">
-                        {% for field in form.hidden_fields %}
-                            {{ field }}
-                        {% endfor %}
-                    </div>
-                    {% csrf_token %}
-                    <button type="submit">Claim your sticker</button>
-                </form>
+
             </div>
         </div>
         <div class="box_three_bottom"></div>
