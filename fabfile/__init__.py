@@ -21,9 +21,12 @@ env.repository = "git@codebasehq.com:rah/rah/rah.git"
 def staging():
     env.roles = ["staging"]
     env.environment = "staging"
+    env.loadbalancers = env.roledefs["staging"]
+
 def prod():
     env.roles = ["application"]
     env.environment = "production"
+    env.loadbalancers = env.roledefs["loadbalancer"]
 
 def test():
     "Run all tests"

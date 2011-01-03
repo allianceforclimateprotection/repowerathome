@@ -13,8 +13,8 @@ def _truth_value(value):
 @runs_once
 def enable_maintenance_page():
     "Turns on the maintenance page"
-    if env.environment == "production":
-        for host in env.roledefs["loadbalancer"]:
+    if hasattr(env, "loadbalancers"):
+        for host in env.loadbalancers:
             with settings(host_string=host):
                 sudo("rm /etc/nginx/sites-enabled/rah")
                 sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
@@ -87,8 +87,8 @@ def restart_app_server():
 @runs_once
 def disable_maintenance_page():
     "Turns off the maintenance page"
-    if env.environment == "production":
-        for host in env.roledefs["loadbalancer"]:
+    if hasattr(env, "loadbalancers"):
+        for host in env.loadbalancers:
             with settings(host_string=host):
                 sudo("rm /etc/nginx/sites-enabled/maintenance")
                 sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
