@@ -1,10 +1,6 @@
-root /home/ubuntu/www_root/;
+root /home/ubuntu/webapp/;
 
 location / {
-    return 503;
-}
-
-error_page 503 @maintenance;
-location @maintenance {
-    rewrite ^(.*)$ /503.html break;
+    proxy_pass http://_s3_domain/;
+    rewrite ^(.*)$ /maintenance.html break;
 }
