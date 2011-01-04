@@ -3,7 +3,7 @@
  */
 /*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
 /*global $: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
-define(function () {
+(function ($) {
     var LATIN_MAP = {
         'À': 'A', 'Á': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A', 'Å': 'A', 'Æ': 'AE', 'Ç':
         'C', 'È': 'E', 'É': 'E', 'Ê': 'E', 'Ë': 'E', 'Ì': 'I', 'Í': 'I', 'Î': 'I',
@@ -124,23 +124,54 @@ define(function () {
         return downcoded;
     }
 
-    return {
-        function URLify (s, num_chars) {
-            // changes, e.g., "Petty theft" to "petty_theft"
-            // remove all these words from the string before urlifying
-            s = downcode(s);
-            removelist = ["a", "an", "as", "at", "before", "but", "by", "for", "from",
-                          "is", "in", "into", "like", "of", "off", "on", "onto", "per",
-                          "since", "than", "the", "this", "that", "to", "up", "via",
-                          "with"];
-            r = new RegExp('\\b(' + removelist.join('|') + ')\\b', 'gi');
-            s = s.replace(r, '');
-            // if downcode doesn't hit, the char will be stripped here
-            s = s.replace(/[^-\w\s]/g, '');  // remove unneeded chars
-            s = s.replace(/^\s+|\s+$/g, ''); // trim leading/trailing spaces
-            s = s.replace(/[-\s]+/g, '-');   // convert spaces to hyphens
-            s = s.toLowerCase();             // convert to lowercase
-            return s.substring(0, num_chars);// trim to first num_chars chars
-        }
+    function URLify (s, num_chars) {
+        // changes, e.g., "Petty theft" to "petty_theft"
+        // remove all these words from the string before urlifying
+        s = downcode(s);
+        removelist = ["a", "an", "as", "at", "before", "but", "by", "for", "from",
+                      "is", "in", "into", "like", "of", "off", "on", "onto", "per",
+                      "since", "than", "the", "this", "that", "to", "up", "via",
+                      "with"];
+        r = new RegExp('\\b(' + removelist.join('|') + ')\\b', 'gi');
+        s = s.replace(r, '');
+        // if downcode doesn't hit, the char will be stripped here
+        s = s.replace(/[^-\w\s]/g, '');  // remove unneeded chars
+        s = s.replace(/^\s+|\s+$/g, ''); // trim leading/trailing spaces
+        s = s.replace(/[-\s]+/g, '-');   // convert spaces to hyphens
+        s = s.toLowerCase();             // convert to lowercase
+        return s.substring(0, num_chars);// trim to first num_chars chars
     }
-});
+
+    $.fn.prepopulate = function(dependencies, maxLength) {
+        /*
+            Depends on urlify.js
+            Populates a selected field with the values of the dependent fields,
+            URLifies and shortens the string. 
+            dependencies - selected jQuery object of dependent fields
+            maxLength - maximum length of the URLify'd string 
+        */
+        return this.each(function() {
+            var field = $(this);
+
+            field.data('_changed', false);
+            field.change(function() {
+                field.data('_changed', true);
+            });
+
+            var populate = function () {
+                // Bail if the fields value has changed
+                if (field.data('_changed') == true) return;
+ 
+                var values = [];
+                dependencies.each(function() {
+                    if ($(this).val().length > 0) {
+                        values.push($(this).val());
+                    }
+                });
+                field.val(URLify(values.join(' '), maxLength));
+            };
+
+            dependencies.keyup(populate).change(populate).focus(populate);
+        });
+    };    
+})(jQuery);

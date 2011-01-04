@@ -612,14 +612,14 @@ var rah = {
         //}
     //},
     
-    page_group_create: {
-        init: function () {
-            $("#id_slug").prepopulate($("#id_name"), 32);
-            $("#id_name").focus(function () {
-                $("#group_slug_address label.inside").removeClass("inside");
-            });
-        }
-    },
+    //page_group_create: {
+        //init: function () {
+            //$("#id_slug").prepopulate($("#id_name"), 32);
+            //$("#id_name").focus(function () {
+                //$("#group_slug_address label.inside").removeClass("inside");
+            //});
+        //}
+    //},
     
     page_group_detail: {
         init: function () {

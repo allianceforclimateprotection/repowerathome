@@ -43,5 +43,10 @@
             name: "pages/registration.password_reset_confirm",
             exclude: ["pages/base"],
         },
+        {
+            name: "pages/group.create",
+            exclude: ["pages/base"],
+            include: ["libs/jquery.prepopulate"],
+        }
     ]
 })
