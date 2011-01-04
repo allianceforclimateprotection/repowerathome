@@ -324,6 +324,7 @@ EOF
     update-rc.d nginx defaults
     
     sed -i "s/_public_dns_name/`echo $PUBLIC_DNS_NAME`/" /etc/nginx/sites-available/*
+    sed -i "s/_s3_domain/`echo $ENVIRONMENT`.static.repowerathome.com/g" /etc/nginx/sites-available/*
     ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah
 }
 
