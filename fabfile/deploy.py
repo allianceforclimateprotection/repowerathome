@@ -4,7 +4,7 @@ from fabric.api import env, settings, require, run, sudo, abort, runs_once
 from fabric.contrib.console import confirm
 from fabric.colors import green, red
 
-from utils import query_revision
+from utils import query_revision, runs_last
 from codebase import codebase_deployment
 
 def _truth_value(value):
@@ -84,7 +84,7 @@ def restart_app_server():
     sudo("stop uwsgi")
     sudo("start uwsgi")
 
-@runs_once
+@runs_last
 def disable_maintenance_page():
     "Turns off the maintenance page"
     if hasattr(env, "loadbalancers"):

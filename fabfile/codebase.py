@@ -2,7 +2,9 @@ import base64
 import re
 import urllib2
 
-from fabric.api import env, local, runs_once, require
+from fabric.api import env, local, require
+
+from utils import runs_last
 
 def _send_codebase(path, data=None):
     "POST the given data message to the codebase API, if no data is provided GET"
@@ -18,7 +20,7 @@ def _send_codebase(path, data=None):
     request = urllib2.Request(url, data, headers)
     return urllib2.urlopen(request).read()
 
-@runs_once
+@runs_last
 def codebase_deployment():
     "Notify codebase that a new revision has been deployed"
     require("sha", "environment", "revision")
