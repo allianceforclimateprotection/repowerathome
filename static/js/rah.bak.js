@@ -573,18 +573,18 @@ var rah = {
         //}
     //},
     
-    page_password_change: {
-        init: function () {
-            // Validate the password form
-            $("#password_change_form").validate({
-                rules: {
-                    old_password: { required: true },
-                    new_password1: { required: true, minlength: 5 },
-                    new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
-                }
-            });
-        }
-    },
+    //page_password_change: {
+        //init: function () {
+            //// Validate the password form
+            //$("#password_change_form").validate({
+                //rules: {
+                    //old_password: { required: true },
+                    //new_password1: { required: true, minlength: 5 },
+                    //new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
+                //}
+            //});
+        //}
+    //},
     
     page_password_reset_confirm: {
         init: function () {            

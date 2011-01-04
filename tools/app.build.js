@@ -34,6 +34,10 @@
             name: "pages/blog.post_detail",
             exclude: ["pages/base"],
             include: ["libs/jquery.qtip", "mods/comments"],
+        },
+        {
+            name: "pages/registration.password_change",
+            exclude: ["pages/base"],
         }
     ]
 })
