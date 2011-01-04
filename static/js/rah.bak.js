@@ -506,11 +506,11 @@ var rah = {
     /**
     * Post (Blog) Detail page
     **/
-    page_post_detail: {
-        init: function () {
-            rah.mod_comment_form.init();
-        }
-    },
+    //page_post_detail: {
+        //init: function () {
+            //rah.mod_comment_form.init();
+        //}
+    //},
     
     //mod_comment_form: {
         //init: function () {

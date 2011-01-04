@@ -29,6 +29,11 @@
         {
             name: "pages/rah.profile.edit",
             exclude: ["pages/base"],
+        },
+        {
+            name: "pages/blog.post_detail",
+            exclude: ["pages/base"],
+            include: ["libs/jquery.qtip", "mods/comments"],
         }
     ]
 })
