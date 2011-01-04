@@ -38,6 +38,10 @@
         {
             name: "pages/registration.password_change",
             exclude: ["pages/base"],
-        }
+        },
+        {
+            name: "pages/registration.password_reset_confirm",
+            exclude: ["pages/base"],
+        },
     ]
 })

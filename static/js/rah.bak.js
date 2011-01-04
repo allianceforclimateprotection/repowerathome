@@ -586,17 +586,17 @@ var rah = {
         //}
     //},
     
-    page_password_reset_confirm: {
-        init: function () {            
-            // Validate the password form
-            $("#password_reset_confirm").validate({
-                rules: {
-                    new_password1: { required: true, minlength: 5 },
-                    new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
-                }
-            });
-        }
-    },
+    //page_password_reset_confirm: {
+        //init: function () {            
+            //// Validate the password form
+            //$("#password_reset_confirm").validate({
+                //rules: {
+                    //new_password1: { required: true, minlength: 5 },
+                    //new_password2: { required: true, minlength: 5, equalTo: "#id_new_password1" }
+                //}
+            //});
+        //}
+    //},
     
     //mod_ajax_setup: {
         //init: function () {
