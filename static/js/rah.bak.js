@@ -628,11 +628,11 @@ var rah = {
         //}
     //},
     
-    page_group_list: {
-        init: function () {
-            rah.mod_search_widget.init();
-        }
-    },
+    //page_group_list: {
+        //init: function () {
+            //rah.mod_search_widget.init();
+        //}
+    //},
     
     //mod_invite_friend: {
         //init: function () {
