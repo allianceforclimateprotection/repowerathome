@@ -47,6 +47,11 @@
             name: "pages/group.create",
             exclude: ["pages/base"],
             include: ["libs/jquery.prepopulate"],
+        },
+        {
+            name: "pages/group.detail",
+            exclude: ["pages/base"],
+            include: ["libs/jquery.tablesorter", "mods/invite"],
         }
     ]
 })

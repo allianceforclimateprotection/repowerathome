@@ -159,6 +159,9 @@
     <div class="box_one_bottom"></div>
     {% endif %}
 </div>
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/group.detail.js' %}"); 
+</script>
 {% endblock %}
-
-{% block js %}page_group_detail{% endblock %}

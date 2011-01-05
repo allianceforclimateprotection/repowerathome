@@ -621,12 +621,12 @@ var rah = {
         //}
     //},
     
-    page_group_detail: {
-        init: function () {
-            $("table").tablesorter();
-            rah.mod_invite_friend.init();
-        }
-    },
+    //page_group_detail: {
+        //init: function () {
+            //$("table").tablesorter();
+            //rah.mod_invite_friend.init();
+        //}
+    //},
     
     page_group_list: {
         init: function () {
