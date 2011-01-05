@@ -52,6 +52,10 @@
             name: "pages/group.detail",
             exclude: ["pages/base"],
             include: ["libs/jquery.tablesorter", "mods/invite"],
+        },
+        {
+            name: "pages/group.edit",
+            exclude: ["pages/base"],
         }
     ]
 })

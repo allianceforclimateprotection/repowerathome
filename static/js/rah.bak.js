@@ -715,16 +715,16 @@ var rah = {
         //}
     //},
     
-    page_group_edit: {
-        init: function () {
-            $("#group_edit_tabs").bind("tabsselect", function (event, ui) {
-                $("form", this).attr("action", $(ui.tab).attr("href"));
-            });
-            $("#delete_group_form").submit(function () {
-                return confirm("Are you sure you delete? This cannot be undone.");
-            });
-        }
-    },
+    //page_group_edit: {
+        //init: function () {
+            //$("#group_edit_tabs").bind("tabsselect", function (event, ui) {
+                //$("form", this).attr("action", $(ui.tab).attr("href"));
+            //});
+            //$("#delete_group_form").submit(function () {
+                //return confirm("Are you sure you delete? This cannot be undone.");
+            //});
+        //}
+    //},
     
     //mod_thumbs_radio_widget: {
         //init: function () {
