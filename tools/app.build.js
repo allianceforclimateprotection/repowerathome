@@ -60,6 +60,11 @@
         {
             name: "pages/events.show",
             exclude: ["pages/base"],
+        },
+        {
+            name: "pages/events.detail",
+            exclude: ["pages/base"],
+            include: ["libs/jquery.qtip", "libs/jquery.jeditable", "mods/comments", "mods/events", "mods/commitments"],
         }
     ]
 })

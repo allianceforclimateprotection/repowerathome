@@ -799,39 +799,39 @@ var rah = {
         //}
     //},
     
-    page_event_show: {
-        init: function () {            
-            rah.mod_comment_form.init();
-            var address = $("#event_address").text();
-            var location = $("#event_location").text();
-            var geocoder = new google.maps.Geocoder();
-            var myOptions = {
-                zoom: 9,
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                scrollwheel: false
-            };
-            var map = new google.maps.Map(document.getElementById("event_map"), myOptions);
-            if (geocoder) {
-                geocoder.geocode({ 'address': address + " " + location}, function (results, status) {
-                    if (status === google.maps.GeocoderStatus.OK) {
-                        map.setCenter(results[0].geometry.location);
-                        var marker = new google.maps.Marker({
-                            map: map, 
-                            position: results[0].geometry.location
-                        });
-                        var infowindow = new google.maps.InfoWindow({
-                            content: "<h4>" + address + "</h4><h6>" + location + "</h6>"
-                        });
-                        google.maps.event.addListener(marker, 'click', function () {
-                            infowindow.open(map, marker);
-                        });
-                    }
-                });
-            }
-            rah.mod_event_guests.init();
-            rah.mod_commitment_card_open_link_setup.init();
-        }
-    },
+    //page_event_show: {
+        //init: function () {            
+            //rah.mod_comment_form.init();
+            //var address = $("#event_address").text();
+            //var location = $("#event_location").text();
+            //var geocoder = new google.maps.Geocoder();
+            //var myOptions = {
+                //zoom: 9,
+                //mapTypeId: google.maps.MapTypeId.ROADMAP,
+                //scrollwheel: false
+            //};
+            //var map = new google.maps.Map(document.getElementById("event_map"), myOptions);
+            //if (geocoder) {
+                //geocoder.geocode({ 'address': address + " " + location}, function (results, status) {
+                    //if (status === google.maps.GeocoderStatus.OK) {
+                        //map.setCenter(results[0].geometry.location);
+                        //var marker = new google.maps.Marker({
+                            //map: map, 
+                            //position: results[0].geometry.location
+                        //});
+                        //var infowindow = new google.maps.InfoWindow({
+                            //content: "<h4>" + address + "</h4><h6>" + location + "</h6>"
+                        //});
+                        //google.maps.event.addListener(marker, 'click', function () {
+                            //infowindow.open(map, marker);
+                        //});
+                    //}
+                //});
+            //}
+            //rah.mod_event_guests.init();
+            //rah.mod_commitment_card_open_link_setup.init();
+        //}
+    //},
     
     //mod_event_date: {
         //init: function () {

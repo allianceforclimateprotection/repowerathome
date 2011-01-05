@@ -1,6 +1,25 @@
 /*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
 /*global $: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
-define(["libs/jquery.qtip", "libs/jquery.editable", "libs/jquery.ui", "mods/messages"], function (qtip, editable, ui, messages) {
+define(["libs/jquery.qtip", "libs/jquery.jeditable", "libs/jquery.ui", "mods/messages"], function (qtip, editable, ui, messages) {
+    var make_editable = function (elem) {
+        var args = {
+            placeholder: '<span class="event_inline_placeholder">click to add</span>',
+            cancel: 'Cancel',
+            submit: '<br/><button type="submit">Ok</button>'
+        };
+        if (elem.hasClass("rsvp_select")) {
+            args.type = "select";
+            args.loadurl = "/events/rsvp_statuses/";
+        }
+        elem.editable(function (value, settings) {
+            $.post(elem.attr("id"), {"value": value}, function (data) {
+                messages.add_message(data["message_html"]);
+                elem.html(data["guest_status"]);
+                // added editable event back to element
+            }, "json");
+            return value;
+        }, args);
+    };
     return {
         date: function () {
             $(".future_date_warning").change(function () {
@@ -25,7 +44,7 @@ define(["libs/jquery.qtip", "libs/jquery.editable", "libs/jquery.ui", "mods/mess
             var namespace = this;
             var editables = $(".editable");
             editables.each(function (idx, elem) { 
-                this.make_editable(elem);
+                make_editable($(elem));
             });
             editables.delegate(".guest_icon", "mouseover", function () {
                 $(this).addClass("ui-icon-circle-triangle-s");
@@ -74,25 +93,6 @@ define(["libs/jquery.qtip", "libs/jquery.editable", "libs/jquery.ui", "mods/mess
                     return false;
                 });
             });
-        },
-        make_editable: function (elem) {
-            var args = {
-                placeholder: '<span class="event_inline_placeholder">click to add</span>',
-                cancel: 'Cancel',
-                submit: '<br/><button type="submit">Ok</button>'
-            };
-            if (elem.hasClass("rsvp_select")) {
-                args.type = "select";
-                args.loadurl = "/events/rsvp_statuses/";
-            }
-            elem.editable(function (value, settings) {
-                $.post(elem.attr("id"), {"value": value}, function (data) {
-                    messages.add_message(data["message_html"]);
-                    elem.html(data["guest_status"]);
-                    // added editable event back to element
-                }, "json");
-                return value;
-            }, args);
         }
     };
 });

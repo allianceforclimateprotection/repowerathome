@@ -143,6 +143,7 @@
         </script>
         <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/require-jquery.js' %}"></script>
         <!--<script  type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>-->
+        {% block extrajs %}{% endblock %}
         {% block pagejs %}
             <script>
                 (function() {
@@ -156,7 +157,6 @@
                 })();
             </script>
         {% endblock %}
-        {% block extrajs %}{% endblock %}
         {% if testing_feedback_form %}
             <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/testing_widget.js' %}"></script>
         {% endif %}
