@@ -778,26 +778,26 @@ var rah = {
         //}
     //},
     
-    page_event_list: {
-        init: function () {
-            $("#house_party_form").validate({ rules: { phone_number: { required: true }}});
-            $('#house_party_link').click(function () { 
-                $('#house_party_dialog').dialog('open'); 
-                return false; 
-            });
-            $('#house_party_dialog').dialog({
-                title: 'Energy meeting contact', 
-                modal: true, 
-                resizable: false, 
-                draggable: false, 
-                autoOpen: false, 
-                buttons: { "Give me a call": function () { 
-                    $('#house_party_form').submit(); 
-                }
-                }
-            });
-        }
-    },
+    //page_event_list: {
+        //init: function () {
+            //$("#house_party_form").validate({ rules: { phone_number: { required: true }}});
+            //$('#house_party_link').click(function () { 
+                //$('#house_party_dialog').dialog('open'); 
+                //return false; 
+            //});
+            //$('#house_party_dialog').dialog({
+                //title: 'Energy meeting contact', 
+                //modal: true, 
+                //resizable: false, 
+                //draggable: false, 
+                //autoOpen: false, 
+                //buttons: { "Give me a call": function () { 
+                    //$('#house_party_form').submit(); 
+                //}
+                //}
+            //});
+        //}
+    //},
     
     page_event_show: {
         init: function () {            

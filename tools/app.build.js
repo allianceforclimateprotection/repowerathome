@@ -56,6 +56,10 @@
         {
             name: "pages/group.edit",
             exclude: ["pages/base"],
+        },
+        {
+            name: "pages/events.show",
+            exclude: ["pages/base"],
         }
     ]
 })
