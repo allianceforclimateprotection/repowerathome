@@ -855,17 +855,17 @@ var rah = {
         //}
     //},
     
-    page_event_create: {
-        init: function () {
-            rah.mod_event_date.init();
-        }
-    },
+    //page_event_create: {
+        //init: function () {
+            //rah.mod_event_date.init();
+        //}
+    //},
     
-    page_event_edit: {
-        init: function () {
-            rah.mod_event_date.init();
-        }
-    },
+    //page_event_edit: {
+        //init: function () {
+            //rah.mod_event_date.init();
+        //}
+    //},
     
     //mod_event_guests: {
         //init: function () {
