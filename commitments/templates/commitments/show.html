@@ -1,4 +1,5 @@
 {% extends "commitments/base.html" %}
+{% load dated_static %}
 {% block title %}My commitments on Repower at Home{% endblock %}
 
 {% block right_content %}
@@ -142,6 +143,9 @@
     <div class="box_one_bottom"></div>        
     {% endif %}
 </div>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/commitments.show.js' %}");
+    </script>
 {% endblock %}
-
-{% block js %}page_commitments_show{% endblock %}

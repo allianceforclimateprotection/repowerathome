@@ -70,6 +70,11 @@
             name: "pages/events.create",
             exclude: ["pages/base"],
             include: ["libs/jquery.qtip", "libs/jquery.jeditable"],
-        }
+        },
+        {
+            name: "pages/commitments.show",
+            exclude: ["pages/base"],
+            include: ["mods/commitments"],
+        },
     ]
 })

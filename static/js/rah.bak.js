@@ -943,8 +943,8 @@ var rah = {
         //}
     //},
     
-    page_commitments_show: {
-        init: function () {
+    //page_commitments_show: {
+        //init: function () {
             // When show or hide a list of users when the action is clicked
             //$(".commit_action").toggle(
                 //function () {
@@ -968,9 +968,9 @@ var rah = {
                 //}
             //);
             
-            rah.mod_commitment_card_open_link_setup.init();
-        }
-    },
+            //rah.mod_commitment_card_open_link_setup.init();
+        //}
+    //},
     
     page_commitments_card: {
         init: function () {
