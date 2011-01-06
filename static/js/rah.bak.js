@@ -972,11 +972,11 @@ var rah = {
         //}
     //},
     
-    page_commitments_card: {
-        init: function () {
-            rah.mod_commitment_card_form_setup.init(window.location.pathname);
-        }
-    },
+    //page_commitments_card: {
+        //init: function () {
+            //rah.mod_commitment_card_form_setup.init(window.location.pathname);
+        //}
+    //},
     
     //mod_commitment_card_open_link_setup: {
         //init: function () {

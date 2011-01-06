@@ -1,12 +1,16 @@
 {% extends "commitments/base.html" %}
+{% load dated_static %}
 {% block title %}My commitments on Repower at Home{% endblock %}
 
 {% block right_content %}
-<div class="box_two_top"></div>
-<div class="box_two_middle">
-    {% include "commitments/_card.html" %}
-</div>
-<div class="box_two_bottom"></div>
-    
+    <div class="box_two_top"></div>
+    <div class="box_two_middle">
+        {% include "commitments/_card.html" %}
+    </div>
+    <div class="box_two_bottom"></div>
+   <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/commitments.card.js' %}");
+    </script> 
 {% endblock %}
-{% block js %}page_commitments_card{% endblock %}

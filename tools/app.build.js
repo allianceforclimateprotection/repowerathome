@@ -76,5 +76,10 @@
             exclude: ["pages/base"],
             include: ["mods/commitments"],
         },
+        {
+            name: "pages/commitments.card",
+            exclude: ["pages/base"],
+            include: ["mods/commitments"],
+        }
     ]
 })
