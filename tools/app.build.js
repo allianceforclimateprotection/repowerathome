@@ -20,66 +20,71 @@
         },
         {
             name: "pages/rah.login",
-            exclude: ["pages/base"],
+            exclude: ["pages/base"]
         },
         {
             name: "pages/rah.register",
-            exclude: ["pages/base"],
+            exclude: ["pages/base"]
         },
         {
             name: "pages/rah.profile.edit",
-            exclude: ["pages/base"],
+            exclude: ["pages/base"]
         },
         {
             name: "pages/blog.post_detail",
             exclude: ["pages/base"],
-            include: ["libs/jquery.qtip", "mods/comments"],
+            include: ["libs/jquery.qtip", "mods/comments"]
         },
         {
             name: "pages/registration.password_change",
-            exclude: ["pages/base"],
+            exclude: ["pages/base"]
         },
         {
             name: "pages/registration.password_reset_confirm",
-            exclude: ["pages/base"],
+            exclude: ["pages/base"]
         },
         {
             name: "pages/group.create",
             exclude: ["pages/base"],
-            include: ["libs/jquery.prepopulate"],
+            include: ["libs/jquery.prepopulate"]
         },
         {
             name: "pages/group.detail",
             exclude: ["pages/base"],
-            include: ["libs/jquery.tablesorter", "mods/invite"],
+            include: ["libs/jquery.tablesorter", "mods/invite"]
         },
         {
             name: "pages/group.edit",
-            exclude: ["pages/base"],
+            exclude: ["pages/base"]
         },
         {
             name: "pages/events.show",
-            exclude: ["pages/base"],
+            exclude: ["pages/base"]
         },
         {
             name: "pages/events.detail",
             exclude: ["pages/base"],
-            include: ["libs/jquery.qtip", "libs/jquery.jeditable", "mods/comments", "mods/events", "mods/commitments"],
+            include: ["libs/jquery.qtip", "libs/jquery.jeditable", "mods/comments", "mods/events", "mods/commitments"]
         },
         {
             name: "pages/events.create",
             exclude: ["pages/base"],
-            include: ["libs/jquery.qtip", "libs/jquery.jeditable"],
+            include: ["libs/jquery.qtip", "libs/jquery.jeditable"]
         },
         {
             name: "pages/commitments.show",
             exclude: ["pages/base"],
-            include: ["mods/commitments"],
+            include: ["mods/commitments"]
         },
         {
             name: "pages/commitments.card",
             exclude: ["pages/base"],
-            include: ["mods/commitments"],
+            include: ["mods/commitments"]
+        },
+        {
+            name: "pages/rah.vampire_hunt",
+            exclude: ["pages/base"],
+            include: ["mods/invite"]
         }
     ]
-})
+});

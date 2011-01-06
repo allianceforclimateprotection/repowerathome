@@ -1048,26 +1048,26 @@ var rah = {
             //$("#commitment_card_form").attr("action", action);
             
             //$("#commitment_card_select_form #id_form_name").change(function () {
-                var load_url = action + '?form_name=' + $(this).val();
-                $("#commitment_card_action_table").load(load_url + ' #commitment_card_action_table table');
-                $("#commitment_card_form").attr("action", load_url);
-            });
-        }
-    },
+                //var load_url = action + '?form_name=' + $(this).val();
+                //$("#commitment_card_action_table").load(load_url + ' #commitment_card_action_table table');
+                //$("#commitment_card_form").attr("action", load_url);
+            //});
+        //}
+    //},
     
-    page_event_commitments: {
-        init: function () {
-            rah.mod_event_tabs.init(2);
-            $("#ui-tabs-2").removeClass("ui-tabs-hide");
-            rah.mod_comment_form.init();
-        }
-    },
+    //page_event_commitments: {
+        //init: function () {
+            //rah.mod_event_tabs.init(2);
+            //$("#ui-tabs-2").removeClass("ui-tabs-hide");
+            //rah.mod_comment_form.init();
+        //}
+    //},
     
-    page_vampire_hunt_landing: {
-        init: function () {
-            rah.mod_invite_friend.init();
-        }
-    }
+    //page_vampire_hunt_landing: {
+        //init: function () {
+            //rah.mod_invite_friend.init();
+        //}
+    //}
 };
 
 $(document).ready(function () {

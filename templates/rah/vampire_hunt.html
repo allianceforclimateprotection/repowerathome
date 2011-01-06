@@ -154,8 +154,10 @@
             </ul>
         </div>
         <div class="box_one_bottom"></div>
-        
-
     </div>
+   <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/rah.vampire_hunt.js' %}");
+    </script> 
 {% endblock %}
-{% block js %}page_vampire_hunt_landing{% endblock %}
