@@ -131,9 +131,7 @@
         {% endif %}
         <div id="fb-root"></div>
         <script type="text/javascript" charset="utf-8">
-            <!--var rah_name = "{% block js %}{% endblock %}";-->
             var media_url = "{{ MEDIA_URL }}"; // contains trailing slash
-            
             var RAH = RAH || {};
             RAH.ENV = {};
             (function () {
@@ -142,24 +140,29 @@
             }).apply(RAH.ENV);
         </script>
         <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/require-jquery.js' %}"></script>
-        <!--<script  type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>-->
         {% block extrajs %}{% endblock %}
         {% block pagejs %}
-            <script>
+            <script type="text/javascript">
                 (function() {
                     RAH = RAH || {};
                     RAH.pagescripts = RAH.pagescripts || [];
+                    {% if testing_feedback_form %}
+                        RAH.pagescripts = ["{% dated_static 'js/mods/testing_widget.js' %}"].concat(RAH.pagescripts);
+                    {% endif %}
                     console.log(RAH.pagescripts);
                     require({
                         priority: ["{%dated_static 'js/pages/base.js' %}",
                         "https://connect.facebook.net/en_US/all.js"].concat(RAH.pagescripts)
-                    }, ["{% dated_static 'js/pages/base.js' %}"].concat(RAH.pagescripts));
+                        }, ["{% dated_static 'js/pages/base.js' %}"].concat(RAH.pagescripts), function (base, testing) {
+                        {% if testing_feedback_form %}
+                            $(function() {
+                                testing.setup();
+                            });
+                        {% endif %}
+                    });
                 })();
             </script>
         {% endblock %}
-        {% if testing_feedback_form %}
-            <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/testing_widget.js' %}"></script>
-        {% endif %}
         {% if ask_to_share %}
             <script type="text/javascript">rah.mod_ask_to_share.init("{% url records_ask_to_share %}");</script>
             <div id="ask_to_share_container"></div>
