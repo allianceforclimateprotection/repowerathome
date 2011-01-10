@@ -6,7 +6,7 @@
     modules: [
         {
             name: "pages/base",
-            include: ["libs/webfont", "libs/jquery.ui", "libs/jquery.form", "libs/jquery.validation", "mods/feedback", "mods/messages", "mods/facebook", "pages/base"]
+            include: ["libs/webfont", "libs/jquery.ui", "libs/jquery.form", "libs/jquery.validation", "mods/feedback", "mods/messages", "mods/facebook"] 
         },
         {
             name: "pages/rah.home_logged_out",

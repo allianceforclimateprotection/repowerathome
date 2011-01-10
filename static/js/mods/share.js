@@ -1,14 +1,16 @@
 /*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
 /*global $: false, RAH: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
-define(["libs/jquery.ui", "libs/facebook", "libs/jquery.validation", "mods/messagses"],
+define(["libs/jquery.ui", "mods/facebook", "libs/jquery.validation", "mods/messages"],
     function (ui, facebook, validate, messages) {
         return {
-            init: function (url) {
+            setup: function (url) {
+                var share_mod = this;
                 $.get(url, function (data) {
-                    this.build_dialog(data);
+                    share_mod.build_dialog(data);
                 });
             },
             build_dialog: function (data) {
+                var share_mod = this;
                 var container = $("<div>");
                 container.html(data);
                 container.dialog({ autoOpen: false, modal: true, height: 312, width: 386,
@@ -20,12 +22,12 @@ define(["libs/jquery.ui", "libs/facebook", "libs/jquery.validation", "mods/messa
                         FB.login(function (response) {
                             if (response.session) {
                                 $.get("/facebook/authorize/", function (data) {
-                                    this.share(form);
+                                    share_mod.share(form);
                                 });
                             }
                         }, { perms: "email,publish_stream,offline_access" });
                     } else {
-                        this.share(form);
+                        share_mod.share(form);
                     }
                     container.dialog("close");
                     return false;
@@ -40,11 +42,12 @@ define(["libs/jquery.ui", "libs/facebook", "libs/jquery.validation", "mods/messa
                 container.dialog("open");
             },
             share: function (form) {
+                var share_mod = this;
                 form.ajaxSubmit(function (data) {
                     if ($(".messages", data).length) {
                         messages.add_message(data);
                     } else {
-                        this.build_dialog(data);
+                        share_mod.build_dialog(data);
                     }
                 });
             }

@@ -130,6 +130,7 @@
             {% include 'codebase/_testing_widget.html' %}
         {% endif %}
         <div id="fb-root"></div>
+        <div id="ask_to_share_container"></div>
         <script type="text/javascript" charset="utf-8">
             var media_url = "{{ MEDIA_URL }}"; // contains trailing slash
             var RAH = RAH || {};
@@ -146,27 +147,30 @@
                 (function() {
                     RAH = RAH || {};
                     RAH.pagescripts = RAH.pagescripts || [];
+                    {% if ask_to_share %}
+                        RAH.pagescripts.push("{% dated_static 'js/mods/share.js' %}");
+                    {% endif %}
                     {% if testing_feedback_form %}
-                        RAH.pagescripts = ["{% dated_static 'js/mods/testing_widget.js' %}"].concat(RAH.pagescripts);
+                        RAH.pagescripts.push("{% dated_static 'js/mods/testing_widget.js' %}");
                     {% endif %}
                     console.log(RAH.pagescripts);
                     require({
                         priority: ["{%dated_static 'js/pages/base.js' %}",
                         "https://connect.facebook.net/en_US/all.js"].concat(RAH.pagescripts)
-                        }, ["{% dated_static 'js/pages/base.js' %}"].concat(RAH.pagescripts), function (base, testing) {
-                        {% if testing_feedback_form %}
+                        }, ["{% dated_static 'js/pages/base.js' %}"].concat(RAH.pagescripts), function () {
+                            var args = Array.prototype.slice.call(arguments);
                             $(function() {
-                                testing.setup();
+                                {% if testing_feedback_form %}
+                                    args.pop().setup(); // testing mod is the last arg in pagescripts, remove it
+                                {% endif %}
+                                {% if ask_to_share %}
+                                    args.pop().setup("{% url records_ask_to_share %}"); // share mod is the last arg in pagescripts, remove it
+                                {% endif %}
                             });
-                        {% endif %}
                     });
                 })();
             </script>
         {% endblock %}
-        {% if ask_to_share %}
-            <script type="text/javascript">rah.mod_ask_to_share.init("{% url records_ask_to_share %}");</script>
-            <div id="ask_to_share_container"></div>
-        {% endif %}
         <script type="text/javascript">
             (function() {
                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
