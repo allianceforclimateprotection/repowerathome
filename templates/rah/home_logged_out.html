@@ -2,57 +2,25 @@
 {% load dated_static %}
 {% block rah_nav_select %}nav_home{% endblock %}
 {% block right_content %}
-<div class="grid_9 alpha omega">
-    {% include "rah/_pledge_block.html" %}
-</div>
-<div class="grid_6 alpha">
-    {% include "rah/_sticker_block.html" %}
-</div>
-<div class="grid_3 omega">
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
-        <h3>Progress</h3>
-        {% include "rah/_progress_stats.html" %}
+    <div class="grid_9 alpha omega">
+        {% include "rah/_pledge_block.html" %}
     </div>
-    <div class="box_one_bottom"></div>
-</div>
-<br class="clear"/>
-{# <div class="grid_3 alpha"> #}
-{#     <div class="box_one_top"></div> #}
-{#     <div class="box_one_middle"> #}
-{#         <h3>Popular Actions</h3> #}
-{#         {% for action in pop_actions %} #}
-{#             <p> #}
-{#                 <a href="{{ action.get_absolute_url }}">{{action.name}}</a><br/> #}
-{#                 <span class="smaller">{{action.users_completed}} completed, {{action.users_committed}} committed</span> #}
-{#             </p> #}
-{#         {% endfor %} #}
-{#         <div class="more_link"> #}
-{#             <a href="{% url action_show %}">More Actions</a> #}
-{#         </div> #}
-{#     </div> #}
-{#     <div class="box_one_bottom"></div> #}
-{# </div> #}
-{# <div class="grid_3 omega"> #}
-{#     <div class="box_one_top"></div> #}
-{#     <div class="box_one_middle"> #}
-{#         <h3>Recent Blog Posts</h3> #}
-{#         {% for post in blog_posts %} #}
-{#         <p> #}
-{#             <a href="{{ post.get_absolute_url }}">{{post.title}}</a><br/> #}
-{#             <span class="smaller">Posted {{post.publish|date}}</span> #}
-{#         </p> #}
-{#         {% endfor %} #}
-{#         <div class="more_link"> #}
-{#             <a href="{% url blog_index %}">More Posts</a> #}
-{#         </div> #}
-{#     </div> #}
-{#     <div class="box_one_bottom"></div> #}
-{# </div> #}
-
+    <div class="grid_6 alpha">
+        {% include "rah/_sticker_block.html" %}
+    </div>
+    <div class="grid_3 omega">
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+            <h3>Progress</h3>
+            {% include "rah/_progress_stats.html" %}
+        </div>
+        <div class="box_one_bottom"></div>
+    </div>
+    <br class="clear"/>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/rah.home_logged_out.js' %}");
+    </script>
 {% endblock %}
-<script>
-    var RAH = RAH || {};
-    RAH.pagescripts = RAH.pagescripts || [];
-    RAH.pagescripts.push("{% dated_static 'js/pages/rah.home_logged_out.js' %}");
-</script>
+

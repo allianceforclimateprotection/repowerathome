@@ -29,9 +29,10 @@
         </div>
         <div class="box_two_bottom"></div>
     </div>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/rah.login.js' %}");
+    </script>
 {% endblock %}
-<script>
-    var RAH = RAH || {};
-    RAH.pagescripts = RAH.pagescripts || [];
-    RAH.pagescripts.push("{% dated_static 'js/pages/rah.login.js' %}");
-</script>
+
