@@ -56,7 +56,7 @@ def optimize_static():
     "Using requirejs and google closure optimize the resources in the static folder"
     require("hosts", "deploy_to")
     run("cd %(deploy_to)s && rm -rf static_build" % env)
-    run("cd %(deploy_to)s && tools/requirejs-0.15.0/build/build.sh tools/app.build.js" % env)
+    run("cd %(deploy_to)s && tools/requirejs/build/build.sh tools/app.build.js" % env)
     run("cd %(deploy_to)s/static_build && find . -name '*.psd' -exec rm {} \;" % env)
 
 @runs_once
