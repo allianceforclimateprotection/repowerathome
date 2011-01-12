@@ -98,10 +98,11 @@
         <div class="box_one_bottom"></div>
         {% endif %}
         
-    </div>
+        </div>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/rah.home_logged_in.js' %}");
+    </script>
 {% endblock %}
-<script>
-    var RAH = RAH || {};
-    RAH.pagescripts = RAH.pagescripts || [];
-    RAH.pagescripts.push("{% dated_static 'js/pages/rah.home_logged_in.js' %}");
-</script>
+
