@@ -2,7 +2,7 @@
 /*global $: false, RAH: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
 define(function () {
     return {
-        init: function () {
+        setup: function () {
             $(".search_widget").submit(function () {
                 var form = $(this);
                 $.ajax({

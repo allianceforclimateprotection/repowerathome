@@ -3,7 +3,8 @@ import copy
 from django import template
 from django.conf import settings
 from django.core.urlresolvers import NoReverseMatch, resolve, reverse
-from django.template import loader, Node, RequestContext
+from django.template import loader, Node, RequestContext, TemplateSyntaxError
+from django.utils.encoding import smart_str
 
 register = template.Library()
 
