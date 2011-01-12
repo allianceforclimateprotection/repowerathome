@@ -92,4 +92,4 @@
             include: ["libs/jquery.slimbox2"]
         }
     ]
-});
+})
