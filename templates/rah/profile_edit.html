@@ -122,5 +122,8 @@
         </div>
     </div>
 {% endblock %}
-
-{% block js %}page_profile_edit{% endblock %}
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/rah.profile.edit.js' %}");
+</script>

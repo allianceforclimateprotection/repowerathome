@@ -28,6 +28,9 @@ def prod():
     env.environment = "production"
     env.loadbalancers = env.roledefs["loadbalancer"]
 
+def environment(environment):
+    env.environment = environment
+
 def test():
     "Run all tests"
     with settings(warn_only=True):

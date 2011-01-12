@@ -6,14 +6,6 @@
         <a class="testing_widget_tab white {% if not request.session.testing_widget_opened %}hidden{% endif %}" 
           href="{% url testing_widget_closed %}">Close Task{{ ticket_count|pluralize }}</a>
     </div>
-    <script type="text/javascript" charset="utf-8">
-    RAH_TICKET_INDEX = 0;
-    RAH_TESTING_TICKETS = Array();
-    RAH_TESTING_SPINNER = "{% dated_static 'images/theme/ajax_spinner.gif' %}";
-    {% for ticket in tickets %}
-        RAH_TESTING_TICKETS.push({{ticket.ticket_id}});
-    {% endfor %}
-    </script>
     <div id="testing_feedback_form_container" class="{% if not request.session.testing_widget_opened %}hidden{% endif %}">
         <br/>
         {% if ticket_count >= 1 %}
@@ -28,4 +20,15 @@
     <div id="testing_spinner" class="hidden">
         <img src="{% dated_static 'images/theme/testing_widget_spinner.gif' %}" alt="loading spinner"/>
     </div>
+    <script type="text/javascript">
+        var RAH = RAH || {};
+        RAH.TESTING = {};
+        (function () {
+            this.ticket_index = 0;
+            this.tickets = [];
+            {% for ticket in tickets %}
+                this.tickets.push({{ ticket.ticket_id }});
+            {% endfor %}
+        }).apply(RAH.TESTING);
+    </script>
 </div>

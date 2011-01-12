@@ -1,4 +1,5 @@
 {% extends "events/base.html" %}
+{% load dated_static %}
 {% block title %}Edit {{ event }}{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
@@ -20,6 +21,9 @@
         </div>
         <div class="box_two_bottom"></div>
     </div>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/events.create.js' %}");
+    </script>
 {% endblock %}
-
-{% block js %}page_event_edit{% endblock %}

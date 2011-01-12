@@ -1,4 +1,5 @@
 {% extends "groups/base.html" %}
+{% load dated_static %}
 {% block title %}Edit {{ group.name }} settings{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
@@ -70,6 +71,9 @@
         <div class="box_one_bottom"></div>
         {% endif %}
     </div>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/group.edit.js' %}"); 
+    </script>
 {% endblock %}
-
-{% block js %}page_group_edit{% endblock %}

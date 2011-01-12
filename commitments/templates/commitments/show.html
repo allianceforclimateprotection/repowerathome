@@ -1,4 +1,5 @@
 {% extends "commitments/base.html" %}
+{% load dated_static %}
 {% block title %}My commitments on Repower at Home{% endblock %}
 
 {% block right_content %}
@@ -80,40 +81,40 @@
                     <tr>
                         <td class="top">
                             <span class="ui-icon ui-icon-triangle-1-e commit_tick"></span>
-                	        <a href="#" class="commit_action" id="commit_action__{{ action.id }}">{{ action.name }}</a>
-                	        <ul class="plain_list commit_list_ul commit_list_ul_{{ action.id }} hidden">
-                	            {% for commitment in tuple.0 %}
-                    			    <li class="contributor__{{ commitment.contributor.id }}">
-                    			        &nbsp;&nbsp;&nbsp;
-                    			        {{ commitment.contributor.first_name }} 
-                    			        {{ commitment.contributor.last_name }}
-                    			        <span class="commit_user_list_edit_link hidden">
-                    			            (<a href="{% url commitments_card commitment.contributor.id %}" class="commitment_card_open">edit</a>)
-                    			        </span>
-                    			    </li>
-                    			{% endfor %}
-                    		</ul>
-                	    </td>
-                	    <td class="top center">
-                	        <b>{{ tuple.1 }}</b>
-                	        <ul class="plain_list commit_list_ul_{{ action.id }} hidden">
-                	            {% for commitment in tuple.0 %}
-            	                    <li class="contributor__{{ commitment.contributor.id }}">
-            	                        {% if commitment.answer == 'C' %}&#10003;{% else %}&nbsp;{% endif %}
-            	                    </li>
-                	            {% endfor %}
-                    		</ul>
-                	    </td>
-                	    <td class="top center">
-                	        <b>{{ tuple.2 }}</b>
-                	        <ul class="plain_list commit_list_ul_{{ action.id }} hidden">
-                	            {% for commitment in tuple.0 %}
-            	                    <li class="contributor__{{ commitment.contributor.id }}">
-            	                        {% if commitment.answer == 'D' %}&#10003;{% else %}&nbsp;{% endif %}
-            	                    </li>
-                	            {% endfor %}
-                    		</ul>
-                	    </td>
+                            <a href="#" class="commit_action" id="commit_action__{{ action.id }}">{{ action.name }}</a>
+                            <ul class="plain_list commit_list_ul commit_list_ul_{{ action.id }} hidden">
+                                {% for commitment in tuple.0 %}
+                                    <li class="contributor__{{ commitment.contributor.id }}">
+                                        &nbsp;&nbsp;&nbsp;
+                                        {{ commitment.contributor.first_name }} 
+                                        {{ commitment.contributor.last_name }}
+                                        <span class="commit_user_list_edit_link hidden">
+                                            (<a href="{% url commitments_card commitment.contributor.id %}" class="commitment_card_open">edit</a>)
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td class="top center">
+                            <b>{{ tuple.1 }}</b>
+                            <ul class="plain_list commit_list_ul_{{ action.id }} hidden">
+                                {% for commitment in tuple.0 %}
+                                    <li class="contributor__{{ commitment.contributor.id }}">
+                                        {% if commitment.answer == 'C' %}&#10003;{% else %}&nbsp;{% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td class="top center">
+                            <b>{{ tuple.2 }}</b>
+                            <ul class="plain_list commit_list_ul_{{ action.id }} hidden">
+                                {% for commitment in tuple.0 %}
+                                    <li class="contributor__{{ commitment.contributor.id }}">
+                                        {% if commitment.answer == 'D' %}&#10003;{% else %}&nbsp;{% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
                     </tr>
                 {% endfor %}
             </table>
@@ -139,9 +140,12 @@
             See all your <a href="#managecards">collected Pledge Cards</a>.
         </p>
     </div>
-    <div class="box_one_bottom"></div>        
+    <div class="box_one_bottom"></div>
     {% endif %}
 </div>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/commitments.show.js' %}");
+    </script>
 {% endblock %}
-
-{% block js %}page_commitments_show{% endblock %}

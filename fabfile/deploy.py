@@ -52,16 +52,18 @@ def install_requirements():
     sudo("cd %(deploy_to)s/../requirements && pip install -r %(deploy_to)s/requirements.txt" % env)
 
 @runs_once
-def minify():
-    "Minify the js and css files"
+def optimize_static():
+    "Using requirejs and google closure optimize the resources in the static folder"
     require("hosts", "deploy_to")
-    run("cd %(deploy_to)s/static/tools && ./minify.sh" % env)
-    
+    run("cd %(deploy_to)s && rm -rf static_build" % env)
+    run("cd %(deploy_to)s && tools/requirejs-0.15.0/build/build.sh tools/app.build.js" % env)
+    run("cd %(deploy_to)s/static_build && find . -name '*.psd' -exec rm {} \;" % env)
+
 @runs_once
 def s3sync():
     "Sync static data with our s3 bucket"
     require("hosts", "deploy_to")
-    run("cd %(deploy_to)s && python manage.py sync_media_s3 --gzip --force --expires" % env)
+    run("cd %(deploy_to)s && python manage.py sync_media_s3 --gzip --force --expires --dir %(deploy_to)s/static_build" % env)
     
 @runs_once
 def syncdb():
@@ -104,7 +106,7 @@ def deploy(revision=None, code_only=False, sync_media=True):
     code_deploy()
     if not _truth_value(code_only):
         install_requirements()
-        minify()
+        optimize_static()
         if _truth_value(sync_media):
             s3sync()
         syncdb()

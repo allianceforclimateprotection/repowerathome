@@ -1,5 +1,6 @@
 {% extends "actions/base.html" %}
 {% load comments %}
+{% load dated_static %}
 {% block meta_desc %}{{action.name}}: {{action.teaser}}{% endblock %}
 {% block extrahead %}
     <meta property="og:image" content="{{ action.get_detail_illustration }}" />
@@ -107,6 +108,9 @@
         <p>When do you think you'll complete this action?</p>
         <div class="commit_calendar"></div>
     </div>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/action.detail.js' %}");
+    </script>
 {% endblock %}
-
-{% block js %}page_action_detail{% endblock %}

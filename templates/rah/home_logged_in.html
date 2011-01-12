@@ -100,4 +100,8 @@
         
     </div>
 {% endblock %}
-{% block js %}page_home_logged_in{% endblock %}
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/rah.home_logged_in.js' %}");
+</script>

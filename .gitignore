@@ -12,3 +12,4 @@ static/images/theme/geo_group_*
 static/images/theme/default_group_*
 lib/src/*
 *.swp
+static_build/*

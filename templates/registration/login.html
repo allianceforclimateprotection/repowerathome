@@ -1,4 +1,5 @@
 {% extends "rah/base.html" %}
+{% load dated_static %}
 {% block tongue %}{% endblock tongue %}
 {% block title %}Log in to Repower at Home{% endblock %}
 {% block right_content %}
@@ -29,4 +30,8 @@
         <div class="box_two_bottom"></div>
     </div>
 {% endblock %}
-{% block js %}page_login{% endblock %}
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/rah.login.js' %}");
+</script>
