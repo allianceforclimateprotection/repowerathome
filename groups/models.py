@@ -307,7 +307,7 @@ class Discussion(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        return ("group_disc_detail", [self.group.slug, self.parent_id if self.parent_id else self.id])
+        return ("group_disc_detail", [self.group.slug, self.parent.id if self.parent.id else self.id])
 
 """
 Signals!
@@ -356,3 +356,12 @@ models.signals.post_save.connect(update_discussion_reply_count, sender=Discussio
 models.signals.post_save.connect(update_group_member_count, sender=GroupUsers)
 models.signals.post_delete.connect(update_group_member_count, sender=GroupUsers)
 models.signals.post_save.connect(alert_users_of_discussion, sender=Discussion)
+
+def add_team_create_stream(sender, instance, created, **kwargs):
+    if created:
+        Stream.objects.get(slug="team-create").enqueue(content_object=instance, start=instance.created)
+models.signals.post_save.connect(add_team_create_stream, sender=Group)
+
+def remove_team_create_stream(sender, instance, **kwargs):
+    Stream.objects.get(slug="team-create").dequeue(content_object=instance)
+models.signals.post_delete.connect(remove_team_create_stream, sender=Group)
