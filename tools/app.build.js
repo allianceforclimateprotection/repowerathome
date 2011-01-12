@@ -85,6 +85,11 @@
             name: "pages/rah.vampire_hunt",
             exclude: ["pages/base"],
             include: ["mods/invite"]
+        },
+        {
+            name: "pages/rah.trendsetter_sticker",
+            exclude: ["pages/base"],
+            include: ["libs/jquery.slimbox2"]
         }
     ]
 });
