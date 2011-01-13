@@ -11,9 +11,9 @@ VALUES
 
 INSERT INTO `messaging_message_content_types` (`id`,`message_id`,`contenttype_id`)
 VALUES
-    (88,25,30);
+    (88,24,30);
 
 INSERT INTO `messaging_abtest` (`id`,`message_id`,`test_message_id`,`test_percentage`,`is_enabled`,`stream_id`,`created`,`updated`)
 VALUES
-    (23,25,NULL,0,1,1,'2011-01-13 09:55:11','2011-01-13 09:55:11');
+    (23,24,NULL,0,1,1,'2011-01-13 09:55:11','2011-01-13 09:55:11');
 
