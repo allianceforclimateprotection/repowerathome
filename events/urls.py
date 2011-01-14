@@ -8,7 +8,7 @@ event_search_info = {
     'queryset': Event.objects.all(),
     'paginate_by': 5,
     'search_fields': ['place_name', 'where', 'location__zipcode'],
-    'object_rendering_template': 'events/_event_search_result.html',
+    'template_name': 'events/_search_listing',
 }
 
 urlpatterns = patterns("events.views",
