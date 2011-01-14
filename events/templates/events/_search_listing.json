@@ -1,0 +1,6 @@
+[
+    {% for e in object_list %}
+        { "id": "{{ e.id }}", "place_name": "{{ e.place_name }}", "zipcode": "{{ e.location.zipcode }}", "url": "{{ e.get_absolute_url }}" }
+        {% if not forloop.last %},{% endif %}
+    {% endfor %}
+]

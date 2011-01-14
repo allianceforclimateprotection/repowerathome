@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 
 from django.db.models import Q
 from django.http import HttpResponse
@@ -21,12 +22,16 @@ def search_list(request, queryset, search_fields=None,
         ec["object_rendering_template"] = object_rendering_template
         kwargs["extra_context"] = ec
     format_ = request.GET.get("format", "html")
+    if not os.path.splitext(template_name)[1]:
+        template_name = "%s.%s" % (template_name, format_)
     if format_ == "json":
-        fields = request.GET.get("fields", None).split(",")
-        data = queryset.values(*fields) if fields else queryset.values()
-        dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else None
-        return HttpResponse(json.dumps(list(data), default=dthandler), mimetype="text/json")
-    return object_list(request, queryset=queryset, template_name=template_name, **kwargs)
+        mimetype = "text/json"
+    else:
+        mimetype = "text/html"
+    #data = queryset.values('id', 'place_name')
+    #return HttpResponse(json.dumps(list(data)), mimetype="text/json")
+    return object_list(request, queryset=queryset, template_name=template_name, 
+            mimetype=mimetype, **kwargs)
     
 def __build_q_from_fields(fields, search):
     if fields:

@@ -10,13 +10,13 @@ require(["libs/jquery.validation", "libs/jquery.ui", "mods/search"],
                     dataType: 'json',
                     data: {
                         search: req.term,
-                        format: 'json',
-                        fields: 'id,place_name,location__zipcode'
+                        format: 'json'
                     },
                     success: function (data) {
                         res($.map(data, function (item) {
+                            console.log(item.url);
                             return {
-                                label: item.location__zipcode,
+                                label: item.zipcode,
                                 value: item.id
                             };
                         }));
@@ -24,12 +24,7 @@ require(["libs/jquery.validation", "libs/jquery.ui", "mods/search"],
                 });
             },
             minLength: 2
-        }).data('autocomplete')._renderItem = function (ul, item) {
-            return $('<li/>', {
-                id: item.value,
-                text: item.label
-            }).appendTo(ul);
-        };
+        });
         $("#house_party_form").validate({ rules: { phone_number: { required: true }}});
         $('#house_party_link').click(function () { 
             $('#house_party_dialog').dialog('open'); 
