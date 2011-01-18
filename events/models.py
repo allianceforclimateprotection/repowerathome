@@ -49,6 +49,7 @@ class Event(models.Model):
     duration = models.PositiveIntegerField(blank=True, null=True)
     details = models.TextField(help_text="For example, where should people park,\
         what's the nearest subway, do people need to be buzzed in, etc.", blank=True)
+    groups = models.ManyToManyField("groups.Group", blank=True)
     is_private = models.BooleanField(default=False)
     limit = models.PositiveIntegerField(blank=True, null=True, help_text="Adding a limit sets a \
         cap on the number of guests that can RSVP. If the limit is reached, potential guests \
