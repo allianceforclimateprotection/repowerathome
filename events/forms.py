@@ -50,7 +50,7 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ("event_type", "place_name", "where", "city", "state", "zipcode", "when", "start", "duration",
-            "details", "is_private")
+            "details", "groups", "is_private")
         widgets = {
             "when": forms.DateInput(format="%m/%d/%Y", attrs={"class": "datepicker future_date_warning"}),
             "start": SelectTimeWidget(minute_step=15, twelve_hr=True, use_seconds=False),
