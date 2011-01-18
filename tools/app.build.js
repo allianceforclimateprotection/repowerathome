@@ -59,8 +59,7 @@
         },
         {
             name: "pages/events.show",
-            exclude: ["pages/base"],
-            include: ["mods/search"]
+            exclude: ["pages/base"]
         },
         {
             name: "pages/events.detail",
