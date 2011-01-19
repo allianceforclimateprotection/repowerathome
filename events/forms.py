@@ -19,7 +19,7 @@ from invite.fields import MultiEmailField
 from messaging.models import Stream
 from commitments.models import Survey, Commitment, Contributor
 
-from models import EventType, Event, Guest, rsvp_recieved
+from models import EventType, Event, Guest, rsvp_recieved, GroupAssociationRequest
 from widgets import SelectTimeWidget
 
 STATES = ("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID",
@@ -77,6 +77,16 @@ class EventForm(forms.ModelForm):
             except Location.DoesNotExist:
                 raise forms.ValidationError("Invalid zipcode %s" % data)
         return data
+
+    def clean_groups(self):
+        data = self.cleaned_data["groups"]
+        approved_groups, self.requested_groups = [], []
+        for g in data:
+            if g.is_user_manager(self.user):
+                approved_groups.append(g)
+            else:
+                self.requested_groups.append(g)
+        return approved_groups
     
     def clean(self):
         city = self.cleaned_data.get("city", None)
@@ -95,7 +105,12 @@ class EventForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         self.instance.creator = self.user
         self.instance.location = self.cleaned_data["location"]
-        return super(EventForm, self).save(*args, **kwargs)
+        event = super(EventForm, self).save(*args, **kwargs)
+        for g in self.requested_groups:
+            request, created = GroupAssociationRequest.objects.get_or_create(
+                event=event, group=g)
+            # TODO: notify user of groups requested
+        return event
 
 class GuestInviteForm(InviteForm):
     emails = MultiEmailField(label="Email addresses", required=True,
