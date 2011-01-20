@@ -7,6 +7,9 @@ def query_revision(treeish="HEAD"):
     if re.match("^[0-9a-f]{40}$", treeish): return treeish
     return local("git show %s | sed q | cut -d ' ' -f 2" % treeish)
 
+def query_branch(treeish="HEAD"):
+    return local("git name-rev --name-only %s" % treeish)
+
 def runs_last(func):
     @functools.wraps(func)
     def decorated(*args, **kwargs):
