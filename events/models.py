@@ -50,7 +50,7 @@ class Event(models.Model):
     details = models.TextField(help_text="For example, where should people park,\
         what's the nearest subway, do people need to be buzzed in, etc.", blank=True)
     groups = models.ManyToManyField("groups.Group", blank=True,
-        limit_choices_to = {'is_geo_group': False})
+        limit_choices_to = {'is_geo_group': False}, verbose_name="Teams")
     is_private = models.BooleanField(default=False)
     limit = models.PositiveIntegerField(blank=True, null=True, help_text="Adding a limit sets a \
         cap on the number of guests that can RSVP. If the limit is reached, potential guests \
@@ -193,6 +193,7 @@ class Event(models.Model):
 class GroupAssociationRequest(models.Model):
     event = models.ForeignKey(Event)
     group = models.ForeignKey('groups.Group')
+    approved = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

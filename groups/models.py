@@ -14,6 +14,7 @@ from actions.models import Action
 from invite.models import Invitation, Rsvp
 from thumbnails.fields import ImageAndThumbsField
 from messaging.models import Stream
+from events.models import GroupAssociationRequest
    
 class GroupManager(models.Manager):
     def groups_with_memberships(self, user, limit=None):
@@ -187,6 +188,11 @@ class Group(models.Model):
     def requesters_to_grant_or_deny(self, user):
         if self.is_joinable() and user.is_authenticated() and self.is_user_manager(user):
             return User.objects.filter(membershiprequests__group=self)
+        return []
+
+    def events_waiting_approval(self, user):
+        if user.is_authenticated() and self.is_user_manager(user):
+            return GroupAssociationRequest.objects.filter(group=self, approved=False)
         return []
         
     def is_user_manager(self, user):
