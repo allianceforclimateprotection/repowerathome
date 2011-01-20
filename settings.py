@@ -160,13 +160,12 @@ THUMBMNAIL_PROCESSORS = (
 )
 THUMBNAIL_EXTENSION = '.png'
 
-CODEBASE_USERNAME = 'macgruber'
-
 MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue", "messaging_sent")
 
 POSTMARK_SENDER = 'noreply@repowerathome.com'
 
-CODEBASE_PROJECT_URL = 'https://rah.codebasehq.com/rah'
+CODEBASE_PROJECT_URL = 'https://api3.codebasehq.com/rah'
+CODEBASE_USERNAME = 'rah/macgruber'
 
 # Date defaults
 DATETIME_FORMAT = "N j, Y, P"
