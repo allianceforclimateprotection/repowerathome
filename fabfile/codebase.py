@@ -4,7 +4,7 @@ import urllib2
 
 from fabric.api import env, local, require
 
-from utils import runs_last
+from utils import query_branch, runs_last
 
 def _send_codebase(path, data=None):
     "POST the given data message to the codebase API, if no data is provided GET"
@@ -24,7 +24,7 @@ def _send_codebase(path, data=None):
 @runs_last
 def codebase_deployment():
     "Notify codebase that a new revision has been deployed"
-    require("sha", "environment", "revision")
+    require("sha", "environment")
     repository = re.search("git\@codebasehq.*:.*\/.*\/(.*)\.git", env.repository).group(1)
 
     xml = []
@@ -32,7 +32,7 @@ def codebase_deployment():
     xml.append("<servers>%s</servers>" % ",".join(env.all_hosts))
     xml.append("<revision>%(sha)s</revision>" % env)
     xml.append("<environment>%(environment)s</environment>" % env)
-    xml.append("<branch>%(revision)s</branch>" % env)
+    xml.append("<branch>%s</branch>" % query_branch(env.sha))
     xml.append("</deployment>")
 
     _send_codebase("/%s/deployments" % repository, "".join(xml))
