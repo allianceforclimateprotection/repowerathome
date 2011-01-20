@@ -18,6 +18,7 @@ from invite.models import Invitation
 from invite.forms import InviteForm
 from utils import hash_val, forbidden
 from messaging.models import Stream
+from events.models import Event, GroupAssociationRequest
 
 from models import Group, GroupUsers, MembershipRequests, Discussion
 from forms import GroupForm, MembershipForm, DiscussionSettingsForm, DiscussionCreateForm, DiscussionApproveForm, DiscussionRemoveForm
@@ -99,6 +100,31 @@ def group_membership_request(request, group_id, user_id, action):
         messages.info(request, "%s has already been added to this team" % user.get_full_name())
     else:
         messages.info(request, "%s has already been denied access to this team" % user.get_full_name())
+    return redirect("group_detail", group_slug=group.slug)
+
+@login_required
+def group_event_request(request, group_id, event_id, action):
+    group = get_object_or_404(Group, id=group_id, is_geo_group=False)
+    event = get_object_or_404(Event, id=event_id)
+    if not group.is_user_manager(request.user):
+        return forbidden(request)
+    try:
+        event_request = GroupAssociationRequest.objects.get(event=event, group=group)
+    except GroupAssociationRequest.DoesNotExist:
+        event_request = None
+    if event_request:
+        if action == "approve":
+            event.groups.add(group)
+            event_request.approved = True
+            event_request.save()
+            messages.success(request, "Your team has been linked with %s" % event)
+        elif action == "deny":
+            event_request.delete()
+            messages.success(request, "Your team will not be linked with %s" % event)
+    elif group.event_set.filter(event=event).exists():
+        messages.info(request, "%s has already been linked with your team" % event)
+    else:
+        messages.info(request, "%s has not been linked with your team" % event)
     return redirect("group_detail", group_slug=group.slug)
 
 def group_detail(request, group_slug):
@@ -273,6 +299,7 @@ def _group_detail(request, group):
     is_poster = group.is_poster(request.user)
     membership_pending = group.has_pending_membership(request.user)
     requesters = group.requesters_to_grant_or_deny(request.user)
+    event_requests = group.events_waiting_approval(request.user)
     has_other_managers = group.has_other_managers(request.user)
     discs = Discussion.objects.filter(parent=None, group=group).order_by("-created")[:5]
     return render_to_response("groups/group_detail.html", locals(), context_instance=RequestContext(request))

@@ -54,7 +54,8 @@ class EventForm(forms.ModelForm):
         widgets = {
             "when": forms.DateInput(format="%m/%d/%Y", attrs={"class": "datepicker future_date_warning"}),
             "start": SelectTimeWidget(minute_step=15, twelve_hr=True, use_seconds=False),
-            "duration": forms.Select(choices=[("", "---")]+DURATIONS)
+            "duration": forms.Select(choices=[("", "---")]+DURATIONS),
+            "groups": forms.CheckboxSelectMultiple(),
         }
     
     def __init__(self, user, *args, **kwargs):
@@ -65,6 +66,12 @@ class EventForm(forms.ModelForm):
             self.fields["zipcode"].initial = self.instance.location.zipcode
         self.fields["start"].initial = datetime.time(18,0)
         self.user = user
+        groups = self.fields["groups"]
+        groups.queryset = groups.queryset.filter(groupusers__user=user)
+        if not groups.queryset:
+            groups.help_text = "You need to be a member of a team first"
+        else:
+            groups.help_text = None
         if user and not user.has_perm("events.host_any_event_type"):
             self.fields["event_type"].initial = EventType.objects.get(name="Energy Meeting").pk
             self.fields["event_type"].widget = forms.HiddenInput()
@@ -82,7 +89,8 @@ class EventForm(forms.ModelForm):
         data = self.cleaned_data["groups"]
         approved_groups, self.requested_groups = [], []
         for g in data:
-            if g.is_user_manager(self.user):
+            if g.is_user_manager(self.user) or GroupAssociationRequest.objects.filter(
+                event=self.instance, group=g, approved=True).exists():
                 approved_groups.append(g)
             else:
                 self.requested_groups.append(g)
