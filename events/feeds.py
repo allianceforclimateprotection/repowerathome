@@ -30,8 +30,7 @@ class EventsFeed(Feed):
         return obj.created
 
     def item_description(self, event):
-        # TODO: Ask how they want each described..
-        return event.__unicode__()
+        return event
 
     def item_link(self, event):
         return event.get_absolute_url()
