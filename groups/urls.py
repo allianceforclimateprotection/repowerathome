@@ -9,6 +9,7 @@ group_search_info = {
     'queryset': Group.objects.all().order_by("-created"),
     'paginate_by': 5,
     'search_fields': ['name', 'description',],
+    'template_name': 'groups/_search_listing',
     'object_rendering_template': 'groups/_group_search_result.html',
 }
 
