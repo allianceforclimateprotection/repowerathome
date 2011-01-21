@@ -72,7 +72,7 @@ def _progress_stats():
         return progress_stats
     else:
         progress_stats = {}  
-        locale.setlocale(locale.LC_ALL, "en_US")
+        locale.setlocale(locale.LC_ALL, "en_US.utf8")
         progress_stats['total_trendsetters'] = locale.format('%d', _total_trendsetters(), True)
         progress_stats['total_points'] = locale.format('%d', _total_points(), True)
         progress_stats['total_actions'] = locale.format('%d', _total_actions(), True)
