@@ -28,8 +28,6 @@ def search_list(request, queryset, search_fields=None,
         mimetype = "text/json"
     else:
         mimetype = "text/html"
-    #data = queryset.values('id', 'place_name')
-    #return HttpResponse(json.dumps(list(data)), mimetype="text/json")
     return object_list(request, queryset=queryset, template_name=template_name, 
             mimetype=mimetype, **kwargs)
     

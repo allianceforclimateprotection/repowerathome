@@ -19,11 +19,12 @@ define(function () {
                     });
                 },
                 focus: function (event, ui) {
-                    this.value = ui.item.label;
                     return false;
                 },
                 select: function (event, ui) {
-                    window.location = ui.item.url;
+                    if (typeof ui.item.url !== 'undefined') {
+                        window.location = ui.item.url;
+                    }
                     return false;
                 },
                 minLength: 2
@@ -40,25 +41,38 @@ define(function () {
                     .appendTo(ul);
             };
             /*jslint nomen: false*/
-            widget.data('autocomplete')._renderMenu = function (ul, items) {
+            widget.data('autocomplete')._renderMenu = function (ul, content) {
             /*jslint nomen: true*/
-                var self = this;
+                var self = this,
+                    items = content.data,
+                    count = content.count,
+                    results_url =  form.attr('action') + '?search=' + widget.val();
                 if (items.length) {
                     $.each(items, function (index, item) {
+                        /*jslint nomen: false*/
                         self._renderItem(ul, item);
+                        /*jslint nomen: true*/
                     });
+                    $('<li/>')
+                        .data('item.autocomplete', { 'url': results_url })
+                        .append($('<a/>', {
+                            text: 'View all ' + count + ' results',
+                            href: results_url
+                        }))
+                        .appendTo(ul);
                 } else {
-                    return $('<li/>', {
+                    $('<li/>', {
                         text: 'No results'
                     })
                     .appendTo(ul);
                 }
             };
+            /*jslint nomen: false*/
             widget.data('autocomplete')._response = function (content) {
-                content = this._normalize( content );
-                this._suggest( content );
-                this._trigger( "open" );
-                this.element.removeClass( "ui-autocomplete-loading" );
+                this._suggest(content);
+                this._trigger("open");
+                /*jslint nomen: true*/
+                this.element.removeClass("ui-autocomplete-loading");
             };
             return widget;
         }

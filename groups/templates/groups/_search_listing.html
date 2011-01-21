@@ -1,0 +1,17 @@
+<br class="clear" />
+{% for object in object_list %}
+    <li class="search_result_object">
+        <div class="group_details">
+            <h6><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></h6>
+            {% for parent in object.parents %}
+                <span class="group_parent">
+                    <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
+                    {% if not forloop.last %}&gt;{% endif %}
+                </span>
+            {% endfor %}
+        </div>
+    </li>
+{% endfor %}
+{% if page_obj.has_next %}
+    <a class="search_more" href="{{ request.path }}?search={{ request.GET.search }}&amp;page={{ page_obj.next_page_number }}">more</a>
+{% endif %}
