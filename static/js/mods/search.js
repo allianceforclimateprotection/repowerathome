@@ -46,7 +46,7 @@ define(function () {
                 var self = this,
                     items = content.data,
                     count = content.count,
-                    results_url =  form.attr('action') + '?search=' + widget.val();
+                    results_url =  form.attr('action') + '?search=' + widget.val() + '&page=all';
                 if (items.length) {
                     $.each(items, function (index, item) {
                         /*jslint nomen: false*/

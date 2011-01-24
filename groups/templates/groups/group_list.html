@@ -35,7 +35,6 @@
     {% if user.is_authenticated %}
         <div class="box_one_top"></div>
         <div class="box_one_middle">
-
             <h3>Your Teams</h3>
             {% if my_groups %}
                 {% with my_groups as groups%}
@@ -44,7 +43,6 @@
             {% else %}
                 <em>You're not a member of any teams yet!</em>
             {% endif %}
-
         </div>
         <div class="box_one_bottom"></div>
     {% endif %}

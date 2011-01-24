@@ -1,6 +1,9 @@
-[
-    {% for e in object_list %}
-        { "id": "{{ e.id }}", "label": "{{ e }}", "date": "{{ e.when|date }} @ {{ e.start|time }}", "url": "{{ e.get_absolute_url }}" }
-        {% if not forloop.last %},{% endif %}
-    {% endfor %}
-]
+{
+    "data": [
+        {% for e in object_list %}
+            { "id": "{{ e.id }}", "label": "{{ e }}", "date": "{{ e.when|date }} @ {{ e.start|time }}", "url": "{{ e.get_absolute_url }}" }
+            {% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ],
+    "count": "{{ paginator.count }}"
+}

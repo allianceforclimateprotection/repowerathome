@@ -1,17 +1,23 @@
-<br class="clear" />
-{% for object in object_list %}
-    <li class="search_result_object">
-        <div class="group_details">
-            <h6><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></h6>
-            {% for parent in object.parents %}
-                <span class="group_parent">
-                    <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
-                    {% if not forloop.last %}&gt;{% endif %}
-                </span>
-            {% endfor %}
-        </div>
-    </li>
-{% endfor %}
-{% if page_obj.has_next %}
-    <a class="search_more" href="{{ request.path }}?search={{ request.GET.search }}&amp;page={{ page_obj.next_page_number }}">more</a>
-{% endif %}
+{% extends "groups/base.html" %}
+{% load dated_static %}
+{% block title %}Teams on Repower at Home{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url group_list %}">Teams</a> &rsaquo;
+    Search Results
+{% endblock %}
+{% block right_content %}
+<div class="grid_6 alpha">
+    <div class="box_two_top"></div>
+    <div class="box_two_middle">
+        <h1>Search Results</h1>
+        {% with object_list as groups %}
+            {% include 'groups/_group_nugget_list.html' %}
+        {% endwith %}
+        {% if page_obj.has_next %}
+            <a class="search_more" href="{{ request.path }}?search={{ request.GET.search }}&amp;page={{ page_obj.next_page_number }}">more</a>
+        {% endif %}
+    </div>
+    <div class="box_two_bottom"></div>
+</div>
+{% endblock %}
