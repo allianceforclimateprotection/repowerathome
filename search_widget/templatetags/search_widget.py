@@ -30,12 +30,9 @@ class SearchWidgetNode(Node):
                     raise e
             else:
                 raise e
-
-        view, args, kwargs = resolve(path)
         request = copy.copy(context["request"])
         request.path = path
-        search_results = view(request, *args, **kwargs).content
-        return loader.render_to_string("search_widget/_search_widget.html", {"path":path, "search_results":search_results})
+        return loader.render_to_string("search_widget/_search_widget.html", {"path":path})
 
 @register.tag
 def search_widget(parser, token):
