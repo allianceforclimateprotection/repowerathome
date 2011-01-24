@@ -188,7 +188,8 @@ class Event(models.Model):
         request.session[self._guest_key()] = guest
         
     def delete_guest_in_session(self, request):
-        del request.session[self._guest_key()]
+        if self._guest_key in request.session:
+            del request.session[self._guest_key()]
 
 class GroupAssociationRequest(models.Model):
     event = models.ForeignKey(Event)
