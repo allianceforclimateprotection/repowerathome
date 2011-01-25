@@ -10,7 +10,6 @@ from django.utils.feedgenerator import Atom1Feed
 
 from events.models import Event
 
-
 class EventsFeed(Feed):
     feed_type = Atom1Feed
     
