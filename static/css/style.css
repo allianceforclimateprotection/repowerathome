@@ -532,7 +532,6 @@ Events Events Events Events Events Events Events Events Events Events Events Eve
 #event_manager_nav li { display: inline; }
 #event_form ul { margin: 0 0 0 0; }
 #edit_event_link { float: right; }
-#event_map { width: 431px; height: 200px; }
 .event_inline_placeholder { color: grey; font-style: italic; }
 .editable_highlight { background-color: #ffff99; cursor: text; }
 #commitment_card { width: 400px; padding: 5px; border: 1px solid black; }

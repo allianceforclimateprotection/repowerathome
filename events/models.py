@@ -14,35 +14,15 @@ from messaging.models import Stream
 from commitments.models import Contributor, Commitment, Survey
 
 from filterspec import HasHappenedFilterSpec
-    
-class EventTypeManager(models.Manager):
-    def get_by_natural_key(self, name):
-        return self.get(name=name)
-
-class EventType(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    teaser = models.CharField(max_length=150)
-    description = models.TextField()
-    survey = models.ForeignKey("commitments.survey")
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    objects = EventTypeManager()
-
-    def __unicode__(self):
-        return self.name
-        
-    def natural_key(self):
-        return [self.name]
 
 class Event(models.Model):
     creator = models.ForeignKey("auth.User")
-    event_type = models.ForeignKey(EventType, default="")
-    default_survey = models.ForeignKey("commitments.survey")
-    place_name = models.CharField(max_length=100, blank=True,
-        help_text="Label for where the event is being held (e.g. Jon's House)")
+    default_survey = models.ForeignKey("commitments.survey", default=9)
+    title = models.CharField(max_length=100, help_text="What do you want to call this shindig?")
     where = models.CharField(max_length=100)
+    lon = models.FloatField(null=True, blank=True)
+    lat = models.FloatField(null=True, blank=True)
     location = models.ForeignKey("geo.Location", null=True)
-    location.state_filter = True
     when = models.DateField()
     when.has_happened = True
     start = models.TimeField()
@@ -55,92 +35,92 @@ class Event(models.Model):
         will need to contact you first.")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         permissions = (
             ("host_any_event_type", "Can host any event type"),
             ("view_any_event", "Can view host details for any event"),
         )
-    
+
     def __unicode__(self):
-        return u"%s %s" % (self.location, self.event_type)
-        
+        return u"%s" % (self.title)
+
     @models.permalink
     def get_absolute_url(self):
         return ("event-detail", [str(self.id)])
-        
+
     def place(self):
         return "%s %s" % (self.where, self.location)
-        
+
     def odd_guests(self):
         return [g for i,g in enumerate(self.guest_set.rsvped_with_order()) if i % 2 != 0]
-        
+
     def even_guests(self):
         return [g for i,g in enumerate(self.guest_set.rsvped_with_order()) if i % 2 == 0]
-    
+
     def start_datetime(self):
         return datetime.datetime.combine(self.when, self.start)
-        
+
     def has_manager_privileges(self, user):
         if not user.is_authenticated():
             return False
         return user.has_perm("events.view_any_event") or \
             Guest.objects.filter(event=self, contributor__user=user, is_host=True).exists()
-            
+
     def is_guest(self, request):
         user = request.user
         if not user.is_authenticated():
             return self._guest_key() in request.session
         return Guest.objects.filter(event=self, contributor__user=user).exists()
-        
+
     def hosts(self):
         return Guest.objects.filter(event=self, is_host=True)
-        
+
     def confirmed_guests(self):
         return Guest.objects.filter(event=self, rsvp_status="A")
-        
+
     def maybe_attending(self):
         return Guest.objects.filter(event=self, rsvp_status="M")
-        
+
     def not_attending(self):
         return Guest.objects.filter(event=self, rsvp_status="N")
-        
+
     def attendees(self):
         return Guest.objects.filter(event=self, rsvp_status__in=["A", "M"])
-        
+
     def invited(self):
          return Guest.objects.filter(event=self, invited__isnull=False).count()
-        
+
     def outstanding_invitations(self):
         return self.guests_that_have_not_responded().count()
-        
+
     def guests_that_have_not_responded(self):
         return Guest.objects.filter(event=self, invited__isnull=False, rsvp_status="")
-        
+
     def guests_no_response_id_list(self):
         return ",".join([g.id for g in self.guests_that_have_not_responded()])
-        
+
     def is_token_valid(self, token):
         try:
             invite = Invitation.objects.get(token=token)
             return invite.content_object == self
         except Invitation.DoesNotExist:
             return False
-            
+
     def next_guest(self, guest):
         guests = list(self.guest_set.all())
         next_index = guests.index(guest) + 1
         return guests[0] if next_index == len(guests) else guests[next_index]
-        
+
     def challenges_committed(self):
         return Commitment.objects.filter(answer="C", guest__event=self)
-        
+
     def challenges_done(self):
         return Commitment.objects.filter(answer="D", guest__event=self)
-        
+
     def has_comments(self):
         return Guest.objects.filter(event=self).exclude(comments="").exists()
-            
+
     def guests_with_commitments(self):
         query = Guest.objects.filter(event=self)
         for question in self.default_survey.questions():
@@ -152,10 +132,10 @@ class Event(models.Model):
                 }
             )
         return query
-        
+
     def _guest_key(self):
         return "event_%d_guest" % self.id
-            
+
     def current_guest(self, request, token=None):
         if request.user.is_authenticated():
             user = request.user
@@ -181,21 +161,21 @@ class Event(models.Model):
             except Guest.DoesNotExist:
                 pass
         return Guest(event=self, contributor=Contributor())
-        
+
     def save_guest_in_session(self, request, guest):
         request.session[self._guest_key()] = guest
-        
+
     def delete_guest_in_session(self, request):
         del request.session[self._guest_key()]
-        
+
 class GuestManager(models.Manager):
     def rsvped_with_order(self):
         return self.exclude(rsvp_status=" ").order_by("rsvp_status", "created")
-    
+
     def guest_engagment(self, date_start=None, date_end=None):
         from django.db import connection, transaction
         from actions.models import Action
-        
+
         if not date_start:
             date_start = datetime.date.min
         if not date_end:
@@ -214,13 +194,13 @@ class GuestManager(models.Manager):
             LEFT JOIN commitments_commitment `%s_commit` ON `%s_commit`.action_id = %s AND `%s_commit`.contributor_id = cn.id
                 AND DATE(`%s_commit`.updated) >= '%s' AND DATE(`%s_commit`.updated) <= '%s'
             """ % (a.slug, a.slug, a.id, a.slug, a.slug, date_start, a.slug, date_end) for a in actions]
-            
+
         query_dict = {
             "action_cases": ", ".join(action_cases),
             "action_joins": " ".join(action_joins),
             "date_start": date_start,
             "date_end": date_end,
-        }    
+        }
         query = """
             SELECT DISTINCT -1, cn.first_name AS "first name", cn.last_name AS "last name", cn.email,
                 cn.phone, l.name AS city, l.st AS state, l.zipcode AS "zip code",
@@ -235,12 +215,12 @@ class GuestManager(models.Manager):
                 END AS 'volunteer',
                 NULL AS "team manager",
                 NULL AS "team member",
-                CASE 
-                    WHEN g.is_host = 1 AND 
-                    DATE(e.when) >= '%(date_start)s' AND DATE(e.when) <= '%(date_end)s' 
+                CASE
+                    WHEN g.is_host = 1 AND
+                    DATE(e.when) >= '%(date_start)s' AND DATE(e.when) <= '%(date_end)s'
                         THEN "completed"
-                    WHEN g.is_host = 1 AND 
-                    DATE(e.created) >= '%(date_start)s' AND DATE(e.created) <= '%(date_end)s' 
+                    WHEN g.is_host = 1 AND
+                    DATE(e.created) >= '%(date_start)s' AND DATE(e.created) <= '%(date_end)s'
                         THEN "yes"
                 END AS "event host",
                 CASE
@@ -254,7 +234,7 @@ class GuestManager(models.Manager):
                         THEN "completed"
                 END AS "kickoff event guest",
                 CASE
-                    WHEN e.event_type_id IN (3) AND cm.id IS NOT NULL AND 
+                    WHEN e.event_type_id IN (3) AND cm.id IS NOT NULL AND
                     DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s'
                         THEN "completed"
                 END AS "field training guest"
@@ -263,7 +243,7 @@ class GuestManager(models.Manager):
             JOIN commitments_contributor cn ON cn.id = g.contributor_id
             LEFT JOIN commitments_commitment cm ON cn.id = cm.contributor_id
             LEFT JOIN geo_location l ON cn.location_id = l.id
-            LEFT JOIN commitments_commitment `organize_commit` ON `organize_commit`.question = 'organize' 
+            LEFT JOIN commitments_commitment `organize_commit` ON `organize_commit`.question = 'organize'
                 AND `organize_commit`.contributor_id = cn.id
                 AND DATE(`organize_commit`.updated) >= '%(date_start)s'
                 AND DATE(`organize_commit`.updated) <= '%(date_end)s'
@@ -281,7 +261,7 @@ class GuestManager(models.Manager):
         queryset = [header_row] + list(cursor.fetchall())
         cursor.close()
         return queryset
-        
+
 class Guest(models.Model):
     RSVP_STATUSES = (
         ("A", "Attending",),
@@ -299,15 +279,15 @@ class Guest(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = GuestManager()
-    
+
     class Meta:
         unique_together = (("event", "contributor",),)
-        
+
     def save(self, *args, **kwargs):
         self.contributor.save()
         self.contributor_id = self.contributor.id
         return super(Guest, self).save(*args, **kwargs)
-    
+
     def status(self):
         if self.rsvp_status:
             return self.get_rsvp_status_display()
@@ -316,7 +296,7 @@ class Guest(models.Model):
         if self.added:
             return "Added %s" % DateFormat(self.added).format("M j")
         raise AttributeError
-            
+
     def __unicode__(self):
         return unicode(self.contributor)
 
@@ -328,10 +308,6 @@ def send_message_to_directly_added_guest(sender, instance, created, **kwargs):
         stream = Stream.objects.get(slug="event-guest-add")
         stream.enqueue(content_object=instance, start=instance.created)
 models.signals.post_save.connect(send_message_to_directly_added_guest, sender=Guest)
-
-def set_default_survey(sender, instance, **kwargs):
-    instance.default_survey = instance.event_type.survey
-models.signals.pre_save.connect(set_default_survey, sender=Event)
 
 def make_creator_a_guest(sender, instance, **kwargs):
     creator = instance.creator

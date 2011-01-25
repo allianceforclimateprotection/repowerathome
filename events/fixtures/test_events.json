@@ -17,7 +17,7 @@
             "date_joined": "2010-02-03 17:30:46"
         }
     },
-    {"pk": 1, "model": "events.event", "fields": {"creator": 1, "event_type": ["Energy Meeting"], "default_survey": ["Energy Meeting Commitment Card"], "when": "2050-08-14", "start": "06:00:00", "duration": "90", "details": "You can park on the street.  My apartment is on the second floor.", "where": "123 Garden Street", "is_private": false, "location": 30602}}, 
+    {"pk": 1, "model": "events.event", "fields": {"creator": 1, "default_survey": ["Energy Meeting Commitment Card"], "when": "2050-08-14", "start": "06:00:00", "duration": "90", "details": "You can park on the street.  My apartment is on the second floor.", "where": "123 Garden Street", "is_private": false, "location": 30602}}, 
     {"pk": 1, "model": "commitments.contributor", "fields": {"created": "2010-02-02", "updated": "2010-02-02", "first_name": "Jane", "last_name": "Doe", "phone": "", "user": null, "email": "jd@email.com"}}, 
     {"pk": 2, "model": "commitments.contributor", "fields": {"created": "2010-02-02", "updated": "2010-02-02", "first_name": "Alex", "last_name": "Smith", "phone": "", "user": null, "email": "am@email.com"}}, 
     {"pk": 3, "model": "commitments.contributor", "fields": {"created": "2010-02-02", "updated": "2010-02-02", "first_name": "Jon", "last_name": "Doe", "phone": "", "user": null, "email": "jondoe@email.com"}}, 

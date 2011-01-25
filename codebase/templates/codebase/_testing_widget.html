@@ -22,13 +22,12 @@
     </div>
     <script type="text/javascript">
         var RAH = RAH || {};
-        RAH.TESTING = {};
-        (function () {
-            this.ticket_index = 0;
-            this.tickets = [];
-            {% for ticket in tickets %}
-                this.tickets.push({{ ticket.ticket_id }});
-            {% endfor %}
-        }).apply(RAH.TESTING);
+        RAH.TESTING = {
+            ticket_index: 0,
+            tickets: []
+        };
+        {% for ticket in tickets %}
+            RAH.TESTING.tickets.push({{ ticket.ticket_id }});
+        {% endfor %}
     </script>
 </div>

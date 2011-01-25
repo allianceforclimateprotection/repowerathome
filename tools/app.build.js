@@ -59,7 +59,8 @@
         },
         {
             name: "pages/events.show",
-            exclude: ["pages/base"]
+            exclude: ["pages/base"],
+            include: ["libs/markerclusterer"]
         },
         {
             name: "pages/events.detail",
