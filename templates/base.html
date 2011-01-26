@@ -148,7 +148,6 @@
                     {% if testing_feedback_form %}
                         RAH.pagescripts.push("{% dated_static 'js/mods/testing_widget.js' %}");
                     {% endif %}
-                    console.log(RAH.pagescripts);
                     require({
                         priority: ["{%dated_static 'js/pages/base.js' %}",
                         "https://connect.facebook.net/en_US/all.js"].concat(RAH.pagescripts)
