@@ -1,5 +1,16 @@
 from django.conf.urls.defaults import *
 
+from search_widget.views import search_list
+
+from models import Event
+
+event_search_info = {
+    'queryset': Event.objects.all(),
+    'paginate_by': 5,
+    'search_fields': ['place_name', 'where', 'location__zipcode'],
+    'template_name': 'events/_search_listing',
+}
+
 urlpatterns = patterns("events.views",
     # TODO: Make these underscores instead of hyphens
     url(r"^$", "show", name="event-show"),
@@ -20,4 +31,5 @@ urlpatterns = patterns("events.views",
     url(r"^(?P<event_id>\d+)/spreadsheet/$", "spreadsheet", name="event-spreadsheet"),
     url(r"^(?P<event_id>\d+)/guests/reminder/$", "message", {"type": "reminder"}, name="event-reminder"),
     url(r"^(?P<event_id>\d+)/guests/announcement/$", "message", {"type": "announcement"}, name="event-announcement"),
+    url(r"^search/$", search_list, event_search_info, name='event_search'),
 )

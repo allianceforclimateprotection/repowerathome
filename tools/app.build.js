@@ -60,7 +60,7 @@
         {
             name: "pages/events.show",
             exclude: ["pages/base"],
-            include: ["libs/markerclusterer"]
+            include: ["libs/markerclusterer", "mods/search"]
         },
         {
             name: "pages/events.detail",
@@ -91,6 +91,11 @@
             name: "pages/rah.trendsetter_sticker",
             exclude: ["pages/base"],
             include: ["libs/jquery.slimbox2"]
+        },
+        {
+            name: "pages/groups.list",
+            exclude: ["pages/base"],
+            include: ["mods/search"]
         }
     ]
 })

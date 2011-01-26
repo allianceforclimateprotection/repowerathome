@@ -42,6 +42,7 @@ sitemaps = {
 # Prepare some feed classes
 from basic.blog.feeds import BlogPostsFeed
 from groups.feeds import GroupActivityFeed
+from events.feeds import EventsFeed
 
 # Import some custom forms to pass into the auth app urls
 from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
@@ -93,6 +94,7 @@ urlpatterns += patterns('',
     url(r'^actions/', include('actions.urls')),
     url(r'^records/', include('records.urls')),
     url(r'^events/', include('events.urls')),
+    url(r'^events/feed/$', EventsFeed(), name='events_feed'),
     url(r'^messaging/', include('messaging.urls')),
     url(r'^facebook/', include('facebook_app.urls')),
     url(r'^commitments/', include('commitments.urls')),

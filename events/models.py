@@ -29,6 +29,8 @@ class Event(models.Model):
     duration = models.PositiveIntegerField(blank=True, null=True)
     details = models.TextField(help_text="For example, where should people park,\
         what's the nearest subway, do people need to be buzzed in, etc.", blank=True)
+    groups = models.ManyToManyField("groups.Group", blank=True,
+        limit_choices_to = {'is_geo_group': False}, verbose_name="Teams")
     is_private = models.BooleanField(default=False)
     limit = models.PositiveIntegerField(blank=True, null=True, help_text="Adding a limit sets a \
         cap on the number of guests that can RSVP. If the limit is reached, potential guests \
@@ -166,7 +168,21 @@ class Event(models.Model):
         request.session[self._guest_key()] = guest
 
     def delete_guest_in_session(self, request):
-        del request.session[self._guest_key()]
+        if self._guest_key in request.session:
+            del request.session[self._guest_key()]
+
+class GroupAssociationRequest(models.Model):
+    event = models.ForeignKey(Event)
+    group = models.ForeignKey('groups.Group')
+    approved = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('event', 'group',)
+
+    def __unicode__(self):
+        return u'%s would like to link %s to %s' % (self.event.creator, self.event, self.group)
 
 class GuestManager(models.Manager):
     def rsvped_with_order(self):
@@ -335,3 +351,9 @@ def notification_on_rsvp(sender, guest, **kwargs):
     if guest.rsvp_status and guest.notify_on_rsvp:
         Stream.objects.get(slug="event-rsvp-notification").enqueue(content_object=guest, start=guest.updated)
 rsvp_recieved.connect(notification_on_rsvp)
+
+def notification_on_group_association_request(sender, instance, created, **kwargs):
+    if created:
+        Stream.objects.get(slug="event-group-association-request").enqueue(
+            content_object=instance, start=instance.created)
+models.signals.post_save.connect(notification_on_group_association_request, sender=GroupAssociationRequest)

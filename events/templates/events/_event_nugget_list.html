@@ -1,3 +1,4 @@
+{% load dated_static %}
 <ul class="plain_list" style="margin-bottom:0px;">
     {% for event in events %}
         <li>
@@ -7,4 +8,11 @@
             </p>
         </li>
     {% endfor %}
+    <p>
+        Subscribe to feed
+        <a href="{% url events_feed %}">
+            <img src="{% dated_static 'images/theme/social_icons/16/feed.png' %}" alt="atom feed" width="16" height="16"/>
+        </a>
+    </p>
+
 </ul>

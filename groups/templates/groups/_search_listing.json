@@ -1,0 +1,9 @@
+{
+    "data": [
+        {% for g in object_list %}
+            { "id": "{{ g.id }}", "label": "{{ g }}", "url": "{{ g.get_absolute_url }}", "img": "{{ MEDIA_URL }}{{ g.image.thumbnail_colorspace_30x30smartcrop }}" }
+            {% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ],
+    "count": "{{ paginator.count }}"
+}

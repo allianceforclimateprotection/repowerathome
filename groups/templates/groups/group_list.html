@@ -1,4 +1,5 @@
 {% extends "groups/base.html" %}
+{% load dated_static %}
 {% block title %}Teams on Repower at Home{% endblock %}
 {% block right_content %}
 <div class="grid_6 alpha">
@@ -23,27 +24,33 @@
     </div>
     <div class="box_two_bottom"></div>
 </div>
+<div class="grid_3 omega">
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        {% load search_widget %}
+        {% search_widget group_search %}
+    </div>
+    <div class="box_one_bottom"></div>
+
     {% if user.is_authenticated %}
-        <div class="grid_3 omega">
-            <div class="box_one_top"></div>
-            <div class="box_one_middle">
-
-                <h3>Your Teams</h3>
-                {% if my_groups %}
-                    {% with my_groups as groups%}
-                        {% include "groups/_group_nugget_list.html" %}
-                    {% endwith %}
-                {% else %}
-                    <em>You're not a member of any teams yet!</em>
-                {% endif %}
-
-            </div>
-            <div class="box_one_bottom"></div>
+        <div class="box_one_top"></div>
+        <div class="box_one_middle">
+            <h3>Your Teams</h3>
+            {% if my_groups %}
+                {% with my_groups as groups%}
+                    {% include "groups/_group_nugget_list.html" %}
+                {% endwith %}
+            {% else %}
+                <em>You're not a member of any teams yet!</em>
+            {% endif %}
         </div>
+        <div class="box_one_bottom"></div>
     {% endif %}
-{% endblock %}
+</div>
 
-{# {% load search_widget %} #}
-{# <h3 class="search_title">Find a Group</h3> #}
-{# {% search_widget group_search %} #}
-{# {% block js %}page_group_list{% endblock %} #}
+<script type="text/javascript" charset="utf-8">
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/group.list.js' %}");
+</script>
+{% endblock %}

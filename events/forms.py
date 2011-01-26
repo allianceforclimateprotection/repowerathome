@@ -21,7 +21,7 @@ from invite.fields import MultiEmailField
 from messaging.models import Stream
 from commitments.models import Survey, Commitment, Contributor
 
-from models import Event, Guest, rsvp_recieved
+from models import Event, Guest, rsvp_recieved, GroupAssociationRequest
 from widgets import SelectTimeWidget
 
 def _durations():
@@ -43,22 +43,41 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ("title", "where", "details", "when", "start", "duration", "is_private", "lat", "lon")
+        fields = ("title", "where", "details", "when", "start", "duration", "is_private", "lat", "lon", "groups")
         widgets = {
             "when": forms.DateInput(format="%m/%d/%Y", attrs={"class": "datepicker future_date_warning"}),
             "start": SelectTimeWidget(minute_step=15, twelve_hr=True, use_seconds=False),
             "duration": forms.Select(choices=[("", "---")]+DURATIONS),
             "lat": forms.HiddenInput(),
-            "lon": forms.HiddenInput()
+            "lon": forms.HiddenInput(),
+            "groups": forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, user, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields["start"].initial = datetime.time(18,0)
         self.user = user
+        groups = self.fields["groups"]
+        groups.queryset = groups.queryset.filter(groupusers__user=user)
+        if not groups.queryset:
+            groups.help_text = "You need to be a member of a team first"
+        else:
+            groups.help_text = None
+
+    def clean_groups(self):
+        data = self.cleaned_data["groups"]
+        approved_groups, self.requested_groups = [], []
+        for g in data:
+            if g.is_user_manager(self.user) or GroupAssociationRequest.objects.filter(
+                event=self.instance, group=g, approved=True).exists():
+                approved_groups.append(g)
+            else:
+                self.requested_groups.append(g)
+        return approved_groups
 
     def clean(self):
         if "where" in self.cleaned_data:
+            error = False
             raw_address = self.cleaned_data["where"]
             url = "http://maps.googleapis.com/maps/api/geocode/json?sensor=false"
             url += "&address=%s" % urllib2.quote(raw_address)
@@ -72,15 +91,33 @@ class EventForm(forms.ModelForm):
                     self.cleaned_data['lat'] = resp['results'][0]['geometry']['location']['lat']
                     self.cleaned_data['lon'] = resp['results'][0]['geometry']['location']['lng']
                     self.cleaned_data['where'] = resp['results'][0]['formatted_address']
+
+                    # look for a postal_code and then lookup the location
+                    for component in resp['results'][0]['address_components']:
+                        if "postal_code" in component['types']:
+                            zipcode = component['short_name']
+                            break
+                    try:
+                        self.cleaned_data['location'] = Location.objects.get(zipcode=zipcode)
+                    except:
+                        error = True
                 else:
-                    del self.cleaned_data['where']
-                    self._errors['where'] = self.error_class(
-                        ['We couldn\'t locate this address on our map.'])
+                    error = True
+            if error:
+                del self.cleaned_data['where']
+                self._errors['where'] = self.error_class(
+                    ['We couldn\'t locate this address on our map.'])
         return self.cleaned_data
 
     def save(self, *args, **kwargs):
         self.instance.creator = self.user
-        return super(EventForm, self).save(*args, **kwargs)
+        self.instance.location = self.cleaned_data["location"]
+        event = super(EventForm, self).save(*args, **kwargs)
+        for g in self.requested_groups:
+            request, created = GroupAssociationRequest.objects.get_or_create(
+                event=event, group=g)
+            # TODO: notify user of groups requested
+        return event
 
 class GuestInviteForm(InviteForm):
     emails = MultiEmailField(label="Email addresses", required=True,
@@ -385,7 +422,7 @@ class RsvpAccountForm(forms.ModelForm):
         return guest
 
 class MessageForm(forms.Form):
-    note = forms.CharField(label="Personal Note", widget=forms.Textarea, 
+    note = forms.CharField(label="Personal Note", widget=forms.Textarea,
         help_text="Enter a brief note that will be included in your email")
     guests = forms.ModelMultipleChoiceField(queryset=None, widget=forms.MultipleHiddenInput)
 
@@ -400,7 +437,7 @@ class MessageForm(forms.Form):
         extra_params={"author": self.user, "note": self.cleaned_data["note"]}
         if self.type == "reminder":
             for guest in self.cleaned_data["guests"]:
-                Stream.objects.get(slug="event-reminder").enqueue(content_object=guest, 
+                Stream.objects.get(slug="event-reminder").enqueue(content_object=guest,
                     start=datetime.datetime.now(), extra_params=extra_params)
         elif self.type == "announcement":
             for guest in self.cleaned_data["guests"]:
@@ -408,4 +445,3 @@ class MessageForm(forms.Form):
                     start=datetime.datetime.now(), extra_params=extra_params)
         else:
             raise AttributeError("Unknown message type: %s" % self.type)
-

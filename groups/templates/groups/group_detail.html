@@ -129,6 +129,26 @@
     </div>
     <div class="box_one_bottom"></div>
     {% endif %}
+
+    {% if event_requests %}
+    <div class="box_one_top"></div>
+    <div class="box_one_middle">
+        <h3>Event Link Requests</h3>
+        <ul>
+            {% for er in event_requests %}
+                <li class="membership_request">
+                    {% safe_user_link er.event.creator %} has requested to link this team to
+                    <a href="{{ er.event.get_absolute_url }}">{{ er.event }}</a>
+                    <div class="membership_tools">
+                        <a href="{% url group_event_approve er.group.id er.event.id %}">Approve</a> or
+                        <a href="{% url group_event_deny er.group.id er.event.id %}">Deny</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="box_one_bottom"></div>
+    {% endif %}
     
     {% if is_member %}
     <div class="box_one_top"></div>

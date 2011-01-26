@@ -365,7 +365,7 @@ class EventEditViewTest(TestCase):
     def test_change_event(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.event_edit_url, {
-            "when": "2050-09-09", "where": "20010", "title": "lalalala",
+            "when": "2050-09-09", "where": "02801", "title": "lalalala",
             "start_hour": "10", "start_minute": "00", "start_meridiem": "a.m.",
             "duration": "90", "details": "test", "is_private": "True", "limit": "30"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "events/detail.html")
