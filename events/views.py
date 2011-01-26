@@ -26,6 +26,7 @@ from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, Guest
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
 
 def show(request):
+    map_events = Event.objects.filter(is_private=False)
     events = Event.objects.filter(is_private=False, when__gt=datetime.datetime.now()).order_by("when", "start")
     if request.user.is_authenticated():
         my_events = Event.objects.filter(guest__contributor__user=request.user)
@@ -73,7 +74,7 @@ def guests_add(request, event_id):
         return redirect(event)
     template = "events/_guests_add.html" if request.is_ajax() else "events/guests_add.html"
     return render_to_response(template, locals(), context_instance=RequestContext(request))
-    
+
 @login_required
 @user_is_event_manager
 def guests_invite(request, event_id):
@@ -86,7 +87,7 @@ def guests_invite(request, event_id):
         return redirect(event)
     template = "events/_guests_invite.html" if request.is_ajax() else "events/guests_invite.html"
     return render_to_response(template, locals(), context_instance=RequestContext(request))
-    
+
 @login_required
 @require_POST
 @user_is_event_manager
@@ -113,7 +114,7 @@ def guests_edit(request, event_id, guest_id, type):
     message_html = render_to_string("_messages.html", {}, context_instance=RequestContext(request))
     guest_status = render_to_string("events/_guest_status.html", {"event": event, "guest": guest}, context_instance=RequestContext(request))
     return HttpResponse(json.dumps({"message_html": message_html, "guest_status": guest_status}), mimetype="text/json")
-    
+
 @login_required
 @user_is_event_manager
 def hosts(request, event_id):
@@ -164,12 +165,12 @@ def rsvp_account(request, event_id):
         auth.login(request, user)
         return redirect(event)
     return render_to_response("events/rsvp_account.html", locals(), context_instance=RequestContext(request))
-    
+
 def rsvp_cancel(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     event.delete_guest_in_session(request)
     return redirect(event)
-    
+
 def rsvp_statuses(request):
     return HttpResponse(json.dumps(dict(Guest.RSVP_STATUSES)), mimetype="text/json")
 
@@ -190,13 +191,13 @@ def print_sheet(request, event_id):
         rows_after_first_page = attendee_count + blank_rows - first_page_rows
         if rows_after_first_page <= page_rows:
             blank_rows += page_rows - rows_after_first_page
-        else: 
+        else:
             blank_rows += page_rows - (rows_after_first_page % page_rows)
-    
+
     blank_rows = range(blank_rows)
     return render_to_pdf("events/sign_in_sheet.html", "%s Sign In.pdf" % event, {
-        "event": event, 
-        "attendees": attendees, 
+        "event": event,
+        "attendees": attendees,
         "blank_rows": blank_rows
     })
 
@@ -206,17 +207,17 @@ def spreadsheet(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     response = HttpResponse(mimetype="text/csv")
     response["Content-Disposition"] = "attachment; filename=%s Guest List.csv" % event
-    
+
     questions = event.default_survey.questions()
     writer = csv.writer(response)
     writer.writerow(["Name", "Email", "Phone", "Zipcode", "Status"] + list(questions))
-    
+
     for g in event.guests_with_commitments():
         answers = [getattr(g, question) for question in questions]
         writer.writerow([g.contributor.name, g.contributor.email, g.contributor.phone, g.contributor.zipcode, g.status()] + answers)
-    
+
     return response
-    
+
 @login_required
 @user_is_event_manager
 def message(request, event_id, type):

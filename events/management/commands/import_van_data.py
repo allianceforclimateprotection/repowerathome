@@ -6,7 +6,7 @@ from django.core.management.base import NoArgsCommand
 from django.contrib.auth.models import User
 
 from actions.models import Action
-from events.models import Event, EventType, Guest, Survey, Commitment
+from events.models import Event, Guest, Survey, Commitment
 from geo.models import Location
 
 
@@ -15,11 +15,11 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
         input_files = [
-            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/commitments1.txt"), 
-            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/commitments2.txt"), 
-            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/commitments3.txt"), 
-            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/commitments4.txt"), 
-            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/events.txt"), 
+            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/commitments1.txt"),
+            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/commitments2.txt"),
+            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/commitments3.txt"),
+            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/commitments4.txt"),
+            os.path.join(os.path.dirname(__file__), "import_van_data_input_files/events.txt"),
             os.path.join(os.path.dirname(__file__), "import_van_data_input_files/emails.txt")
         ]
         VanImporter(input_files=input_files)
@@ -69,7 +69,7 @@ class VanImporter(object):
                 try:
                     self.people[cid].update(row)
                 except KeyError, e:
-                    self.people[cid] = row        
+                    self.people[cid] = row
         """
         # How many cid's don't have events
         print "My Campaign ID, FirstName, LastName, Email"
@@ -94,38 +94,27 @@ class VanImporter(object):
         for k in prune_keys:
             del self.people[k]
         print "%s record(s) pruned" % len(prune_keys)
-        
+
         # Loop through the people and make a set of events
         for k, v in self.people.iteritems():
             self.events[v['House Party Code']] = {'House Party Date': v['House Party Date'], 'event_location': v['event_location'] }
-        
-        # Create an event type
-        print "Creating event type"
-        event_type = EventType.objects.get_or_create(
-            name = "Pilot Energy Meeting", 
-            description = """Our energy choices at home have a huge impact on our health, our environment, and our 
-                pocketbooks. At the energy meeting, we will explore ways to improve our community by using less energy
-                at home. We'll learn about simple actions that tackle the main sources of home energy waste, and we'll
-                also brainstorm ways we can grow our impact by getting others involved in repowering their homes."""
-        )[0]
-        
+
         # Create the events in the Database
         print "Creating events...",
         event_counter = 0
         brenna = User.objects.get(pk=8)
         for k, v in self.events.iteritems():
             self.events[k] = Event.objects.create(
-                creator=brenna, 
-                event_type=event_type, 
-                when=time.strftime("%Y-%m-%d", time.strptime(v['House Party Date'], "%m/%d/%y")), 
-                start="20:00:00", 
-                duration=90, 
+                creator=brenna,
+                when=time.strftime("%Y-%m-%d", time.strptime(v['House Party Date'], "%m/%d/%y")),
+                start="20:00:00",
+                duration=90,
                 details="Pilot energy meeting",
                 location=Location.objects.get(zipcode=v['event_location'])
             )
             event_counter += 1
         print "%s event records created!" % event_counter
-        
+
         # Create Guest records
         print "Creating guest records...",
         guest_counter = 0
@@ -135,14 +124,14 @@ class VanImporter(object):
                 location = Location.objects.get(zipcode=v['mZip5'])
             except:
                 location = None
-            
+
             # If that didn't work, use the zip from their event.
             if location == None:
                 try:
                     location = Location.objects.get(zipcode=v['event_location'])
                 except:
                     location = None
-            
+
             try:
                 self.people[k]['guest_obj'] = Guest.objects.create(
                     event = self.events[v['House Party Code']],
@@ -158,17 +147,16 @@ class VanImporter(object):
             except:
                 print self.people[k]
         print "%s guest records created!" % guest_counter
-        
+
         # Create an event survey
         print "Creating survey"
         survey = Survey.objects.get_or_create(
-            name = "Pilot Commitment Card", 
-            event_type = event_type, 
+            name = "Pilot Commitment Card",
             form_name = "PilotEnergyMeetingCommitmentCard",
             template_name = "events/_pilot_commitment_card.html",
             is_active = True
         )[0]
-        
+
         # Loop through people and create commitments for them
         print "Creating commitments...",
         commitment_counter = 0
@@ -178,13 +166,13 @@ class VanImporter(object):
                 if commitment_name in v.keys() and v[commitment_name] <> '' and v[commitment_name] <> None and v[commitment_name] <> 'Decommitted':
                     Commitment.objects.create(
                         guest = v['guest_obj'],
-                        survey = survey, 
+                        survey = survey,
                         question = commitment_name,
                         answer = self.answer_map[v[commitment_name]],
                         action = Action.objects.get(slug=action_slug)
                     )
                     commitment_counter += 1
-                    
+
         print "%s commitment records created!" % commitment_counter
-        
-        
+
+

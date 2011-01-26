@@ -2,4 +2,6 @@
 /*global $: false, RAH: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
 require(["mods/events"], function (events) {
     events.date();
+
+    // Setup geolocation access
 });

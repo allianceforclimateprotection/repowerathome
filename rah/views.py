@@ -29,7 +29,7 @@ from rah.models import Profile, StickerRecipient
 from records.models import Record
 from rah.forms import RegistrationForm, RegistrationProfileForm, AuthenticationForm, \
     HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm, StickerRecipientForm
-from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL
+from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL, LOCALE
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
 from groups.models import Group
@@ -72,7 +72,7 @@ def _progress_stats():
         return progress_stats
     else:
         progress_stats = {}  
-        locale.setlocale(locale.LC_ALL, "en_US.utf8")
+        locale.setlocale(locale.LC_ALL, LOCALE)
         progress_stats['total_trendsetters'] = locale.format('%d', _total_trendsetters(), True)
         progress_stats['total_points'] = locale.format('%d', _total_points(), True)
         progress_stats['total_actions'] = locale.format('%d', _total_actions(), True)
@@ -102,7 +102,7 @@ def _vampire_power_slayers():
     key = 'vampire_hunt_slayers'
     vamp_stats = cache.get(key, {})
     if not vamp_stats:
-        locale.setlocale(locale.LC_ALL, "en_US")
+        locale.setlocale(locale.LC_ALL, LOCALE)
 
         # This is wrapped in a try catch so tests which do not instantiate the vampire action will still pass
         try:

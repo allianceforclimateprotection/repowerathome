@@ -60,7 +60,7 @@
         {
             name: "pages/events.show",
             exclude: ["pages/base"],
-            include: ["mods/search"]
+            include: ["libs/markerclusterer", "mods/search"]
         },
         {
             name: "pages/events.detail",

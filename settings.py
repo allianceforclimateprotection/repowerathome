@@ -177,6 +177,9 @@ YEAR_MONTH_FORMAT = "F Y"
 MONTH_DAY_FORMAT = "F j"
 LONG_DATE_FORMAT = "l F j, Y"
 
+# Should be set to something that's listed in `locale -a`
+LOCALE = 'en_US'
+
 try:
     from local_settings import *
 except ImportError:

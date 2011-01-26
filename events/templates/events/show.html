@@ -6,6 +6,7 @@
     <div class="box_two_top"></div>
     <div class="box_two_middle">
         <h1>Host an energy meeting</h1>
+        <div id="events_map" style="width:100%; height:300px; border: 1px solid; margin-bottom:18px;"></div>
         <p>
             Energy meetings bring together people who are already part of a community, like parents in a PTA,
             parishioners in a church, or people in a book club. <b>The meetings bring the idea of saving energy to this
@@ -100,7 +101,21 @@
     <script>
         var RAH = RAH || {};
         RAH.pagescripts = RAH.pagescripts || [];
-        RAH.pagescripts.push("{% dated_static 'js/pages/events.show.js' %}"); 
+        RAH.pagescripts.push("{% dated_static 'js/pages/events.show.js' %}");
+        
+        // Add locations for plotting on the map
+        RAH.event_locations = [];
+        {% for event in map_events %}
+            var info = "<b>{{ event.title|escape|escapejs }}</b><br/>\
+                {{ event.where|escape|escapejs }}<br/>";
+                info += "<a href='{% url event-detail event.id %}'>View event</a>";
+            RAH.event_locations.push({ 
+                lat: "{{ event.lat }}", 
+                lon: "{{ event.lon }}",
+                "info": info,
+                id: {{ event.id }}
+            });
+        {% endfor %}
     </script>
 {% endblock %}
 {% block extrajs %}
