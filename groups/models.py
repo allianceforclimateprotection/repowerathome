@@ -53,7 +53,8 @@ class GroupManager(models.Manager):
     def create_geo_group(self, location_type, location, parent):
         name = Group.LOCATION_NAME[location_type](location)
         slug = Group.LOCATION_SLUG[location_type](location)
-        return Group.objects.create(name=name, slug=slug, is_geo_group=True, location_type=location_type, sample_location=location, parent=parent)
+        return Group.objects.create(name=name, slug=slug, headquarters=location,
+                is_geo_group=True, location_type=location_type, sample_location=location, parent=parent)
         
     def groups_not_blacklisted_by_user(self, user):
         return self.filter(users=user).exclude(pk__in=user.email_blacklisted_group_set.all())
@@ -107,10 +108,11 @@ class Group(models.Model):
     description = models.TextField(blank=True)
     image = ImageAndThumbsField(upload_to="group_images", null=True, default="images/theme/default_group.png")
     is_featured = models.BooleanField(default=False)
+    headquarters = models.ForeignKey(Location)
     membership_type = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default="O", null=True)
     is_geo_group = models.BooleanField(default=False)
     location_type = models.CharField(max_length=1, choices=LOCATION_TYPE, blank=True)
-    sample_location = models.ForeignKey(Location, null=True, blank=True)
+    sample_location = models.ForeignKey(Location, null=True, blank=True, related_name="sample_group_set")
     parent = models.ForeignKey("self", null=True, blank=True, related_name="children")
     users = models.ManyToManyField(User, through="GroupUsers")
     requesters = models.ManyToManyField(User, through="MembershipRequests", related_name="requested_group_set")
