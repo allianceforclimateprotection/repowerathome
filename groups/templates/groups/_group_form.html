@@ -2,15 +2,6 @@
     <div class="overset_form_message error">{{ error }}</div>
 {% endfor %}
 {% for field in form %}
-    {% if field.name == "name" or field.name == "description" %}
-        <p class="form_row overset {% if field.errors %}error{% endif %}">
-            {{ field.label_tag }}
-            {{ field }}
-            {% for error in field.errors %}
-                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
-            {% endfor %}
-        </p>
-    {% endif %}
     {% if field.name == "slug" %}
         <div id="group_slug_wrapper">
             <label id="group_slug_domain">http://repowerathome.com/</label>
@@ -22,14 +13,7 @@
                 {% endfor %}
             </p>
         </div>
-    {% endif %}
-    {% if field.name == "image" or field.name == "membership_type" %}
-        <div class="form_row {% if field.errors %}error{% endif %}">
-            {{ field.label_tag }}
-            {{ field }}
-            {% for error in field.errors %}
-                <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
-            {% endfor %}
-        </div>
+    {% else %}
+        {% include 'rah/_field.html' %}
     {% endif %}
 {% endfor %}

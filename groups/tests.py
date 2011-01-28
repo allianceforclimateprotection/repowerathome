@@ -509,6 +509,8 @@ class GroupTest(TestCase):
         self.failUnlessEqual(list(self.yankees.users_not_blacklisted()), [user_net, user_edu])
 
 class GroupCreateViewTest(TestCase):
+    fixtures = ["test_geo_02804.json"]
+
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
@@ -525,7 +527,8 @@ class GroupCreateViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         image = files.File(open("static/images/theme/geo_group.jpg"))
         response = self.client.post(self.group_create_url, {"name": "Test Group", "slug": "test-group",
-            "description": "This is a test group", "image": image, "membership_type": "O"}, follow=True)
+            "description": "This is a test group", "image": image, "membership_type": "O", 
+            "headquarters": "02804"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
         test_group = response.context["group"]
         self.failUnlessEqual(test_group.slug, "test-group")
@@ -538,36 +541,40 @@ class GroupCreateViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.group_create_url, follow=True)
         errors = response.context["form"].errors
-        self.failUnlessEqual(len(errors), 4)
+        self.failUnlessEqual(len(errors), 5)
         self.failUnlessEqual("name" in errors, True)
         self.failUnlessEqual("slug" in errors, True)
         self.failUnlessEqual("description" in errors, True)
         self.failUnlessEqual("image" in errors, False)
         self.failUnlessEqual("membership_type" in errors, True)
+        self.failUnlessEqual("headquarters" in errors, True)
     
     def test_invalid_slug(self):
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.group_create_url, {"name": "Test Group", "slug": "test group",
-            "description": "This is a test group", "membership_type": "O"}, follow=True)
+            "description": "This is a test group", "membership_type": "O", "headquarters": "02804"}, follow=True)
         errors = response.context["form"].errors
         self.failUnlessEqual(len(errors), 1)
         self.failUnlessEqual("slug" in errors, True)
     
     def test_non_unique_slug(self):
-        Group.objects.create(name="new group", slug="test-group")
+        Group.objects.create(name="new group", slug="test-group",
+            headquarters=Location.objects.get(zipcode="02804"))
         self.client.login(username="test@test.com", password="test")
         response = self.client.post(self.group_create_url, {"name": "Test Group", "slug": "test-group",
-            "description": "This is a test group", "membership_type": "O"}, follow=True)
+            "description": "This is a test group", "membership_type": "O", "headquarters": "02804"}, follow=True)
         errors = response.context["form"].errors
         self.failUnlessEqual(len(errors), 1)
         self.failUnlessEqual("slug" in errors, True)
 
 
 class GroupLeaveViewTest(TestCase):
+    fixtures = ["test_geo_02804.json"]
+
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
-        self.group = Group.objects.create(name="test group", slug="test-group")
+        self.group = Group.objects.create(name="test group", slug="test-group", headquarters=Location.objects.get(zipcode="02804"))
         self.group_leave_url = reverse("group_leave", args=[self.group.id])
     
     def test_login_required(self):
@@ -583,7 +590,8 @@ class GroupLeaveViewTest(TestCase):
     
     def test_geo_group_id(self):
         self.client.login(username="test@test.com", password="test")
-        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True)
+        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True,
+            headquarters=Location.objects.get(zipcode="02804"))
         leave_url = reverse("group_leave", args=[geo_group.id])
         response = self.client.get(leave_url)
         self.failUnlessEqual(response.status_code, 404)
@@ -612,12 +620,12 @@ class GroupLeaveViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
 
 class GroupJoinViewTest(TestCase):
-    fixtures = ["team_membership.json"]
+    fixtures = ["team_membership.json", "test_geo_02804.json"]
     
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
-        self.group = Group.objects.create(name="test group", slug="test-group")
+        self.group = Group.objects.create(name="test group", slug="test-group", headquarters=Location.objects.get(zipcode="02804"))
         self.group_join_url = reverse("group_join", args=[self.group.id])
     
     def test_login_required(self):
@@ -633,7 +641,8 @@ class GroupJoinViewTest(TestCase):
     
     def test_geo_group_id(self):
         self.client.login(username="test@test.com", password="test")
-        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True)
+        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True,
+            headquarters=Location.objects.get(zipcode="02804"))
         join_url = reverse("group_join", args=[geo_group.id])
         response = self.client.get(join_url)
         self.failUnlessEqual(response.status_code, 404)
@@ -684,7 +693,7 @@ class GroupMembershipRequestViewTest(object):
         self.client = Client()
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
         self.requester = User.objects.create_user(username="requester", email="requester@test.com", password="requester")
-        self.group = Group.objects.create(name="test group", slug="test-group")
+        self.group = Group.objects.create(name="test group", slug="test-group", headquarters=Location.objects.get(zipcode="02804"))
         self.url = reverse(self.url_name, args=[self.group.id, self.requester.id])
     
     def test_login_required(self):
@@ -700,7 +709,8 @@ class GroupMembershipRequestViewTest(object):
     
     def test_geo_group_id(self):
         self.client.login(username="test@test.com", password="test")
-        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True)
+        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True,
+            headquarters=Location.objects.get(zipcode="02804"))
         approve_url = reverse(self.url_name, args=[geo_group.id, self.requester.id])
         response = self.client.get(approve_url)
         self.failUnlessEqual(response.status_code, 404)
@@ -726,7 +736,7 @@ class GroupMembershipRequestViewTest(object):
         self.failUnless("info" in message.tags)
 
 class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
-    fixtures = ["team_membership.json"]
+    fixtures = ["test_geo_02804.json", "team_membership.json"]
     
     def __init__(self, *args, **kwargs):
         self.url_name = "group_approve"
@@ -749,7 +759,7 @@ class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
         
 
 class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
-    fixtures = ["team_membership.json"]
+    fixtures = ["test_geo_02804.json", "team_membership.json"]
     
     def __init__(self, *args, **kwargs):
         self.url_name = "group_deny"
@@ -771,6 +781,8 @@ class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
         self.failUnless("turned down" in email.body)
 
 class GroupDetailViewTest(TestCase):
+    fixtures = ["test_geo_02804.json"]
+
     def setUp(self):
         self.client = Client()
     
@@ -780,13 +792,15 @@ class GroupDetailViewTest(TestCase):
         self.failUnlessEqual(response.status_code, 404)
     
     def test_geo_group_id(self):
-        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True)
+        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True,
+            headquarters=Location.objects.get(zipcode="02804"))
         detail_url = reverse("group_detail", args=[geo_group.slug])
         response = self.client.get(detail_url)
         self.failUnlessEqual(response.status_code, 404)
     
     def test_valid_detail(self):
-        group = Group.objects.create(name="test group", slug="test-group")
+        group = Group.objects.create(name="test group", slug="test-group",
+            headquarters=Location.objects.get(zipcode="02804"))
         detail_url = reverse("group_detail", args=[group.slug])
         response = self.client.get(detail_url)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
@@ -827,22 +841,26 @@ class GeoGroupViewTest(TestCase):
         self.failUnlessEqual(response.status_code, 404)
 
 class GroupListViewTest(TestCase):
+    fixtures = ["test_geo_02804.json"]
+
     def setUp(self):
         self.client = Client()
         self.url = reverse("group_list")
     
     def test_listing(self):
         for i in xrange(10):
-            Group.objects.create(name="%s" % i, slug="slug-%s" % i)
+            Group.objects.create(name="%s" % i, slug="slug-%s" % i, headquarters=Location.objects.get(zipcode="02804"))
         response = self.client.get(self.url)
         self.failUnlessEqual(response.template[0].name, "groups/group_list.html")
         self.failUnlessEqual(len(response.context["groups"]), 10)
 
 class GroupEditViewTest(TestCase):
+    fixtures = ["test_geo_02804.json"]
+
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
-        self.group = Group.objects.create(name="test group", slug="test-group")
+        self.group = Group.objects.create(name="test group", slug="test-group", headquarters=Location.objects.get(zipcode="02804"))
         self.url = reverse("group_edit", args=[self.group.slug])
     
     def test_login_required(self):
@@ -875,7 +893,8 @@ class GroupEditViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         image = open("static/images/theme/geo_group.jpg")
         response = self.client.post(self.url, {"name": "Test Group", "slug": "test-group",
-            "description": "This is a test group", "image": image, "change_group": "True"}, follow=True)
+            "description": "This is a test group", "image": image, "change_group": "True",
+            "headquarters": "02804"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
         errors = response.context["group_form"].errors
         self.failUnless("membership_type" in errors)
@@ -885,7 +904,8 @@ class GroupEditViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         image = open("static/images/theme/geo_group.jpg")
         response = self.client.post(self.url, {"name": "Changed Group", "slug": "changed-group",
-            "description": "This is a test group", "image": image, "membership_type": "C", "change_group": "True"}, follow=True)
+            "description": "This is a test group", "image": image, "membership_type": "C", 
+            "change_group": "True", "headquarters": "02804"}, follow=True)
         test_group = response.context["group"]
         self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
         changed_group = Group.objects.get(pk=self.group.id)
