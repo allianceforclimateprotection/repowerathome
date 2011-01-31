@@ -264,6 +264,30 @@ ALTER TABLE groups_group ADD headquarters_id int(11) NOT NULL AFTER is_featured;
 CREATE TEMPORARY TABLE starting_headquarters AS
 SELECT g.id, g.name,
 CASE 
+    WHEN g.id=43 THEN 6578 -- code for Washington, DC
+    WHEN g.id=67 THEN 6578 -- code for Washington, DC
+    WHEN g.id=96 THEN 6578 -- code for Washington, DC
+    WHEN g.id=106 THEN 6578 -- code for Washington, DC
+    WHEN g.id=127 THEN 17257 -- code for Catonsville, MD
+    WHEN g.id=166 THEN 17726 -- code for Baltimore, MD
+    WHEN g.id=178 THEN 17268 -- code for Towson, MD
+    WHEN g.id=181 THEN 6578 -- code for Washington, DC
+    WHEN g.id=182 THEN 29830 -- code for Toledo, OH
+    WHEN g.id=203 THEN 17447 -- code for Columbia, MD
+    WHEN g.id=214 THEN 4415 -- code for San Francisco, CA
+    WHEN g.id=215 THEN 17726 -- code for Baltimore, MD
+    WHEN g.id=218 THEN 7585 -- code for Miami, FL
+    WHEN g.id=236 THEN 41628 -- code for Madison, WI
+    WHEN g.id=237 THEN 17726 -- code for Baltimore, MD
+    WHEN g.id=245 THEN 40973 -- code for Seattle, WA
+    WHEN g.id=247 THEN 3439 -- code for San Gabriel, CA
+    WHEN g.id=306 THEN 17726 -- code for Baltimore, MD
+    WHEN g.id=365 THEN 17418 -- code for Bel Air, MD
+    WHEN g.id=884 THEN 25331 -- code for Wyckoff, NJ
+    WHEN g.id=898 THEN 6578 -- code for Washington, DC
+    WHEN g.id=1189 THEN 25331 -- code for Wyckoff, NJ
+    WHEN g.id=1190 THEN 25331 -- code for Wyckoff, NJ
+    WHEN g.id=1286 THEN 19622 -- code for Watertown, MN
     WHEN s.id THEN s.id
     WHEN l.id THEN l.id
     ELSE 6578 -- if we can't guest, set the default to Washington, DC
