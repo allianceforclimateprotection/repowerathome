@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.views.generic.list_detail import object_list
 
-def search_list(request, queryset, search_fields=None, template_name="search_widget/_search_listing.html", 
+def search_list(request, queryset, search_fields=None, template_name="search_widget/_search_listing.html",
     object_rendering_template=None, **kwargs):
     if not search_fields:
         search_fields = []
@@ -29,9 +29,9 @@ def search_list(request, queryset, search_fields=None, template_name="search_wid
         mimetype = "text/html"
     if request.GET.get("page", None) == "all":
         kwargs.pop("paginate_by")
-    return object_list(request, queryset=queryset, template_name=template_name, 
+    return object_list(request, queryset=queryset, template_name=template_name,
             mimetype=mimetype, **kwargs)
-    
+
 def __build_q_from_fields(fields, search):
     if fields:
         q = Q()
