@@ -11,6 +11,8 @@ from PIL.Image import open as pil_open
 from utils import hash_val
 
 from geo.models import Location
+from geo.fields import GoogleLocationField
+
 from models import Group, GroupUsers, Discussion
 
 class GroupForm(forms.ModelForm):
@@ -20,6 +22,7 @@ class GroupForm(forms.ModelForm):
     slug = forms.SlugField(label="Team address", help_text="This will be your team's web address")
     description = forms.CharField(label="Team description", help_text="What is the team all about?",
         widget=forms.Textarea(attrs={"rows": 5}))
+    headquarters = GoogleLocationField(label="Headquarters")
     image = forms.FileField(label="Upload a team image", help_text="You can upload png, jpg or gif files upto 512K", required=False)
 
     states = ["ak", "al", "ar", "az", "ca", "co", "ct", "dc", "de", "fl", "ga", "hi", "ia", "id", "il", 
