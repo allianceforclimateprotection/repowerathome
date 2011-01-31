@@ -36,11 +36,6 @@ def _durations():
 DURATIONS = _durations()
 
 class EventForm(forms.ModelForm):
-    where = forms.CharField(max_length=100, label="Street address", help_text="Include the city and state")
-    is_private = forms.ChoiceField(choices=((True, "Yes"), (False, "No")), initial=False,
-        widget=forms.CheckboxInput, help_text="If your event is kept private, only individuals\
-            who receive an invite email will be able to RSVP.")
-
     class Meta:
         model = Event
         fields = ("title", "where", "details", "when", "start", "duration", "is_private", "lat", "lon", "groups")

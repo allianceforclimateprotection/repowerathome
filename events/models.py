@@ -19,7 +19,8 @@ class Event(models.Model):
     creator = models.ForeignKey("auth.User")
     default_survey = models.ForeignKey("commitments.survey", default=9)
     title = models.CharField(max_length=100, help_text="What do you want to call this shindig?")
-    where = models.CharField(max_length=100)
+    where = models.CharField(max_length=100, verbose_name="Street address",
+        help_text="Include the city and state")
     lon = models.FloatField(null=True, blank=True)
     lat = models.FloatField(null=True, blank=True)
     location = models.ForeignKey("geo.Location", null=True)
@@ -31,7 +32,8 @@ class Event(models.Model):
         what's the nearest subway, do people need to be buzzed in, etc.", blank=True)
     groups = models.ManyToManyField("groups.Group", blank=True,
         limit_choices_to = {'is_geo_group': False}, verbose_name="Teams")
-    is_private = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=False, help_text="If your event is \
+        kept private, only individuals who receive an invite email will be able to RSVP.")
     limit = models.PositiveIntegerField(blank=True, null=True, help_text="Adding a limit sets a \
         cap on the number of guests that can RSVP. If the limit is reached, potential guests \
         will need to contact you first.")
