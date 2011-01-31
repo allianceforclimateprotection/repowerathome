@@ -109,6 +109,8 @@ class Group(models.Model):
     image = ImageAndThumbsField(upload_to="group_images", null=True, default="images/theme/default_group.png")
     is_featured = models.BooleanField(default=False)
     headquarters = models.ForeignKey(Location)
+    lon = models.FloatField(null=True, blank=True)
+    lat = models.FloatField(null=True, blank=True)
     membership_type = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default="O", null=True)
     is_geo_group = models.BooleanField(default=False)
     location_type = models.CharField(max_length=1, choices=LOCATION_TYPE, blank=True)

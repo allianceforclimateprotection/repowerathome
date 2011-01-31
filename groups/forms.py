@@ -33,7 +33,7 @@ class GroupForm(forms.ModelForm):
 
     class Meta:
         model = Group
-        exclude = ("is_featured", "is_geo_group", "location_type", "sample_location", "member_count",
+        exclude = ("is_featured", "lat", "lon", "is_geo_group", "location_type", "sample_location", "member_count",
                    "parent", "users", "requesters", "email_blacklisted", "disc_moderation", "disc_post_perm",)
         widgets = {
             "membership_type": forms.RadioSelect
@@ -67,6 +67,10 @@ class GroupForm(forms.ModelForm):
         return data
 
     def save(self):
+        if self.cleaned_data["headquarters"]:
+            field = self.fields["headquarters"]
+            self.instance.lat = field.raw_data["latitude"]
+            self.instance.lon = field.raw_data["longitude"]
         group = super(GroupForm, self).save()
         current_image = self.cleaned_data["image"]
         if current_image and current_image != group.image.field.default:

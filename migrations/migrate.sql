@@ -187,7 +187,7 @@ SELECT g.id, g.name,
 CASE 
     WHEN s.id THEN s.id
     WHEN l.id THEN l.id
-    ELSE 1
+    ELSE 6578 -- if we can't guest, set the default to Washington, DC
 END AS location_id
 FROM groups_group g
 LEFT JOIN groups_groupusers m ON g.id = m.group_id AND m.is_manager = 1
@@ -205,3 +205,105 @@ DROP TEMPORARY TABLE starting_headquarters;
 -- Add headquasters foreign key relationships
 ALTER TABLE groups_group ADD KEY `groups_group_948a4cc7` (`headquarters_id`);
 ALTER TABLE groups_group ADD CONSTRAINT `headquarters_id_refs_id_a1850736` FOREIGN KEY (`headquarters_id`) REFERENCES `geo_location` (`id`);
+
+-- Add new columns, lon & lat, to the groups table
+ALTER TABLE groups_group ADD lat DOUBLE PRECISION NULL AFTER headquarters_id;
+ALTER TABLE groups_group ADD lon DOUBLE PRECISION NULL AFTER headquarters_id;
+-- Add lat,lon data for all non geo groups
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='26';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='43';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='67';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='89';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='96';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='106';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='115';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='127';
+UPDATE `groups_group` SET `lat`='38.9906657', `lon`='-77.026088' WHERE `id`='156';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='166';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='178';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='181';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='182';
+UPDATE `groups_group` SET `lat`='39.203', `lon`='-76.857981' WHERE `id`='203';
+UPDATE `groups_group` SET `lat`='38.8048355', `lon`='-77.0469214' WHERE `id`='212';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='214';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='215';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='218';
+UPDATE `groups_group` SET `lat`='42.583645', `lon`='-83.2454883' WHERE `id`='234';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='236';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='237';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='240';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='241';
+UPDATE `groups_group` SET `lat`='42.583645', `lon`='-83.2454883' WHERE `id`='244';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='245';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='247';
+UPDATE `groups_group` SET `lat`='38.8048355', `lon`='-77.0469214' WHERE `id`='248';
+UPDATE `groups_group` SET `lat`='38.9906657', `lon`='-77.026088' WHERE `id`='249';
+UPDATE `groups_group` SET `lat`='39.6067789', `lon`='-75.8332718' WHERE `id`='266';
+UPDATE `groups_group` SET `lat`='38.2526647', `lon`='-85.7584557' WHERE `id`='278';
+UPDATE `groups_group` SET `lat`='38.8048355', `lon`='-77.0469214' WHERE `id`='305';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='306';
+UPDATE `groups_group` SET `lat`='41.6005448', `lon`='-93.6091064' WHERE `id`='317';
+UPDATE `groups_group` SET `lat`='39.0181651', `lon`='-77.2085914' WHERE `id`='322';
+UPDATE `groups_group` SET `lat`='38.9906657', `lon`='-77.026088' WHERE `id`='338';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='357';
+UPDATE `groups_group` SET `lat`='38.9906657', `lon`='-77.026088' WHERE `id`='359';
+UPDATE `groups_group` SET `lat`='39.2720509', `lon`='-76.7319161' WHERE `id`='360';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='365';
+UPDATE `groups_group` SET `lat`='39.2903848', `lon`='-76.6121893' WHERE `id`='367';
+UPDATE `groups_group` SET `lat`='41.5628294', `lon`='-83.6538244' WHERE `id`='494';
+UPDATE `groups_group` SET `lat`='40.7607793', `lon`='-111.8910474' WHERE `id`='583';
+UPDATE `groups_group` SET `lat`='39.6428362', `lon`='-84.2866083' WHERE `id`='660';
+UPDATE `groups_group` SET `lat`='41.2381', `lon`='-85.8530469' WHERE `id`='712';
+UPDATE `groups_group` SET `lat`='36.6850612', `lon`='-93.1199012' WHERE `id`='765';
+UPDATE `groups_group` SET `lat`='41.7354861', `lon`='-111.834388' WHERE `id`='800';
+UPDATE `groups_group` SET `lat`='38.646991', `lon`='-90.224967' WHERE `id`='811';
+UPDATE `groups_group` SET `lat`='39.0181651', `lon`='-77.2085914' WHERE `id`='864';
+UPDATE `groups_group` SET `lat`='38.9784453', `lon`='-76.4921829' WHERE `id`='867';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='884';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='885';
+UPDATE `groups_group` SET `lat`='41.012833', `lon`='-81.6051221' WHERE `id`='886';
+UPDATE `groups_group` SET `lat`='38.9342776', `lon`='-77.1774801' WHERE `id`='890';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='891';
+UPDATE `groups_group` SET `lat`='38.8048355', `lon`='-77.0469214' WHERE `id`='892';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='898';
+UPDATE `groups_group` SET `lat`='38.8048355', `lon`='-77.0469214' WHERE `id`='902';
+UPDATE `groups_group` SET `lat`='47.6062095', `lon`='-122.3320708' WHERE `id`='909';
+UPDATE `groups_group` SET `lat`='39.178889', `lon`='-76.957778' WHERE `id`='914';
+UPDATE `groups_group` SET `lat`='39.9611755', `lon`='-82.9987942' WHERE `id`='1016';
+UPDATE `groups_group` SET `lat`='35.6009452', `lon`='-82.554015' WHERE `id`='1023';
+UPDATE `groups_group` SET `lat`='39.4212175', `lon`='-76.6260805' WHERE `id`='1028';
+UPDATE `groups_group` SET `lat`='37.9357576', `lon`='-122.3477486' WHERE `id`='1041';
+UPDATE `groups_group` SET `lat`='43.2081366', `lon`='-71.5375718' WHERE `id`='1046';
+UPDATE `groups_group` SET `lat`='43.2081366', `lon`='-71.5375718' WHERE `id`='1070';
+UPDATE `groups_group` SET `lat`='39.2903848', `lon`='-76.6121893' WHERE `id`='1106';
+UPDATE `groups_group` SET `lat`='39.2903848', `lon`='-76.6121893' WHERE `id`='1131';
+UPDATE `groups_group` SET `lat`='43.2081366', `lon`='-71.5375718' WHERE `id`='1141';
+UPDATE `groups_group` SET `lat`='38.9806658', `lon`='-77.100256' WHERE `id`='1142';
+UPDATE `groups_group` SET `lat`='43.13194', `lon`='-71.54972' WHERE `id`='1146';
+UPDATE `groups_group` SET `lat`='38.9906657', `lon`='-77.026088' WHERE `id`='1152';
+UPDATE `groups_group` SET `lat`='40.75839', `lon`='-82.5154471' WHERE `id`='1163';
+UPDATE `groups_group` SET `lat`='42.0411414', `lon`='-87.6900587' WHERE `id`='1166';
+UPDATE `groups_group` SET `lat`='39.3702773', `lon`='-94.7824609' WHERE `id`='1172';
+UPDATE `groups_group` SET `lat`='37.365833', `lon`='-76.313889' WHERE `id`='1182';
+UPDATE `groups_group` SET `lat`='40.7989473', `lon`='-81.378447' WHERE `id`='1185';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='1189';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='1190';
+UPDATE `groups_group` SET `lat`='47.7623204', `lon`='-122.2054035' WHERE `id`='1198';
+UPDATE `groups_group` SET `lat`='42.8614748', `lon`='-71.6253487' WHERE `id`='1199';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='1206';
+UPDATE `groups_group` SET `lat`='36.2326362', `lon`='-80.7081209' WHERE `id`='1210';
+UPDATE `groups_group` SET `lat`='38.8048355', `lon`='-77.0469214' WHERE `id`='1245';
+UPDATE `groups_group` SET `lat`='41.3259134', `lon`='-75.7893604' WHERE `id`='1253';
+UPDATE `groups_group` SET `lat`='47.3073228', `lon`='-122.2284532' WHERE `id`='1271';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='1286';
+UPDATE `groups_group` SET `lat`='33.1192068', `lon`='-117.086421' WHERE `id`='1290';
+UPDATE `groups_group` SET `lat`='39.4014955', `lon`='-76.6019125' WHERE `id`='1294';
+UPDATE `groups_group` SET `lat`='39.2667819', `lon`='-74.644881' WHERE `id`='1317';
+UPDATE `groups_group` SET `lat`='39.2903848', `lon`='-76.6121893' WHERE `id`='1321';
+UPDATE `groups_group` SET `lat`='44.8927439', `lon`='-93.034938' WHERE `id`='1375';
+UPDATE `groups_group` SET `lat`='35.4675602', `lon`='-97.5164276' WHERE `id`='1438';
+UPDATE `groups_group` SET `lat`='39.0992752', `lon`='-76.8483061' WHERE `id`='1457';
+UPDATE `groups_group` SET `lat`='39.9403453', `lon`='-82.0131924' WHERE `id`='1468';
+UPDATE `groups_group` SET `lat`='33.6839473', `lon`='-117.7946942' WHERE `id`='1487';
+UPDATE `groups_group` SET `lat`='39.1637984', `lon`='-119.7674034' WHERE `id`='1503';
+UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='1522';
