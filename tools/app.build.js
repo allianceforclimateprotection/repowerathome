@@ -93,7 +93,7 @@
             include: ["libs/jquery.slimbox2"]
         },
         {
-            name: "pages/groups.list",
+            name: "pages/group.list",
             exclude: ["pages/base"],
             include: ["mods/search"]
         }
