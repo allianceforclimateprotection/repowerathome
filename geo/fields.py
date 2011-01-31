@@ -63,7 +63,7 @@ class GoogleLocationField(GoogleGeoField):
         self.raw_data = {}
 
     def prepare_value(self, value):
-        if isinstance(value, int):
+        if isinstance(value, int) or isinstance(value, long):
             return Location.objects.get(pk=value)
         return value
 
