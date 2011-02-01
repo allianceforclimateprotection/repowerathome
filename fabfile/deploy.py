@@ -15,21 +15,22 @@ def enable_maintenance_page():
     "Turns on the maintenance page"
     if hasattr(env, "loadbalancers"):
         for host in env.loadbalancers:
-            with settings(host_string=host):
-                sudo("rm /etc/nginx/sites-enabled/rah")
-                sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
-                sudo("/etc/init.d/nginx reload")
-    
+            with settings(host_string=host, warn_only=True):
+                result = sudo("rm /etc/nginx/sites-enabled/rah")
+                if not result.failed:
+                    sudo("ln -s /etc/nginx/sites-available/maintenance /etc/nginx/sites-enabled/maintenance")
+                    sudo("/etc/init.d/nginx reload")
+
 def _fetch():
     "Updates the application with new code"
     require("hosts", "deploy_to")
     run("cd %(deploy_to)s && git fetch --all" % env)
-    
+
 def _reset():
     "Set the workspace to the desired revision"
     require("hosts", "deploy_to")
     run("cd %(deploy_to)s && git reset --hard" % env)
-    
+
 def _checkout():
     "Checkout the revision you would like to deploy"
     require("hosts", "deploy_to")
@@ -38,7 +39,7 @@ def _checkout():
             `date +'%%Y-%%m-%%d_%%H-%%M-%%S'`_`whoami` %(sha)s" % env)
         if result.failed:
             abort(red("Have you pushed your latest changes to the repository?"))
-            
+
 def code_deploy():
     "Wrapper for performing a code deploy of fetch, reset and checkout"
     require("hosts", "deploy_to")
@@ -64,7 +65,7 @@ def s3sync():
     "Sync static data with our s3 bucket"
     require("hosts", "deploy_to")
     run("cd %(deploy_to)s && python manage.py sync_media_s3 --gzip --force --expires --dir %(deploy_to)s/static_build" % env)
-    
+
 @runs_once
 def syncdb():
     "Sync the database with any new models"
@@ -79,7 +80,7 @@ def migratedb():
     require("hosts", "deploy_to")
     if confirm("Would you like to migrate the database?"):
         run("cd %(deploy_to)s && python manage.py migrate" % env)
-    
+
 def restart_app_server():
     "Restart uWSGI processes"
     require("hosts")
@@ -95,7 +96,7 @@ def disable_maintenance_page():
                 sudo("rm /etc/nginx/sites-enabled/maintenance")
                 sudo("ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah")
                 sudo("/etc/init.d/nginx reload")
-                
+
 def deploy(revision=None, code_only=False, sync_media=True):
     "Deploy a revision to server"
     if revision:
