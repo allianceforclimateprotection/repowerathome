@@ -3,9 +3,9 @@
 {% block title %}Edit {{ group.name }} settings{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
-    <a href="{% url group_list %}">Teams</a> &rsaquo;
+    <a href="{% url group_list %}">Communities</a> &rsaquo;
     <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
-    Edit Team
+    Edit Community
 {% endblock %}
 {% block right_content %}
     <div class="grid_6 alpha">
@@ -13,7 +13,7 @@
         <div class="box_two_middle">
             <div class="tabs" id="group_edit_tabs">
                 <ul>
-                    <li><a href="#group_tab">Team</a></li>
+                    <li><a href="#group_tab">Community</a></li>
                     <li><a href="#members_tab">Members</a></li>
                     <li><a href="#discussions_tab">Discussions</a></li>
                 </ul>
@@ -26,9 +26,9 @@
                         {% csrf_token %}
                     </form>
                     <form id="delete_group_form" action="" method="post">
-                        <h3>Delete Team</h3>
-                        <p>Deleting a team will immediately remove it from our system.<br/>Teams cannot be undeleted.</p>
-                        <p><input type="submit" name="delete_group" value="Delete Team"></input></p>
+                        <h3>Delete Community</h3>
+                        <p>Deleting a community will immediately remove it from our system.<br/>Communities cannot be undeleted.</p>
+                        <p><input type="submit" name="delete_group" value="Delete Community"></input></p>
                         {% csrf_token %}
                     </form>
                 </div>

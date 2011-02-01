@@ -35,7 +35,7 @@ def group_create(request):
         if form.is_valid():
             group = form.save()
             GroupUsers.objects.create(group=group, user=request.user, is_manager=True)
-            Stream.objects.get(slug="team-create").enqueue(content_object=group, start=group.created)
+            Stream.objects.get(slug="community-create").enqueue(content_object=group, start=group.created)
             Record.objects.create_record(request.user, 'group_create', group)
             messages.success(request, "%s has been created." % group)
             return redirect("group_detail", group_slug=group.slug)
@@ -49,11 +49,11 @@ def group_leave(request, group_id):
     if request.user.id in group.users.all().values_list("id", flat=True):
         if group.has_other_managers(request.user):
             GroupUsers.objects.filter(group=group, user=request.user).delete()
-            messages.success(request, "You have been removed from team %s" % group)
+            messages.success(request, "You have been removed from community %s" % group)
         else:
-            messages.error(request, "You cannot leave the team, until you've assigned someone else to be manager.", extra_tags="sticky")
+            messages.error(request, "You cannot leave the community, until you've assigned someone else to be manager.", extra_tags="sticky")
     else:
-        messages.error(request, "You cannot leave a team your not a member of")
+        messages.error(request, "You cannot leave a community your not a member of")
     return redirect("group_detail", group_slug=group.slug)
     
 @login_required
@@ -67,10 +67,10 @@ def group_join(request, group_id):
         return redirect("group_detail", group_slug=group.slug)
     if group.is_public():
         GroupUsers.objects.create(group=group, user=request.user, is_manager=False)
-        messages.success(request, "You have successfully joined team %s" % group, extra_tags="sticky")
+        messages.success(request, "You have successfully joined community %s" % group, extra_tags="sticky")
     else:
         membership_request = MembershipRequests.objects.create(group=group, user=request.user)
-        Stream.objects.get(slug="team-join-request").enqueue(content_object=membership_request, start=datetime.now())
+        Stream.objects.get(slug="community-join-request").enqueue(content_object=membership_request, start=datetime.now())
         messages.success(request, "You have made a request to join %s, a manager should grant or deny your membership shortly." % group, extra_tags="sticky")
     return redirect("group_detail", group_slug=group.slug)
 
@@ -87,19 +87,19 @@ def group_membership_request(request, group_id, user_id, action):
     if membership_request:
         if action == "approve":
             GroupUsers.objects.create(group=group, user=user, is_manager=False)
-            Stream.objects.get(slug="team-membership-approved").enqueue(content_object=membership_request,
+            Stream.objects.get(slug="community-membership-approved").enqueue(content_object=membership_request,
                 start=datetime.now())
             membership_request.delete()
-            messages.success(request, "%s has been added to the team" % user.get_full_name())
+            messages.success(request, "%s has been added to the community" % user.get_full_name())
         elif action == "deny":
-            Stream.objects.get(slug="team-membership-denied").enqueue(content_object=membership_request,
+            Stream.objects.get(slug="community-membership-denied").enqueue(content_object=membership_request,
                 start=datetime.now())
             membership_request.delete()
-            messages.success(request, "%s has been denied access to the team" % user.get_full_name())
+            messages.success(request, "%s has been denied access to the community" % user.get_full_name())
     elif GroupUsers.objects.filter(group=group, user=user).exists():
-        messages.info(request, "%s has already been added to this team" % user.get_full_name())
+        messages.info(request, "%s has already been added to this community" % user.get_full_name())
     else:
-        messages.info(request, "%s has already been denied access to this team" % user.get_full_name())
+        messages.info(request, "%s has already been denied access to this community" % user.get_full_name())
     return redirect("group_detail", group_slug=group.slug)
 
 @login_required
@@ -117,14 +117,14 @@ def group_event_request(request, group_id, event_id, action):
             event.groups.add(group)
             event_request.approved = True
             event_request.save()
-            messages.success(request, "Your team has been linked with %s" % event)
+            messages.success(request, "Your community has been linked with %s" % event)
         elif action == "deny":
             event_request.delete()
-            messages.success(request, "Your team will not be linked with %s" % event)
+            messages.success(request, "Your community will not be linked with %s" % event)
     elif group.event_set.filter(event=event).exists():
-        messages.info(request, "%s has already been linked with your team" % event)
+        messages.info(request, "%s has already been linked with your community" % event)
     else:
-        messages.info(request, "%s has not been linked with your team" % event)
+        messages.info(request, "%s has not been linked with your community" % event)
     return redirect("group_detail", group_slug=group.slug)
 
 def group_detail(request, group_slug):

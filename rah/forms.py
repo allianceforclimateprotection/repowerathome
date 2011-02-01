@@ -191,7 +191,6 @@ class HousePartyForm(forms.Form):
         if user.is_authenticated():
             self.fields["name"].widget = forms.HiddenInput()
             self.fields["name"].initial = user.get_full_name()
-        return form
     
     def send(self, user):
         template = loader.get_template('rah/house_party_email.html')
@@ -227,8 +226,8 @@ PasswordChangeForm.base_fields.keyOrder = ['old_password', 'new_password1', 'new
 
 class GroupNotificationsForm(forms.Form):
     notifications = forms.ModelMultipleChoiceField(required=False, queryset=None, 
-        widget=forms.CheckboxSelectMultiple, help_text="By selecting a team, you have elected to \
-        recieve emails for each thread posted to the discussion board.", label="Team email notifications")
+            widget=forms.CheckboxSelectMultiple, help_text="By selecting a community, you have elected to \
+        recieve emails for each thread posted to the discussion board.", label="Community email notifications")
     
     def __init__(self, user, *args, **kwargs):
         from groups.models import Group

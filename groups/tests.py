@@ -155,7 +155,7 @@ class GroupDiscViews(TestCase):
         # try to remove as an anon user
         self.client.logout()
         response = self.client.post(self.urls['d1_remove'], {'is_removed': True}, follow=True)
-        self.assertRedirects(response, "/login/?next=/teams/yankees/discussions/1/remove/")
+        self.assertRedirects(response, "/login/?next=/communities/yankees/discussions/1/remove/")
         disc = Discussion.objects.get(pk=1)
         self.failUnlessEqual(disc.is_removed, False)
         
@@ -620,7 +620,7 @@ class GroupLeaveViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
 
 class GroupJoinViewTest(TestCase):
-    fixtures = ["team_membership.json", "test_geo_02804.json"]
+    fixtures = ["community_membership.json", "test_geo_02804.json"]
     
     def setUp(self):
         self.client = Client()
@@ -686,11 +686,80 @@ class GroupJoinViewTest(TestCase):
         self.failUnless(MembershipRequests.objects.filter(user=self.user, group=self.group).exists())
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, [manager.email])
-        self.failUnlessEqual(email.subject, "Team Join Request")
+        self.failUnlessEqual(email.subject, "Community Join Request")
 
-class GroupMembershipRequestViewTest(object):
+class GroupMembershipApproveViewTest(TestCase):
+    fixtures = ["test_geo_02804.json", "community_membership.json"]
+    
     def setUp(self):
         self.client = Client()
+        self.url_name = "group_approve"
+        self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
+        self.requester = User.objects.create_user(username="requester", email="requester@test.com", password="requester")
+        self.group = Group.objects.create(name="test group", slug="test-group", headquarters=Location.objects.get(zipcode="02804"))
+        self.url = reverse(self.url_name, args=[self.group.id, self.requester.id])
+    
+    def test_login_required(self):
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "registration/login.html")
+    
+    def test_invalid_group_id(self):
+        self.client.login(username="test@test.com", password="test")
+        max_id = Group.objects.aggregate(max=models.Max("id"))["max"]
+        approve_url = reverse(self.url_name, args=[max_id+1, self.requester.id])
+        response = self.client.get(approve_url)
+        self.failUnlessEqual(response.status_code, 404)
+    
+    def test_geo_group_id(self):
+        self.client.login(username="test@test.com", password="test")
+        geo_group = Group.objects.create(name="geo group", slug="geo-group", is_geo_group=True,
+            headquarters=Location.objects.get(zipcode="02804"))
+        approve_url = reverse(self.url_name, args=[geo_group.id, self.requester.id])
+        response = self.client.get(approve_url)
+        self.failUnlessEqual(response.status_code, 404)
+    
+    def test_invalid_user_id(self):
+        self.client.login(username="test@test.com", password="test")
+        max_id = User.objects.aggregate(max=models.Max("id"))["max"]
+        approve_url = reverse(self.url_name, args=[self.group.id, max_id+1])
+        response = self.client.get(approve_url)
+        self.failUnlessEqual(response.status_code, 404)
+    
+    def test_not_a_manager(self):
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.status_code, 403)
+    
+    def test_did_not_request(self):
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("info" in message.tags)
+    
+    def test_successful_approve(self):
+        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
+        MembershipRequests.objects.create(user=self.requester, group=self.group)
+        self.client.login(username="test@test.com", password="test")
+        response = self.client.get(self.url, follow=True)
+        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
+        message = iter(response.context["messages"]).next()
+        self.failUnless("success" in message.tags)
+        self.failUnlessEqual(MembershipRequests.objects.filter(user=self.requester, group=self.group).exists(), False)
+        self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), True)
+        email = mail.outbox.pop()
+        self.failUnlessEqual(email.to, [self.requester.email])
+        self.failUnlessEqual(email.subject, "Community Membership Response")
+        self.failUnless("approved your access" in email.body)
+        
+
+class GroupMembershipDenyViewTest(TestCase):
+    fixtures = ["test_geo_02804.json", "community_membership.json"]
+    
+    def setUp(self):
+        self.client = Client()
+        self.url_name = "group_deny"
         self.user = User.objects.create_user(username="1", email="test@test.com", password="test")
         self.requester = User.objects.create_user(username="requester", email="requester@test.com", password="requester")
         self.group = Group.objects.create(name="test group", slug="test-group", headquarters=Location.objects.get(zipcode="02804"))
@@ -735,36 +804,6 @@ class GroupMembershipRequestViewTest(object):
         message = iter(response.context["messages"]).next()
         self.failUnless("info" in message.tags)
 
-class GroupMembershipApproveViewTest(GroupMembershipRequestViewTest, TestCase):
-    fixtures = ["test_geo_02804.json", "team_membership.json"]
-    
-    def __init__(self, *args, **kwargs):
-        self.url_name = "group_approve"
-        super(TestCase, self).__init__(*args, **kwargs)
-    
-    def test_successful_approve(self):
-        GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
-        MembershipRequests.objects.create(user=self.requester, group=self.group)
-        self.client.login(username="test@test.com", password="test")
-        response = self.client.get(self.url, follow=True)
-        self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
-        message = iter(response.context["messages"]).next()
-        self.failUnless("success" in message.tags)
-        self.failUnlessEqual(MembershipRequests.objects.filter(user=self.requester, group=self.group).exists(), False)
-        self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), True)
-        email = mail.outbox.pop()
-        self.failUnlessEqual(email.to, [self.requester.email])
-        self.failUnlessEqual(email.subject, "Team Membership Response")
-        self.failUnless("approved your access" in email.body)
-        
-
-class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
-    fixtures = ["test_geo_02804.json", "team_membership.json"]
-    
-    def __init__(self, *args, **kwargs):
-        self.url_name = "group_deny"
-        super(TestCase, self).__init__(*args, **kwargs)
-    
     def test_successful_deny(self):
         GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
         MembershipRequests.objects.create(user=self.requester, group=self.group)
@@ -777,7 +816,7 @@ class GroupMembershipDenyViewTest(GroupMembershipRequestViewTest, TestCase):
         self.failUnlessEqual(GroupUsers.objects.filter(user=self.requester, group=self.group).exists(), False)
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, [self.requester.email])
-        self.failUnlessEqual(email.subject, "Team Membership Response")
+        self.failUnlessEqual(email.subject, "Community Membership Response")
         self.failUnless("turned down" in email.body)
 
 class GroupDetailViewTest(TestCase):
@@ -958,5 +997,5 @@ class BaseballViews(TestCase):
     def setUp(self):
         self.group = Group.objects.get(slug="yankees")
 
-    def test_does_team_suck(self):
+    def test_does_community_suck(self):
         self.failUnlessEqual(self.group.name, "yankees")

@@ -127,8 +127,8 @@ class Group(models.Model):
     member_count = models.IntegerField(default=0)
     
     class Meta:
-        verbose_name = "team"
-        verbose_name_plural = "teams"
+        verbose_name = "community"
+        verbose_name_plural = "communities"
         
     def is_joinable(self):
         return not self.is_geo_group
@@ -270,7 +270,7 @@ class GroupUsers(models.Model):
         verbose_name_plural = "members"
     
     def __unicode__(self):
-        return u'%s belongs to team %s' % (self.user.get_full_name(), self.group)
+        return u'%s belongs to community %s' % (self.user.get_full_name(), self.group)
         
 class MembershipRequests(models.Model):
     user = models.ForeignKey(User)
@@ -357,7 +357,7 @@ def update_group_member_count(sender, instance, **kwargs):
 
 def alert_users_of_discussion(sender, instance, **kwargs):
     if instance.is_public and not instance.is_removed and not instance.reply_count:
-        Stream.objects.get(slug="team-discussion").enqueue(content_object=instance, start=instance.created)
+        Stream.objects.get(slug="community-discussion").enqueue(content_object=instance, start=instance.created)
     return True
 
 models.signals.post_save.connect(associate_with_geo_groups, sender=Profile)
@@ -367,6 +367,6 @@ models.signals.post_save.connect(update_group_member_count, sender=GroupUsers)
 models.signals.post_delete.connect(update_group_member_count, sender=GroupUsers)
 models.signals.post_save.connect(alert_users_of_discussion, sender=Discussion)
 
-def remove_team_create_stream(sender, instance, **kwargs):
-    Stream.objects.get(slug="team-create").dequeue(content_object=instance)
-models.signals.post_delete.connect(remove_team_create_stream, sender=Group)
+def remove_community_create_stream(sender, instance, **kwargs):
+    Stream.objects.get(slug="community-create").dequeue(content_object=instance)
+models.signals.post_delete.connect(remove_community_create_stream, sender=Group)

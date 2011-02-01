@@ -60,7 +60,7 @@
         {% if my_groups or my_geo_groups %}
         <div class="box_one_top"></div>
         <div class="box_one_middle">
-            <h3>Your Teams</h3>
+            <h3>Your Communities</h3>
             <p>
             {% for group in my_groups %}
                 <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br />

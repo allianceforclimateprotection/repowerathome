@@ -6,12 +6,12 @@
 {% block title %}{{group.name}}{% endblock %}
 {% block extrahead %}
     {% if group.slug %}
-        <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower at Home Team Activity" />
+        <link rel="alternate" type="application/atom+xml"  href="{% url group_activity_feed group.slug %}" title="Repower at Home Community Activity" />
     {% endif %}
 {% endblock %}
 {% block breadcrumbs %}
 <a href="{% url index %}">Home</a> &rsaquo;
-<a href="{% url group_list %}">Teams</a> &rsaquo;
+<a href="{% url group_list %}">Communities</a> &rsaquo;
 {{group.name}}
 {% endblock %}
 {% block right_content %}
@@ -71,7 +71,7 @@
     {% if group_records %}
     <div class="box_two_top"></div>
     <div class="box_two_middle">
-        <h2>Team Activity
+        <h2>Community Activity
             {% if group.slug %}
                 <a class="atom_link" href="{% url group_activity_feed group.slug %}">
                     <img src="{% dated_static 'images/theme/social_icons/16/feed.png' %}" alt="atom feed" width="16" height="16"/>
@@ -91,18 +91,18 @@
         <img src="{{ MEDIA_URL }}{{ group.image.thumbnail_colorspace_189x157smartcrop }}" alt="group image" height="157" width="189" />
         <div>{{ group.description|linebreaks }}</div>
         <p>
-            Team points: {{ group.total_points }}<br />
+            Community points: {{ group.total_points }}<br />
             Total members: {{ group.total_members }}<br />
         </p>
         <p>
             {% if is_manager %}
-                <a href="{% url group_edit group.slug %}">Edit Team</a><br/>
+                <a href="{% url group_edit group.slug %}">Edit Community</a><br/>
             {% endif %}
             {% if group.is_joinable and is_member %}
-                <a href="{% url group_leave group.id %}">Leave Team</a>
+                <a href="{% url group_leave group.id %}">Leave Community</a>
             {% endif %}
             {% if group.is_joinable and not is_member and not membership_pending %}
-                <a class="button" href="{% url group_join group.id %}">Join Team</a>
+                <a class="button" href="{% url group_join group.id %}">Join Community</a>
             {% endif %}
             {% if membership_pending %}
                 <p>Your membership status is currently <b>pending</b>.</p>
@@ -137,7 +137,7 @@
         <ul>
             {% for er in event_requests %}
                 <li class="membership_request">
-                    {% safe_user_link er.event.creator %} has requested to link this team to
+                    {% safe_user_link er.event.creator %} has requested to link this community to
                     <a href="{{ er.event.get_absolute_url }}">{{ er.event }}</a>
                     <div class="membership_tools">
                         <a href="{% url group_event_approve er.group.id er.event.id %}">Approve</a> or
@@ -153,7 +153,7 @@
     {% if is_member %}
     <div class="box_one_top"></div>
     <div class="box_one_middle">
-        <h3>Team Invitations</h3>
+        <h3>Community Invitations</h3>
         <p>
             Invites sent: {{ group.invites_sent }}
             <a class="button invite_friend_link" href="{% url invite-invite %}">Send Invite</a>

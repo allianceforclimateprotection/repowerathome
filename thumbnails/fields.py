@@ -85,8 +85,8 @@ class ImageAndThumbsField(models.ImageField):
     to the ability to generate thumbnails on the fly.  Thumbnail generation works be accessing
     pseudo ``thumbnail`` attributes.
 
-    For example if you've created an ``image`` field for your Team model, you can access a
-    thumbmnail using the following: ``team.image.thumbnail_128x128``. If the thumbnail does not
+    For example if you've created an ``image`` field for your Community model, you can access a
+    thumbmnail using the following: ``community.image.thumbnail_128x128``. If the thumbnail does not
     exist, then it is automatically generated and stored using your default file storage system.
 
     As you've probably already noticed, the size of the thumbnail is specified in the name of the

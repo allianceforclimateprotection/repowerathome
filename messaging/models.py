@@ -83,9 +83,9 @@ class Message(models.Model):
     generic_relation_content_type = models.ForeignKey("contenttypes.contenttype", null=True, 
         blank=True, help_text="Only set this field if the content types, that are to be rendered\
         with this message, itself have generic relations to another model.  For example if we\
-        were creating a message for Team Invites, the invitation model has a generic relationship\
-        with another model, in this case it would reference a team.  Thus this field would\
-        be set to 'team'", related_name="generic_content_type")
+        were creating a message for Community Invites, the invitation model has a generic relationship\
+        with another model, in this case it would reference a community.  Thus this field would\
+        be set to 'community'", related_name="generic_content_type")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = MessageManager()

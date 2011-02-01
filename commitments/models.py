@@ -63,8 +63,8 @@ class ContributorManager(models.Manager):
                     WHEN `volunteer_commit`.answer = "True" THEN "yes"
                     WHEN `volunteer_commit`.answer = "False" THEN "no"
                 END AS 'volunteer',
-                NULL AS "team manager",
-                NULL AS "team member",
+                NULL AS "community manager",
+                NULL AS "community member",
                 CASE
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
                         WHERE cn.id = g.contributor_id and g.is_host = 1

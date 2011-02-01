@@ -23,10 +23,10 @@
             {% endfor %}
             </p>
         {% endif %}
-        {% if teams %}
-            <h2>Teams</h2>
+        {% if communities %}
+            <h2>Communities</h2>
             <p>
-            {% for group in teams %}
+            {% for group in communities %}
                 <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br />
             {% endfor %}
             </p>

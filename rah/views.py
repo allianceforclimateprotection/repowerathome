@@ -59,7 +59,7 @@ def _total_actions():
 def _total_commitment_cards():
     return (ContributorSurvey.objects.all().count())
     
-def _total_teams():
+def _total_communities():
     return (Group.objects.filter(is_geo_group=False).count() or 0)
     
 def _total_events():
@@ -77,7 +77,7 @@ def _progress_stats():
         progress_stats['total_points'] = locale.format('%d', _total_points(), True)
         progress_stats['total_actions'] = locale.format('%d', _total_actions(), True)
         progress_stats['total_commitment_cards'] = locale.format('%d', _total_commitment_cards(), True)
-        progress_stats['total_teams'] = locale.format('%d', _total_teams(), True)
+        progress_stats['total_communities'] = locale.format('%d', _total_communities(), True)
         progress_stats['total_events'] = locale.format('%d', _total_events(), True)
         cache.set('progress_stats', progress_stats, 60 * 5)
         return progress_stats
@@ -90,7 +90,7 @@ def _vampire_power_leaderboards():
         vamp_stats['individual_leaders'] = User.objects.filter(is_staff=False,
             contributorsurvey__contributor__commitment__action=vampire_action).annotate(
             contributions=Count("contributorsurvey")).order_by("-contributions")[:5]
-        vamp_stats['team_leaders'] = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
+        vamp_stats['community_leaders'] = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
             groupusers__user__contributorsurvey__contributor__commitment__action=vampire_action).annotate(
             contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
 
@@ -169,7 +169,7 @@ def index(request):
 def logged_out_home(request):
     # blog_posts = Post.objects.filter(status=2)[:3]
     # pop_actions = Action.objects.get_popular(count=5)
-    top_teams = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:4]
+    top_communities = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:4]
     locals().update(_progress_stats())
     contributor_form = ContributorForm()
     pledge_card_form = PledgeCard(None, None)
@@ -297,7 +297,7 @@ def profile(request, user_id):
         'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
         'commitment_list': UserActionProgress.objects.commitments_for_user(user),
-        'teams': Group.objects.filter(users=user, is_geo_group=False),
+        'communities': Group.objects.filter(users=user, is_geo_group=False),
         'records': Record.objects.user_records(user, 10),
     }, context_instance=RequestContext(request))
 
