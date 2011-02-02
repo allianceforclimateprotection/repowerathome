@@ -33,6 +33,10 @@ def show(request):
     house_party_form = HousePartyForm(request.user)
     return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
 
+def archive(request):
+    events = Event.objects.filter(is_private=False).order_by("-when", "-start")
+    return render_to_response("events/archive.html", locals(), context_instance=RequestContext(request))
+
 @login_required
 def create(request):
     form = EventForm(user=request.user, data=(request.POST or None))

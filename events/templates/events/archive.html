@@ -1,0 +1,18 @@
+{% extends "events/base.html" %}
+{% load dated_static %}
+{% block title %}Events on Repower at Home{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url event-show %}">Events</a> &rsaquo;
+   Events Archive 
+{% endblock %}
+{% block right_content %}
+<div class="grid_6 alpha">
+    <div class="box_two_top"></div>
+    <div class="box_two_middle">
+        <h1>Events Archive</h1>
+        {% include 'events/_event_nugget_list.html' %}
+    </div>
+    <div class="box_two_bottom"></div>
+</div>
+{% endblock %}
