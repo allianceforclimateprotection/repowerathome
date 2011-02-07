@@ -123,6 +123,8 @@ INSTALLED_APPS = (
     'media_widget',
     'threadedcomments',
     'rah_comments',
+    'brabeion',
+    'badges',
 )
 
 FIXTURE_DIR = ('fixtures',)

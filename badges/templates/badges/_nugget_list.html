@@ -1,0 +1,10 @@
+<ul class='plain_list'>
+    {% for badge in badges %}
+        <li>
+            <p>
+                {{ badge.name }}
+                <span class='smaller'>{{ badge.awarded_at|date }}</span>
+            </p>
+        </li>
+    {% endfor %}
+</ul>

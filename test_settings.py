@@ -49,6 +49,8 @@ INSTALLED_APPS = (
     'codebase',
     'threadedcomments',
     'rah_comments',
+    'brabeion',
+    'badges',
 )
 
 LOGIN_URL = "/login/"
