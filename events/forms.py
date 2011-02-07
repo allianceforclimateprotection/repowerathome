@@ -55,7 +55,7 @@ class EventForm(forms.ModelForm):
         groups = self.fields["groups"]
         groups.queryset = groups.queryset.filter(groupusers__user=user)
         if not groups.queryset:
-            groups.help_text = "You need to be a member of a team first"
+            groups.help_text = "You need to be a member of a community first"
         else:
             groups.help_text = None
 

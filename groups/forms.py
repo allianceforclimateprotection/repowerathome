@@ -18,18 +18,18 @@ from models import Group, GroupUsers, Discussion
 class GroupForm(forms.ModelForm):
     IMAGE_FORMATS = {"PNG": "png", "JPEG": "jpeg", "GIF": "gif"}
 
-    name = forms.CharField(label="Team name", help_text="Enter a name for your new team")
-    slug = forms.SlugField(label="Team address", help_text="This will be your team's web address")
-    description = forms.CharField(label="Team description", help_text="What is the team all about?",
+    name = forms.CharField(label="Community name", help_text="Enter a name for your new community")
+    slug = forms.SlugField(label="Community address", help_text="This will be your community's web address")
+    description = forms.CharField(label="Community description", help_text="What is the community all about?",
         widget=forms.Textarea(attrs={"rows": 5}))
     headquarters = GoogleLocationField(label="Headquarters")
-    image = forms.FileField(label="Upload a team image", help_text="You can upload png, jpg or gif files upto 512K", required=False)
+    image = forms.FileField(label="Upload a community image", help_text="You can upload png, jpg or gif files upto 512K", required=False)
 
     states = ["ak", "al", "ar", "az", "ca", "co", "ct", "dc", "de", "fl", "ga", "hi", "ia", "id", "il", 
         "in", "ks", "ky", "la", "ma", "md", "me", "mi", "mn", "mo", "ms", "mt", "nc", "nd", "ne", 
         "nh", "nj", "nm", "nv", "ny", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", 
         "va", "vt", "wa", "wi", "wv", "wy"]
-    group_name_blacklist = ["user", "users", "admin", "event", "team"]
+    group_name_blacklist = ["user", "users", "admin", "event", "team", "teams", "community", "communities", "groups", "groups"]
 
     class Meta:
         model = Group
@@ -43,7 +43,7 @@ class GroupForm(forms.ModelForm):
         data = self.cleaned_data["image"]
         if data:
             if data.size > 4194304:
-                raise forms.ValidationError("Team images cannot be larger than 512K")
+                raise forms.ValidationError("Community images cannot be larger than 512K")
             self.image_format = pil_open(data.file).format
             if not self.image_format in GroupForm.IMAGE_FORMATS:
                 raise forms.ValidationError("Images cannot be of type %s" % data.content_type)
@@ -52,18 +52,18 @@ class GroupForm(forms.ModelForm):
     def clean_slug(self):
         data = self.cleaned_data["slug"]
         if data in GroupForm.states or any([data.startswith("%s-" % state) for state in GroupForm.states]):
-            raise forms.ValidationError("Team addresses cannot begin with a state name.")
+            raise forms.ValidationError("Community addresses cannot begin with a state name.")
 
         # Make sure the name is not in the blacklist or a resolvable URL
         try:
             if data in GroupForm.group_name_blacklist or resolve(reverse("group_detail", args=[data]))[0].__name__ != "group_detail":
-                raise forms.ValidationError("This team address is not available.")
+                raise forms.ValidationError("This community address is not available.")
         except:
-            raise forms.ValidationError("This team address is not available.")
+            raise forms.ValidationError("This community address is not available.")
 
         # Make sure there isn't a flatpage with this slug
         if FlatPage.objects.filter(url="/%s/" % data):
-            raise forms.ValidationError("This team address is not available.")
+            raise forms.ValidationError("This community address is not available.")
         return data
 
     def save(self):
@@ -87,11 +87,11 @@ class MembershipForm(forms.Form):
         ('', '--Set Membership Role--'),
         ('M', 'Manager',),
         ('N', 'Regular Member',),
-        ('D', 'Remove from Team',),
+        ('D', 'Remove from Community',),
     )
     role = forms.ChoiceField(label="", choices=MEMBERSHIP_ROLES, error_messages={"required": "You must select a membership action."})
     memberships = forms.ModelMultipleChoiceField(queryset=GroupUsers.objects.all(), widget=forms.CheckboxSelectMultiple,
-        error_messages={"required": "You must select at least one member from the team."})
+        error_messages={"required": "You must select at least one member from the community."})
 
     def __init__(self, group, *args, **kwargs):
         super(MembershipForm, self).__init__(*args, **kwargs)
@@ -103,7 +103,7 @@ class MembershipForm(forms.Form):
         role = data["role"] if "role" in data else ""
         memberships = data["memberships"] if "memberships" in data else []
         if (role == "N" or role == "D") and self.group.number_of_managers() == len(memberships):
-            self._errors["memberships"] = forms.util.ErrorList(["You must leave at least one manager in the team."])
+            self._errors["memberships"] = forms.util.ErrorList(["You must leave at least one manager in the community."])
             del self.cleaned_data["memberships"]
         return self.cleaned_data
 

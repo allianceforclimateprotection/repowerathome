@@ -32,4 +32,5 @@ urlpatterns = patterns("events.views",
     url(r"^(?P<event_id>\d+)/guests/reminder/$", "message", {"type": "reminder"}, name="event-reminder"),
     url(r"^(?P<event_id>\d+)/guests/announcement/$", "message", {"type": "announcement"}, name="event-announcement"),
     url(r"^search/$", search_list, event_search_info, name='event_search'),
+    url(r"^archive/$", "archive", name="event-archive"),
 )

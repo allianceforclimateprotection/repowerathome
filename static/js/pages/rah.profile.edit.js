@@ -25,6 +25,6 @@ require(["libs/jquery.ui", "libs/jquery.validation", "mods/facebook"],
             $("input[type='checkbox']", selector.parents(".form_row")).attr("checked", checked);
             return false;
         });
-        $("#team_selectors").removeClass("hidden");
+        $("#community_selectors").removeClass("hidden");
         $("#link_with_facebook").click(facebook.authorize);
     });

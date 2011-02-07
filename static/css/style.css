@@ -225,9 +225,9 @@ Navigation Navigation Navigation Navigation Navigation Navigation Navigation Nav
 #nav_actions{width:160px; background: url(../images/theme/nav_sprite.png?0000000007) -125px 110px;}
 #nav_actions:hover{background-position: -125px 0px;}
 #nav_actions.selected{background-position: -125px 55px;}
-#nav_teams{width:137px; background: url(../images/theme/nav_sprite.png?0000000007) -285px 110px;}
-#nav_teams:hover{background-position: -285px 0px;}
-#nav_teams.selected{background-position: -285px 55px;}
+#nav_communities{width:137px; background: url(../images/theme/nav_sprite.png?0000000007) -285px 110px;}
+#nav_communities:hover{background-position: -285px 0px;}
+#nav_communities.selected{background-position: -285px 55px;}
 #nav_community{width:209px; background: url(../images/theme/nav_sprite.png?0000000007) -422px 110px;}
 #nav_community:hover{background-position: -422px 0px;}
 #nav_community.selected{background-position: -422px 55px;}
@@ -619,7 +619,7 @@ ul.plain_list li {list-style-type: none;}
 .excel_icon { background-image: url(../images/theme/excel-icon.png?0000000007); }
 
 .selector { font-size: 12px; }
-#team_selectors { margin-left: 15px; }
+#community_selectors { margin-left: 15px; }
 #vampire_hunt_directions ol { margin-left: 20px; }
 #vampire_hunt_directions li { margin-bottom: 5px; list-style: decimal; }
 #vampire_hunt_directions li li { list-style: disc; margin-bottom: 0; }

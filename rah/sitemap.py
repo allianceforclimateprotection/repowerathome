@@ -16,7 +16,7 @@ class RahSitemap(Sitemap):
         """Add urls here and they will be added to sitemap.xml"""
         urls = [
             "/actions/",
-            "/teams/",
+            "/communities/",
             "/",
             "/user/list/",
         ]

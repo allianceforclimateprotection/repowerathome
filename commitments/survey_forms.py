@@ -71,7 +71,7 @@ class SurveyForm(forms.ModelForm):
 
 class EnergyMeetingCommitmentCard(SurveyForm):
     host_event = forms.BooleanField(required=False, label="Host an event")
-    join_team = forms.BooleanField(required=False, label="Join a team")
+    join_community = forms.BooleanField(required=False, label="Join a community")
     action_slugs = ("eliminate-standby-vampire-power", "programmable-thermostat",
         "change-air-conditioning-heater-filters", "have-home-energy-audit")
     

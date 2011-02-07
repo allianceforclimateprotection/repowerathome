@@ -33,7 +33,7 @@
         <div id="notifications_tab">
             <form id="notifications_form" action="" method="post" autocomplete="false">
                 {% with group_notification_form.notifications as field %}
-                    <div id="team_notifications" class="form_row overset {% if field.errors %}error{% endif %}">
+                    <div id="community_notifications" class="form_row overset {% if field.errors %}error{% endif %}">
                         {{ field.label_tag }}
                         <div class="notification_selectors" class="hidden">
                             <a class="selector select_all" href="">Select All</a> |

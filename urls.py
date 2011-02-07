@@ -87,7 +87,7 @@ urlpatterns += patterns('',
     url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^twitter/', include('twitter_app.urls')),
     url(r'^rateable/', include('rateable.urls')),
-    url(r'^teams/', include('groups.urls')),
+    url(r'^communities/', include('groups.urls')),
     url(r'^media_widget/', include('media_widget.urls')),
     url(r'^invite/', include('invite.urls')),
     url(r'^flagged/flag/$', 'flagged.views.flag', name='flagged-flag'),
@@ -109,7 +109,7 @@ if settings.DEBUG:
         url(r'^static/(?P<path>.*)$', 'serve', {'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
     )
 
-# These patterns are redeclared here so they can be at the domain root. e.g. /team-name instead of /teams/team-name
+# These patterns are redeclared here so they can be at the domain root. e.g. /community-name instead of /communities/community-name
 urlpatterns += patterns('groups.views',
     url(r'^(?P<group_slug>[a-z0-9-]+)/$', 'group_detail', name='group_detail'),
     url(r'^(?P<group_slug>[a-z0-9-]+)/edit/$', 'group_edit', name='group_edit'),

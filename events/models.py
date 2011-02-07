@@ -31,7 +31,7 @@ class Event(models.Model):
     details = models.TextField(help_text="For example, where should people park,\
         what's the nearest subway, do people need to be buzzed in, etc.", blank=True)
     groups = models.ManyToManyField("groups.Group", blank=True,
-        limit_choices_to = {'is_geo_group': False}, verbose_name="Teams")
+        limit_choices_to = {'is_geo_group': False}, verbose_name="Communities")
     is_private = models.BooleanField(default=False, help_text="If your event is \
         kept private, only individuals who receive an invite email will be able to RSVP.")
     limit = models.PositiveIntegerField(blank=True, null=True, help_text="Adding a limit sets a \
@@ -231,8 +231,8 @@ class GuestManager(models.Manager):
                     WHEN `volunteer_commit`.answer = "True" THEN "yes"
                     WHEN `volunteer_commit`.answer = "False" THEN "no"
                 END AS 'volunteer',
-                NULL AS "team manager",
-                NULL AS "team member",
+                NULL AS "community manager",
+                NULL AS "community member",
                 CASE
                     WHEN g.is_host = 1 AND
                     DATE(e.when) >= '%(date_start)s' AND DATE(e.when) <= '%(date_end)s'

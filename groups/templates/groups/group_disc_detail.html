@@ -2,7 +2,7 @@
 {% block title %}{{ disc.subject }}{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
-    <a href="{% url group_list %}">Teams</a> &rsaquo;
+    <a href="{% url group_list %}">Communities</a> &rsaquo;
     <a href="{% url group_detail group.slug %}">{{ group.name }}</a> &rsaquo;
     <a href="{% url group_disc_list group.slug %}">Discussions</a> &rsaquo;
     {{ disc.subject }}
@@ -21,7 +21,7 @@
         {% else %}
             {% if group.is_joinable %}
                 {# You must be a member of this group to post discussions.  #}
-                {# <a class="button" href="{% url group_join group.id %}">Join Team</a> #}
+                {# <a class="button" href="{% url group_join group.id %}">Join Community</a> #}
             {% endif %}
         {% endif %}
     </div>
