@@ -168,7 +168,7 @@ class Profile(models.Model):
         facebook_picture = facebook_profile(self.user, "large")
         if facebook_picture:
             return facebook_picture
-        return 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=189' % (self._email_hash(), default_icon)
+        return 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=200' % (self._email_hash(), default_icon)
 
     def _email_hash(self):
         return (hashlib.md5(self.user.email.lower()).hexdigest())

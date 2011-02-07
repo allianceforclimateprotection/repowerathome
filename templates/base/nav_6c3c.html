@@ -1,0 +1,27 @@
+{% extends "base/nav.html" %}
+{% block 9c_content %}
+    <div class="breadcrumbs">
+        {% block breadcrumbs %}
+            breadcrumbs
+        {% endblock %}
+    </div>
+    <div class="title_bar">
+        {% block title_bar %}
+            title    
+        {% endblock %}
+    </div>
+    <div class="tab_nav">
+        {% block tab_nav %}
+        {% endblock %}
+    </div>
+    <div class="grid_6 alpha">
+        {% block content %}
+            major col
+        {% endblock %}
+    </div>
+    <div class="grid_3 omega">
+        {% block sidebar %}
+            sidebar
+        {% endblock %}
+    </div>
+{% endblock %}

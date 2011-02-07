@@ -1,103 +1,29 @@
-{% extends "actions/base.html" %}
+{% extends "base/nav_6c3c.html" %}
 {% load comments %}
 {% load dated_static %}
 {% block meta_desc %}{{action.name}}: {{action.teaser}}{% endblock %}
+
 {% block extrahead %}
     <meta property="og:image" content="{{ action.get_detail_illustration }}" />
     <meta property="og:type" content="activity" />
     <meta property="og:title" content="{{action.name}}" />
     <meta property="og:description" content="{{action.teaser}}" />
 {% endblock %}
+
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
     <a href="{% url action_show %}">Actions</a> &rsaquo;
     {{action.name}}
 {% endblock %}
-{% block title %}{{action.name}}{% endblock %}
-{% block right_content %}
-    
-    <div class="box_three_top"></div>
-    <div class="box_three_middle">
-        {% if action.has_illustration %}
-            <img src="{{ action.get_detail_illustration }}" alt="{{action.name}} illustration" width="675" height="287"/>
-        {% else %}
-            <h1 id="action_title">{{action.name}}</h1>
-        {% endif %}
-    </div>
-    <div class="box_three_bottom"></div>
-    <div class="container_9">
-        <div class="grid_6 alpha">
-            <div class="box_two_top"></div>
-            <div id="action_details" class="box_two_middle">
-                {# <span class='tag_list'> #}
-                {#     {% for tag in action.tags %} #}
-                {#         <a class="tag" href="{% url action_tag tag %}">{{ tag.name|deslug }}</a> #}
-                {#     {% endfor %} #}
-                {# </span> #}
-                {% render_template_snippet action.content %}
-            </div>
-            <div class="box_two_bottom"></div>
-        </div>
-        <div class="grid_3 omega">
-            <div class="box_one_top"></div>
-            <div class="box_one_middle">
-                <h2>{{action.points}} points</h2>
-                {# <b>{{ action.users_completed }}</b> people have completed this action and #}
-                {# <b>{{ total_users_committed }}</b> people have made a commitment to complete it. #}
-                <b>{{ action.users_completed }}</b> people have done this and
-                <b>{{ total_users_committed }}</b> people are committed to do it.
 
-            </div>
-            <div class="box_one_bottom"></div>
-            
-            <div class="box_one_top"></div>
-            <div class="box_one_middle">
-                {% if progress.date_committed and not progress.is_completed %}
-                    <h2>My Commitment</h2>
-                    <p>
-                        You committed to complete this action by {{ progress.date_committed|date }}. 
-                        (<a href="#" class="commit_trigger">change date</a> or 
-                        <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
-                    </p>
-                {% endif %}
-            
-                {% if action.users_completed %}
-                    <h3>Recently Completed</h3>
-                    <ul class="plain_list">
-                        {% for user in users_completed %}
-                            <li>
-                                {% safe_user_link user %}<br/>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            
-                {% if action.users_committed %}
-                    <h3>Recently Committed</h3>
-                    <ul class="plain_list">
-                        {% for user in users_committed %}
-                            <li>
-                                {% safe_user_link user %}<br/>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="box_one_bottom"></div>
-            
-            <div class="box_one_top"></div>
-            <div class="box_one_middle">
-                <h3>Share this action</h3>
-                <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=box_count&amp;show_faces=false&amp;width=60&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:60px; height:60px;" allowTransparency="true"></iframe>
-                <a href="http://twitter.com/share" class="twitter-share-button" data-text="{{ action.name }}" data-url="http://repowerathome.com/{{ action.get_absolute_url }}" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-                {# <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> #}
-            </div>
-            <div class="box_one_bottom"></div>
-        </div>
-    </div>
-    <br class="clear"/>
-    <br class="clear"/>
-    <br class="clear"/>
+{% block title_bar %}
+    <h1 id="action_title">{{action.name}}</h1>
+{% endblock %}
+
+{% block title %}{{action.name}}{% endblock %}
+
+{% block content %}
+    {% render_template_snippet action.content %}
     <div id="comments">
         {% with action as object %}
             {% render_comment_list for object %}
@@ -108,9 +34,49 @@
         <p>When do you think you'll complete this action?</p>
         <div class="commit_calendar"></div>
     </div>
-    <script>
-        var RAH = RAH || {};
-        RAH.pagescripts = RAH.pagescripts || [];
-        RAH.pagescripts.push("{% dated_static 'js/pages/action.detail.js' %}");
-    </script>
 {% endblock %}
+{% block sidebar %}
+    <h2>{{action.points}} points</h2>
+    <b>{{ action.users_completed }}</b> people have done this and
+    <b>{{ total_users_committed }}</b> people are committed to do it.
+    {% if progress.date_committed and not progress.is_completed %}
+        <h2>My Commitment</h2>
+        <p>
+            You committed to complete this action by {{ progress.date_committed|date }}. 
+            (<a href="#" class="commit_trigger">change date</a> or 
+            <a href="{% url action_cancel action.slug %}" class="commit_cancel">cancel</a>)
+        </p>
+    {% endif %}
+
+    {% if action.users_completed %}
+        <h3>Recently Completed</h3>
+        <ul class="plain_list">
+            {% for user in users_completed %}
+                <li>
+                    {% safe_user_link user %}<br/>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if action.users_committed %}
+        <h3>Recently Committed</h3>
+        <ul class="plain_list">
+            {% for user in users_committed %}
+                <li>
+                    {% safe_user_link user %}<br/>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h3>Share this action</h3>
+    <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=box_count&amp;show_faces=false&amp;width=60&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:60px; height:60px;" allowTransparency="true"></iframe>
+    <a href="http://twitter.com/share" class="twitter-share-button" data-text="{{ action.name }}" data-url="http://repowerathome.com/{{ action.get_absolute_url }}" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    </div>
+{% endblock %}
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/action.detail.js' %}");
+</script>

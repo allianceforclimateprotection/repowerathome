@@ -1,0 +1,63 @@
+{% extends "base/base.html" %}
+{% block 12c_content %}
+<div class="grid_3 alpha">
+    <div id="nav">
+        {% if user.is_authenticated %}
+            <div id="profile_picture">
+                <img src="{{ user.get_profile.profile_picture_large }}" alt="Your profile picture" width="200"/>
+            </div>
+            <div>
+                <a href="{% url profile user.id %}" title="View your profile">{{user.get_full_name }}</a>
+            </div>
+            {% if user.get_profile.location %}
+                <div>
+                    {{ user.get_profile.location }}
+                </div>
+            {% endif %}
+            {{ user.get_profile.total_points }}<span> points</span>
+        {% else %}
+            Not logged in!
+        {% endif %}
+        <ul>
+            <li>
+                <a href="{% url action_show %}">Actions</a>
+            </li>
+            <li>
+                <a href="{% url group_list %}">Communities</a>
+            </li>
+            <li>
+                <a href="">Challenges</a>
+            </li>
+            <li>
+                <a href="{% url event-show %}">Events</a>
+            </li>
+            <li>
+                <a href="">Badges</a>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <a href="">My Calendar</a>
+            </li>
+            <li>
+                <a href="">My Profile / Settings</a>
+            </li>
+            <li>
+                <a href="">Invite Friends</a>
+            </li>
+            <li>
+                <a href="">Enter Commitment Cards</a>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <a href="{% url logout %}">Log Out</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="grid_9 omega" id="content">
+    {% block 9c_content %}
+    {% endblock %}
+</div>
+{% endblock %}

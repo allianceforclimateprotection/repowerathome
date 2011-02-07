@@ -20,23 +20,17 @@ from forms import ActionCommitForm
 
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
-    if tag_slug:
-        tag_filter = get_object_or_404(Tag, name=tag_slug)
-        actions = Action.tagged.with_any(tag_filter)
-    else:
-        actions = Action.objects.all()
-        
+
+    actions = Action.objects.all()
     actions = sorted(actions, key=lambda a: not a.has_illustration())
 
-    tags = Action.tags.cloud()
-    
     if request.user.is_authenticated():
         actions, recommended, committed, completed = Action.objects.actions_by_status(request.user)
-    
-    return render_to_response("actions/action_show.html", locals(), 
+
+    return render_to_response("actions/action_show.html", locals(),
         context_instance=RequestContext(request))
 
-        
+
 def community_show(request):
     return render_to_response("actions/community_show.html", {}, context_instance=RequestContext(request))
 
@@ -49,7 +43,7 @@ def action_detail(request, action_slug):
     action_commit_form = ActionCommitForm(user=request.user, action=action, initial={'date_committed':datetime.date.today()+datetime.timedelta(days=1)})
     default_vars.update(locals())
     return render_to_response("actions/action_detail.html", default_vars, RequestContext(request))
-        
+
 @login_required_save_POST
 @csrf_protect
 def action_complete(request, action_slug):
@@ -64,7 +58,7 @@ def action_complete(request, action_slug):
     messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/complete')
     messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/complete/%s' % action_slug)
     return redirect("action_detail", action_slug=action.slug)
-    
+
 @login_required
 @csrf_protect
 def action_undo(request, action_slug):
@@ -76,7 +70,7 @@ def action_undo(request, action_slug):
         messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/undo')
         messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/undo/%s' % action_slug)
     return redirect("action_detail", action_slug=action.slug)
-    
+
 @login_required_save_POST
 @csrf_protect
 def action_commit(request, action_slug):
@@ -97,12 +91,12 @@ def action_commit(request, action_slug):
     default_vars = _default_action_vars(action, request.user)
     default_vars.update(locals())
     return render_to_response("actions/action_detail.html", default_vars, RequestContext(request))
-    
+
 @login_required
 @csrf_protect
 def action_cancel(request, action_slug):
     action = get_object_or_404(Action, slug=action_slug)
-    if request.method == "POST":    
+    if request.method == "POST":
         if action.cancel_for_user(request.user):
             messages.success(request, "We cancelled your commitment. If you're having trouble completing an action, try asking a question. Other members will be happy to help!")
             messages.add_message(request, GA_TRACK_PAGEVIEW, '/actions/cancel')
@@ -114,7 +108,7 @@ def action_cancel(request, action_slug):
 @csrf_protect
 def save_action_form(request, action_slug, form_name):
     import action_forms
-    
+
     action = get_object_or_404(Action, slug=action_slug)
     action_form = get_object_or_404(ActionForm, action=action, form_name=form_name)
     if request.method == "GET":
@@ -136,12 +130,12 @@ def save_action_form(request, action_slug, form_name):
         ajax_data_func = getattr(form, "ajax_data", None)
         return HttpResponse(json.dumps(ajax_data_func() if ajax_data_func else None))
     return redirect("action_detail", action_slug=action.slug)
-    
+
 def _default_action_vars(action, user):
-    users_completed = User.objects.filter(useractionprogress__action=action, 
+    users_completed = User.objects.filter(useractionprogress__action=action,
         useractionprogress__is_completed=1).order_by("-useractionprogress__updated")[:5]
     noshow_users_completed = action.users_completed - users_completed.count()
-    users_committed = User.objects.filter(useractionprogress__action=action, 
+    users_committed = User.objects.filter(useractionprogress__action=action,
         useractionprogress__date_committed__isnull=False,
         useractionprogress__is_completed=0).order_by("-useractionprogress__updated")
     total_users_committed = users_committed.count()
@@ -159,10 +153,10 @@ def _default_action_vars(action, user):
     del default_vars["action"]
     del default_vars["user"]
     return default_vars
-    
+
 def _build_action_form_vars(action, user):
     import action_forms
-    
+
     forms = {}
     for form in action.action_forms_with_data(user):
         if hasattr(action_forms, form.form_name):

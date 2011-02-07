@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:og="http://opengraphprotocol.org/schema/"
+      xmlns:fb="http://www.facebook.com/2008/fbml" lang="en" xml:lang="en">
+    <head>
+        {% load dated_static %}
+        <title>{% block title %}Save energy at home and organize your community{% endblock %} | Repower at Home</title>
+        <meta name="google-site-verification" content="LKUJZqwKMnEGjg_dQNKL-2eLLK3yvftU0RKv7SuymGQ" />
+        <meta name="msvalidate.01" content="DC928E84A1569AF4933A7DB431C08DB4" />
+        <meta name="y_key" content="9d9c6c76735e5a92"/>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+        <meta http-equiv="content-language" content="en-us" />
+        <meta name="geo.position" content="38.896231;-77.024158" />
+        <meta name="geo.country" content="US"/>
+        <meta name="geo.region" content="US-DC"/>
+        <meta name="geo.placename" content="Alliance for Climate Protection"/>
+        <meta name="ICBM" content="38.896231, -77.024158"/>
+        <meta name="og:site_name" content="Repower at Home"/>
+        <meta name="fb:app_id" content="132085630163980"/>
+        <meta name="keywords" content="{% block meta_keywords %}energy efficiency, home energy, climate change, repower at home, alliance for climage protection{% endblock %}" />
+        <meta name="description" content="{% block meta_desc %}We can take action to keep millions of pounds of dirty coal from polluting our communities. Every point you earn means one less pound of coal needs to be burned.{% endblock %}" />
+        <meta name="DC.title" content="Repower at Home" /> 
+        <meta name="DC.creator" content="Alliance for Climate Protection" /> 
+        <meta name="DC.subject" content="energy efficiency; home energy; climate change; repower at home; alliance for climage protection" /> 
+        <meta name="DC.description" content="We can take action to keep millions of pounds of dirty coal from polluting our communities. Every point you earn means one less pound of coal needs to be burned." /> 
+        <meta name="DC.format" content="text/html; charset=utf-8" />
+        <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" /> 
+        <link rel="alternate" type="application/atom+xml"  href="{% url blog_feed %}" title="Repower at Home Blog" />
+        <link rel="shortcut icon" href="{% dated_static 'images/theme/favicon.ico' %}"/>
+        <link rel="stylesheet" href="{% dated_static 'css/style_new.css' %}" type="text/css" media="screen" charset="utf-8"/>
+        <!--[if IE]>
+        <![endif]-->
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-11623269-1']);
+            _gaq.push(['_trackPageview']);
+        </script>
+        {% block extrahead %}{% endblock %}
+        {% if testing_feedback_form %}
+            <link rel="stylesheet" href="{% dated_static 'css/testing_widget.css' %}" type="text/css" media="screen" charset="utf-8"/>
+        {% endif %}
+    </head>
+    <body>
+        <div id="header_container">
+            <div id="header" class="container_12">
+                <a href="/" title="Home" id="header_logo">
+                    <img src="{% dated_static 'images/theme_new/header_logo.png' %}" alt="Repower at Home logo" width="239" height="35"/>
+                </a>
+                <form action="/search" id="cse_search_box_form">
+                    <input type="hidden" name="cx" value="018322562804099680750:4l5wfmovb4q" />
+                    <input type="hidden" name="cof" value="FORID:11" />
+                    <input type="hidden" name="ie" value="UTF-8" />
+                    <input type="text" name="q" size="31" id="cse_search_box"/>
+                    <button type="submit" id="cse_search_box_submit">Go</button>
+                </form>
+                <div id="header_links">
+                    <a href="/about/" id="header_about">About Us</a>
+                    <a href="{% url blog_index %}">Blog</a>
+                    <button>Log In</button>
+                </div>
+            </div>
+        </div>
+        <div id="content_container">
+            <div class="container_12">
+                <div class="grid_12 alpha omega">
+                    {% block 12c_content %}
+                    {% endblock %}
+                </div>
+            </div>
+            
+
+        </div>
+        <div id="footer_container">
+            <div id="footer" class="container_12">
+                <div class="grid_4 alpha">
+                    <a href="/" title="Home" id="footer_logo">
+                        <img src="{% dated_static 'images/theme_new/footer_logo.png' %}" alt="Repower at Home logo" width="267" height="40"/>
+                    </a>
+                </div>
+                <div class="grid_4">
+                    <h2>Who are we? Listen up.</h2>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+                        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim 
+                        ad minim veniam, quis nostrud exercitation ullamco
+                    </p>
+                </div>
+                <div class="grid_4 omega">
+                    <h2>Follow Us</h2>
+                    <div id="footer_social_icons">
+                        <a href="http://www.facebook.com/pages/Repower-at-Home/135501849796509">
+                            <img src="{% dated_static 'images/theme_new/social_fb.png' %}" alt="Facebook icon" 
+                                 title="Find us on Facebook" width="53" height="52"/>
+                        </a>
+                        <a href="http://twitter.com/repowerathome">
+                            <img src="{% dated_static 'images/theme_new/social_twit.png' %}" alt="Twitter icon" 
+                                 title="Follow us on Twitter" width="53" height="52"/>
+                        </a>
+                        <a href="http://www.youtube.com/repowerhome">
+                            <img src="{% dated_static 'images/theme_new/social_yt.png' %}" alt="YouTube icon" 
+                                 title="Watch us on YouTube" width="53" height="52"/>
+                        </a>
+                        <a href="{% url blog_feed %}">
+                            <img src="{% dated_static 'images/theme_new/social_rss.png' %}" alt="Feed icon" 
+                                 title="Subscribe to our blog" width="53" height="52"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="grid_12 alpha omega">
+                    <a href="{% url rah.views.feedback %}" class="feedback_link" rel="nofollow">Feedback</a> | 
+                    <a href="/terms/" rel="nofollow">Terms of Use</a> | 
+                    <a href="/privacy/" rel="nofollow">Privacy Policy</a> |
+                    <a href="/about/">About Us</a>
+                    <br/>
+                    Copyright &copy; 2011 <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> 
+                    . All Rights Reserved.
+                </div>
+            </div>
+        </div>
+        {% if testing_feedback_form %}
+            {% include 'codebase/_testing_widget.html' %}
+        {% endif %}
+        <div id="fb-root"></div>
+        <script type="text/javascript" charset="utf-8">
+            var media_url = "{{ MEDIA_URL }}"; // contains trailing slash
+            var RAH = RAH || {};
+            RAH.ENV = {};
+            (function () {
+                this.nav_select = "{% block rah_nav_select %}{% endblock %}";
+                this.facebook_appid = {{ FACEBOOK_APPID }};
+            }).apply(RAH.ENV);
+        </script>
+        <script type="text/javascript" charset="utf-8" src="{% dated_static 'js/require-jquery.js' %}"></script>
+        {% block extrajs %}{% endblock %}
+        {% block pagejs %}
+            <script type="text/javascript">
+                (function() {
+                    RAH = RAH || {};
+                    RAH.pagescripts = RAH.pagescripts || [];
+                    {% if ask_to_share %}
+                        RAH.pagescripts.push("{% dated_static 'js/mods/share.js' %}");
+                    {% endif %}
+                    {% if testing_feedback_form %}
+                        RAH.pagescripts.push("{% dated_static 'js/mods/testing_widget.js' %}");
+                    {% endif %}
+                    require({
+                        priority: ["{%dated_static 'js/pages/base.js' %}",
+                        "https://connect.facebook.net/en_US/all.js"].concat(RAH.pagescripts)
+                        }, ["{% dated_static 'js/pages/base.js' %}"].concat(RAH.pagescripts), function () {
+                            var args = Array.prototype.slice.call(arguments);
+                            $(function() {
+                                {% if testing_feedback_form %}
+                                    args.pop().setup(); // testing mod is the last arg in pagescripts, remove it
+                                {% endif %}
+                                {% if ask_to_share %}
+                                    args.pop().setup("{% url records_ask_to_share %}"); // share mod is the last arg in pagescripts, remove it
+                                {% endif %}
+                            });
+                    });
+                })();
+            </script>
+        {% endblock %}
+        <script type="text/javascript">
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+            })();
+        </script>
+    </body>
+</html>

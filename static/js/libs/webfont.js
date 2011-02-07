@@ -1,6 +1,6 @@
-// WebFont 1.0.16 / TypeKit
+// WebFont 1.0.18 / TypeKit
 /*
- * Copyright 2010 Small Batch, Inc.
+ * Copyright 2011 Small Batch, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -180,6 +180,22 @@ webfont.DomHelper.prototype.removeClassName = function(e, name) {
   }
   e.className = remainingClasses.join(' ').replace(/^\s+/, '')
       .replace(/\s+$/, '');
+};
+
+/**
+ * Returns true if an element has a given class name and false otherwise.
+ * @param {Element} e The element.
+ * @param {string} name The class name to check for.
+ * @return {boolean} Whether or not the element has this class name.
+ */
+webfont.DomHelper.prototype.hasClassName = function(e, name) {
+  var classes = e.className.split(/\s+/);
+  for (var i = 0, len = classes.length; i < len; i++) {
+    if (classes[i] == name) {
+      return true;
+    }
+  }
+  return false;
 };
 
 /**
@@ -578,6 +594,11 @@ webfont.UserAgentParser.prototype.getDocumentMode_ = function(doc) {
 };
 
 /**
+ * A class to dispatch events and manage the event class names on an html
+ * element that represent the current state of fonts on the page. Active class
+ * names always overwrite inactive class names of the same type, while loading
+ * class names may be present whenever a font is loading (regardless of if an
+ * associated active or inactive class name is also present).
  * @param {webfont.DomHelper} domHelper
  * @param {HTMLElement} htmlElement
  * @param {Object} callbacks
@@ -623,6 +644,9 @@ webfont.EventDispatcher.INACTIVE = 'inactive';
  */
 webfont.EventDispatcher.FONT = 'font';
 
+/**
+ * Dispatch the loading event and append the loading class name.
+ */
 webfont.EventDispatcher.prototype.dispatchLoading = function() {
   this.domHelper_.appendClassName(this.htmlElement_,
       this.cssClassName_.build(
@@ -631,6 +655,7 @@ webfont.EventDispatcher.prototype.dispatchLoading = function() {
 };
 
 /**
+ * Dispatch the font loading event and append the font loading class name.
  * @param {string} fontFamily
  * @param {string} fontDescription
  */
@@ -643,6 +668,8 @@ webfont.EventDispatcher.prototype.dispatchFontLoading = function(fontFamily, fon
 };
 
 /**
+ * Dispatch the font active event, remove the font loading class name, remove
+ * the font inactive class name, and append the font active class name.
  * @param {string} fontFamily
  * @param {string} fontDescription
  */
@@ -650,6 +677,9 @@ webfont.EventDispatcher.prototype.dispatchFontActive = function(fontFamily, font
   this.domHelper_.removeClassName(this.htmlElement_,
       this.cssClassName_.build(
           this.namespace_, fontFamily, fontDescription, webfont.EventDispatcher.LOADING));
+  this.domHelper_.removeClassName(this.htmlElement_,
+      this.cssClassName_.build(
+          this.namespace_, fontFamily, fontDescription, webfont.EventDispatcher.INACTIVE));
   this.domHelper_.appendClassName(this.htmlElement_,
       this.cssClassName_.build(
           this.namespace_, fontFamily, fontDescription, webfont.EventDispatcher.ACTIVE));
@@ -658,6 +688,9 @@ webfont.EventDispatcher.prototype.dispatchFontActive = function(fontFamily, font
 };
 
 /**
+ * Dispatch the font inactive event, remove the font loading class name, and
+ * append the font inactive class name (unless the font active class name is
+ * already present).
  * @param {string} fontFamily
  * @param {string} fontDescription
  */
@@ -665,28 +698,48 @@ webfont.EventDispatcher.prototype.dispatchFontInactive = function(fontFamily, fo
   this.domHelper_.removeClassName(this.htmlElement_,
       this.cssClassName_.build(
           this.namespace_, fontFamily, fontDescription, webfont.EventDispatcher.LOADING));
-  this.domHelper_.appendClassName(this.htmlElement_,
+  var hasFontActive = this.domHelper_.hasClassName(this.htmlElement_,
       this.cssClassName_.build(
-          this.namespace_, fontFamily, fontDescription, webfont.EventDispatcher.INACTIVE));
+          this.namespace_, fontFamily, fontDescription, webfont.EventDispatcher.ACTIVE));
+  if (!hasFontActive) {
+    this.domHelper_.appendClassName(this.htmlElement_,
+        this.cssClassName_.build(
+            this.namespace_, fontFamily, fontDescription, webfont.EventDispatcher.INACTIVE));
+  }
   this.dispatch_(
       webfont.EventDispatcher.FONT + webfont.EventDispatcher.INACTIVE, fontFamily, fontDescription);
 };
 
+/**
+ * Dispatch the inactive event, remove the loading class name, and append the
+ * inactive class name (unless the active class name is already present).
+ */
 webfont.EventDispatcher.prototype.dispatchInactive = function() {
   this.domHelper_.removeClassName(this.htmlElement_,
       this.cssClassName_.build(
           this.namespace_, webfont.EventDispatcher.LOADING));
-  this.domHelper_.appendClassName(this.htmlElement_,
+  var hasActive = this.domHelper_.hasClassName(this.htmlElement_,
       this.cssClassName_.build(
-        this.namespace_, webfont.EventDispatcher.INACTIVE));
+          this.namespace_, webfont.EventDispatcher.ACTIVE));
+  if (!hasActive) {
+    this.domHelper_.appendClassName(this.htmlElement_,
+        this.cssClassName_.build(
+          this.namespace_, webfont.EventDispatcher.INACTIVE));
+  }
   this.dispatch_(webfont.EventDispatcher.INACTIVE);
 };
 
+/**
+ * Dispatch the active event, remove the loading class name, remove the inactive
+ * class name, and append the active class name.
+ */
 webfont.EventDispatcher.prototype.dispatchActive = function() {
-  // what about inactive? maybe if all fonts failed to load?
   this.domHelper_.removeClassName(this.htmlElement_,
       this.cssClassName_.build(
           this.namespace_, webfont.EventDispatcher.LOADING));
+  this.domHelper_.removeClassName(this.htmlElement_,
+      this.cssClassName_.build(
+          this.namespace_, webfont.EventDispatcher.INACTIVE));
   this.domHelper_.appendClassName(this.htmlElement_,
       this.cssClassName_.build(
           this.namespace_, webfont.EventDispatcher.ACTIVE));
@@ -963,8 +1016,10 @@ webfont.FontWatchRunner.prototype.getDefaultFontSize_ = function(defaultFonts) {
 webfont.FontWatchRunner.prototype.createHiddenElementWithFont_ = function(
     defaultFonts, opt_withoutFontFamily) {
   var variationCss = this.fvd_.expand(this.fontDescription_);
-  var styleString = "position:absolute;top:-999px;font-size:300px;font-family:" +
-      (opt_withoutFontFamily ? "" : this.nameHelper_.quote(this.fontFamily_) + ",") +
+  var styleString = "position:absolute;top:-999px;font-size:300px;" +
+    "width:auto;height:auto;line-height:normal;margin:0;padding:0;" +
+    "font-variant:normal;font-family:" + (opt_withoutFontFamily ? "" :
+        this.nameHelper_.quote(this.fontFamily_) + ",") +
       defaultFonts + ";" + variationCss;
   var span = this.domHelper_.createElement('span', { 'style': styleString },
       this.fontTestString_);
@@ -1108,7 +1163,7 @@ webfont.CssClassName.prototype.build = function(var_args) {
  */
 webfont.CssFontFamilyName = function() {
   /** @type {string} */
-  this.quote_ = '"';
+  this.quote_ = "'";
 };
 
 /**
@@ -1391,22 +1446,41 @@ webfont.FontApiUrlBuilder = function(apiUrl) {
 
     this.apiUrl_ = protocol + webfont.FontApiUrlBuilder.DEFAULT_API_URL;
   }  
-  this.fontFamilies_ = null;
+  this.fontFamilies_ = [];
+  this.subsets_ = [];
 };
+
 
 webfont.FontApiUrlBuilder.DEFAULT_API_URL = '//fonts.googleapis.com/css';
 
+
 webfont.FontApiUrlBuilder.prototype.setFontFamilies = function(fontFamilies) {
-  // maybe clone?
-  this.fontFamilies_ = fontFamilies;
+  this.parseFontFamilies_(fontFamilies);
 };
+
+
+webfont.FontApiUrlBuilder.prototype.parseFontFamilies_ =
+    function(fontFamilies) {
+  var length = fontFamilies.length;
+
+  for (var i = 0; i < length; i++) {
+    var elements = fontFamilies[i].split(':');
+
+    if (elements.length == 3) {
+      this.subsets_.push(elements.pop());
+    }
+    this.fontFamilies_.push(elements.join(':'));
+  }
+};
+
 
 webfont.FontApiUrlBuilder.prototype.webSafe = function(string) {
   return string.replace(/ /g, '+');
 };
 
+
 webfont.FontApiUrlBuilder.prototype.build = function() {
-  if (!this.fontFamilies_) {
+  if (this.fontFamilies_.length == 0) {
     throw new Error('No fonts to load !');
   }
   if (this.apiUrl_.indexOf("kit=") != -1) {
@@ -1419,6 +1493,10 @@ webfont.FontApiUrlBuilder.prototype.build = function() {
     sb.push(this.webSafe(this.fontFamilies_[i]));
   }
   var url = this.apiUrl_ + '?family=' + sb.join('%7C'); // '|' escaped.
+
+  if (this.subsets_.length > 0) {
+    url += '&subset=' + this.subsets_.join(',');
+  }
 
   return url;
 };
@@ -1450,32 +1528,47 @@ webfont.FontApiParser.VARIATIONS = {
 };
 
 webfont.FontApiParser.INT_FONTS = {
-  'Hanuman': '&#x1780;&#x1781;&#x1782;'
+  'latin': webfont.FontWatchRunner.DEFAULT_TEST_STRING,
+  'cyrillic': '&#1081;&#1103;&#1046;',
+  'greek': '&#945;&#946;&#931;',
+  'khmer': '&#x1780;&#x1781;&#x1782;',
+  'Hanuman': '&#x1780;&#x1781;&#x1782;' // For backward compatibility
 };
 
 webfont.FontApiParser.prototype.parse = function() {
   var length = this.fontFamilies_.length;
 
   for (var i = 0; i < length; i++) {
-    var pair = this.fontFamilies_[i].split(":");
-    var fontFamily = pair[0];
-    var variations = null;
+    var elements = this.fontFamilies_[i].split(":");
+    var fontFamily = elements[0];
+    var variations = ['n4'];
 
-    if (pair.length == 2) {
-      var fvds = this.parseVariations_(pair[1]);
+    if (elements.length >= 2) {
+      var fvds = this.parseVariations_(elements[1]);
 
       if (fvds.length > 0) {
         variations = fvds;
       }
-    } else {
-      variations = ['n4'];
+      if (elements.length == 3) {
+        var subsets = this.parseSubsets_(elements[2]);
+        if (subsets.length > 0) {
+          var fontTestString = webfont.FontApiParser.INT_FONTS[subsets[0]];
+
+          if (fontTestString) {
+	    this.fontTestStrings_[fontFamily] = fontTestString;
+	  }
+	}
+      }
+    }
+
+    // For backward compatibility
+    if (!this.fontTestStrings_[fontFamily]) {
+      var hanumanTestString = webfont.FontApiParser.INT_FONTS[fontFamily];
+      if (hanumanTestString) {
+        this.fontTestStrings_[fontFamily] = hanumanTestString;
+      }
     }
     this.parsedFontFamilies_.push(fontFamily);
-    var fontTestString = webfont.FontApiParser.INT_FONTS[fontFamily];
-
-    if (fontTestString) {
-      this.fontTestStrings_[fontFamily] = fontTestString;
-    }
     this.variations_[fontFamily] = variations;
   }
 };
@@ -1506,6 +1599,10 @@ webfont.FontApiParser.prototype.generateFontVariationDescription_ = function(var
 
 webfont.FontApiParser.prototype.parseVariations_ = function(variations) {
   var finalVariations = [];
+
+  if (!variations) {
+    return finalVariations;
+  }
   var providedVariations = variations.split(",");
   var length = providedVariations.length;
 
@@ -1519,6 +1616,17 @@ webfont.FontApiParser.prototype.parseVariations_ = function(variations) {
   }
   return finalVariations;
 };
+
+
+webfont.FontApiParser.prototype.parseSubsets_ = function(subsets) {
+  var finalSubsets = [];
+
+  if (!subsets) {
+    return finalSubsets;
+  }
+  return subsets.split(",");
+};
+
 
 webfont.FontApiParser.prototype.getFontFamilies = function() {
   return this.parsedFontFamilies_;
@@ -1544,10 +1652,7 @@ webfont.GoogleFontApi = function(userAgent, domHelper, configuration) {
 webfont.GoogleFontApi.NAME = 'google';
 
 webfont.GoogleFontApi.prototype.supportUserAgent = function(userAgent, support) {
-  if (userAgent.getPlatform().match(/iPad|iPod|iPhone/) != null) {
-    support(false);
-  }
-  return support(userAgent.isSupportingWebFont());
+  support(userAgent.isSupportingWebFont());
 };
 
 webfont.GoogleFontApi.prototype.load = function(onReady) {
@@ -1628,6 +1733,74 @@ window['WebFont'].addModule(webfont.CustomCss.NAME, function(configuration) {
 /**
  * @constructor
  */
+webfont.FontdeckScript = function(global, domHelper, configuration) {
+  this.global_ = global;
+  this.domHelper_ = domHelper;
+  this.configuration_ = configuration;
+  this.fontFamilies_ = [];
+  this.fontVariations_ = {};
+  this.fvd_ = new webfont.FontVariationDescription();
+};
+
+webfont.FontdeckScript.NAME = 'fontdeck';
+webfont.FontdeckScript.HOOK = '__webfontfontdeckmodule__';
+webfont.FontdeckScript.API = 'http://fontdeck.com/api/v1/project-info?'
+
+webfont.FontdeckScript.prototype.getScriptSrc = function(projectId) {
+  var api = this.configuration_['api'] || webfont.FontdeckScript.API;
+  return api + 'project=' + projectId + '&domain=' + document.location.hostname + '&callback=window.__webfontfontdeckmodule__[' + projectId + ']';
+};
+
+webfont.FontdeckScript.prototype.supportUserAgent = function(userAgent, support) {
+  var projectId = this.configuration_['id'];
+  var families = this.configuration_['families'] || null;
+  var self = this;
+
+  if (projectId) {
+    // Provide data to Fontdeck for processing.
+    if (!this.global_[webfont.FontdeckScript.HOOK]) {
+      this.global_[webfont.FontdeckScript.HOOK] = {};
+    }
+
+    // The API will call this function with a link to the CSS
+    // and a list of supported fonts.
+    this.global_[webfont.FontdeckScript.HOOK][projectId] = function(data) {
+      self.domHelper_.insertInto('head', self.domHelper_.createCssLink(data['css']));
+        for (var i = 0, j = data['provides'].length; i < j; ++i) {
+          var font = data['provides'][i];
+          self.fontFamilies_.push(font['name']);
+          self.fontVariations_[font['name']] = [self.fvd_.compact("font-weight:" + font['weight'] + ";font-style:" +  font['style'])];
+        }
+        // If families were passed into load, then use them instead.
+        if (families !== null) {
+          self.fontFamilies_ = families;
+        }
+      support(true);
+    };
+
+    // Call the Fontdeck API.
+    var script = this.domHelper_.createScriptSrc(this.getScriptSrc(projectId));
+    this.domHelper_.insertInto('head', script);
+
+  } else {
+    support(true);
+  }
+};
+
+webfont.FontdeckScript.prototype.load = function(onReady) {
+  onReady(this.fontFamilies_, this.fontVariations_);
+};
+
+window['WebFont'].addModule(webfont.FontdeckScript.NAME, function(configuration) {
+  var userAgentParser = new webfont.UserAgentParser(navigator.userAgent, document);
+  var userAgent = userAgentParser.parse();
+  var domHelper = new webfont.DomHelper(document, userAgent);
+  return new webfont.FontdeckScript(window, domHelper, configuration);
+});
+
+/**
+ * @constructor
+ */
 webfont.TypekitScript = function(global, domHelper, configuration) {
   this.global_ = global;
   this.domHelper_ = domHelper;
@@ -1690,4 +1863,3 @@ window['WebFont'].addModule(webfont.TypekitScript.NAME, function(configuration) 
 if (window['WebFontConfig']) {
   window['WebFont']['load'](window['WebFontConfig']);
 }
-

@@ -1,0 +1,534 @@
+/* ---------------------------------------------------------------------------------------------------------------------
+Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset Reset 
+------------------------------------------------------------------------------------------------------------------------
+
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
+*/
+html{color:#000;background:#FFF;}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,
+legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;}
+address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
+li{list-style:none;}caption,th{text-align:left;}
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
+q:before,q:after{content:'';}
+abbr,acronym{border:0;font-variant:normal;}
+sup{vertical-align:text-top;}
+sub{vertical-align:text-bottom;}
+input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;}
+input,textarea,select{*font-size:100%;}
+legend{color:#000;}
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts
+--------------------------------------------------------------------------------------------------------------------- */
+@font-face {
+	/* This declaration targets Internet Explorer */
+	font-family: 'Museo500';
+	src: url('../fonts/museo/museo500-regular-webfont.eot');}
+
+@font-face {
+	/* This declaration targets everything else */
+	font-family: 'Museo500';
+	src: url(//:) format('no404'), 
+        url('../fonts/museo/museo500-regular-webfont.woff') format('woff'), 
+        url('../fonts/museo/museo500-regular-webfont.ttf') format('truetype'), 
+        url('../fonts/museo/museo500-regular-webfont.svg#webfontELabNKOo') format('svg');
+	font-weight: normal;
+	font-style: normal;}
+
+@font-face {
+	/* This declaration targets Internet Explorer */
+	font-family: 'Museo700';
+	src: url('../fonts/museo/museo700-regular-webfont.eot');}
+
+@font-face {
+	/* This declaration targets everything else */
+	font-family: 'Museo700';
+	src: url(//:) format('no404'), 
+        url('../fonts/museo/museo700-regular-webfont.woff') format('woff'), 
+        url('../fonts/museo/museo700-regular-webfont.ttf') format('truetype'), 
+        url('../fonts/museo/museo700-regular-webfont.svg#webfontELabNKOo') format('svg');
+	font-weight: normal;
+	font-style: normal;}
+
+@font-face {
+	/* This declaration targets Internet Explorer */
+	font-family: 'MuseoSlab500';
+	src: url('../fonts/museoslab/Museo_Slab_500-webfont.eot');
+}
+
+@font-face {
+	/* This declaration targets everything else */
+	font-family: 'MuseoSlab500';
+	src: url(//:) format('no404'), 
+        url('../fonts/museoslab/Museo_Slab_500-webfont.woff') format('woff'), 
+        url('../fonts/museoslab/Museo_Slab_500-webfont.ttf') format('truetype'), 
+        url('../fonts/museoslab/Museo_Slab_500-webfont.svg#webfontCqe9dOP9') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors 
+--------------------------------------------------------------------------------------------------------------------- */
+.green        { color: #42AB35; }
+.green_bright { color: #8DD143; }
+.blue_dark    { color: #103665; }
+.blue_light   { color: #D9E8EF; }
+.blue         { color: #012758; }
+.white        { color: #FFFFFF; }
+.grey         { color: #333333; }
+.grey_light   { color: #C1C1C1; }
+.grey_dark    { color: #323232; }
+.red          { color: #c3262f; }
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements Elements 
+--------------------------------------------------------------------------------------------------------------------- */
+body, html {
+    font: 14px/18px Arial, Helvetica, sans-serif;
+    color: #333; 
+    background-color: #323232; }
+a { color: #388ca0; text-decoration: none; }
+a:hover { text-decoration:underline; }
+a:active { color: #6EC3D1; text-decoration:underline; }
+h1, h1 a, h2 {
+    font-family:"MuseoSlab500", Tahoma, sans-serif;
+    font-weight:500;
+    font-style: normal;
+    color: #ed6623;}
+.wf-active h1, .wf-active h1 a {visibility: visible;}
+h3, h4, h5, h6 { font-weight:bold; color: #6e9b31; }
+h1 { font-size: 30px; line-height:45px; margin-bottom:9px; }
+h2 { font-size: 24px; line-height:27px; margin-bottom:9px; }
+h3 { font-size: 16px; margin-bottom:9px; }
+h4 { font-size: 14px; color: #333333; }
+h5 { font-size: 14px; }
+h6 { font-size: 12px; }
+cite {display:none;}
+table {
+    width: 100%;
+    background: #fff;
+    border-left: 1px solid #ddd;
+    border-bottom: 1px solid #ddd; }
+tr { margin: 1px; border-top: 1px solid #ddd; }
+td { padding: 3px; border-right: 1px solid #ddd;}
+tr.alt td, tr.even td { background: #f7f7f7; }
+th { padding: 3px; font-weight: normal; color: #444; background: #eee; border-right: 1px solid #ddd;}
+p { color: #333; margin-bottom: 18px; }
+strong, b { font-weight:bold; }
+em, i { font-style: italic; }
+ol li{ list-style: decimal; margin-left: 18px; }
+ul li { list-style-type: disc; }
+ul{ margin-left: 18px; margin-bottom: 18px; }
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Header Header Header Header Header Header Header Header Header Header Header Header Header Header Header Header Header 
+--------------------------------------------------------------------------------------------------------------------- */
+#header_container{
+    width:100%;
+    height: 64px;
+    position:relative;
+    background-color: #103665; }
+#header{ position:relative; }
+#header_logo { position:absolute; left: 0px; top:14px; }
+#header #cse_search_box_form{ position:absolute; right:360px; top:22px;}
+#cse_search_box{
+    color:#333;
+    width:246px;
+    border:1px solid #FFFFFF;}
+#cse_search_box_submit{
+    border: 1px solid #FFFFFF;
+    background-color: #8DD143;
+    color: #FFFFFF;
+    margin-left:-5px;
+}
+#header_links {
+    position:absolute;
+    right:0;
+    top: 23px;
+}
+#header_links a, #header_links button { margin-left:9px; }
+#header_links a { color: #FFFFFF; }
+#header_about { border-right: 1px solid #FFFFFF; padding-right: 12px; }
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Content Content Content Content Content Content Content Content Content Content Content Content Content Content Content 
+--------------------------------------------------------------------------------------------------------------------- */
+#content_container{
+    width: 100%; 
+    position: relative; 
+    background-color: #00F;
+    height:100%;
+    overflow:auto;
+    background: #00285c url('../images/theme_new/content_bg_inside.png') 0 0 repeat-x;
+}
+#content{
+    background-color: #FFF;
+    -moz-box-shadow: 0px 0px 7px #333;
+    -webkit-box-shadow: 0px 0px 7px #333;
+    box-shadow: 0px 0px 7px #333;
+    margin-bottom:36px;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer 
+--------------------------------------------------------------------------------------------------------------------- */
+#footer_container{
+    width:100%;
+    position:relative;
+    -moz-box-shadow: inset 0px 5px 5px #111;
+    -webkit-box-shadow: inset 0px 5px 5px #111;
+    box-shadow: inset 0px 5px 5px #111;
+    height: 320px;
+}
+#footer, #footer p { color: #757575; }
+#footer h2 { text-shadow: 0px -1px 1px #000;}
+#footer a, #footer h2 {color:#ADADAD;}
+#footer .grid_4 { padding-top: 40px; padding-bottom: 40px; }
+#footer .grid_12 {
+    border-top: 1px solid #404040;
+    font-size: 12px;
+    padding-top: 12px;
+    line-height:24px; 
+}
+#footer_logo img{ padding-top:40px; }
+#footer_social_icons{ margin-top:30px; margin-left: 20px; }
+#footer_social_icons a:hover { text-decoration:none; }
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav
+--------------------------------------------------------------------------------------------------------------------- */
+#nav {
+    background-color: #F2F2F2;
+    padding: 9px;
+    margin-right:-18px;
+    -moz-box-shadow: 0px 0px 7px #333;
+    -webkit-box-shadow: 0px 0px 7px #333;
+    box-shadow: 0px 0px 7px #333;
+
+-webkit-border-bottom-left-radius: 8px;
+-moz-border-radius-bottomleft: 8px;
+border-bottom-left-radius: 8px;
+    
+}
+
+#nav #profile_picture {
+    padding: 9px;
+    border: 1px solid #c1c1c1;
+    background-color: #FFFFFF;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid Grid  
+------------------------------------------------------------------------------------------------------------------------
+Variable Grid System.
+Learn more ~ http://www.spry-soft.com/grids/
+Based on 960 Grid System - http://960.gs/
+Licensed under GPL and MIT.
+*/
+.container_12 {margin-left: auto;margin-right: auto;width: 972px;}
+.grid_1, .grid_2, .grid_3, .grid_4, .grid_5, .grid_6, .grid_7, .grid_8, .grid_9, .grid_10, .grid_11, .grid_12 
+{display:inline; float:left; position:relative; margin-left:9px; margin-right:9px;}
+.alpha {margin-left: 0;}
+.omega {margin-right: 0;}
+.container_12 .grid_1 {width:63px;}
+.container_12 .grid_2 {width:144px;}
+.container_12 .grid_3 {width:225px;}
+.container_12 .grid_4 {width:306px;}
+.container_12 .grid_5 {width:387px;}
+.container_12 .grid_6 {width:468px;}
+.container_12 .grid_7 {width:549px;}
+.container_12 .grid_8 {width:630px;}
+.container_12 .grid_9 {width:711px;}
+.container_12 .grid_10 {width:792px;}
+.container_12 .grid_11 {width:873px;}
+.container_12 .grid_12 {width:954px;}
+.container_12 .prefix_1 {padding-left:81px;}
+.container_12 .prefix_2 {padding-left:162px;}
+.container_12 .prefix_3 {padding-left:243px;}
+.container_12 .prefix_4 {padding-left:324px;}
+.container_12 .prefix_5 {padding-left:405px;}
+.container_12 .prefix_6 {padding-left:486px;}
+.container_12 .prefix_7 {padding-left:567px;}
+.container_12 .prefix_8 {padding-left:648px;}
+.container_12 .prefix_9 {padding-left:729px;}
+.container_12 .prefix_10 {padding-left:810px;}
+.container_12 .prefix_11 {padding-left:891px;}
+.container_12 .suffix_1 {padding-right:81px;}
+.container_12 .suffix_2 {padding-right:162px;}
+.container_12 .suffix_3 {padding-right:243px;}
+.container_12 .suffix_4 {padding-right:324px;}
+.container_12 .suffix_5 {padding-right:405px;}
+.container_12 .suffix_6 {padding-right:486px;}
+.container_12 .suffix_7 {padding-right:567px;}
+.container_12 .suffix_8 {padding-right:648px;}
+.container_12 .suffix_9 {padding-right:729px;}
+.container_12 .suffix_10 {padding-right:810px;}
+.container_12 .suffix_11 {padding-right:891px;}
+.container_12 .push_1 {left:81px;}
+.container_12 .push_2 {left:162px;}
+.container_12 .push_3 {left:243px;}
+.container_12 .push_4 {left:324px;}
+.container_12 .push_5 {left:405px;}
+.container_12 .push_6 {left:486px;}
+.container_12 .push_7 {left:567px;}
+.container_12 .push_8 {left:648px;}
+.container_12 .push_9 {left:729px;}
+.container_12 .push_10 {left:810px;}
+.container_12 .push_11 {left:891px;}
+.container_12 .pull_1 {left:-81px;}
+.container_12 .pull_2 {left:-162px;}
+.container_12 .pull_3 {left:-243px;}
+.container_12 .pull_4 {left:-324px;}
+.container_12 .pull_5 {left:-405px;}
+.container_12 .pull_6 {left:-486px;}
+.container_12 .pull_7 {left:-567px;}
+.container_12 .pull_8 {left:-648px;}
+.container_12 .pull_9 {left:-729px;}
+.container_12 .pull_10 {left:-810px;}
+.container_12 .pull_11 {left:-891px;}
+
+/* 
+Clear Floated Elements
+http://sonspring.com/journal/clearing-floats 
+http://perishablepress.com/press/2008/02/05/lessons-learned-concerning-the-clearfix-css-hack 
+*/
+.clear { clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
+.clearfix:after {clear: both; content: ' '; display: block; font-size: 0; line-height: 0; visibility: hidden; width: 0; height: 0;}
+.clearfix {display: inline-block;}
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 
+https://github.com/nathansmith/formalize
+
+`Widths
+----------------------------------------------------------------------------------------------------*/
+
+.input_tiny {
+	width: 50px;
+}
+
+.input_small {
+	width: 100px;
+}
+
+.input_medium {
+	width: 150px;
+}
+
+.input_large {
+	width: 200px;
+}
+
+.input_xlarge {
+	width: 250px;
+}
+
+.input_xxlarge {
+	width: 300px;
+}
+
+.input_full {
+	width: 100%;
+}
+
+/*
+	Added via JS to <textarea> and class="input_full".
+	Applies to IE6, IE7. Other browsers don't need it.
+*/
+.input_full_wrap {
+	display: block;
+	padding-right: 8px;
+}
+
+/* `UI Consistency
+----------------------------------------------------------------------------------------------------*/
+
+::-moz-focus-inner {
+	border: 0;
+}
+
+input[type="search"]::-webkit-search-decoration {
+	display: none;
+}
+
+input,
+button,
+select,
+textarea {
+	margin: 0;
+	vertical-align: middle;
+}
+
+button,
+input[type="reset"],
+input[type="submit"],
+input[type="button"] {
+	-webkit-appearance: none;
+	border: 1px solid;
+	border-color: #ddd #bbb #999;
+	cursor: pointer;
+	color: #333;
+	font: 12px/1.2 Arial, sans-serif;
+	outline: 0;
+	overflow: visible;
+	padding: 3px 10px 4px;
+	text-shadow: #fff 0 1px 1px;
+	width: auto;
+
+	/* IE7 */
+	*padding-top: 2px;
+	*padding-bottom: 0px;
+}
+
+button {
+	/* IE7 */
+	*padding-top: 1px;
+	*padding-bottom: 1px;
+}
+
+button[disabled],
+input[type="reset"][disabled],
+input[type="submit"][disabled],
+input[type="button"][disabled] {
+	color: #888;
+}
+
+textarea,
+select,
+input[type="date"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="email"],
+input[type="month"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="text"],
+input[type="time"],
+input[type="url"],
+input[type="week"] {
+	-webkit-appearance: none;
+	-moz-border-radius: 0;
+	-webkit-border-radius: 0;
+	border-radius: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	background-color: #fff;
+	border: 1px solid;
+	border-color: #848484 #c1c1c1 #e1e1e1;
+	color: #000;
+	outline: 0;
+	padding: 2px 3px;
+	font-size: 13px;
+	height: 1.8em;
+
+	/* IE7 */
+	*padding-top: 2px;
+	*padding-bottom: 1px;
+	*height: auto;
+}
+
+/*
+	Separate rule for Firefox.
+	Cannot stack with WebKit's.
+*/
+input.placeholder_text,
+textarea.placeholder_text {
+	color: #888;
+}
+
+::-webkit-input-placeholder {
+	color: #888;
+}
+
+textarea[disabled],
+select[disabled],
+input[type="date"][disabled],
+input[type="datetime"][disabled],
+input[type="datetime-local"][disabled],
+input[type="email"][disabled],
+input[type="month"][disabled],
+input[type="number"][disabled],
+input[type="password"][disabled],
+input[type="search"][disabled],
+input[type="tel"][disabled],
+input[type="text"][disabled],
+input[type="time"][disabled],
+input[type="url"][disabled],
+input[type="week"][disabled] {
+	background-color: #eee;
+	color: #888;
+}
+
+button:focus,
+button:active,
+input:focus,
+input:active,
+select:focus,
+select:active,
+textarea:focus,
+textarea:active {
+	-moz-box-shadow: #06f 0 0 7px;
+	-webkit-box-shadow: #06f 0 0 7px;
+	box-shadow: #06f 0 0 7px;
+
+	/* for Opera */
+	z-index: 1;
+}
+
+.is_webkit select {
+	/* Tweaks for Safari + Chrome. */
+	background-image: url(../images/select_arrow.gif);
+	background-repeat: no-repeat;
+	background-position: right center;
+	padding-right: 20px;
+}
+
+textarea,
+select[multiple] {
+	height: auto;
+}
+
+select[multiple],
+.is_webkit select[multiple] {
+	background-image: none;
+	padding: 0;
+}
+
+textarea {
+	overflow: auto;
+	resize: vertical;
+	width: 100%;
+}
+
+optgroup {
+	color: #000;
+	font-style: normal;
+	font-weight: normal;
+}
+
+
