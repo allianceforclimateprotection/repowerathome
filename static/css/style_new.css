@@ -169,12 +169,33 @@ Content Content Content Content Content Content Content Content Content Content 
     overflow:auto;
     background: #00285c url('../images/theme_new/content_bg_inside.png') 0 0 repeat-x;
 }
-#content{
+#content_9c_container{
     background-color: #FFF;
     -moz-box-shadow: 0px 0px 7px #333;
     -webkit-box-shadow: 0px 0px 7px #333;
     box-shadow: 0px 0px 7px #333;
     margin-bottom:36px;
+}
+
+#content_9c {
+    padding: 9px;
+}
+
+.ribbon_large {
+    color: #FFFFFF;
+    background: #FFFFFF url('../images/theme_new/ribbon_large.png') 0 0 no-repeat; 
+    padding: 8px 0px 0px 18px;
+    font-weight: bold;
+    position: relative;
+    height: 27px;
+}
+.ribbon_large_wrap{
+    height: 37px;
+    width: 30px;
+    position: absolute;
+    top: 0;
+    right: -19px;
+    background: transparent url('../images/theme_new/ribbon_large.png') 0px -35px no-repeat;
 }
 
 /* ---------------------------------------------------------------------------------------------------------------------
