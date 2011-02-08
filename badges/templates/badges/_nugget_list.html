@@ -2,7 +2,7 @@
     {% for badge in badges %}
         <li>
             <p>
-                {{ badge.name }}
+                <a href='{% url badge_detail badge.slug %}'>{{ badge.name }}</a>
                 <span class='smaller'>{{ badge.awarded_at|date }}</span>
             </p>
         </li>

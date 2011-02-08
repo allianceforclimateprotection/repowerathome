@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}{{ badge.name }}{% endblock %}
+{% block breadcrumbs %}
+    <a href='{% url index %}'>Home</a> &rsaquo;
+    <a href='{% url badge_list %}'>Badges</a> &rsaquo;
+    {{ badge.name }}
+{% endblock %}
+{% block right_content %}
+    <div class="box_three_top"></div>
+    <div class="box_three_middle">
+        <h1>{{ badge.name }}</h1>
+        <h4>{{ badge.description }}</h4>
+    </div>
+    <div class="box_three_bottom"></div>
+{% endblock %}

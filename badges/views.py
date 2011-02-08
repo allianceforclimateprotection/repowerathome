@@ -1,10 +1,20 @@
+from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from brabeion import badges as badge_cache
+from brabeion.models import BadgeAward
 
-from badges import all_badges_with_completion
+import badges
+from models import all_badges, get_badge
 
 def list(request):
-    badges = all_badges_with_completion(request.user)
+    badges = all_badges(request.user)
     return render_to_response('badges/list.html', locals(), context_instance=RequestContext(request))
+
+def detail(request, slug):
+    badge = get_badge(slug)
+    if not badge:
+        raise Http404('A badge %s does not exist' % slug)
+    awardees = BadgeAward.objects.select_related().filter(slug=slug)
+    return render_to_response('badges/detail.html', locals(), context_instance=RequestContext(request))
