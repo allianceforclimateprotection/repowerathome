@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from itertools import chain
 
 from events.models import Event
@@ -14,12 +14,12 @@ class CombinedICSFeed(ICalendarFeed):
            """
         # Get the events
         today = date.today()
-        one_week = timedelta(days=7)
-        events = Event.objects.filter(when__gte=today, when__lte=today+one_week)
-        actions = UserActionProgress.objects.filter(date_committed__gte=today, date_committed__lte=today+one_week)
+        one_week_later = today + timedelta(days=7)
+        events = Event.objects.filter(when__gte=today, when__lte=one_week_later)
+        actions = UserActionProgress.objects.filter(date_committed__gte=today, date_committed__lte=one_week_later)
 
         # Map the models to IcsEvent
-        mapped_events = [IcsEvent("Event"+str(i.id), i.title, i.when) for i in events] # TODO: Change when to specific time
+        mapped_events = [IcsEvent("Event"+str(i.id), i.title, i.start_datetime(),end=i.start_datetime()+timedelta(hours=i.duration) ) for i in events]
         mapped_actions= [IcsEvent("Actions"+str(i.id), i.action, i.date_committed) for i in actions]
 
         # Combine the lists.  FIXME: This is inefficient... 
