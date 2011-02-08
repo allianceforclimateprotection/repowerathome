@@ -43,6 +43,7 @@ sitemaps = {
 from basic.blog.feeds import BlogPostsFeed
 from groups.feeds import GroupActivityFeed
 from events.feeds import EventsFeed
+from ics_feed.feeds import CombinedICSFeed
 
 # Import some custom forms to pass into the auth app urls
 from rah.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
@@ -102,6 +103,7 @@ urlpatterns += patterns('',
     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}, name='sitemap'),
     url(r'^codebase/', include('codebase.urls')),
     url(r'^admin/', include(admin.site.urls), name='admin_root'),
+    url(r'^icalfeed/', CombinedICSFeed(), name='ical_feed'),
 )
 
 if settings.DEBUG:
