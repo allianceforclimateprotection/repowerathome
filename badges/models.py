@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.comments.models import Comment
 
 from actions.models import UserActionProgress
 from commitments.models import Commitment
@@ -40,3 +41,8 @@ def possibly_award_hosting_hero_badge(sender, instance, created, **kwargs):
     if created:
         badge_cache.possibly_award_badge('created_an_event', user=instance.creator)
 models.signals.post_save.connect(possibly_award_hosting_hero_badge, sender=Event)
+
+def possibly_award_gift_of_gab_badge(sender, instance, created, **kwargs):
+    if created:
+        badge_cache.possibly_award_badge('created_a_comment', user=instance.user)
+models.signals.post_save.connect(possibly_award_gift_of_gab_badge, sender=Comment)

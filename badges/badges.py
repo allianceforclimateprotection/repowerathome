@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.comments.models import Comment
 
 from actions.models import Action, UserActionProgress
 
@@ -49,7 +50,7 @@ models.signals.post_save.connect(update_action_badge, sender=Action)
 class TrendsetterBadge(Badge):
     events = ['took_the_pledge']
     multiple = False
-    levels = ['gold']
+    levels = ['']
     slug = 'trendsetter-badge'
     name = 'Trendsetter'
     description = 'Took the Trendsetter Pledge'
@@ -61,7 +62,7 @@ badge_cache.register(TrendsetterBadge)
 class FoundingFatherBadge(Badge):
     events = ['created_a_community']
     multiple = False
-    levels = ['gold']
+    levels = ['']
     slug = 'founding-father-badge'
     name = 'Founding Father'
     description = 'Started a community'
@@ -73,7 +74,7 @@ badge_cache.register(FoundingFatherBadge)
 class HostingHeroBadge(Badge):
     events = ['created_an_event']
     multiple = False
-    levels = ['gold']
+    levels = ['']
     slug = 'hosting-hero-badge'
     name = 'Hosting Hero'
     description = 'Created an event'
@@ -81,3 +82,28 @@ class HostingHeroBadge(Badge):
     def award(self, **state):
         return BadgeAwarded()
 badge_cache.register(HostingHeroBadge)
+
+class GiftOfGabBadge(Badge):
+    events = ['create_a_comment']
+    multiple = False
+    levels = ['Bronze', 'Silver', 'Gold']
+    slug = 'gift-of-gab-badge'
+    name = 'Gift Of Gab'
+    description = '''
+        <ul>
+            <li>Bronze: Left one comment or question<li>
+            <li>Silver: Left 5 comments or questions</li>
+            <li>Gold: Left 15 comments or questions</li>
+        </ul>
+    '''
+
+    def award(self, **state):
+        user = state['user']
+        num_of_comments = Comment.objects.filter(user=user).count()
+        if num_of_comments >= 15:
+            return BadgeAwarded(level=3)
+        elif num_of_comments >= 5:
+            return BadgeAwarded(level=2)
+        return BadgeAwarded(level=1)
+badge_cache.register(GiftOfGabBadge)
+
