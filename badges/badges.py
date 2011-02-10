@@ -119,3 +119,14 @@ class ChampionChallengerBadge(Badge):
         return BadgeAwarded()
 #badge_cache.register(ChampionChallengerBadge)
 
+class PaparazziBadge(Badge):
+    events = ['uploaded_an_image']
+    multiple = False
+    levels = ['']
+    slug = 'paparazzi-badge'
+    name = 'Paparazzi'
+    description = 'Uploaded an image to an action, event or community'
+    
+    def award(self, **state):
+        return BadgeAwarded()
+badge_cache.register(PaparazziBadge)
