@@ -1,6 +1,8 @@
 from datetime import datetime
 from smtplib import SMTPException
 
+from brabeion import badges as badge_cache
+
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -37,6 +39,7 @@ def group_create(request):
             GroupUsers.objects.create(group=group, user=request.user, is_manager=True)
             Stream.objects.get(slug="community-create").enqueue(content_object=group, start=group.created)
             Record.objects.create_record(request.user, 'group_create', group)
+            badge_cache.possibly_award_badge('created_a_community', user=request.user)
             messages.success(request, "%s has been created." % group)
             return redirect("group_detail", group_slug=group.slug)
     else:

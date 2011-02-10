@@ -24,7 +24,7 @@ class ActionBadge(Badge):
             return BadgeAwarded()
 
     def name(self):
-        return '%s Badge' % self.action.name
+        return self.action.name
 
     def description(self):
         return 'Completed %s action' % self.action.name
@@ -45,3 +45,39 @@ def update_action_badge(sender, instance, created, **kwargs):
     if created:
         create_action_badge(instance)
 models.signals.post_save.connect(update_action_badge, sender=Action)
+
+class TrendsetterBadge(Badge):
+    events = ['took_the_pledge']
+    multiple = False
+    levels = ['gold']
+    slug = 'trendsetter-badge'
+    name = 'Trendsetter'
+    description = 'Took the Trendsetter Pledge'
+
+    def award(self, **state):
+        return BadgeAwarded()
+badge_cache.register(TrendsetterBadge)
+
+class FoundingFatherBadge(Badge):
+    events = ['created_a_community']
+    multiple = False
+    levels = ['gold']
+    slug = 'founding-father-badge'
+    name = 'Founding Father'
+    description = 'Started a community'
+
+    def award(self, **state):
+        return BadgeAwarded()
+badge_cache.register(FoundingFatherBadge)
+
+class HostingHeroBadge(Badge):
+    events = ['created_an_event']
+    multiple = False
+    levels = ['gold']
+    slug = 'hosting-hero-badge'
+    name = 'Hosting Hero'
+    description = 'Created an event'
+
+    def award(self, **state):
+        return BadgeAwarded()
+badge_cache.register(HostingHeroBadge)
