@@ -107,6 +107,24 @@ class GiftOfGabBadge(Badge):
         return BadgeAwarded(level=1)
 badge_cache.register(GiftOfGabBadge)
 
+class IdeaMachineBadge(Badge):
+    events = ['create_a_comment']
+    multiple = False
+    levels = ['Bronze', 'Silver', 'Gold']
+    slug = 'idea-machine-badge'
+    name = 'Idea Machine'
+    description = '''
+        <ul>
+            <li>Bronze: Shared one idea or tip</li>
+            <li>Silver: Shared 5 ideas or tips</li>
+            <li>Gold: Shared 15 ideas or tips</li>
+        </ul>
+    '''
+
+    def award(self, **state):
+        pass #TODO: this should be implemented when we have a new commenting system
+#badge_cache.register(IdeaMachineBadge)
+
 class ChampionChallengerBadge(Badge):
     events = ['created_a_challenge']
     multiple = False
@@ -130,3 +148,15 @@ class PaparazziBadge(Badge):
     def award(self, **state):
         return BadgeAwarded()
 badge_cache.register(PaparazziBadge)
+
+class MomentumBuilderBadge(Badge):
+    events = ['invited_a_friend']
+    multiple = False
+    levels = ['']
+    slug = 'momentum-builder-badge'
+    name = 'Momentum Builder'
+    description = 'Invited friends to Repower at Home'
+
+    def award(self, **state):
+        return BadgeAwarded()
+badge_cache.register(MomentumBuilderBadge)

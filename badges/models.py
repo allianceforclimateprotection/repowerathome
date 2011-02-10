@@ -6,6 +6,7 @@ from actions.models import UserActionProgress
 from commitments.models import Commitment
 from events.models import Event
 from media_widget.models import StickerImage
+from invite.models import Invitation
 
 from brabeion import badges as badge_cache
 from brabeion.models import BadgeAward
@@ -49,11 +50,16 @@ def possibly_award_gift_of_gab_badge(sender, instance, created, **kwargs):
         badge_cache.possibly_award_badge('created_a_comment', user=instance.user)
 models.signals.post_save.connect(possibly_award_gift_of_gab_badge, sender=Comment)
 
-def possible_award_paparazzi_badge(sender, instance, created, **kwargs):
+def possibly_award_paparazzi_badge(sender, instance, created, **kwargs):
     if instance.approved:
         try:
             user = User.objects.get(email=instance.email)
             badge_cache.possibly_award_badge('uploaded_an_image', user=user)
         except User.DoesNotExist:
             pass
-models.signals.post_save.connect(possible_award_paparazzi_badge, sender=StickerImage)
+models.signals.post_save.connect(possibly_award_paparazzi_badge, sender=StickerImage)
+
+def possibly_award_momentum_builder_badge(sender, instance, created, **kwargs):
+    if created:
+        badge_cache.possibly_award_badge('invited_a_friend', user=instance.user)
+models.signals.post_save.connect(possibly_award_momentum_builder_badge, sender=Invitation)
