@@ -107,3 +107,15 @@ class GiftOfGabBadge(Badge):
         return BadgeAwarded(level=1)
 badge_cache.register(GiftOfGabBadge)
 
+class ChampionChallengerBadge(Badge):
+    events = ['created_a_challenge']
+    multiple = False
+    levels = ['']
+    slug = 'champion-challenger-badge'
+    name = 'Champion Challenger'
+    description = 'Created a challenge'
+
+    def award(self, **state):
+        return BadgeAwarded()
+#badge_cache.register(ChampionChallengerBadge)
+
