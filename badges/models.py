@@ -3,10 +3,11 @@ from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
 
 from actions.models import UserActionProgress
-from commitments.models import Commitment
+from commitments.models import Commitment, ContributorSurvey
 from events.models import Event
 from media_widget.models import StickerImage
 from invite.models import Invitation
+from rah.models import Profile
 
 from brabeion import badges as badge_cache
 from brabeion.models import BadgeAward
@@ -63,3 +64,33 @@ def possibly_award_momentum_builder_badge(sender, instance, created, **kwargs):
     if created:
         badge_cache.possibly_award_badge('invited_a_friend', user=instance.user)
 models.signals.post_save.connect(possibly_award_momentum_builder_badge, sender=Invitation)
+
+def possibly_award_social_media_maven_badge(sender, instance, created, **kwargs):
+    if instance.twitter_access_token or instance.facebook_access_token:
+        badge_cache.possibly_award_badge('linked_social_account', user=instance.user)
+models.signals.post_save.connect(possibly_award_social_media_maven_badge, sender=Profile)
+
+def possibly_award_follow_through_badge(sender, instance, created, **kwargs):
+    badge_cache.possibly_award_badge('entered_commitment_card', user=instance.entered_by)
+models.signals.post_save.connect(possibly_award_follow_through_badge, sender=ContributorSurvey)
+
+def possibly_award_shout_out_badge(sender, instance, created, **kwargs):
+    if instance.twitter_share or instance.facebook_share:
+        badge_cache.possibly_award_badge('opted_to_share_activity', user=instance.user)
+models.signals.post_save.connect(possibly_award_shout_out_badge, sender=Profile)
+
+def possibly_award_storyteller_badge(sender, instance, created, **kwargs):
+    if instance.location and instance.building_type and instance.about and \
+            instance.get_profile().first_name and instance.get_profile().last_name:
+        badge_cache.possibly_award_badge('completed_profile', user=instance.user)
+models.signals.post_save.connect(possibly_award_storyteller_badge, sender=Profile)
+
+def possibly_award_dogged_badge(sender, instance, created, **kwargs):
+    if instance.is_completed and instance.date_committed:
+        badge_cache.possibly_award_badge('completed_a_commitment', user=instance.user)
+models.signals.post_save.connect(possibly_award_dogged_badge, sender=UserActionProgress)
+
+def possibly_award_unbelievable_badge(sender, instance, created, **kwargs):
+    if instance.is_completed:
+        badge_cache.possibly_award_badge('completed_an_action', user=instance.user)
+models.signals.post_save.connect(possibly_award_unbelievable_badge, sender=UserActionProgress)

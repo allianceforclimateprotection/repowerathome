@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.comments.models import Comment
 
 from actions.models import Action, UserActionProgress
+from commitments.models import ContributorSurvey
 
 from brabeion import badges as badge_cache
 from brabeion.base import Badge, BadgeAwarded
@@ -91,7 +92,7 @@ class GiftOfGabBadge(Badge):
     name = 'Gift Of Gab'
     description = '''
         <ul>
-            <li>Bronze: Left one comment or question<li>
+            <li>Bronze: Left one comment or question</li>
             <li>Silver: Left 5 comments or questions</li>
             <li>Gold: Left 15 comments or questions</li>
         </ul>
@@ -160,3 +161,116 @@ class MomentumBuilderBadge(Badge):
     def award(self, **state):
         return BadgeAwarded()
 badge_cache.register(MomentumBuilderBadge)
+
+class SocialMediaMavenBadge(Badge):
+    events = ['linked_social_account']
+    multiple = False
+    levels = ['Silver', 'Gold']
+    slug = 'social-media-maven-badge'
+    name = 'Social Media Maven'
+    description = '''
+        <ul>
+            <li>Silver: Linked Twitter or Facebook account to Repower at Home</li>
+            <li>Gold: Linked both Twitter and Facebook accounts to Repower at Home</li>
+        </ul>
+    '''
+
+    def award(self, **state):
+        user = state['user']
+        profile = user.get_profile()
+        if profile.twitter_access_token and profile.facebook_access_token:
+            return BadgeAwarded(level=2)
+        if profile.twitter_access_token or profile.facebook_access_token:
+            return BadgeAwarded(level=1)
+badge_cache.register(SocialMediaMavenBadge)
+
+class FollowThroughBadge(Badge):
+    events = ['entered_commitment_card']
+    multiple = False
+    levels = ['Bronze', 'Silver', 'Gold']
+    slug = 'follow-through-badge'
+    name = 'Follow Through'
+    description = '''
+        <ul>
+            <li>Bronze: Entered 5 commitment cards</li>
+            <li>Silver: Entered 15 commitment cards</li>
+            <li>Gold: Entered 30 commitment cards</li>
+        </ul>
+    '''
+
+    def award(self, **state):
+        user = state['user']
+        num_of_surveys = ContributorSurvey.objects.filter(entered_by=user).count()
+        if num_of_surveys >= 30:
+            return BadgeAwarded(level=3)
+        elif num_of_surveys >= 15:
+            return BadgeAwarded(level=2)
+        elif num_of_surveys >= 5:
+            return BadgeAwarded(level=1)
+badge_cache.register(FollowThroughBadge)
+
+class ShoutOutBadge(Badge):
+    events = ['opted_to_share_activity']
+    multiple = False
+    levels = ['']
+    slug = 'shout-out-badge'
+    name = 'Shout Out'
+    description = 'Opted to automatically share activity on Twitter or Facebook'
+
+    def award(self, **state):
+        return BadgeAwarded()
+badge_cache.register(ShoutOutBadge)
+
+class StorytellerBadge(Badge):
+    events = ['completed_profile']
+    multiple = False
+    levels = ['']
+    slug = 'storyteller-badge'
+    name = 'StoryTeller'
+    description = 'Completed profile'
+
+    def award(self, **state):
+        return BadgeAwarded()
+badge_cache.register(StorytellerBadge)
+
+class DoggedBadge(Badge):
+    events = ['completed_a_commitment']
+    multiple = False
+    levels = ['Bronze', 'Silver', 'Gold']
+    slug = 'dogged-badge'
+    name = 'Dogged'
+    description = '''
+        <ul>
+            <li>Bronze: Completed one commitment</li>
+            <li>Silver: Completed 3 commitments</li>
+            <li>Gold: Completed 5 commitments</li>
+        </ul>
+    '''
+
+    def award(self, **state):
+        user = state['user']
+        num_dogged_actions = UserActionProgress.objects.filter(user=user, is_completed=True, 
+                date_committed__isnull=False).count()
+        if num_dogged_actions >= 5:
+            return BadgeAwarded(level=3)
+        elif num_dogged_actions >= 3:
+            return BadgeAwarded(level=2)
+        elif num_dogged_actions:
+            return BadgeAwarded(level=1)
+badge_cache.register(DoggedBadge)
+
+class UnbelievableBadge(Badge):
+    events = ['completed_an_action']
+    multiple = False
+    levels = ['']
+    slug = 'unbelievable-badge'
+    name = 'Unbelievable'
+    description = 'Completed all the home energy actions'
+
+    def award(self, **state):
+        user = state['user']
+        num_of_actions = Action.objects.all().count()
+        num_of_completed = UserActionProgress.objects.filter(user=user, is_completed=True)
+        if num_of_actions == num_of_completed:
+            return BadgeAwarded()
+badge_cache.register(UnbelievableBadge)

@@ -9,7 +9,7 @@
     <div class="box_three_top"></div>
     <div class="box_three_middle">
         <h1>{{ badge.name }}</h1>
-        <h4>{{ badge.description }}</h4>
+        <h4>{{ badge.description|safe }}</h4>
     </div>
     <div class="box_three_bottom"></div>
 {% endblock %}
