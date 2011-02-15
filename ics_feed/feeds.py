@@ -19,9 +19,24 @@ class CombinedICSFeed(ICalendarFeed):
         actions = UserActionProgress.objects.filter(date_committed__gte=today, date_committed__lte=one_week_later)
 
         # Map the models to IcsEvent
-        mapped_events = [IcsEvent("Event"+str(i.id), i.title, i.start_datetime(),end=i.start_datetime()+timedelta(hours=i.duration) ) for i in events]
+        mapped_events = [IcsEvent("Event"+str(i.id), i.title, *self._get_event_times(i)) for i in events]
         mapped_actions= [IcsEvent("Actions"+str(i.id), i.action, i.date_committed) for i in actions]
 
         # Combine the lists.  FIXME: This is inefficient... 
         combined_items = list(chain(mapped_events, mapped_actions))
         return combined_items 
+
+
+    def _get_event_times(self, event):
+        """Returns the event's end time using it's start_datetime() and duration attributes.
+        Note: End might be none if no duration was set.
+           """
+        start = event.start_datetime()
+
+        if event.duration: 
+            duration_in_minutes = event.duration
+            end = start + timedelta(minutes=duration_in_minutes)
+        else:
+            end = None 
+
+        return (start, end)
