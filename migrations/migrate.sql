@@ -430,3 +430,100 @@ WHERE ct.app_label = 'threadedcomments' AND ct.model = 'threadedcomment';
 -- Feature two communities for the home page --
 UPDATE `groups_group` SET `is_featured`='1' WHERE `id`='106';
 UPDATE `groups_group` SET `is_featured`='1' WHERE `id`='1141';
+
+--create action badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT uap.user_id, NOW(), CONCAT(a.slug, '-action-badge'), 0
+FROM actions_useractionprogress uap
+JOIN actions_action a ON uap.action_id = a.id
+WHERE uap.is_completed = 1;
+
+--create trendsetter badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT cn.user_id, NOW(), 'trendsetter-badge', 0
+FROM commitments_commitment cm
+JOIN commitments_contributor cn ON cm.contributor_id = cn.id
+WHERE cm.question = 'pledge' AND cm.answer = 'True' AND cn.user_id IS NOT NULL;
+
+--create hosting hero badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT DISTINCT e.creator_id, NOW(), 'hosting-hero-badge', 0
+FROM events_event e;
+
+--create gift of gab badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT c.user_id, NOW(), 'gift-of-gab', 
+CASE 
+    WHEN COUNT(c.user_id) >= 15 THEN 3
+    WHEN COUNT(c.user_id) >= 5 THEN 2
+    ELSE 1
+END
+FROM django_comments c
+GROUP BY c.user_id;
+
+--create paparazzi badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT DISTINCT u.id, NOW(), 'paparazzi-badge', 0
+FROM media_widget_stickerimage s
+JOIN auth_user u on s.email = u.email;
+
+--create momentum builder badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT DISTINCT i.user_id, NOW(), 'momentum-builder-badge', 0
+FROM invite_invitation i;
+
+--create social media maven badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT p.user_id, NOW(), 'social-media-maven-badge',
+CASE
+    WHEN p.twitter_access_token IS NOT NULL AND p.facebook_access_token IS NOT NULL THEN 2
+    WHEN p.twitter_access_token IS NOT NULL OR p.facebook_access_token IS NOT NULL THEN 1
+END
+FROM rah_profile p
+WHERE p.twitter_access_token IS NOT NULL OR p.facebook_access_token IS NOT NULL;
+
+--create follow through badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT s.entered_by_id, NOW(), 'follow-through-badge',
+CASE
+    WHEN COUNT(s.entered_by_id) >= 30 THEN 3
+    WHEN COUNT(s.entered_by_id) >= 15 THEN 2
+    WHEN COUNT(s.entered_by_id) >= 5 THEN 1
+END
+FROM commitments_contributorsurvey s
+GROUP BY s.entered_by_id
+HAVING COUNT(s.entered_by_id) >= 5;
+
+--create shout out badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT p.user_id, NOW(), 'shout-out-badge', 0
+FROM rah_profile p
+WHERE p.twitter_share = 1 or p.facebook_share = 1;
+
+--create storyteller badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT p.user_id, NOW(), 'storyteller-badge', 0
+FROM rah_profile p
+JOIN auth_user u ON p.user_id = u.id
+WHERE p.location_id IS NOT NULL AND p.building_type IS NOT NULL AND p.about IS NOT NULL
+AND u.first_name != '' AND u.last_name != '';
+
+--create dogged badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT uap.user_id, NOW(), 'dogged-badge',
+CASE
+    WHEN COUNT(uap.user_id) >= 5 THEN 3
+    WHEN COUNT(uap.user_id) >= 3 THEN 2
+    ELSE 1
+END
+FROM actions_useractionprogress uap
+WHERE uap.is_completed = 1 AND uap.date_committed IS NOT NULL
+GROUP BY uap.user_id;
+
+--create unbelievable badges
+INSERT INTO brabeion_badgeaward (user_id, awarded_at, slug, level)
+SELECT uap.user_id, NOW(), 'unbelievable-badge', 0
+FROM actions_useractionprogress uap
+WHERE uap.is_completed = 1
+GROUP BY uap.user_id
+HAVING COUNT(uap.user_id) = (SELECT COUNT(*) FROM actions_action);
