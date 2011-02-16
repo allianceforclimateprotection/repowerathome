@@ -25,11 +25,13 @@ class ActionBadge(Badge):
                 is_completed=True).exists():
             return BadgeAwarded()
 
-    def name(self):
+    def get_name(self):
         return self.action.name
+    name = property(get_name)
 
-    def description(self):
+    def get_description(self):
         return 'Completed %s action' % self.action.name
+    description = property(get_description)
 
     def __unicode__(self):
         return self.slug
@@ -89,7 +91,7 @@ class GiftOfGabBadge(Badge):
     multiple = False
     levels = ['Bronze', 'Silver', 'Gold']
     slug = 'gift-of-gab-badge'
-    name = 'Gift Of Gab'
+    name = 'Gift of Gab'
     description = '''
         <ul>
             <li>Bronze: Left one comment or question</li>
