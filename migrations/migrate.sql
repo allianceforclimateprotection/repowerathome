@@ -410,3 +410,18 @@ UPDATE `groups_group` SET `lat`='39.9403453', `lon`='-82.0131924' WHERE `id`='14
 UPDATE `groups_group` SET `lat`='33.6839473', `lon`='-117.7946942' WHERE `id`='1487';
 UPDATE `groups_group` SET `lat`='39.1637984', `lon`='-119.7674034' WHERE `id`='1503';
 UPDATE `groups_group` SET `lat`='38.8951118', `lon`='-77.0363658' WHERE `id`='1522';
+
+-- Migrate comments to threadedcomments --
+INSERT INTO threadedcomments_comment (comment_ptr_id, title, parent_id, last_child_id, tree_path)
+SELECT id, '', NULL, NULL, LPAD(id, 10, '0')
+FROM django_comments;
+
+-- Attach all of the previsous ratings to the new threadedcomments --
+UPDATE rateable_ratings r, django_content_type ct
+SET r.content_type_id = ct.id
+WHERE ct.app_label = 'threadedcomments' AND ct.model = 'threadedcomment';
+
+-- Attach all of the previous flags to the new threadedcomments --
+UPDATE flagged_flags f, django_content_type ct
+SET f.content_type_id = ct.id
+WHERE ct.app_label = 'threadedcomments' AND ct.model = 'threadedcomment';

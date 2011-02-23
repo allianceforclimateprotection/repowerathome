@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     'commitments',
     'codebase',
     'media_widget',
+    'threadedcomments',
 )
 
 FIXTURE_DIR = ('fixtures',)
@@ -166,6 +167,8 @@ POSTMARK_SENDER = 'noreply@repowerathome.com'
 
 CODEBASE_PROJECT_URL = 'https://api3.codebasehq.com/rah'
 CODEBASE_USERNAME = 'rah/macgruber'
+
+COMMENTS_APP = 'threadedcomments'
 
 # Date defaults
 DATETIME_FORMAT = "N j, Y, P"

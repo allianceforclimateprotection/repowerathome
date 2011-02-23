@@ -1,11 +1,11 @@
-{% load comments %}
+{% load threadedcomments_tags %}
 
 {% if request.user.is_authenticated %}
     <h2 id="comments_form_heading">Leave a comment</h2>
     {% if object %}
         {% get_comment_form for object as form %}
     {% endif %}
-    <form id="comment_form" action="{% comment_form_target %}" method="post">
+    <form id="comment_form" action="{% url comments-post-comment %}" method="post">
         <div>
         {% for field in form %}
             {% if field.is_hidden %}
