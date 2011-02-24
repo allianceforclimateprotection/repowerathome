@@ -96,6 +96,11 @@
             name: "pages/group.list",
             exclude: ["pages/base"],
             include: ["mods/search"]
+        },
+        {
+            name: "pages/action.detail",
+            exclude: ["pages/base"],
+            include: ["mods/comments", "libs/jquery.qtip"]
         }
     ]
 })

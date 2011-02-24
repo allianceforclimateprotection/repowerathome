@@ -1,8 +1,0 @@
-{% load ratings %}
-{% get_rating_count for content_object as users_voted %}
-{% get_rating_sum for content_object as users_helped %}
-
-{
-    "messages": "{% filter jsonify %}{% include '_messages.html' %}{% endfilter %}",
-    "users_voted_stats": "<span class=\"users_helped\">{{ users_helped }}</span> of <span class=\"users_voted\">{{ users_voted }}</span> liked this"
-}
