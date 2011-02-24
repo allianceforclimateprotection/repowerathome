@@ -5,7 +5,7 @@ from django.conf.urls.defaults import *
 from actions import admin as actions_admin
 from basic.blog import admin as blog_admin
 from rah import admin as rah_admin
-from rah.feeds import UserActivityFeed
+from rah.feeds import UserActivityFeed, CommentsFeed
 from geo import admin as geo_admin
 from groups import admin as groups_admin
 from tagging import admin as tagging_admin
@@ -104,6 +104,7 @@ urlpatterns += patterns('',
     url(r'^codebase/', include('codebase.urls')),
     url(r'^admin/', include(admin.site.urls), name='admin_root'),
     url(r'^icalfeed/', CombinedICSFeed(), name='ical_feed'),
+    url(r'comments/(?P<content_type_id>\d+)/(?P<object_pk>\d+)/feed/$', CommentsFeed(), name='comments_feed'),
 )
 
 if settings.DEBUG:

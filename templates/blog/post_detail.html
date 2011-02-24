@@ -3,6 +3,11 @@
 {% load dated_static %}
 
 {% block title %}{{ object.title }}{% endblock %}
+{% block extrahead %}
+    {% get_content_type_id for object as content_type_id %}
+    <link rel="alternate" type="application/atom+xml" href="{% url comments_feed content_type_id,object.id %}" 
+        title="{{ object }} comments feed" />
+{% endblock %}
 
 {% block content_title %}
     <h2>{{ object.title }}</h2>
@@ -45,6 +50,8 @@
     <div class="box_three_bottom"></div>
     <br class="clear"/>
     <div id="comments">
+        {% get_content_type_id for object as content_type_id %}
+        <a class="atom_link" href="{% url comments_feed content_type_id,object.id %}">{{ object }} comments feed</a>
         {% render_comment_list for object %}
         <br class="clear"/>
         {% render_comment_form for object %}
