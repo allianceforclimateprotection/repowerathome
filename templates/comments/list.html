@@ -5,7 +5,7 @@
 {% get_comment_list for object as comments %}
 {% if comments %}
     <h2 id="comments_heading">What people are saying</h2>
-    {% for comment in comments %}
+    {% for comment in comments|annotate_tree %}
         <div class="grid_6 alpha comment_wrapper" id="c{{ comment.id }}">
             <div class="box_two_top"></div>
             <div class="box_two_middle comment">
@@ -15,7 +15,7 @@
             <span class="point"></span>
             <div class="comment_tools">
                 <span class="comment_date">
-                    {{ comment.submit_date|date:"DATETIME_FORMAT" }}
+                    {{ comment.submit_date|timesince }}
                 </span>
                 <div class="comment_buttons">
                     {% get_rating_count for comment as users_voted %}
@@ -41,5 +41,36 @@
             </div>
         </div>
         <br class="clear" />
+        {#  
+            only display the comment response form if this comment has no children
+            or
+            this is the last child in the tree
+        #}
+        {% if not comment.parent and not comment.last_child_id or comment.parent and comment.last %}
+            {% get_comment_form for object as response_form with comment.id %}
+            <form action="{% url comments-post-comment %}" method="post">
+                <div>
+                    {% for field in response_form %}
+                        {% if field.is_hidden %}
+                            {{ field }}
+                        {% else %}
+                            {% if field.name == "honeypot" %}
+                                <p style="display: none;">{{ field }}</p>
+                            {% else %}
+                                {% if field.name == "comment" %}
+                                    {% if field.errors %}{{ field.errors }}{% endif %}
+                                    <p class="form_row {% if field.errors %}error {% endif %}">
+                                        {{ field }}
+                                    </p>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ object.get_absolute_url }}{% endif %}" />
+                    <input type="submit" value="ADD YOUR COMMENT" id="add_comment_submit" />
+                    {% csrf_token %}
+                </div>
+            </form>
+        {% endif %}
     {% endfor %}
 {% endif %}
