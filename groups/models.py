@@ -351,9 +351,12 @@ def update_discussion_reply_count(sender, instance, **kwargs):
         parent.save()
 
 def update_group_member_count(sender, instance, **kwargs):
-    group = Group.objects.get(pk=instance.group.id)
-    group.member_count = GroupUsers.objects.filter(group=group).count()
-    group.save()
+    try:
+        group = instance.group
+        group.member_count = GroupUsers.objects.filter(group=group).count()
+        group.save()
+    except Group.DoesNotExist:
+        pass #in case the group was just deleted
 
 def alert_users_of_discussion(sender, instance, **kwargs):
     if instance.is_public and not instance.is_removed and not instance.reply_count:
