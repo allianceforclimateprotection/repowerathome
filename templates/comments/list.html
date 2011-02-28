@@ -41,36 +41,38 @@
             </div>
         </div>
         <br class="clear" />
-        {#  
+        {% comment %}
             only display the comment response form if this comment has no children
             or
             this is the last child in the tree
-        #}
+        {% endcomment %}
         {% if not comment.parent and not comment.last_child_id or comment.parent and comment.last %}
-            {% get_comment_form for object as response_form with comment.id %}
-            <form action="{% url comments-post-comment %}" method="post">
-                <div>
-                    {% for field in response_form %}
-                        {% if field.is_hidden %}
-                            {{ field }}
-                        {% else %}
-                            {% if field.name == "honeypot" %}
-                                <p style="display: none;">{{ field }}</p>
+            {% if request.user.is_authenticated %}
+                {% get_comment_form for object as response_form with comment.id %}
+                <form action="{% url comments-post-comment %}" method="post">
+                    <div>
+                        {% for field in response_form %}
+                            {% if field.is_hidden %}
+                                {{ field }}
                             {% else %}
-                                {% if field.name == "comment" %}
-                                    {% if field.errors %}{{ field.errors }}{% endif %}
-                                    <p class="form_row {% if field.errors %}error {% endif %}">
-                                        {{ field }}
-                                    </p>
+                                {% if field.name == "honeypot" %}
+                                    <p style="display: none;">{{ field }}</p>
+                                {% else %}
+                                    {% if field.name == "comment" %}
+                                        {% if field.errors %}{{ field.errors }}{% endif %}
+                                        <p class="form_row {% if field.errors %}error {% endif %}">
+                                            {{ field }}
+                                        </p>
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                    <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ object.get_absolute_url }}{% endif %}" />
-                    <input type="submit" value="ADD YOUR COMMENT" id="add_comment_submit" />
-                    {% csrf_token %}
-                </div>
-            </form>
+                        {% endfor %}
+                        <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ object.get_absolute_url }}{% endif %}" />
+                        <input type="submit" value="Comment" id="add_comment_submit" />
+                        {% csrf_token %}
+                    </div>
+                </form>
+            {% endif %}
         {% endif %}
     {% endfor %}
 {% endif %}
