@@ -425,3 +425,8 @@ WHERE ct.app_label = 'threadedcomments' AND ct.model = 'threadedcomment';
 UPDATE flagged_flags f, django_content_type ct
 SET f.content_type_id = ct.id
 WHERE ct.app_label = 'threadedcomments' AND ct.model = 'threadedcomment';
+
+
+-- Feature two communities for the home page --
+UPDATE `groups_group` SET `is_featured`='1' WHERE `id`='106';
+UPDATE `groups_group` SET `is_featured`='1' WHERE `id`='1141';
