@@ -17,7 +17,7 @@ from rah.signals import logged_in
 
 class ActionManager(models.Manager):
     
-    def get_popular(self, count=5):
+    def get_popular(self, count=6):
         # Returns the most popular actions where popularity is defined as the sum of completed and commited users
         # TODO: Write a unit test for get_popular
         actions = Action.objects.all()

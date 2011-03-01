@@ -1,0 +1,21 @@
+{% extends "base/nav.html" %}
+{% block content_9c %}
+<div id="content_9c">
+    <div id="title_bar_9c">
+        {% block title_bar %}
+            page header
+        {% endblock %}
+    </div>
+    <div class="ribbon_large">
+        {% block ribbon_bar %}
+            ribbon
+        {% endblock %}
+        <div class="ribbon_large_wrap"></div>
+    </div>
+    <div>
+        {% block content %}
+            major col
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

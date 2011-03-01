@@ -3,14 +3,19 @@
 require(["libs/webfont", "libs/jquery.ui", "libs/jquery.form", "libs/jquery.validation", "mods/feedback", "mods/messages", "mods/facebook"],
     function (webfont, ui, form, validation, feedback, messages, facebook) {
         // Setup TypeKit for non IE browsers
-        var browser = $.browser;
-        if (!browser.msie && !(browser.mozilla && browser.version.substr(0, 5) === "1.9.0")) {
-            WebFont.load({ typekit: { id: 'vbg1eri'}});
-        }
-        
+        //var browser = $.browser;
+        //if (!browser.msie && !(browser.mozilla && browser.version.substr(0, 5) === "1.9.0")) {
+            //WebFont.load({ 
+                //typekit: { 
+                    //id: 'vbg1eri',
+                    //api: (('https:' === document.location.protocol) ? 'https:' : 'http:') + "//use.typekit.com"
+                //}
+            //});
+        //}
+
         // setup buttons
-        $("button, input:submit, a.button, input.button").button();
-        $(".buttonset").buttonset();
+        //$("button, input:submit, a.button, input.button").button();
+        //$(".buttonset").buttonset();
         
         // Setup datepicker
         $(".datepicker").datepicker();
@@ -23,20 +28,6 @@ require(["libs/webfont", "libs/jquery.ui", "libs/jquery.form", "libs/jquery.vali
         if (typeof(rah_nav_select) !== 'undefined' && rah_nav_select !== '') {
             $("#" + rah_nav_select).addClass("selected");
         }
-        $("#nav a").text("");
-
-        // style some submit buttons as links
-        $(".as_link[type='submit']").each(function () {
-            var button = $(this);
-            var link = $("<a/>")
-                .text(button.val())
-                .attr("href", "#")
-                .click(function () {
-                    button.parents("form").submit();
-                    return false;
-                });
-            button.replaceWith(link);
-        });
         
         $.ajaxSetup({
             error: function (XMLHttpRequest, textStatus) { 
@@ -56,11 +47,6 @@ require(["libs/webfont", "libs/jquery.ui", "libs/jquery.form", "libs/jquery.vali
             submitHandler: function (form) {
                 form.submit();
             }
-        });
-
-        $(".chart_link").click(function () {
-            $.getScript($(this).attr("href"));
-            return false;
         });
 
         messages.setup();

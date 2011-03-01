@@ -1,0 +1,38 @@
+{% extends "base/nav.html" %}
+{% block content_9c %}
+    <div id="breadcrumbs">
+        {% block breadcrumbs %}
+            breadcrumbs
+        {% endblock %}
+    </div>
+    <div id="title_bar">
+        <div class="grid_5 alpha">
+            {% block title_bar_sub %}{% endblock %}
+            <h1>{% block title_bar %}{% endblock %}</h1>
+        </div>
+        {% block title_bar_floaters %}{% endblock %}
+        <!--<div class="title_bar_floater floater_double">-->
+            <!--<div class="floater_body"></div>-->
+        <!--</div>-->
+
+        <div id="title_bar_bottom_shadow"></div>
+    </div>
+    <div class="tab_nav">
+        {% block tab_nav %}
+        {% endblock %}
+    </div>
+    <div class="grid_6 alpha">
+        <div id="content_6c">
+        {% block content %}
+            major col
+        {% endblock %}
+        </div>
+    </div>
+    <div class="grid_3 omega">
+        <div id="sidebar">
+        {% block sidebar %}
+            sidebar
+        {% endblock %}
+        </div>
+    </div>
+{% endblock %}

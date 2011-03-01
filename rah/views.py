@@ -42,46 +42,45 @@ from messaging.forms import StreamNotificationsForm
 
 from decorators import save_queued_POST
 from signals import logged_in
-    
+
 def _total_trendsetters():
     return (Profile.objects.all().count()) + \
         (Contributor.objects.filter(user__isnull=True).count() or 0)
-        
+
 def _total_points():
     return (Profile.objects.all().aggregate(Sum("total_points"))["total_points__sum"] or 0) + \
         (Action.objects.filter(commitment__answer="D", commitment__contributor__user__isnull=True).aggregate(
             Sum("points"))["points__sum"] or 0) 
-    
+
 def _total_actions():
     return (Record.objects.filter(void=False, activity=1).count() or 0) + \
         (Commitment.objects.filter(answer="D", action__isnull=False, contributor__user__isnull=True).count() or 0)
-        
+
 def _total_commitment_cards():
     return (ContributorSurvey.objects.all().count())
-    
+
 def _total_communities():
     return (Group.objects.filter(is_geo_group=False).count() or 0)
-    
+
 def _total_events():
     return (Event.objects.filter(when__lte=datetime.now()).count() or 0)
-    
+
 
 def _progress_stats():
     progress_stats = cache.get('progress_stats')
     if progress_stats:
         return progress_stats
     else:
-        progress_stats = {}  
-        locale.setlocale(locale.LC_ALL, LOCALE)
-        progress_stats['total_trendsetters'] = locale.format('%d', _total_trendsetters(), True)
-        progress_stats['total_points'] = locale.format('%d', _total_points(), True)
-        progress_stats['total_actions'] = locale.format('%d', _total_actions(), True)
-        progress_stats['total_commitment_cards'] = locale.format('%d', _total_commitment_cards(), True)
-        progress_stats['total_communities'] = locale.format('%d', _total_communities(), True)
-        progress_stats['total_events'] = locale.format('%d', _total_events(), True)
+        progress_stats = {}
+        progress_stats['total_trendsetters'] = _total_trendsetters()
+        progress_stats['total_points'] = _total_points()
+        progress_stats['total_actions'] = _total_actions()
+        progress_stats['total_commitment_cards'] = _total_commitment_cards()
+        progress_stats['total_communities'] = _total_communities()
+        progress_stats['total_events'] = _total_events()
         cache.set('progress_stats', progress_stats, 60 * 5)
         return progress_stats
-    
+
 def _vampire_power_leaderboards():
     key = 'vampire_hunt_leaderboards'
     vamp_stats = cache.get(key, {})
@@ -134,7 +133,7 @@ def _vampire_power_slayers():
         cache.set(key, vamp_stats, 60 * 5)
 
     return vamp_stats
-    
+
 @csrf_protect
 def index(request):
     """
@@ -143,7 +142,7 @@ def index(request):
     # If the user is not logged in, show them the logged out homepage and bail
     if not request.user.is_authenticated():
         return logged_out_home(request)
-    
+
     recommended, committed, completed = Action.objects.actions_by_status(request.user)[1:4]
     twitter_status_form = TwitterStatusForm(initial={
         "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com/"
@@ -153,9 +152,9 @@ def index(request):
     my_events = Event.objects.filter(guest__contributor__user=request.user)
     records = Record.objects.user_records(request.user, 10)
     pledge_card_count = ContributorSurvey.objects.filter(entered_by=request.user).count()
-    
+
     locals().update(_progress_stats())
-    
+
     try:
         contributor = Contributor.objects.get(user=request.user)
     except Contributor.DoesNotExist:
@@ -167,9 +166,11 @@ def index(request):
     return render_to_response('rah/home_logged_in.html', locals(), context_instance=RequestContext(request))
 
 def logged_out_home(request):
+    section_class = "section_home"
     # blog_posts = Post.objects.filter(status=2)[:3]
     # pop_actions = Action.objects.get_popular(count=5)
-    top_communities = Group.objects.filter(is_geo_group=False).order_by("-member_count")[:4]
+    top_users = Profile.objects.filter(is_profile_private=False, location__isnull=False, facebook_connect_only=True).select_related("user").order_by("-total_points")[:6]
+    top_communities = Group.objects.filter(is_featured=True).order_by("-member_count")[:2]
     locals().update(_progress_stats())
     contributor_form = ContributorForm()
     pledge_card_form = PledgeCard(None, None)
@@ -185,15 +186,15 @@ def logout(request):
     auth.logout(request)
     messages.success(request, "You have successfully logged out.", extra_tags="sticky")
     return redirect("index")
-    
+
 def password_change_done(request):
     messages.success(request, "Your password was changed successfully.", extra_tags="sticky")
     return redirect("profile_edit", user_id=request.user.id)
-    
+
 def password_reset_done(request):
     messages.success(request, "We just sent you an email with instructions for resetting your password.", extra_tags="sticky")
     return redirect("index")
-    
+
 def password_reset_complete(request):
     messages.success(request, "Password reset successfully!", extra_tags="sticky")
     return redirect("index")
@@ -211,18 +212,18 @@ def register(request, template_name="registration/register.html"):
         logged_in.send(sender=None, request=request, user=user, is_new_user=True)
         auth.login(request, user)
         save_queued_POST(request)
-        
+
         # Light security check -- make sure redirect_to isn't garbage.
         if not redirect_to or ' ' in redirect_to:
             redirect_to = settings.LOGIN_REDIRECT_URL
-        
+
         # Heavier security check -- redirects to http://example.com should 
         # not be allowed, but things like /view/?param=http://example.com 
         # should be allowed. This regex checks if there is a '//' *before* a
         # question mark.
         elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
             redirect_to = settings.LOGIN_REDIRECT_URL
-                
+
         return HttpResponseRedirect(redirect_to)
     return render_to_response(template_name, {
         'user_form': user_form,
@@ -238,28 +239,28 @@ def login(request, template_name='registration/login.html',
     """Displays the login form and handles the login action."""
 
     redirect_to = request.REQUEST.get(redirect_field_name, '')
-    
+
     if request.method == "POST":
         form = authentication_form(data=request.POST)
         if form.is_valid():
             # Light security check -- make sure redirect_to isn't garbage.
             if not redirect_to or ' ' in redirect_to:
                 redirect_to = settings.LOGIN_REDIRECT_URL
-            
+
             # Heavier security check -- redirects to http://example.com should 
             # not be allowed, but things like /view/?param=http://example.com 
             # should be allowed. This regex checks if there is a '//' *before* a
             # question mark.
             elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
                 redirect_to = settings.LOGIN_REDIRECT_URL
-            
+
             # Okay, security checks complete. Log the user in.
             user = form.get_user()
             logged_in.send(sender=None, request=request, user=user, is_new_user=False)
             auth.login(request, user)
             save_queued_POST(request)
             messages.add_message(request, GA_TRACK_PAGEVIEW, '/login/success')
-            
+
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
 
@@ -267,14 +268,14 @@ def login(request, template_name='registration/login.html',
 
     else:
         form = authentication_form(request)
-    
+
     request.session.set_test_cookie()
 
     if Site._meta.installed:
         current_site = Site.objects.get_current()
     else:
         current_site = RequestSite(request)
-    
+
     return render_to_response(template_name, {
         'login_form': form,
         'register_form': RegistrationForm(),
@@ -288,7 +289,7 @@ def profile(request, user_id):
     profile = user.get_profile()
     if request.user <> user and user.get_profile().is_profile_private:
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
-        
+
     recommended, committed, completed = Action.objects.actions_by_status(user)[1:4]
     return render_to_response('rah/profile.html', {
         'profile_user': user,
@@ -306,13 +307,13 @@ def profile(request, user_id):
 def profile_edit(request, user_id):
     if request.user.id <> int(user_id):
         return forbidden(request, "Sorry, but you do not have permissions to edit this profile.")
-    
+
     profile = request.user.get_profile()
     account_form = AccountForm(instance=request.user)
     profile_form = ProfileEditForm(instance=profile)
     group_notifications_form = GroupNotificationsForm(user=request.user)
     stream_notifications_form = StreamNotificationsForm(user=request.user)
-    
+
     if request.method == 'POST':
         if "edit_account" in request.POST:
             profile_form = ProfileEditForm(request.POST, instance=profile)
@@ -349,16 +350,16 @@ def feedback(request):
         if form.is_valid():
             feedback = form.save()
             form.send(request)
-            
+
             # Add the logged in user to the record
             if request.user.is_authenticated():
                 feedback.user = request.user
                 feedback.save()
-                
+
             messages.success(request, 'Thank you for the feedback.')
     else:
         form = FeedbackForm(initial={ 'url': request.META.get('HTTP_REFERER'), })
-    
+
     if request.is_ajax():
         if request.method == 'POST':
             message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))
@@ -366,7 +367,7 @@ def feedback(request):
         template = 'rah/_feedback.html'
     else:
         template = 'rah/feedback.html'
-        
+
     return render_to_response(template, { 'feedback_form': form, }, context_instance=RequestContext(request))
 
 def validate_field(request):
@@ -374,7 +375,7 @@ def validate_field(request):
     # Must be called with an AJAX request
     if not request.is_ajax():
         return forbidden(request)
-    
+
     valid = False
 
     # Valid if there are no other users using that email address
@@ -385,16 +386,16 @@ def validate_field(request):
             valid = True
         if request.user.is_authenticated() and request.user.email == email:
             valid = True
-    
+
     # Valid if zipcode is in our location table
     elif request.POST.get("zipcode"):
         if request.POST.get("zipcode").isdigit() and len(request.POST.get("zipcode")) == 5:
             location = Location.objects.filter(zipcode__exact = request.POST.get("zipcode"))
             if location:
                 valid = True
-    
+
     return HttpResponse(json.dumps(valid))
-    
+
 def house_party(request):
     if request.method == 'POST':
         form = HousePartyForm(user=request.user, data=request.POST)
@@ -403,14 +404,14 @@ def house_party(request):
                 Record.objects.create_record(request.user, 'mag_request_party_host_info')
             messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
     return redirect('event-show')
-    
+
 def vampire_hunt(request):
     locals().update(_vampire_power_slayers())
     locals().update(_vampire_power_leaderboards())
     if request.user.is_authenticated():
         my_contributors = Contributor.objects.filter(contributorsurvey__entered_by=request.user).count()
     return render_to_response('rah/vampire_hunt.html', locals(), context_instance=RequestContext(request))
-    
+
 def trendsetter_sticker(request):
     from media_widget.forms import StickerImageUpload
     from media_widget.models import StickerImage
@@ -428,7 +429,7 @@ def ga_opt_out(request):
 def comment_message(sender, comment, request, **kwargs):
     messages.add_message(request, messages.SUCCESS, 'Thanks for the comment.')
 comments.signals.comment_was_posted.connect(comment_message)
-    
+
 def forbidden(request, message="You do not have permissions."):
     from django.http import HttpResponseForbidden
     return HttpResponseForbidden(loader.render_to_string('403.html', { 'message':message, }, RequestContext(request)))

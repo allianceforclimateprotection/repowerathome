@@ -12,9 +12,8 @@ def _send_codebase(path, data=None):
     account = match.group(2)
     domain = "api3.%s" % match.group(1)
     project = match.group(3)
-    username = local("git config codebase.username").strip()
-    api_key = local("git config codebase.apikey").strip()
-    
+    username = local("git config codebase.username", capture=True).strip()
+    api_key = local("git config codebase.apikey", capture=True).strip()
     url = "https://%s/%s%s" % (domain, project, path)
     headers = {"Content-type": "application/xml", "Accept": "application/xml", 
         "Authorization": "Basic %s" % base64.b64encode("%s/%s:%s" % (account, username, api_key))}

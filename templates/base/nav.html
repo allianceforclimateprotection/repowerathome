@@ -1,0 +1,68 @@
+{% extends "base/base.html" %}
+{% block 12c_content %}
+<div class="grid_3 alpha omega">
+    <div id="nav">
+        {% if user.is_authenticated %}
+            <div id="profile_picture">
+                <img src="{{ user.get_profile.profile_picture_large }}" alt="Your profile picture" width="200"/>
+            </div>
+            <div>
+                <a href="{% url profile user.id %}" title="View your profile">{{user.get_full_name }}</a>
+            </div>
+            {% if user.get_profile.location %}
+                <div>
+                    {{ user.get_profile.location }}
+                </div>
+            {% endif %}
+            {{ user.get_profile.total_points }}<span> points</span>
+        {% else %}
+        {#Not logged in!#}
+        {% endif %}
+        <ul id="nav_primary" class="plain_list">
+            <li class="{% ifequal nav_selected "actions" %}nav_selected{% endifequal %}">
+                <a href="{% url action_show %}">Actions</a>
+                <div class="nav_pointer_wrap"></div>
+            </li>
+            <li class="{% ifequal nav_selected "communities" %}nav_selected{% endifequal %}">
+                <a href="{% url group_list %}">Communities</a>
+                <div class="nav_pointer_wrap"></div>
+            </li>
+            <li class="{% ifequal nav_selected "challenges" %}nav_selected{% endifequal %}">
+                <a href="">Challenges</a>
+                <div class="nav_pointer_wrap"></div>
+            </li>
+            <li class="{% ifequal nav_selected "events" %}nav_selected{% endifequal %}">
+                <a href="{% url event-show %}">Events</a>
+                <div class="nav_pointer_wrap"></div>
+            </li>
+            <li class="{% ifequal nav_selected "badges" %}nav_selected{% endifequal %}">
+                <a href="">Badges</a>
+                <div class="nav_pointer_wrap"></div>
+            </li>
+        </ul>
+        {% if user.is_authenticated %}        
+            <ul id="nav_secondary" class="plain_list">
+                <li>
+                    <a href="">My Calendar</a>
+                </li>
+                <li>
+                    <a href="">My Profile / Settings</a>
+                </li>
+                <li>
+                    <a href="">Invite Friends</a>
+                </li>
+                <li>
+                    <a href="">Enter Commitment Cards</a>
+                </li>
+                <li id="nav_logout_link">
+                    <a href="{% url logout %}">Log Out</a>
+                </li>
+            </ul>
+        {% endif %}
+    </div>
+</div>
+<div class="grid_9 alpha omega" id="content_9c_container">
+    {% block content_9c %}
+    {% endblock %}
+</div>
+{% endblock %}

@@ -11,7 +11,7 @@ class UserNode(template.Node):
         if len(tokens) != 2:
             raise template.TemplateSyntaxError("Only 2 arguments needed for %s, the second should be a user" % tokens[0])
         return parser.compile_filter(tokens[1])
-    
+
     def __init__(self, user_expr):
         self.user_expr = user_expr
 
@@ -41,17 +41,17 @@ def safe_user_link(parser, token):
     """
     user_expr = UserNode.parse(parser, token)
     return UserNode(user_expr)
-    
+
 @register.filter
 @template.defaultfilters.stringfilter
 def deslug(value):
     return value.title().replace('_', ' ').replace('-', ' ')
-    
+
 @register.filter
 @template.defaultfilters.stringfilter
 def jsonify(value):
     return value.replace("\n", " ").replace('"', '\\"')
-    
+
 @register.filter
 def truncate(value, length, killwords=False, end='...'):
     value = unicode(value)

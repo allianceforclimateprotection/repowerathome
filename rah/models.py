@@ -28,11 +28,11 @@ class Feedback(models.Model):
 
     def __unicode__(self):
         return u'%s...' % (self.comment[:15])
-        
+
 class ProfileManager(models.Manager):
     def user_engagement(self, users=None, date_start=None, date_end=None):
         from django.db import connection, transaction
-        
+
         if not date_start:
             date_start = datetime.date.min
         if not date_end:
@@ -53,14 +53,14 @@ class ProfileManager(models.Manager):
                 AND DATE(`%s_uap`.updated) >= '%s' and DATE(`%s_uap`.updated) <= '%s'
             """ % (a.slug, a.slug, a.id, a.slug, a.slug, date_start, a.slug, date_end) for a in actions]
         users_filter = "WHERE u.id IN (%s)" % ",".join([str(u.pk) for u in users]) if users else ""
-            
+
         query_dict = {
             "action_cases": ", ".join(action_cases),
             "action_joins": " ".join(action_joins),
             "users_filter": users_filter,
             "date_start": date_start,
             "date_end": date_end
-        }    
+        }
         query = """
             SELECT u.id, u.first_name AS "first name", u.last_name AS "last name", u.email,
                 NULL AS phone, l.name AS city, l.st AS state, l.zipcode AS "zip code",
@@ -144,7 +144,7 @@ class Profile(models.Model):
     ask_to_share = models.BooleanField(default=True)
     total_points = models.IntegerField(default=0)
     objects = ProfileManager()
-    
+
     def __unicode__(self):
         return u'%s' % (self.user.email)
 
@@ -154,61 +154,63 @@ class Profile(models.Model):
         if cache_hit:
             return cache_hit
         else:
-            facebook_picture = facebook_profile(self.user, "square")
-            if facebook_picture:
-                profile_picture = facebook_picture
-            else:
+            try:
+                profile_picture = facebook_profile(self.user, "square")
+            except:
+                pass
+
+            if not profile_picture:
                 profile_picture = 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=52' % (self._email_hash(), default_icon)
-            
+
             # Cache the profile picture url for 6 hours
             cache.set(key, profile_picture, 60 * 60 * 6)
             return profile_picture
-    
+
     def profile_picture_large(self, default_icon='identicon'):
         facebook_picture = facebook_profile(self.user, "large")
         if facebook_picture:
             return facebook_picture
-        return 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=189' % (self._email_hash(), default_icon)
+        return 'http://www.gravatar.com/avatar/%s?r=g&d=%s&s=200' % (self._email_hash(), default_icon)
 
     def _email_hash(self):
         return (hashlib.md5(self.user.email.lower()).hexdigest())
-        
+
     def potential_points(self):
         return UserActionProgress.objects.pending_commitments(user=self.user).aggregate(
             models.Sum("action__points"))["action__points__sum"]
-            
+
     def number_of_committed_actions(self):
         return UserActionProgress.objects.pending_commitments(user=self.user).count()
-            
+
     def commitments_made_yestarday(self):
         start = datetime.datetime.combine(yestarday(), datetime.time.min)
         end = datetime.datetime.combine(yestarday(), datetime.time.max)
         return UserActionProgress.objects.pending_commitments(user=self.user).filter(
             updated__gte=start, updated__lte=end).order_by("-date_committed")
-        
+
     def commitments_made_before_yestarday(self):
         start = datetime.datetime.combine(yestarday(), datetime.time.min)
         return UserActionProgress.objects.pending_commitments(user=self.user).filter(
             updated__lt=start).order_by("-date_committed")
-            
+
     def commitments_made_last_24_hours(self):
         return UserActionProgress.objects.pending_commitments(user=self.user).filter(
             updated__gte=yestarday()).order_by("-date_committed")
-            
+
     def commitments_made_more_than_24_hours(self):
         return UserActionProgress.objects.pending_commitments(user=self.user).filter(
             updated__lt=yestarday()).order_by("-date_committed")
-        
+
     def commitments_due_in_a_week(self):
         return self._commitment_due_on(datetime.date.today() + datetime.timedelta(days=7))
-        
+
     def commitments_due_today(self):
         return self._commitment_due_on(datetime.date.today())
-            
+
     def _commitment_due_on(self, due_date):
         return UserActionProgress.objects.pending_commitments(user=self.user).filter(
             date_committed=due_date).order_by("-date_committed")
-            
+
 class StickerRecipient(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)

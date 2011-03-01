@@ -1,28 +1,23 @@
-{% extends "actions/base.html" %}
+{% extends "base/nav_9c.html" %}
 {% load dated_static %}
 {% block title %}Actions to Repower at Home{% endblock %}
-{% block right_content %}
-    <div class="box_three_top"></div>
-    <div class="box_three_middle">
-        <h1>Set the trend in your home</h1>
+{% block title_bar %}
+    <img src="{% dated_static "images/theme_new/actions_section_large.png" %}" alt="Actions section" height="100" width="100"/>
+    <div>
+        <h1>Actions</h1>
         <p>
-            The actions you’ll find here will cut energy waste, lower your monthly bills and put your home on the
-            leading edge of the energy efficiency revolution.
+        The actions you’ll find here will cut energy waste, lower your monthly
+        bills and put your home on the leading edge of the energy efficiency
+        revolution.
         </p>
     </div>
-    <div class="box_three_bottom"></div>
-    
-    <div class="action_nugget_wrapper_three">
-        {% for action in actions %}
-            {% include 'actions/_action_nugget.html' %}
-        {% endfor %}
-    </div>
 {% endblock %}
-{#     {% for tag in tags %} #}
-{#         <li {% if forloop.last %} class="minor_nav_last"{% endif %}> #}
-{#             <span class="icon_gt"></span> #}
-{#             <a href='{% url action_tag tag %}#action_show'> #}
-{#                 {{ tag.name|deslug }} ({{ tag.count }}) #}
-{#             </a> #}
-{#         </li> #}
-{#     {% endfor %} #}
+
+{% block ribbon_bar %}
+    Showing {{ actions|length }} actions
+{% endblock %}
+{% block content %}
+{% for action in actions %}
+{% include 'actions/_action_nugget.html' %}
+{% endfor %}
+{% endblock %}

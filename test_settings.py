@@ -2,7 +2,7 @@ try:
     from settings import *
 except ImportError:
     print 'settings could not be imported'
-    
+
 DATABASE_ENGINE   = 'sqlite3'  # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 
 CACHE_BACKEND = 'dummy://'
@@ -19,6 +19,7 @@ INSTALLED_APPS = (
     'django.contrib.sitemaps',
     'django.contrib.flatpages',
     'django.contrib.markup',
+    'django.contrib.humanize',
     'rah',
     'rateable',
     'rateable.tests',
