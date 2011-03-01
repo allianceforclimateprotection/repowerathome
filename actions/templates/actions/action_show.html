@@ -1,19 +1,23 @@
 {% extends "base/nav_9c.html" %}
 {% load dated_static %}
 {% block title %}Actions to Repower at Home{% endblock %}
-{% block page_header %}
-    <h1>Actions</h1>
-    <p>
-        The actions you’ll find here will cut energy waste, lower your monthly bills and 
-        put your home on the leading edge of the energy efficiency revolution.
-    </p>
+{% block title_bar %}
+    <img src="{% dated_static "images/theme_new/actions_section_large.png" %}" alt="Actions section" height="100" width="100"/>
+    <div>
+        <h1>Actions</h1>
+        <p>
+        The actions you’ll find here will cut energy waste, lower your monthly
+        bills and put your home on the leading edge of the energy efficiency
+        revolution.
+        </p>
+    </div>
 {% endblock %}
 
 {% block ribbon_bar %}
     Showing {{ actions|length }} actions
 {% endblock %}
 {% block content %}
-    {% for action in actions %}
-        {% include 'actions/_action_nugget.html' %}
-    {% endfor %}
+{% for action in actions %}
+{% include 'actions/_action_nugget.html' %}
+{% endfor %}
 {% endblock %}

@@ -3,15 +3,15 @@
 require(["libs/webfont", "libs/jquery.ui", "libs/jquery.form", "libs/jquery.validation", "mods/feedback", "mods/messages", "mods/facebook"],
     function (webfont, ui, form, validation, feedback, messages, facebook) {
         // Setup TypeKit for non IE browsers
-        var browser = $.browser;
-        if (!browser.msie && !(browser.mozilla && browser.version.substr(0, 5) === "1.9.0")) {
-            WebFont.load({ 
-                typekit: { 
-                    id: 'vbg1eri',
-                    api: (('https:' === document.location.protocol) ? 'https:' : 'http:') + "//use.typekit.com"
-                }
-            });
-        }
+        //var browser = $.browser;
+        //if (!browser.msie && !(browser.mozilla && browser.version.substr(0, 5) === "1.9.0")) {
+            //WebFont.load({ 
+                //typekit: { 
+                    //id: 'vbg1eri',
+                    //api: (('https:' === document.location.protocol) ? 'https:' : 'http:') + "//use.typekit.com"
+                //}
+            //});
+        //}
 
         // setup buttons
         //$("button, input:submit, a.button, input.button").button();

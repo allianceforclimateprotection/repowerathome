@@ -20,7 +20,7 @@ from forms import ActionCommitForm
 
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
-
+    nav_selected = "actions"
     actions = Action.objects.all()
     actions = sorted(actions, key=lambda a: not a.has_illustration())
 
@@ -37,6 +37,7 @@ def community_show(request):
 @csrf_protect
 def action_detail(request, action_slug):
     """Detail page for an action"""
+    nav_selected = "actions"
     action = get_object_or_404(Action, slug=action_slug)
     default_vars = _default_action_vars(action, request.user)
     default_vars.update(_build_action_form_vars(action, request.user))

@@ -11,13 +11,31 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <a href="{% url index %}">Home</a> &rsaquo;
-    <a href="{% url action_show %}">Actions</a> &rsaquo;
+    <a href="{% url index %}">Home</a> &raquo;
+    <a href="{% url action_show %}">Actions</a> &raquo;
     {{action.name}}
 {% endblock %}
 
 {% block title_bar %}
-    <h1 id="action_title">{{action.name}}</h1>
+    {{action.name}}
+{% endblock %}
+{% block title_bar_sub %}
+    Repower at Home Action
+{% endblock %}
+{% block title_bar_floaters %}
+    <div class="title_bar_floater">
+        <div class="floater_title">Points</div>
+        <div class="floater_body"><h1>{{action.points}}</h1></div>
+    </div>
+    <div class="title_bar_floater">
+        <div class="floater_title">Badge</div>
+        <div class="floater_body">
+            <a href="#">
+                <img src="{% dated_static 'images/theme_new/badge.png' %}"/>
+            </a>
+            <a href="#" class="white">View badge page</a>
+        </div>
+    </div>
 {% endblock %}
 
 {% block title %}{{action.name}}{% endblock %}
@@ -36,11 +54,28 @@
     </div>
 {% endblock %}
 {% block sidebar %}
-    <h2>{{action.points}} points</h2>
-    <b>{{ action.users_completed }}</b> people have done this and
-    <b>{{ total_users_committed }}</b> people are committed to do it.
+    <div class="ribbon_small ribbon_small_dark">
+        Share
+        <div class="ribbon_small_wrap ribbon_small_wrap_dark"></div>
+    </div>
+    <ul class="plain_list nugget_3c_image_grid nugget_3c_share_grid">
+        <li>
+            <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=box_count&amp;show_faces=false&amp;width=47&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:47px; height:60px;" allowTransparency="true"></iframe>
+        </li>
+        <li>
+            <a href="http://twitter.com/share" class="twitter-share-button" data-text="{{ action.name }}" data-url="http://repowerathome.com{{ action.get_absolute_url }}" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+        </li>
+        <li>
+            <a class="addthis_counter"></a>
+            <!--TODO: Move this script out of here-->
+            <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4d659aab07c24995"></script>
+        </li>
+    </ul>
     {% if progress.date_committed and not progress.is_completed %}
-        <h2>My Commitment</h2>
+        <div class="ribbon_small">
+            Your Commitment
+        <div class="ribbon_small_wrap"></div>
+        </div>
         <p>
             You committed to complete this action by {{ progress.date_committed|date }}. 
             (<a href="#" class="commit_trigger">change date</a> or 
@@ -49,31 +84,33 @@
     {% endif %}
 
     {% if action.users_completed %}
-        <h3>Recently Completed</h3>
-        <ul class="plain_list">
+        <div class="ribbon_small">
+            Completed ({{ action.users_completed }})
+            <div class="ribbon_small_wrap"></div>
+        </div>
+        <ul class="plain_list nugget_3c_image_grid">
             {% for user in users_completed %}
                 <li>
-                    {% safe_user_link user %}<br/>
+                    <img width="54" height="54" src="{{user.get_profile.profile_picture}}" />
+                    <div>
+                    {% safe_user_link user %}
+                    </div>
                 </li>
             {% endfor %}
         </ul>
     {% endif %}
 
-    {% if action.users_committed %}
-        <h3>Recently Committed</h3>
-        <ul class="plain_list">
-            {% for user in users_committed %}
-                <li>
-                    {% safe_user_link user %}<br/>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
 
-    <h3>Share this action</h3>
-    <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=box_count&amp;show_faces=false&amp;width=60&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:60px; height:60px;" allowTransparency="true"></iframe>
-    <a href="http://twitter.com/share" class="twitter-share-button" data-text="{{ action.name }}" data-url="http://repowerathome.com/{{ action.get_absolute_url }}" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <div class="ribbon_small">
+        Image Gallery
+        <div class="ribbon_small_wrap"></div>
     </div>
+        TODO
+    <div class="ribbon_small">
+        Links and Downloads
+        <div class="ribbon_small_wrap"></div>
+    </div>
+        TODO
 {% endblock %}
 <script>
     var RAH = RAH || {};
