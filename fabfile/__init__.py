@@ -43,8 +43,8 @@ def clean():
     if env.hosts:
         run("cd %(deploy_to)s && find . -name '*.pyc' -depth -exec rm {} \;" % env)
     else:
-        local("find . -name '*.pyc' -depth -exec rm {} \;")
-        
+        local("find . -name '*.pyc' -depth -exec rm {} \;", capture=True)
+
 from codebase import *
 from deploy import *
 from server import *

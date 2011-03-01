@@ -5,10 +5,10 @@ from fabric.api import local, env
 
 def query_revision(treeish="HEAD"):
     if re.match("^[0-9a-f]{40}$", treeish): return treeish
-    return local("git show %s | sed q | cut -d ' ' -f 2" % treeish)
+    return local("git show %s | sed q | cut -d ' ' -f 2" % treeish, capture=True)
 
 def query_branch(treeish="HEAD"):
-    return local("git name-rev --name-only %s" % treeish)
+    return local("git name-rev --name-only %s" % treeish, capture=True)
 
 def runs_last(func):
     @functools.wraps(func)
