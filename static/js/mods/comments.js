@@ -47,7 +47,7 @@ define(["libs/jquery.qtip", "mods/messages"], function (qtip, messages) {
                     dataType: "json",
                     success: function (data) {
                         var container = form.parent("div");
-                        $(".users_voted_stats", container).html(data["users_voted_stats"]).effect("highlight", {"backgroundColor": "#B0D8F2"}, 1500);
+                        $(".users_voted_stats", container).html(data[0]["users_voted_stats"]);
                     }
                 });
                 return false;

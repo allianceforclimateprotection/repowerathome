@@ -47,6 +47,8 @@ INSTALLED_APPS = (
     'source_tracking',
     'commitments',
     'codebase',
+    'threadedcomments',
+    'rah_comments',
 )
 
 LOGIN_URL = "/login/"

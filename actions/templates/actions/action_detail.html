@@ -8,6 +8,9 @@
     <meta property="og:type" content="activity" />
     <meta property="og:title" content="{{action.name}}" />
     <meta property="og:description" content="{{action.teaser}}" />
+    {% get_content_type_id for action as content_type_id %}
+    <link rel="alternate" type="application/atom+xml" href="{% url comments_feed content_type_id,action.id %}" 
+        title="{{ action }} comments feed" />
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -43,6 +46,8 @@
 {% block content %}
     {% render_template_snippet action.content %}
     <div id="comments">
+        {% get_content_type_id for action as content_type_id %}
+        <a class="atom_link" href="{% url comments_feed content_type_id,action.id %}">{{ action }} comments feed</a>
         {% with action as object %}
             {% render_comment_list for object %}
             {% render_comment_form for object %}

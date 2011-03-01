@@ -56,4 +56,4 @@ def rate(request, next=None, using=None, success_message=None, error_message=Non
         ] + template_list
     response = loader.render_to_string(template_list, {"rating": rating, "content_object": content_object}, context_instance=RequestContext(request))
     for message in request._messages: pass #if messages weren't used in the response, clear them out
-    return HttpResponse(response)   
+    return HttpResponse(response, mimetype="text/json") if request.is_ajax() else HttpResponse(response)

@@ -1,22 +1,25 @@
-{% load comments %}
+{% load threadedcomments_tags %}
 
 {% if request.user.is_authenticated %}
     <h2 id="comments_form_heading">Leave a comment</h2>
     {% if object %}
         {% get_comment_form for object as form %}
     {% endif %}
-    <form id="comment_form" action="{% comment_form_target %}" method="post">
+    <form id="comment_form" action="{% url comments-post-comment %}" method="post">
         <div>
         {% for field in form %}
             {% if field.is_hidden %}
                 {{ field }}
             {% else %}
-                {% if field.name == "comment" or field.name == "honeypot" %}
-                    {% if field.errors %}{{ field.errors }}{% endif %}
-                    <p class="form_row {% if field.errors %}error {% endif %}" 
-                        {% ifequal field.name "honeypot" %} style="display:none;" {% endifequal %}>
-                        {{ field }}
-                    </p>
+                {% if field.name == "honeypot" %}
+                    <p style="display: none;">{{ field }}</p>
+                {% else %}
+                    {% if field.name == "message_type" or field.name == "comment" %}
+                        {% if field.errors %}{{ field.errors }}{% endif %}
+                        <p class="form_row {% if field.errors %}error {% endif %}">
+                            {{ field }}
+                        </p>
+                    {% endif %}
                 {% endif %}
             {% endif %}
         {% endfor %}
@@ -25,7 +28,6 @@
         {% csrf_token %}
         </div>
     </form>
-    
 {% else %}
     <br/><br/>
     <a href="{% url login %}">Log in</a> or <a href="{% url register %}">sign up</a> to post comments.
