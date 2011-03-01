@@ -7,51 +7,13 @@ DATABASE_ENGINE   = 'sqlite3'  # 'postgresql_psycopg2', 'postgresql', 'mysql', '
 
 CACHE_BACKEND = 'dummy://'
 
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.admin',
-    'django.contrib.admindocs',
-    'django.contrib.comments',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.sitemaps',
-    'django.contrib.flatpages',
-    'django.contrib.markup',
-    'django.contrib.humanize',
-    'rah',
-    'rateable',
+INSTALLED_APPS = list(settings.INSTALLED_APPS) + [
     'rateable.tests',
-    'records',
-    'geo',
-    'invite',
     'invite.tests',
-    'basic.blog',
-    'basic.inlines',
-    'tagging',
-    'twitter_app',
-    'search_widget',
     'search_widget.tests',
-    'groups',
-    'flagged',
     'flagged.tests',
-    'django_extensions',
-    'debug_toolbar',
-    'dated_static',
-    'actions',
-    'events',
-    'messaging',
     'messaging.tests',
-    'thumbnails',
-    'source_tracking',
-    'commitments',
-    'codebase',
-    'threadedcomments',
-    'rah_comments',
-    'brabeion',
-    'badges',
-)
+]
 
 LOGIN_URL = "/login/"
 
