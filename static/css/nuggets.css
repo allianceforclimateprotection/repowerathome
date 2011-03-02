@@ -1,0 +1,163 @@
+/* ---------------------------------------------------------------------------------------------------------------------
+Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
+--------------------------------------------------------------------------------------------------------------------- */
+/* nugget_3c_image_grid -- Used for completed users on action detail page */
+
+.nugget_3c_image_grid {
+    height:100%;
+    overflow: auto;
+}
+.nugget_3c_image_grid li {
+    margin: 6px;
+    float: left;
+}
+.nugget_3c_image_grid img {
+    padding: 3px;
+    border: 1px solid #ccc;
+    height: 54px;
+}
+.nugget_3c_image_grid div {
+    text-overflow: ellipsis;
+    width: 62px;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 12px;
+}
+.nugget_3c_share_grid li {
+    margin: 6px 11px;
+}
+
+/*nugget_2c_list -- Used on featured users on home page, paginated lists of users on community pages, etc. */
+
+.nugget_2c_list {
+    height: 100%;
+    overflow: auto;
+}
+.nugget_2c_list li {
+    float: left;
+    margin-bottom: 6px;
+}
+.nugget_2c_list li img {
+    border: 1px solid #ccc;
+    padding: 3px;
+    margin-right: 3px;
+    float: left;
+}
+.nugget_2c_list li div {
+    color: #8FD100;
+    font-weight: bold;
+    font-size: 12px;
+    margin-top: 8px;
+    margin-left: 3px;
+    line-height: 16px;
+    float: left;
+    width: 98px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/*nugget_4c_list -- Used on homepage for featured communities */
+
+.nugget_4c_list {
+    height: 100%;
+    overflow: auto;
+}
+.nugget_4c_list li {
+    float: left;
+    margin-bottom: 18px;
+}
+.nugget_4c_list li img {
+    float: left;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-right: 9px;
+}
+.nugget_4c_list li div {
+    color: #8FD100;
+    float: left;
+    font-weight: bold;
+    line-height: 18px;
+    padding-top: 9px;
+}
+.nugget_4c_list li div span {
+    color: #999999;
+    font-weight: normal;
+}
+
+/*nugget_3c -- Used on action, badge, and challenge landing pages*/
+
+.nugget_3c {
+    float: left;
+    margin: 0 9px 9px 0;
+    border: 1px solid #E5E5E5;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    width: 200px;
+    padding: 9px;
+    cursor: pointer;
+}
+
+/*hover*/
+.nugget_3c:hover {
+    border: 1px solid #666;
+}
+.nugget_3c:hover p{
+    /*color: #666;*/
+}
+.nugget_3c:hover .nugget_3c_image{
+    background-position: 0 0;
+}
+
+.nugget_3c h2 {
+    font-family:"MuseoSlab500", Tahoma, sans-serif;
+    letter-spacing: -1px;
+    font-size: 18px; 
+    line-height: 21px;
+    margin-bottom: 6px;
+}
+.nugget_3c p {
+    /*color: #CCCCCC;*/
+    font-size: 13px;
+    line-height: 16px;
+    min-height: 80px;
+    margin-bottom: 0px;
+}
+.nugget_3c p cite { display: none; }
+
+.nugget_3c h2 a:hover {
+    text-decoration: none;
+}
+.nugget_3c .nugget_3c_status {
+    color: #42AB35;
+    font-size: 12px;
+    font-weight: bold;
+    height: 16px;
+    margin-bottom: 3px;
+    line-height: 16px;
+    padding-top: 4px;
+}
+.nugget_3c .nugget_3c_status_complete, .nugget_3c .nugget_3c_status_committed {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color: #fff;
+    padding: 3px 0 0 6px;
+    font-size: 10px;
+    border-bottom: 1px solid #c3ccd9;
+}    
+.nugget_3c .nugget_3c_status_complete {
+    background-color: #42AB35;
+}
+.nugget_3c .nugget_3c_status_committed {
+    background-color: #103665;
+}
+.nugget_3c .nugget_3c_image {
+    width: 65px;
+    height: 65px;
+    background: transparent url('../images/theme_new/badge_sample.png') 0px -65px no-repeat;
+    float: left;
+    margin-right: 9px;
+}
+

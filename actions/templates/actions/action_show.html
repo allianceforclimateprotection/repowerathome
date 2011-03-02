@@ -1,23 +1,33 @@
 {% extends "base/nav_9c.html" %}
 {% load dated_static %}
+{% load humanize %}
 {% block title %}Actions to Repower at Home{% endblock %}
-{% block title_bar %}
-    <img src="{% dated_static "images/theme_new/actions_section_large.png" %}" alt="Actions section" height="100" width="100"/>
-    <div>
-        <h1>Actions</h1>
-        <p>
-        The actions you’ll find here will cut energy waste, lower your monthly
-        bills and put your home on the leading edge of the energy efficiency
-        revolution.
-        </p>
-    </div>
+{% block title_bar_image %}<img src="{% dated_static "images/theme_new/section_actions_large.png" %}" alt="Actions section" height="100" width="100"/>{% endblock %}
+{% block title_bar_title %}Actions{% endblock %}
+{% block title_bar_copy %}
+    The actions you’ll find here will cut energy waste, lower your monthly bills
+    and put your home on the leading edge of the energy efficiency revolution.
 {% endblock %}
-
 {% block ribbon_bar %}
     Showing {{ actions|length }} actions
 {% endblock %}
 {% block content %}
 {% for action in actions %}
-{% include 'actions/_action_nugget.html' %}
+<div class="nugget_3c">
+    {% if action.completed %}
+        <div class="nugget_3c_status nugget_3c_status_complete">COMPLETED</div>
+    {% else %}
+        {% if action.committed %}
+            <div class="nugget_3c_status nugget_3c_status_committed">COMMITTED: {{action.committed|date:"N jS"}}</div>
+        {% else %}
+                <div class="nugget_3c_status">{{ action.points|intcomma }} Points</div>
+        {% endif %}
+    {% endif %}
+    <h2>
+        <a href="{% url action_detail action.slug %}">{{ action.name }}</a>
+    </h2>
+    <div class="nugget_3c_image"></div>
+    <p>{{ action.teaser|safe }}</p>
+</div>
 {% endfor %}
 {% endblock %}

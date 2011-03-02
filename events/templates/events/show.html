@@ -1,123 +1,52 @@
-{% extends "events/base.html" %}
+{% extends "base/nav_9c.html" %}
+
 {% load dated_static %}
+{% load search_widget %}
+
 {% block title %}Events on Repower at Home{% endblock %}
-{% block right_content %}
-<div class="grid_6 alpha">
-    <div class="box_two_top"></div>
-    <div class="box_two_middle">
-        <h1>Host an energy meeting</h1>
-        <div id="events_map" style="width:100%; height:300px; border: 1px solid; margin-bottom:18px;"></div>
-        <p>
-            Energy meetings bring together people who are already part of a community, like parents in a PTA,
-            parishioners in a church, or people in a book club. <b>The meetings bring the idea of saving energy to this
-            community</b>, and get members excited about taking action to reduce their use.
-        </p>
-
-        <h3>How do I host?</h3>
-        <p>
-            Repower at Home's toolkit makes it easy to invite guests, manage RSVPs, and hold a great event. Get started
-            by <a href="http://rahstatic.s3.amazonaws.com/meeting_materials/Host%20Guide.pdf">downloading the host
-            guide</a>. You can also review other materials that will help you organize and run your event. Check out the
-            <a href="/hosting/">materials page</a>.    
-        </p>
-        <p class="center"><a class="button" href="{% url event-create %}" style="font-size:18px">Create an Event</a></p>
-        
-        <h3>What happens at a meeting?</h3>
-        <p>
-            The meeting introduces guests to <b>four actions</b> almost anyone can do. Guests <b>make commitments</b> to
-            take these actions, and <b>brainstorm next steps</b> they can take together to get even more people
-            involved.
-        </p>
-
-        <h3>Who hosts meetings?</h3>
-        <p>
-            <b>Anyone, from engineers to English teachers, can host a meeting</b>. You don’t need to be an energy
-            efficiency expert to host &ndash; in fact, you don’t need to have any background in the topic at all. The 
-            <a href="/hosting/">materials page</a> will give you all the information you need to run an event and share
-            your enthusiasm with your community.
-        </p>
-        <object width="432" height="268">
-            <param name="movie" value="http://www.youtube.com/v/gcK06I0Jd9o&amp;hl=en_US&amp;fs=1?rel=0"></param>
-            <param name="allowFullScreen" value="true"></param>
-            <param name="allowscriptaccess" value="always"></param>
-            <embed src="http://www.youtube.com/v/gcK06I0Jd9o&amp;hl=en_US&amp;fs=1?rel=0"
-                   type="application/x-shockwave-flash" 
-                   allowscriptaccess="always" 
-                   allowfullscreen="true" 
-                   width="432" 
-                   height="268"></embed>
-        </object>
-        <p>
-            Listen to Elena talk about why she decided to host an energy meeting
-        </p>
-
-        <h3>What if I need help?</h3>
-        <p>
-            A field organizer will support you as you run your meeting. Use the contact links on the right of this page
-            to get in touch with a field organizer.
-        </p>
-        
-    </div>
-    <div class="box_two_bottom"></div>
-</div>
-<div class="grid_3 omega">
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
-        {% load search_widget %}
-        {% search_widget event_search %}
-    </div>
-    <div class="box_one_bottom"></div>
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
-        <h3>Need some help?</h3>
-        <p>
-            If you would like to talk to a real person about hosting an energy meeting you can <a
-            href="mailto:field@repowerathome.com?subject=Hosting%20an%20energy%20meeting">send us an email</a> or we can
-            <a href="{% url house_party %}" id='house_party_link' rel="nofollow">give you a call</a>. 
-        </p>
-    </div>
-    <div class="box_one_bottom"></div>
-    {% if user.is_authenticated and my_events %}
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
-        <h3>Your Events</h3>
-        {% with my_events as events %}
-            {% include "events/_event_nugget_list.html" %}
-        {% endwith %}
-    </div>
-    <div class="box_one_bottom"></div>
-    {% endif %}
-    {% if events %}
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
-        <h3>Upcoming Events</h3>
-        {% include "events/_event_nugget_list.html" %}
-    </div>
-    <div class="box_one_bottom"></div>
-    {% endif %}
-</div>
-
-{% include "rah/_house_party_dialog.html" %}
-    <script>
-        var RAH = RAH || {};
-        RAH.pagescripts = RAH.pagescripts || [];
-        RAH.pagescripts.push("{% dated_static 'js/pages/events.show.js' %}");
-        
-        // Add locations for plotting on the map
-        RAH.event_locations = [];
-        {% for event in map_events %}
-            var info = "<b>{{ event.title|escape|escapejs }}</b><br/>\
-                {{ event.where|escape|escapejs }}<br/>";
-                info += "<a href='{% url event-detail event.id %}'>View event</a>";
-            RAH.event_locations.push({ 
-                lat: "{{ event.lat }}", 
-                lon: "{{ event.lon }}",
-                "info": info,
-                id: {{ event.id }}
-            });
-        {% endfor %}
-    </script>
+{% block title_bar_image %}<img src="{% dated_static "images/theme_new/section_events_large.png" %}" alt="Events section" height="100" width="100"/>{% endblock %}
+{% block title_bar_title %}Events{% endblock %}
+{% block title_bar_copy %}
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+    euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
 {% endblock %}
+{% block ribbon_bar %}Showing {{map_events|length}} events{% endblock %}
+{% block content %}
+<h1>Host an energy meeting</h1>
+<div id="events_map" style="width:100%; height:300px; border: 1px solid; margin-bottom:18px;"></div>
+<p>
+    Energy meetings bring together people who are already part of a community, like parents in a PTA,
+    parishioners in a church, or people in a book club. <b>The meetings bring the idea of saving energy to this
+    community</b>, and get members excited about taking action to reduce their use.
+</p>
+{% search_widget event_search %}
+
+{% if events %}
+    <h3>Upcoming Events</h3>
+    {% include "events/_event_nugget_list.html" %}
+{% endif %}
+
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/events.show.js' %}");
+    
+    // Add locations for plotting on the map
+    RAH.event_locations = [];
+    {% for event in map_events %}
+        var info = "<b>{{ event.title|escape|escapejs }}</b><br/>\
+            {{ event.where|escape|escapejs }}<br/>";
+            info += "<a href='{% url event-detail event.id %}'>View event</a>";
+        RAH.event_locations.push({ 
+            lat: "{{ event.lat }}", 
+            lon: "{{ event.lon }}",
+            "info": info,
+            id: {{ event.id }}
+        });
+    {% endfor %}
+</script>
+{% endblock %}
+
 {% block extrajs %}
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 {% endblock %}
