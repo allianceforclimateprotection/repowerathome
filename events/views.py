@@ -26,6 +26,7 @@ from forms import EventForm, GuestInviteForm, GuestAddForm, GuestListForm, Guest
 from decorators import user_is_event_manager, user_is_guest, user_is_guest_or_has_token
 
 def show(request):
+    nav_selected = "events"
     map_events = Event.objects.filter(is_private=False)
     events = Event.objects.filter(is_private=False, when__gt=datetime.datetime.now()).order_by("when", "start")
     if request.user.is_authenticated():
@@ -34,11 +35,13 @@ def show(request):
     return render_to_response("events/show.html", locals(), context_instance=RequestContext(request))
 
 def archive(request):
+    nav_selected = "events"
     events = Event.objects.filter(is_private=False).order_by("-when", "-start")
     return render_to_response("events/archive.html", locals(), context_instance=RequestContext(request))
 
 @login_required
 def create(request):
+    nav_selected = "events"
     form = EventForm(user=request.user, data=(request.POST or None))
     if form.is_valid():
         event = form.save()
@@ -49,6 +52,7 @@ def create(request):
 
 @user_is_guest_or_has_token
 def detail(request, event_id, token=None):
+    nav_selected = "events"
     event = get_object_or_404(Event, id=event_id)
     guest = event.current_guest(request, token)
     has_manager_privileges = event.has_manager_privileges(request.user)
@@ -59,6 +63,7 @@ def detail(request, event_id, token=None):
 @login_required
 @user_is_event_manager
 def edit(request, event_id):
+    nav_selected = "events"
     event = get_object_or_404(Event, id=event_id)
     form = EventForm(user=request.user, instance=event, data=(request.POST or None))
     if form.is_valid():

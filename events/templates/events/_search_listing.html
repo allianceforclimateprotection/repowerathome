@@ -1,4 +1,4 @@
-{% extends "events/base.html" %}
+{% extends "base/nav_9c.html" %}
 {% load dated_static %}
 {% block title %}Events on Repower at Home{% endblock %}
 {% block breadcrumbs %}
@@ -6,18 +6,13 @@
     <a href="{% url event-show %}">Events</a> &rsaquo;
     Search Results
 {% endblock %}
-{% block right_content %}
-<div class="grid_6 alpha">
-    <div class="box_two_top"></div>
-    <div class="box_two_middle">
-        <h1>Search Results</h1>
+{% block title_bar_title %}Search Results{% endblock %}
+{% block ribbon_bar %}Showing {{object_list|length}} events{% endblock %}
+{% block content %}
         {% with object_list as events %}
             {% include 'events/_event_nugget_list.html' %}
         {% endwith %}
         {% if page_obj.has_next %}
             <a class="search_more" href="{{ request.path }}?search={{ request.GET.search }}&amp;page={{ page_obj.next_page_number }}">more</a>
         {% endif %}
-    </div>
-    <div class="box_two_bottom"></div>
-</div>
 {% endblock %}

@@ -2,14 +2,14 @@
 {% block content_9c %}
 <div id="content_9c">
     <div id="title_bar_9c">
-        {% block title_bar %}
-            page header
-        {% endblock %}
+        {% block title_bar_image %}{% endblock %}
+        <div>
+            <h1>{% block title_bar_title %}{% endblock %}</h1>
+            <p>{% block title_bar_copy %}{% endblock %}</p>
+        </div>
     </div>
     <div class="ribbon_large">
-        {% block ribbon_bar %}
-            ribbon
-        {% endblock %}
+        {% block ribbon_bar %}{% endblock %}
         <div class="ribbon_large_wrap"></div>
     </div>
     <div>

@@ -7,7 +7,7 @@ DATABASE_ENGINE   = 'sqlite3'  # 'postgresql_psycopg2', 'postgresql', 'mysql', '
 
 CACHE_BACKEND = 'dummy://'
 
-INSTALLED_APPS = list(settings.INSTALLED_APPS) + [
+INSTALLED_APPS = list(INSTALLED_APPS) + [
     'rateable.tests',
     'invite.tests',
     'search_widget.tests',

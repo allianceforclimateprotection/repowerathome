@@ -1,4 +1,4 @@
-{% extends "events/base.html" %}
+{% extends "base/nav_form.html" %}
 {% load dated_static %}
 {% block title %}Create an Event{% endblock %}
 {% block breadcrumbs %}
@@ -7,20 +7,14 @@
     <a href="{% url event-show %}">Events</a> &rsaquo;
     Create an Event
 {% endblock %}
-{% block right_content %}
-    <div class="grid_6 alpha">
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <h1>Create an Event</h1>
-            <form id="event_form" action="" method="post">
-                {% include "events/_form.html" %}
-                {% csrf_token %}
-                <input type="submit" value="Create Event" /> |
-                <a href="{% url event-show %}">cancel</a>
-            </form>
-        </div>
-        <div class="box_two_bottom"></div>
-    </div>
+{% block content %}
+    <h1>Create an Event</h1>
+    <form id="event_form" action="" method="post">
+        {% include "events/_form.html" %}
+        {% csrf_token %}
+        <button type="submit">Create Event</button>
+        <a href="{% url event-show %}" class="button button_grey_flat">cancel</a>
+    </form>
     <script>
         var RAH = RAH || {};
         RAH.pagescripts = RAH.pagescripts || [];
