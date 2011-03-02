@@ -13,3 +13,4 @@ static/images/theme/default_group_*
 lib/src/*
 *.swp
 static_build/*
+docs/_build/*
