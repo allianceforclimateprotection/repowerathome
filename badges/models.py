@@ -71,7 +71,8 @@ def possibly_award_social_media_maven_badge(sender, instance, created, **kwargs)
 models.signals.post_save.connect(possibly_award_social_media_maven_badge, sender=Profile)
 
 def possibly_award_follow_through_badge(sender, instance, created, **kwargs):
-    badge_cache.possibly_award_badge('entered_commitment_card', user=instance.entered_by)
+    if instance.entered_by:
+        badge_cache.possibly_award_badge('entered_commitment_card', user=instance.entered_by)
 models.signals.post_save.connect(possibly_award_follow_through_badge, sender=ContributorSurvey)
 
 def possibly_award_shout_out_badge(sender, instance, created, **kwargs):
