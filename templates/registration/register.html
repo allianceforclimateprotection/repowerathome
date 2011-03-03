@@ -1,88 +1,45 @@
-{% extends "rah/base.html" %}
+{% extends "base/nav_form.html" %}
 {% load dated_static %}
-{% block tongue %}{% endblock tongue %}
-{% block title %}Register for Repower at Home{% endblock %}
-{% block right_content %}
-    <div class="prefix_2">
-        <div class="box_three_top"></div>
-        <div class="box_three_middle">
-            <div id="registration_left_col">
-                <h1>Take the Pledge</h1>
-                <p>
-                    <object width="360" height="227"><param name="movie" value="https://repowerathome.com/youtube/v/kPm9wMhIcJs&amp;hl=en_US&amp;fs=1?rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="https://repowerathome.com/youtube/v/kPm9wMhIcJs&amp;hl=en_US&amp;fs=1?rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="360" height="227"></embed></object>
-                </p>
-                <h3>A clean energy future starts with us. </h3>
-                <p>
-                    Across the country, Trendsetters are working to transform the way our homes and communities use energy. Join us! Become a Trendsetter by creating an account and pledging to save energy. With an account, you can:
-                </p>
-                <ul>
-                    <li>Learn about easy steps you can take to rid your home of energy waste.</li>
-                    <li>Share your energy-saving achievements with your friends. </li>
-                    <li>Access tools for spreading the word about saving energy in your community. </li>
-                    <li>Connect with other Trendsetters in your neighborhood and across the country. </li>
-                </ul>
-                <p>
-                    <div class="fb_button" id="fb-login">
-                        <a href="#" class="fb_button fb_button_medium">
-                            <span id="fb_login_text" class="fb_button_text">Join with Facebook</span>
-                        </a>
-                    </div>
-                </p>
-            </div>
-            <div id="registration_right_col">
-                <p id="home_page_pledge_text">
-                    &#8220;I pledge to save energy <br/>&nbsp;in my home and set the <br/>&nbsp;trend in my community.&#8221;
-                </p>
-                <form action="{% url register %}" method="post" id="registration_form" autocomplete="off">
-                    <div class="form_row overset form_row_float form_row_float_left_field">
-                        <label for="id_first_name">First name</label>
-                        <input type="text" name="first_name" id="id_first_name" />
-                    </div>
-                    
-                    <div class="form_row overset form_row_float">
-                        <label for="id_last_name">Last name</label>
-                        <input id="id_last_name" type="text" name="last_name" maxlength="30" />
-                    </div>
-                    <br class="clear"/>
-                    <div class="form_row overset form_row_float form_row_float_left_field">
-                        <label for="id_password1">Password</label>
-                        <input type="password" name="password1" id="id_password1" />
-                    </div>
-
-                    <div class="form_row overset form_row_float">
-                        <label for="id_password2">Confirm Password</label>
-                        <input type="password" name="password2" id="id_password2" />
-                    </div>
-                    <br class="clear"/>
-                    <div class="form_row overset ">
-                        <label for="email_register">Email</label>
-                        <input type="text" id="email_register" name="email" />
-                    </div>
-
-                    <div class="form_row overset ">
-                        <label for="id_zipcode">Zipcode (US residents only)</label>
-                        <input id="id_zipcode" type="text" name="zipcode" maxlength="10" />
-                        {# <div class="help_text"></div> #}
-                    </div>
-                    <p>
-                        <input type="submit" value="Join" id="register_submit" style="font-size:18px;"/>
-                        <span class="smaller">
-                            Already have an account? <a href="{% url login %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Log in</a>
-                        </span>
-                    </p>
-                    <div>
-                        {{ register_form.honeypot }}
-                        <input type="hidden" name="next" value="{{ next|escape }}" />
-                    </div>
-                    {% csrf_token %}
-                </form>
-            </div>
-        </div>
-        <div class="box_three_bottom"></div>
+{% block title %}Sign up for Repower at Home{% endblock %}
+{% block breadcrumbs %}
+   <a href="{% url index %}">Home</a> &raquo; 
+   Sign up
+{% endblock %}
+{% block form_info %}
+<h3>A clean energy future starts with us. </h3>
+<p>
+    Across the country, Trendsetters are working to transform the way our homes and
+    communities use energy. Join us! Become a Trendsetter by creating an account
+    and pledging to save energy.
+</p>
+<div class="fb_button" id="fb-login">
+    <a href="#" class="fb_button fb_button_large">
+        <span id="fb_login_text" class="fb_button_text">Join with Facebook</span>
+    </a>
+</div>
+<!--<ul>-->
+    <!--<li>Learn about easy steps you can take to rid your home of energy waste.</li>-->
+    <!--<li>Share your energy-saving achievements with your friends. </li>-->
+    <!--<li>Access tools for spreading the word about saving energy in your community. </li>-->
+    <!--<li>Connect with other Trendsetters in your neighborhood and across the country. </li>-->
+<!--</ul>-->
+{% endblock %}
+{% block content %}
+<form action="{% url register %}" method="post" autocomplete="off">
+    <h1>Sign Up Now</h1>
+    {% include "base/_form.html" %}
+    {% with profile_form as form %}
+        {% include "base/_form.html" %}
+    {% endwith %}
+    {% csrf_token %}
+    <div class="form_buttons">
+        <button class="button_mega" type="submit">Sign Up</button>
+        <input type="hidden" name="next" value="{{ next|escape }}" />
     </div>
-    <script>
-        var RAH = RAH || {};
-        RAH.pagescripts = RAH.pagescripts || [];
-        RAH.pagescripts.push("{% dated_static 'js/pages/rah.register.js' %}");
-    </script>
+</form>
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/rah.register.js' %}");
+</script>
 {% endblock %}

@@ -1,9 +1,7 @@
 {% extends "base/nav.html" %}
 {% block content_9c %}
-    <div id="breadcrumbs">
-        {% block breadcrumbs %}
-            breadcrumbs
-        {% endblock %}
+    <div id="breadcrumbs_shadow">
+        {% block breadcrumbs %}{% endblock %}
     </div>
     <div class="grid_6 alpha">
         <div id="form_6c">
@@ -13,6 +11,7 @@
     <div class="grid_3 omega">
         <div id="form_info">
         {% block form_info %}{% endblock %}
+        <div id="form_info_wrap"></div>
         </div>
     </div>
 {% endblock %}

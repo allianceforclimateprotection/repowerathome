@@ -1,3 +1,110 @@
+#form_6c {
+    padding: 9px;
+}
+#form_6c h1 {
+    font-family:"MuseoSlab700", Tahoma, sans-serif;
+    color: #103665;
+    font-size: 38px;
+    border-bottom: 1px solid #CCC; 
+    padding-bottom: 9px;
+    margin-bottom: 18px;
+}
+
+#form_6c form {
+    background: #F2F2F2;
+    padding: 9px 18px 18px 18px;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+    height: 100%;
+    overflow: auto;
+}
+#form_6c form .form_row {
+    margin-bottom: 12px;
+    float: left;
+}
+#form_6c form .form_row_half {
+    margin-right: 9px;
+}
+#form_6c form .form_row_half_last {
+    margin-right: 0px;
+}
+
+#form_6c form label {
+    display: block;
+    color: #103665;
+    font-weight: bold;
+}
+#form_6c form .form_help_text {
+    font-size: 12px;
+    color: #666666;
+    line-height: 16px;
+}
+
+#form_6c form .form_row input[type=text], 
+#form_6c form .form_row input[type=password],
+#form_6c form .form_row textarea
+{
+    border: 1px solid #CCC;
+    font-size: 12px;
+    padding: 4px;
+    width: 402px;
+    outline: none;
+}
+#form_6c form .form_row_half input[type=text], 
+#form_6c form .form_row_half input[type=password] {
+    width: 187px;
+}
+
+#form_6c form .form_row input:focus, 
+#form_6c form .form_row textarea:focus {
+    background: #FFFFF0;
+}
+
+#form_6c form .form_row input[type=checkbox] {
+    float: left;
+    height: 21px;
+    margin-right: 6px;
+}
+
+#form_6c form .form_row ul {
+    margin: 0px;
+}
+#form_6c form .form_row ul li {
+    list-style: none;
+}
+#form_6c form .form_row ul li label {
+    font-weight: normal;
+    color: #333;
+}
+
+#form_6c .form_buttons {
+    text-align: center;
+    padding-top: 18px;
+    margin-top: 18px;
+    border-top: 1px solid #ccc;
+    float: left;
+    width: 100%;
+}
+#form_6c .form_buttons .form_cancel {
+    margin-right: 18px;
+}
+
+
+
+
+/*Errors*/
+#form_6c form label.form_error{
+    font-size: 12px;
+    font-weight: normal;
+}
+#form_6c form .form_error input, #form_6c form .form_error textarea, #form_6c form .form_error label {
+    color: #FF1D1D;
+}
+#form_6c form .form_error input, #form_6c form .form_error textarea{
+    border-color: #FF1D1D !important;
+}
+
 /* ---------------------------------------------------------------------------------------------------------------------
 Button Button Button Button Button Button Button Button Button Button Button Button Button Button Button Button Button 
 --------------------------------------------------------------------------------------------------------------------- */
@@ -120,4 +227,35 @@ button::-moz-focus-inner, input::-moz-focus-inner  { border: 0; padding:0; }
 }
 
 .button_189 { width: 189px; }
+
+#form_info{
+    position: absolute;
+    right: -9px;
+    top: 9px;
+    padding: 9px 24px 9px 12px;
+    width: 215px;
+    background: #80b1cc;
+    line-height: 18px;
+    -webkit-border-top-left-radius: 6px;
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-bottomleft: 6px;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+#form_info_wrap {
+    position: absolute;
+    bottom: -5px;
+    right: 0px;
+    background: transparent url('../images/theme_new/ribbon_form_info.png') 0 0 no-repeat;
+    width: 240px;
+    height: 5px;
+}
+#form_info, #form_info p, #form_info a  {
+    color: #FFF; 
+}
+#form_info h3 {
+    color: #fff;
+}
+
 

@@ -22,17 +22,18 @@ class RegistrationForm(forms.ModelForm):
     A form that creates a user, with no privileges, from the given email and password.
     """
     email = forms.EmailField(label='Email', widget=forms.TextInput(attrs={'id':'email_register'}))
-    first_name = forms.CharField(min_length=2)
+    first_name = forms.CharField(min_length=2, widget=forms.TextInput(attrs={'class':'form_row_half'}))
+    last_name = forms.CharField(required=False, min_length=2, widget=forms.TextInput(attrs={'class':'form_row_half form_row_half_last'}))
+
     password1 = forms.CharField(label='Password', min_length=5, widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
     honeypot = Honeypot()
-    
+
     class Meta:
         model = User
         fields = ("first_name", "last_name", "email",)
 
     def clean(self):
-        self.instance.username = hashlib.md5(self.cleaned_data.get("email", "")).hexdigest()[:30] 
+        self.instance.username = hashlib.md5(self.cleaned_data.get("email", "")).hexdigest()[:30]
         self.instance.set_password(self.cleaned_data.get("password1", auth.models.UNUSABLE_PASSWORD))
         super(RegistrationForm, self).clean()
         return self.cleaned_data
@@ -44,34 +45,21 @@ class RegistrationForm(forms.ModelForm):
         except User.DoesNotExist:
             return email
         raise forms.ValidationError('This email address has already been registered in our system. If you have forgotten your password, please use the password reset link.')
-        
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1", "")
-        password2 = self.cleaned_data["password2"]
-        if password1 != password2:
-            raise forms.ValidationError("The two password fields didn't match.")
-        if len(password2) < 5:
-            raise forms.ValidationError("Your password must contain at least 5 characters.")
-        return password2
-            
-class RegistrationProfileForm(forms.ModelForm):
-    zipcode = forms.CharField(max_length=10, required=False, help_text="Leave blank if not a US resident")
-    
-    class Meta:
-        model = Profile
-        fields = ("building_type",)
-        
+
+class RegistrationProfileForm(forms.Form):
+    zipcode = forms.CharField(max_length=5, required=False, help_text="Leave blank if you don't have a US zipcode", widget=forms.TextInput())
+
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
         if data:
             if len(data) <> 5:
                 raise forms.ValidationError("Please enter a 5 digit zipcode")
             try:
-                self.instance.location = Location.objects.get(zipcode=data)
+                self.location = Location.objects.get(zipcode=data)
             except Location.DoesNotExist, e:
                 raise forms.ValidationError("Zipcode is invalid")
         return data
-        
+
 class AuthenticationForm(forms.Form):
    """
    Base class for authenticating users. Extend this to get a form that accepts
@@ -120,7 +108,7 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ("comment", "beta_group", "url")
-    
+
     url = forms.CharField(widget=forms.HiddenInput, required=False)
     comment = forms.CharField(widget=forms.Textarea, required=False, label="Your Comments")
     beta_group = forms.BooleanField(help_text="""Check here if you would like to be a part 
@@ -132,20 +120,20 @@ class FeedbackForm(forms.ModelForm):
         msg = EmailMessage('Feedback Form', template.render(Context(context)), None, ["feedback@repowerathome.com"])
         msg.content_subtype = "html"
         msg.send()
-        
+
 class ProfileEditForm(forms.ModelForm):
     about = forms.CharField(max_length=255, required=False, label="About you", widget=forms.Textarea)
     zipcode = forms.CharField(max_length=5, required=False)
     is_profile_private = forms.BooleanField(label="Make Profile Private", required=False)
-    
+
     class Meta:
         model = Profile
         fields = ("zipcode", "building_type", "about", "is_profile_private")
-    
+
     def __init__(self, *args, **kwargs):
         super(ProfileEditForm, self).__init__(*args, **kwargs)
         self.fields["zipcode"].initial = self.instance.location.zipcode if self.instance.location else ""
-    
+
     def clean_zipcode(self):
         data = self.cleaned_data['zipcode'].strip()
         if not len(data):
@@ -163,9 +151,9 @@ class AccountForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', 'first_name', 'last_name')
-    
+
     first_name = forms.CharField(max_length=255, required=True)
-    
+
     def clean_email(self):
         email = self.cleaned_data['email'].strip()
         if not len(email):
@@ -185,13 +173,13 @@ class HousePartyForm(forms.Form):
         ('afternoon', 'Afternoon'), 
         ('evening', 'Evening')
     ))
-    
+
     def __init__(self, user, *args, **kwargs):
         form = super(HousePartyForm, self).__init__(*args, **kwargs)
         if user.is_authenticated():
             self.fields["name"].widget = forms.HiddenInput()
             self.fields["name"].initial = user.get_full_name()
-    
+
     def send(self, user):
         template = loader.get_template('rah/house_party_email.html')
         context = {
@@ -206,11 +194,11 @@ class HousePartyForm(forms.Form):
         except SMTPException, e:
             return False
         return True
-        
+
 class SetPasswordForm(auth_forms.SetPasswordForm):
     new_password1 = forms.CharField(min_length=5, label="New password", widget=forms.PasswordInput)
     new_password2 = forms.CharField(label="New password confirmation", widget=forms.PasswordInput)
-        
+
 class PasswordChangeForm(auth_forms.PasswordChangeForm):
     """
     A form that lets a user change his/her password by entering
@@ -219,16 +207,16 @@ class PasswordChangeForm(auth_forms.PasswordChangeForm):
     old_password = forms.CharField(label="Old password", widget=forms.PasswordInput)
     new_password1 = forms.CharField(min_length=5, label="New password", widget=forms.PasswordInput)
     new_password2 = forms.CharField(label="New password confirmation", widget=forms.PasswordInput)
-    
+
     def clean_old_password(self):
         return super(PasswordChangeForm, self).clean_old_password()
 PasswordChangeForm.base_fields.keyOrder = ['old_password', 'new_password1', 'new_password2']
 
 class GroupNotificationsForm(forms.Form):
-    notifications = forms.ModelMultipleChoiceField(required=False, queryset=None, 
+    notifications = forms.ModelMultipleChoiceField(required=False, queryset=None,
             widget=forms.CheckboxSelectMultiple, help_text="By selecting a community, you have elected to \
         recieve emails for each thread posted to the discussion board.", label="Community email notifications")
-    
+
     def __init__(self, user, *args, **kwargs):
         from groups.models import Group
         super(GroupNotificationsForm, self).__init__(*args, **kwargs)
@@ -237,7 +225,7 @@ class GroupNotificationsForm(forms.Form):
         self.fields["notifications"].queryset = self.groups
         self.not_blacklisted = [g.pk for g in Group.objects.groups_not_blacklisted_by_user(user)]
         self.fields["notifications"].initial = self.not_blacklisted
-                
+
     def save(self):
         from groups.models import DiscussionBlacklist
         notifications = self.cleaned_data["notifications"]
@@ -246,10 +234,10 @@ class GroupNotificationsForm(forms.Form):
                 DiscussionBlacklist.objects.create(user=self.user, group=group)
             if group in notifications and group.pk not in self.not_blacklisted:
                 DiscussionBlacklist.objects.get(user=self.user, group=group).delete()
-                
+
 class StickerRecipientForm(forms.ModelForm):
     honeypot = Honeypot()
-    
+
     class Meta:
         model = StickerRecipient
         exclude = ("user",)

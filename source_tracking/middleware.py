@@ -25,7 +25,7 @@ class SourceTrackingMiddleware(object):
             codes["referrer"] = referrer
         if codes.items():
             request.session[STK] = codes
-            
+
 def add_source_tracking(sender, request, user, is_new_user, **kwargs):
     if is_new_user:
         codes = request.session.pop(STK, {"source": "direct"})

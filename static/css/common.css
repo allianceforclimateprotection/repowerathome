@@ -107,9 +107,13 @@ Content Content Content Content Content Content Content Content Content Content 
 #sidebar {
     padding: 9px 0 0 0;
 }
-#breadcrumbs {
+#breadcrumbs, #breadcrumbs_shadow {
     font-size: 12px;
     padding: 9px 9px;
+}
+#breadcrumbs_shadow {
+    box-shadow: -2px 3px 5px #aaa;
+
 }
 
 /* ---------------------------------------------------------------------------------------------------------------------
@@ -366,5 +370,7 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .plain_list { margin: 0px; }
 .plain_list li { list-style: none; }
 .center { text-align: center; }
+.right { text-align: right; }
 .float {float: left;}
+.hidden {display: none;}
 

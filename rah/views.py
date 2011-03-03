@@ -50,7 +50,7 @@ def _total_trendsetters():
 def _total_points():
     return (Profile.objects.all().aggregate(Sum("total_points"))["total_points__sum"] or 0) + \
         (Action.objects.filter(commitment__answer="D", commitment__contributor__user__isnull=True).aggregate(
-            Sum("points"))["points__sum"] or 0) 
+            Sum("points"))["points__sum"] or 0)
 
 def _total_actions():
     return (Record.objects.filter(void=False, activity=1).count() or 0) + \
@@ -205,14 +205,17 @@ def register(request, template_name="registration/register.html"):
     initial = {"email": request.GET["email"]} if "email" in request.GET else None
     user_form = RegistrationForm(initial=initial, data=(request.POST or None))
     profile_form = RegistrationProfileForm(request.POST or None)
+
     if user_form.is_valid() and profile_form.is_valid():
         new_user = user_form.save()
-        RegistrationProfileForm(instance=new_user.get_profile(), data=request.POST).save()
-        user = auth.authenticate(username=user_form.cleaned_data["email"], password=user_form.cleaned_data["password1"])
+        if hasattr(profile_form, 'location'):
+            profile = new_user.get_profile()
+            profile.location = profile_form.location
+            profile.save()
+        user = auth.authenticate(username=new_user.email, password=user_form.cleaned_data["password1"])
         logged_in.send(sender=None, request=request, user=user, is_new_user=True)
         auth.login(request, user)
         save_queued_POST(request)
-
         # Light security check -- make sure redirect_to isn't garbage.
         if not redirect_to or ' ' in redirect_to:
             redirect_to = settings.LOGIN_REDIRECT_URL
@@ -226,7 +229,7 @@ def register(request, template_name="registration/register.html"):
 
         return HttpResponseRedirect(redirect_to)
     return render_to_response(template_name, {
-        'user_form': user_form,
+        'form': user_form,
         'profile_form': profile_form,
         REDIRECT_FIELD_NAME: redirect_to,
     }, context_instance=RequestContext(request))
@@ -449,8 +452,6 @@ logged_in.connect(send_registration_emails)
 def take_the_pledge(sender, request, user, is_new_user, **kwargs):
     if is_new_user:
         contributor, created = Contributor.objects.get_or_create_from_user(user=user)
-        Commitment.objects.get_or_create(contributor=contributor, question="pledge",
-            defaults={"answer":True})
-        ContributorSurvey.objects.get_or_create(contributor=contributor,
-            survey=Survey.objects.get(form_name="PledgeCard"), entered_by=None)
+        Commitment.objects.get_or_create(contributor=contributor, question="pledge", defaults={"answer":True})
+        ContributorSurvey.objects.get_or_create(contributor=contributor, survey=Survey.objects.get(form_name="PledgeCard"), entered_by=None)
 logged_in.connect(take_the_pledge)

@@ -7,13 +7,18 @@
     <a href="{% url event-show %}">Events</a> &rsaquo;
     Create an Event
 {% endblock %}
+{% block form_info %}
+    info!
+{% endblock %}
 {% block content %}
-    <h1>Create an Event</h1>
     <form id="event_form" action="" method="post">
-        {% include "events/_form.html" %}
+        <h1>Create an Event</h1>
+        {% include "base/_form.html" %}
         {% csrf_token %}
-        <button type="submit">Create Event</button>
-        <a href="{% url event-show %}" class="button button_grey_flat">cancel</a>
+        <div class="form_buttons">
+            <a href="{% url event-show %}" class="form_cancel">Cancel</a>
+            <button class="button_mega" type="submit">Create Event</button>
+        </div>
     </form>
     <script>
         var RAH = RAH || {};

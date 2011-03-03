@@ -1,0 +1,21 @@
+{% for error in form.non_field_errors %}
+    <div class="form_error">{{ error }}</div>
+{% endfor %}
+{% for field in form.visible_fields %}
+<div class="form_row {% if field.errors %}form_error{% endif %} {{field.field.widget.attrs.class }}">
+        {% if "CheckboxInput" in field.field.widget|pprint %}
+            {{ field }}{{ field.label_tag }}
+        {% else %}
+            {{ field.label_tag }}{{ field }}
+        {% endif %}
+        {% for error in field.errors %}
+            <label class="form_error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+        {% endfor %}
+        <div class="form_help_text">{{ field.help_text }}</div>
+    </div>
+{% endfor %}
+<div class="hidden">
+    {% for field in form.hidden_fields %}
+        {{ field }}
+    {% endfor %}
+</div>

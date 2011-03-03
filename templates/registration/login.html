@@ -1,34 +1,40 @@
-{% extends "rah/base.html" %}
+{% extends "base/nav_form.html" %}
 {% load dated_static %}
-{% block tongue %}{% endblock tongue %}
 {% block title %}Log in to Repower at Home{% endblock %}
-{% block right_content %}
-    <div class="prefix_3">
-        <div class="box_two_top"></div>
-        <div class="box_two_middle">
-            <form action="{% url login %}" method="post" id="login_form" autocomplete="off">
-                <h1>Log In</h1>
-                {% with login_form as form %}
-                    {% include "rah/_overset_form.html" %}
-                {% endwith %}
-                <p>
-                    <input type="submit" value="Log in" /> or
-                    <div class="fb_button" id="fb-login">
-                        <a href="#" class="fb_button fb_button_medium">
-                            <span id="fb_login_text" class="fb_button_text">Login in with Facebook</span>
-                        </a>
-                    </div>
-                </p>
-                {% csrf_token %}
-                <p><input type="hidden" name="next" value="{{ next|escape }}" /></p>
-            </form>
-            <p class="smaller">
-                Don't have an account? <a href="{% url rah.views.register %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Sign up</a><br/>
-                <a href="{% url password_reset %}">Recover password</a>
-            </p>
+{% block breadcrumbs %}
+   <a href="{% url index %}">Home</a> &raquo; 
+   Log in
+{% endblock %}
+{% block form_info %}
+<h3>Need a little help?</h3>
+<ul>
+    <li>
+        <a href="{% url register %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}">Create an account</a><br/>
+    </li>
+    <li>
+        <a href="{% url password_reset %}">Recover your password</a>
+    </li>
+</ul>
+<div class="fb_button" id="fb-login">
+    <a href="#" class="fb_button fb_button_large">
+        <span id="fb_login_text" class="fb_button_text">Login in with Facebook</span>
+    </a>
+</div>
+{% endblock %}
+
+
+{% block content %}
+    <form action="{% url login %}" method="post" autocomplete="off">
+        <h1>Log In</h1>
+        {% with login_form as form %}
+            {% include "base/_form.html" %}
+        {% endwith %}
+        {% csrf_token %}
+        <div class="form_buttons">
+            <button class="button_mega" type="submit">Log in</button>
+            <input type="hidden" name="next" value="{{ next|escape }}" />
         </div>
-        <div class="box_two_bottom"></div>
-    </div>
+    </form>
     <script>
         var RAH = RAH || {};
         RAH.pagescripts = RAH.pagescripts || [];
