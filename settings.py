@@ -125,6 +125,7 @@ INSTALLED_APPS = (
     'rah_comments',
     'brabeion',
     'badges',
+    'challenges',
 )
 
 FIXTURE_DIR = ('fixtures',)

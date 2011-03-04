@@ -1,0 +1,31 @@
+{% extends "base/nav_form.html" %}
+{% load dated_static %}
+{% block title %}{{ type_label }} a Challenge{% endblock %}
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    <a href="{% url challenges_list %}">Challenges</a> &rsaquo;
+    {{ type_label }} a Challenge
+{% endblock %}
+{% block content %}
+    <form id="challenge_form" action="" method="post">
+        <h1>{{ type_label }} a Challenge</h1>
+        {% include "base/_form.html" %}
+        {% csrf_token %}
+        <div class="form_buttons">
+            {% if challenge.id %}
+                <a href="{% url challenges_detail challenge.id %}" class="form_cancel">Cancel</a>
+            {% else %}
+                <a href="{% url challenges_list %}" class="form_cancel">Cancel</a>
+            {% endif %}
+            <button class="button_mega" type="submit">{{ type_label }} Challenge</button>
+        </div>
+    </form>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+    </script>
+{% endblock %}
+{% block form_info %}
+    Fill in this form to create a new challenge
+{% endblock %}
+
