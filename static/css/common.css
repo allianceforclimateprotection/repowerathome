@@ -12,10 +12,10 @@ a:hover { text-decoration:underline; }
 a:active { color: #6EC3D1; text-decoration:underline; }
 a:focus { outline: none; }
 h1, h1 a {
-    font-family:"MuseoSlab500", Tahoma, sans-serif;
+    font-family:"MuseoSlab700", Tahoma, sans-serif;
     color: #046495;}
 h2, h3, h4, h5, h6 { font-weight:bold; color: #046495; }
-h1 { font-size: 30px; line-height:45px; margin-bottom:9px; }
+h1 { font-size: 32px; line-height:45px; margin-bottom:9px; }
 h2 { font-size: 24px; line-height:27px; margin-bottom:9px; }
 h3 { font-size: 16px; margin-bottom:9px; }
 h4 { font-size: 14px; color: #333333; }
@@ -207,22 +207,32 @@ Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar 
 #title_bar_9c {
     height: 100%;
     overflow: auto;
-    margin-bottom: 9px;
+    margin-bottom: 18px;
 }
 #title_bar_9c img, #title_bar_9c div {
     float: left;
 }
 #title_bar_9c h1 {
     margin: 0;
-    color: #1C336B;
+    line-height: 36px;
+    color: #0F3669;
 }
 #title_bar_9c div {
-    width: 580px;
+    width: 570px;
     margin-left: 9px;
 }
-#title_bar_9c p{
-    margin:0;
+#title_bar_9c.title_bar_9c_custom_img img {
+    padding: 9px;
+    border: 1px solid #d6d6d6;
+    margin-bottom: 21px;
 }
+#title_bar_9c_info {
+    margin-bottom: 18px;
+}
+#title_bar_9c_info span {
+    color: #666666;
+}
+
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons 
@@ -234,6 +244,7 @@ Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons 
     font-weight: bold;
     position: relative;
     height: 27px;
+    margin-bottom: 18px;
 }
 .ribbon_large_wrap{
     height: 37px;
@@ -280,10 +291,32 @@ Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav 
     border-bottom-left-radius: 8px;
 }
 
-#nav #profile_picture {
+/*Profile info for logged in users*/
+#nav #nav_profile_picture {
     padding: 9px;
     border: 1px solid #c1c1c1;
     background-color: #FFFFFF;
+    margin: 9px 0 3px 9px;
+}
+#nav h3 {
+    font-size: 24px;
+    font-family:"MuseoSlab700", Tahoma, sans-serif;
+    font-weight: normal;
+    margin-bottom: 3px;
+}
+#nav h3 a {
+    color: #0F3669;
+}
+#nav #nav_profile_location {
+    color: #666666;
+}
+#nav #nav_profile_stats {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 9px;
+}
+#nav #nav_profile_location, #nav #nav_profile_stats, #nav h3 {
+    margin-left: 12px;
 }
 
 
@@ -349,6 +382,40 @@ Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav 
     width: 9px;
     height: 37px;
 }
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav 
+--------------------------------------------------------------------------------------------------------------------- */
+#tab_nav {
+    overflow: auto;
+    height: 100%;
+    background: transparent url('../images/theme_new/tab_nav_shadow.png') 0 100% repeat-x;
+    /*margin: 0 9px 0 9px;*/
+}
+#tab_nav li {
+    float: left;
+    font-family:"MuseoSlab500", Tahoma, sans-serif;
+    padding: 6px 9px 6px 9px;
+}
+#tab_nav li a {
+    color: #333;
+}
+#tab_nav li.tab_nav_selected {
+    float: left;
+    color: #006499;
+    background: #FFF;
+    border: 1px solid #d6d6d6;
+    border-bottom: 0px;
+}
+#tab_nav li.tab_nav_link {
+    float: right;
+    font-size: 12px;
+    font-family: inherit;
+}
+#tab_nav li.tab_nav_link a {
+    color: #006499;
+}
+
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors 
