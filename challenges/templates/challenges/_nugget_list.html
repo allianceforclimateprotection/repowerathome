@@ -1,0 +1,10 @@
+<ul class='plain_list'>
+    {% for challenge in challenges %}
+        <li>
+            <p>
+                <a href="{% url challenges_detail challenge.id %}">{{ challenge.title }}</a>
+                <span class='smaller'>{{ challenge.status }}</span>
+            </p>
+        </li>
+    {% endfor %}
+</ul>

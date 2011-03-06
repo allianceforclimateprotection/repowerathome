@@ -1,0 +1,27 @@
+{% extends "base/nav_6c3c.html" %}
+{% block breadcrumbs %}
+    <a href="{% url challenges_list %}">Challenges</a> &raquo;
+    {{ challenge.title }}
+{% endblock %}
+{% block title_bar_sub %}Petition Challenge{% endblock %}
+{% block title_bar %}{{ challenge.title }}{% endblock %}
+{% block tab_nav %}
+    <a href="{% url challenges_edit challenge.id %}">Edit this Challenge</a>
+{% endblock %}
+{% block content %}
+    {{ challenge.description }}
+    {% with petition as form %}
+    <form action="{% url challenges_sign challenge.id %}" method="post">
+            {% include "base/_form.html" %}
+            {% csrf_token %}
+            <div class="form_buttons">
+                <button class="button" type="submit">Sign the Petition</button>
+            </div>
+        </form>
+    {% endwith %}
+    <ul>
+        {% for supporter in challenge.supporters.all %}
+            <li>{{ supporter }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
