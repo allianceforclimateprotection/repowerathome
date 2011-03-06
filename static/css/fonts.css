@@ -35,6 +35,16 @@ Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fo
     font-style: normal;
 }
 @font-face {
+    font-family: 'MuseoSlab300';
+    src: url('../fonts/museoslab/Museo_Slab_300-webfont.eot');
+    src: url('../fonts/museoslab/Museo_Slab_300-webfont.eot?iefix') format('eot'),
+         url('../fonts/museoslab/Museo_Slab_300-webfont.woff') format('woff'),
+         url('../fonts/museoslab/Museo_Slab_300-webfont.ttf') format('truetype'),
+         url('../fonts/museoslab/Museo_Slab_300-webfont.svg#webfontY8VndmkE') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
     font-family: 'MuseoSlab500';
     src: url('../fonts/museoslab/Museo_Slab_500-webfont.eot');
     src: url('../fonts/museoslab/Museo_Slab_500-webfont.eot?iefix') format('eot'),

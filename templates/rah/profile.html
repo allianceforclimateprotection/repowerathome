@@ -1,6 +1,7 @@
 {% extends "base/nav_6c3c_b.html" %}
 {% load record %}
 {% load dated_static %}
+{% load humanize %}
 {% block title %}{{profile_user.get_full_name}}'s profile{% endblock %}
 {% block extrahead %}
     <link rel="alternate" type="application/atom+xml"  href="{% url user_activity_feed profile.user.id %}" title="Repower at Home User Activity" />
@@ -30,19 +31,35 @@
     <li class="tab_nav_link"><a href="#actions">Edit your profile</a></li>
 {% endblock %}
 {% block content %}
+        {% if communities %}
+            <h2>Communities</h2>
+            <ul class="plain_list">
+            {% for group in communities %}
+            <li>
+            <a href="{{ group.get_absolute_url }}">
+                <img src="{{ MEDIA_URL }}{{ group.image.thumbnail_colorspace_70x70smartcrop }}" alt="community image" height="60" width="60"/>
+            </a>
+            <div>
+                <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br/>
+                <span>{{ group.headquarters }}</span>
+            </div>
+            <div>
+                <div>Points</div>
+                {{ group.member_count }}
+            </div>
+            <div>
+                <div>Members</div>
+                {{ group.total_points }}
+            </div>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
         {% if commitment_list %}
             <h2>Commitments</h2>
             <p>
             {% for row in commitment_list %}
                 <a href="{% url action_detail row.action.slug %}">{{row.action.name}}</a> by {{row.date_committed|date}}<br/>
-            {% endfor %}
-            </p>
-        {% endif %}
-        {% if communities %}
-            <h2>Communities</h2>
-            <p>
-            {% for group in communities %}
-                <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br />
             {% endfor %}
             </p>
         {% endif %}
@@ -79,11 +96,12 @@
         Vital Stats
         <div class="ribbon_small_wrap ribbon_small_wrap_dark"></div>
     </div>
-    {{ completed|length }} actions completed<br/>
-    {{ committed|length }} actions committed<br/>
-    {{ profile.total_points }} total points <br/>
-    0 challenges completed
-
+    <ul class="plain_list nugget_3c_grid_2">
+        <li>Actions Completed <div>{{ completed|length }}</div></li>
+        <li>Actions Committed <div>{{ committed|length }}</div></li>
+        <li>Points Earned <div class="{% if profile.total_points > 99 %}digits_3{% endif %} {% if profile.total_points > 999 %}digits_4{% endif %} {% if profile.total_points > 9999 %}digits_5{% endif %}">{{ profile.total_points|intcomma }}</div></li>
+        <li>Challenges Completed <div>0</div></li>
+    </ul>
 
     <div class="ribbon_small">
         Events

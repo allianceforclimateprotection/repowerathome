@@ -262,6 +262,7 @@ Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons 
     font-weight: bold;
     position: relative;
     height: 22px;
+    margin: 9px 0 9px 0;
 }
 .ribbon_small_wrap{
     height: 28px;
@@ -394,7 +395,7 @@ Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav 
 }
 #tab_nav li {
     float: left;
-    font-family:"MuseoSlab500", Tahoma, sans-serif;
+    font-family:"MuseoSlab300", Tahoma, sans-serif;
     padding: 6px 9px 6px 9px;
 }
 #tab_nav li a {

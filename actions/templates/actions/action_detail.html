@@ -63,7 +63,7 @@
         Share
         <div class="ribbon_small_wrap ribbon_small_wrap_dark"></div>
     </div>
-    <ul class="plain_list nugget_3c_image_grid nugget_3c_share_grid">
+    <ul class="plain_list nugget_3c_grid_3 nugget_3c_grid_3_share">
         <li>
             <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=box_count&amp;show_faces=false&amp;width=47&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:47px; height:60px;" allowTransparency="true"></iframe>
         </li>
@@ -93,7 +93,7 @@
             Completed ({{ action.users_completed }})
             <div class="ribbon_small_wrap"></div>
         </div>
-        <ul class="plain_list nugget_3c_image_grid">
+        <ul class="plain_list nugget_3c_grid_3">
             {% for user in users_completed %}
                 <li>
                     <img width="54" height="54" src="{{user.get_profile.profile_picture}}" />

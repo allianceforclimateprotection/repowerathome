@@ -1,34 +1,70 @@
 /* ---------------------------------------------------------------------------------------------------------------------
 Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
 --------------------------------------------------------------------------------------------------------------------- */
-/* nugget_3c_image_grid -- Used for completed users on action detail page */
+/* nugget_3c_grid_3 -- Used for completed users on action detail page */
 
-.nugget_3c_image_grid {
+.nugget_3c_grid_3 {
     height:100%;
     overflow: auto;
 }
-.nugget_3c_image_grid li {
+.nugget_3c_grid_3 li {
     margin: 6px;
     float: left;
 }
-.nugget_3c_image_grid img {
+.nugget_3c_grid_3 img {
     padding: 3px;
     border: 1px solid #ccc;
     height: 54px;
 }
-.nugget_3c_image_grid div {
+.nugget_3c_grid_3 div {
     text-overflow: ellipsis;
     width: 62px;
     white-space: nowrap;
     overflow: hidden;
     font-size: 12px;
 }
-.nugget_3c_share_grid li {
+.nugget_3c_grid_3_share li {
     margin: 6px 11px;
 }
 
-/*nugget_2c_list -- Used on featured users on home page, paginated lists of users on community pages, etc. */
+/* nugget_3c_grid_2 -- Used for displaying stats on profile pages, community pages*/
+.nugget_3c_grid_2 {
+    height:100%;
+    overflow: auto;
+    margin-left: 3px;
+}
+.nugget_3c_grid_2 li {
+    float: left;
+    color: #0F3669;
+    background: #E0ECF2;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    width: 88px;
+    height: 88px;
+    font-size: 14px;
+    line-height: 18px;
+    font-family:"MuseoSlab700", Tahoma, sans-serif;
+    padding: 9px 9px 9px 9px;
+}
+.nugget_3c_grid_2 li div {
+    font-family:"MuseoSlab900", Tahoma, sans-serif;
+    font-size: 58px;
+    line-height: 58px;
+    text-align: center;
+}
+.nugget_3c_grid_2 li div.digits_3 { font-size: 42px; }
+.nugget_3c_grid_2 li div.digits_4 { font-size: 32px; }
+.nugget_3c_grid_2 li div.digits_5 { font-size: 26px; }
+.nugget_3c_grid_2 li div.digits_6 { font-size: 22px; }
+.nugget_3c_grid_2 li div.digits_7 { font-size: 18px; }
 
+
+
+
+/*nugget_2c_list -- Used on featured users on home page, paginated lists of users on community pages, etc. */
 .nugget_2c_list {
     height: 100%;
     overflow: auto;
@@ -83,6 +119,11 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
 .nugget_4c_list li div span {
     color: #999999;
     font-weight: normal;
+}
+
+/*nugget_6c_list -- used for displaying user's communities on their profile page*/
+.nugget_6c_list {
+
 }
 
 /*nugget_3c -- Used on action, badge, and challenge landing pages*/
