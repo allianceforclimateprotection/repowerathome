@@ -32,6 +32,7 @@ def group_create(request):
     create a form a user can use to create a custom group, on POST save this group to the database
     and automatically add the creator to the said group as a manager.
     """
+    nav_selected = "communities"
     if request.method == "POST":
         form = GroupForm(request.POST, request.FILES)
         if form.is_valid():
@@ -44,8 +45,12 @@ def group_create(request):
             return redirect("group_detail", group_slug=group.slug)
     else:
         form = GroupForm()
-    return render_to_response("groups/group_create.html", {"form": form, "site": Site.objects.get_current()}, context_instance=RequestContext(request))
-    
+    return render_to_response("groups/group_create.html", {
+        "form": form,
+        "site": Site.objects.get_current(),
+        "nav_selected": nav_selected
+    }, context_instance=RequestContext(request))
+
 @login_required
 def group_leave(request, group_id):
     group = get_object_or_404(Group, id=group_id, is_geo_group=False)
@@ -58,7 +63,7 @@ def group_leave(request, group_id):
     else:
         messages.error(request, "You cannot leave a community your not a member of")
     return redirect("group_detail", group_slug=group.slug)
-    
+
 @login_required
 def group_join(request, group_id):
     group = get_object_or_404(Group, id=group_id, is_geo_group=False)
@@ -136,7 +141,7 @@ def group_detail(request, group_slug):
     """
     group = get_object_or_404(Group, slug=group_slug, is_geo_group=False)
     return _group_detail(request, group)
-    
+
 def geo_group(request, state, county_slug=None, place_slug=None):
     slug = state.lower()
     if county_slug:
@@ -145,11 +150,12 @@ def geo_group(request, state, county_slug=None, place_slug=None):
         slug += "-%s" % place_slug
     group = get_object_or_404(Group, slug=slug)
     return _group_detail(request, group)
-    
+
 def group_list(request):
     """
     display a listing of the groups
     """
+    nav_selected = "communities"
     groups = Group.objects.groups_with_memberships(request.user)
     if request.user.is_authenticated():
         my_groups = Group.objects.filter(users=request.user, is_geo_group=False)
@@ -158,6 +164,7 @@ def group_list(request):
 @login_required
 @csrf_protect
 def group_edit(request, group_slug):
+    nav_selected = "communities"
     group = get_object_or_404(Group, slug=group_slug, is_geo_group=False)
     if not group.is_user_manager(request.user):
         return forbidden(request)
@@ -253,7 +260,7 @@ def group_disc_approve(request, group_slug, disc_id):
     if request.method == "POST" and form.is_valid() and group.is_user_manager(request.user):
         form.save()
         messages.success(request, "Discussion approved")
-    
+
     return_to = disc.parent_id if disc.parent_id else disc.id
     return redirect("group_disc_detail", group_slug=group_slug, disc_id=return_to)
 
@@ -271,9 +278,9 @@ def group_disc_remove(request, group_slug, disc_id):
             return redirect("group_disc_detail", group_slug=group_slug, disc_id=disc.parent_id)
         else:
             return redirect("group_disc_list", group_slug=group_slug)
-    
+
     return redirect("group_disc_detail", group_slug=group_slug, disc_id=disc.id)
-    
+
 def group_disc_list(request, group_slug):
     group = Group.objects.get(slug=group_slug)
     paginator = Paginator(Discussion.objects.filter(parent=None, group=group), 20)
@@ -284,16 +291,17 @@ def group_disc_list(request, group_slug):
         page = int(request.GET.get('page', '1'))
     except ValueError:
         page = 1
-    
+
     # If page request is out of range, deliver last page of results.
     try:
         discs = paginator.page(page)
     except (EmptyPage, InvalidPage):
         discs = paginator.page(paginator.num_pages)
-    
+
     return render_to_response("groups/group_disc_list.html", locals(), context_instance=RequestContext(request))
 
 def _group_detail(request, group):
+    nav_selected = "communities"
     popular_actions = list(group.completed_actions_by_user(5))
     top_members = group.members_ordered_by_points()
     group_records = group.group_records(10)

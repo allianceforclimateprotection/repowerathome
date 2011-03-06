@@ -30,7 +30,7 @@
                 <div class="nav_pointer_wrap"></div>
             </li>
             <li class="{% ifequal nav_selected "challenges" %}nav_selected{% endifequal %}">
-                <a href="">Challenges</a>
+            <a href="{% url challenges_list %}">Challenges</a>
                 <div class="nav_pointer_wrap"></div>
             </li>
             <li class="{% ifequal nav_selected "events" %}nav_selected{% endifequal %}">
@@ -38,7 +38,7 @@
                 <div class="nav_pointer_wrap"></div>
             </li>
             <li class="{% ifequal nav_selected "badges" %}nav_selected{% endifequal %}">
-                <a href="">Badges</a>
+            <a href="{% url badge_list %}">Badges</a>
                 <div class="nav_pointer_wrap"></div>
             </li>
         </ul>

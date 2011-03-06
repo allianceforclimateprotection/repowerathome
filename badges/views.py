@@ -9,10 +9,12 @@ import badges
 from models import all_badges, get_badge
 
 def list(request):
+    nav_selected = "badges"
     badges = all_badges(request.user)
     return render_to_response('badges/list.html', locals(), context_instance=RequestContext(request))
 
 def detail(request, slug):
+    nav_selected = "badges"
     badge = get_badge(slug)
     if not badge:
         raise Http404('A badge %s does not exist' % slug)

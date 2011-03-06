@@ -1,18 +1,25 @@
-{% extends 'base.html' %}
+{% extends "base/nav_9c.html" %}
+{% load dated_static %}
 {% block title %}Repower at Home Badges{% endblock %}
-{% block right_content %}
-    <div class="box_three_top"></div>
-    <div class="box_three_middle">
-        <h1>Badges</h1>
-        <p>
-            The Repower at Home Badges
-        </p>
-    </div>
-    <div class="box_three_bottom"></div>
-    
-    <div class="box_three_top"></div>
-    <div class="box_three_middle">
-        {% include 'badges/_nugget_list.html' %}
-    </div>
-    <div class="box_three_bottom"></div>
+
+{% block title_bar_image %}<img src="{% dated_static "images/theme_new/section_actions_large.png" %}" alt="Actions section" height="100" width="100"/>{% endblock %}
+{% block title_bar_title %}Badges{% endblock %}
+{% block title_bar_copy %}
+    The Repower at Home Badges
+{% endblock %}
+{% block ribbon_bar %}
+    Showing {{ badges|length }} badges
+{% endblock %}
+
+{% block content %}
+    <ul class='plain_list'>
+    {% for badge in badges %}
+        <li>
+            <p>
+                <a href='{% url badge_detail badge.slug %}'>{{ badge.name }}</a>
+                <span class='smaller'>{{ badge.awarded_at|date }}</span>
+            </p>
+        </li>
+    {% endfor %}
+    </ul>
 {% endblock %}

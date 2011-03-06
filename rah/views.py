@@ -361,15 +361,7 @@ def feedback(request):
     else:
         form = FeedbackForm(initial={ 'url': request.META.get('HTTP_REFERER'), })
 
-    if request.is_ajax():
-        if request.method == 'POST':
-            message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))
-            return HttpResponse(message_html)
-        template = 'rah/_feedback.html'
-    else:
-        template = 'rah/feedback.html'
-
-    return render_to_response(template, { 'feedback_form': form, }, context_instance=RequestContext(request))
+    return render_to_response('rah/feedback.html', { 'form': form, }, context_instance=RequestContext(request))
 
 def validate_field(request):
     """The jQuery Validation plugin will post a single form field to this view and expects a json response."""

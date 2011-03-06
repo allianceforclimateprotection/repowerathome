@@ -1,5 +1,21 @@
-{% extends "rah/base.html" %}
+{% extends "base/nav_form.html" %}
+{% block title %}Feedback{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &rsaquo;
+    Feedback
+{% endblock %}
+{% block form_info %}
+    Your feedback is extremely valuable to us. Use this form to let us 
+    know what you think about this page or the site in general. Thanks!
+{% endblock %}
 {% block content %}
+<form action="" method="post">
     <h1>Give us Feedback</h1>
-    {% include "rah/_feedback.html" %}
+    {% include "base/_form.html" %}
+    {% csrf_token %}
+    <div class="form_buttons">
+        <button class="button_mega" type="submit">Submit feedback</button>
+    </div>
+</form>
 {% endblock %}

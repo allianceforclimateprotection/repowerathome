@@ -6,7 +6,7 @@
     modules: [
         {
             name: "pages/base",
-            include: ["libs/jquery.ui", "libs/jquery.form", "libs/jquery.validation", "mods/feedback", "mods/messages", "mods/facebook"] 
+            include: ["libs/jquery.ui", "libs/jquery.form", "libs/jquery.validation", "mods/messages", "mods/facebook"] 
         },
         {
             name: "pages/rah.home_logged_out",

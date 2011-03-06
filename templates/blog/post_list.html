@@ -1,11 +1,12 @@
-{% extends "blog/base.html" %}
+{% extends "base/nav_6c3c.html" %}
+
 {% load blog comments %}
 {% load dated_static %}
 
 {% block title %}Repower at Home Blog{% endblock %}
 
 {% block content_title %}{% endblock %}
-{% block right_content %}
+{% block content %}
 <div class="post_list">
     {% for post in object_list %}
         <div class="box_three_top"></div>

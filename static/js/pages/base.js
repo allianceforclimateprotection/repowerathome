@@ -1,33 +1,13 @@
 /*jslint maxerr: 1000, white: true, browser: true, devel: true, rhino: true, onevar: false, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, sub: true */
-/*global $: false, RAH: false, FB: false, WebFont: false, jQuery: false, window: false, google: false, require: false, define: false */
-require(["libs/webfont", "libs/jquery.ui", "libs/jquery.form", "libs/jquery.validation", "mods/feedback", "mods/messages", "mods/facebook"],
-    function (webfont, ui, form, validation, feedback, messages, facebook) {
-        // Setup TypeKit for non IE browsers
-        //var browser = $.browser;
-        //if (!browser.msie && !(browser.mozilla && browser.version.substr(0, 5) === "1.9.0")) {
-            //WebFont.load({ 
-                //typekit: { 
-                    //id: 'vbg1eri',
-                    //api: (('https:' === document.location.protocol) ? 'https:' : 'http:') + "//use.typekit.com"
-                //}
-            //});
-        //}
-
-        // setup buttons
-        //$("button, input:submit, a.button, input.button").button();
-        //$(".buttonset").buttonset();
+/*global $: false, RAH: false, FB: false, jQuery: false, window: false, google: false, require: false, define: false */
+require(["libs/jquery.ui", "libs/jquery.form", "libs/jquery.validation", "mods/messages", "mods/facebook"],
+    function (ui, form, validation, messages, facebook) {
         
         // Setup datepicker
         $(".datepicker").datepicker();
         
         // setup tabs
         $(".tabs").tabs();
-
-        // Highlight the right nav option if specified
-        var rah_nav_select = RAH.ENV.nav_select;
-        if (typeof(rah_nav_select) !== 'undefined' && rah_nav_select !== '') {
-            $("#" + rah_nav_select).addClass("selected");
-        }
         
         $.ajaxSetup({
             error: function (XMLHttpRequest, textStatus) { 
@@ -50,6 +30,5 @@ require(["libs/webfont", "libs/jquery.ui", "libs/jquery.form", "libs/jquery.vali
         });
 
         messages.setup();
-        feedback.setup();
         facebook.setup();
     });

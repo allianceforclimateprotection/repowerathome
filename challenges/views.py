@@ -11,6 +11,7 @@ from models import Challenge
 from forms import ChallengeForm, PetitionForm
 
 def _edit(request, challenge):
+    nav_selected = "challenges"
     form = ChallengeForm(instance=challenge, data=(request.POST or None))
     if form.is_valid():
         form.save()
@@ -19,6 +20,7 @@ def _edit(request, challenge):
     return render_to_response('challenges/edit.html', locals(), context_instance=RequestContext(request))
 
 def list(request):
+    nav_selected = "challenges"
     challenges = Challenge.objects.all_challenges(request.user)
     return render_to_response('challenges/list.html', locals(), context_instance=RequestContext(request))
 
@@ -28,6 +30,7 @@ def create(request):
     return _edit(request, challenge)
 
 def detail(request, challenge_id):
+    nav_selected = "challenges"
     challenge = get_object_or_404(Challenge.objects.select_related(), id=challenge_id)
     petition = PetitionForm(challenge=challenge, data=(request.POST or None))
     if petition.is_valid():

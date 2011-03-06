@@ -1,10 +1,16 @@
-{% extends "groups/base.html" %}
+{% extends "base/nav_9c.html" %}
+
 {% load dated_static %}
 {% block title %}Communities on Repower at Home{% endblock %}
-{% block right_content %}
-<div class="grid_6 alpha">
-    <div class="box_two_top"></div>
-    <div class="box_two_middle">
+{% block title_bar_image %}<img src="{% dated_static "images/theme_new/section_events_large.png" %}" alt="Events section" height="100" width="100"/>{% endblock %}
+{% block title_bar_title %}Community{% endblock %}
+{% block title_bar_copy %}
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+    euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+{% endblock %}
+{% block ribbon_bar %}Showing {{map_events|length}} events{% endblock %}
+
+{% block content %}
         <h1>Start a Community</h1>
         <p>
             Are you ready to lead the charge for a cleaner tomorrow? Starting a community is a great way to help
@@ -21,20 +27,10 @@
             </p>
             {% include "groups/_group_nugget_list.html" %}
         {% endif %}
-    </div>
-    <div class="box_two_bottom"></div>
-</div>
-<div class="grid_3 omega">
-    <div class="box_one_top"></div>
-    <div class="box_one_middle">
         {% load search_widget %}
         {% search_widget group_search %}
-    </div>
-    <div class="box_one_bottom"></div>
 
     {% if user.is_authenticated %}
-        <div class="box_one_top"></div>
-        <div class="box_one_middle">
             <h3>Your Communities</h3>
             {% if my_groups %}
                 {% with my_groups as groups%}
@@ -43,10 +39,7 @@
             {% else %}
                 <em>You're not a member of any communities yet!</em>
             {% endif %}
-        </div>
-        <div class="box_one_bottom"></div>
     {% endif %}
-</div>
 
 <script type="text/javascript" charset="utf-8">
     var RAH = RAH || {};

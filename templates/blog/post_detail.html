@@ -1,4 +1,4 @@
-{% extends "blog/base.html" %}
+{% extends "base/nav_6c3c.html" %}
 {% load comments %}
 {% load dated_static %}
 
@@ -25,7 +25,7 @@
     <a href="{% url blog_index %}">Blog</a> &rsaquo;
     {{ object.title }}
 {% endblock breadcrumbs %}
-{% block right_content %}
+{% block content %}
     <div class="box_three_top"></div>
     <div class="box_three_middle">
         <div class="post">
