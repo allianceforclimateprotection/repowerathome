@@ -251,8 +251,11 @@ button::-moz-focus-inner, input::-moz-focus-inner  { border: 0; padding:0; }
     width: 240px;
     height: 5px;
 }
-#form_info, #form_info p, #form_info a  {
+#form_info, #form_info p, #form_info a {
     color: #FFF; 
+}
+#form_info a {
+    text-decoration: underline;
 }
 #form_info h3 {
     color: #fff;

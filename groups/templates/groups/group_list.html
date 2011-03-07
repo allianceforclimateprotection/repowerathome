@@ -5,19 +5,16 @@
 {% block title_bar_image %}sprite_section_communities_large{% endblock %}
 {% block title_bar_title %}Community{% endblock %}
 {% block title_bar_copy %}
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
-    euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+Starting a community is a great way to help your neighborhood, church, school,
+or local group become more energy savvy. As a community leader, you can use
+your community to organize meetings, encourage action, and track progress
+towards your community's goals.
+<br/><br/>
+<a class="button" href="{% url group_create %}">Start a Community</a>
 {% endblock %}
-{% block ribbon_bar %}Showing {{map_events|length}} events{% endblock %}
+{% block ribbon_bar %}Showing {{groups|length}} communities{% endblock %}
 
 {% block content %}
-        <h1>Start a Community</h1>
-        <p>
-            Are you ready to lead the charge for a cleaner tomorrow? Starting a community is a great way to help
-            your neighborhood, church, school, or local group become more energy savvy. As a community leader, you can use your community to
-            organize meetings, encourage action, and track progress towards your community's goals.
-        </p>
-        <p><a class="button" href="{% url group_create %}">Start a Community</a></p>
         {% if groups %}
             <h1>Join a Community</h1>
             <p>
