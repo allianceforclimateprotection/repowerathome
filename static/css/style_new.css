@@ -61,16 +61,16 @@ Home Page Home Page Home Page Home Page Home Page Home Page Home Page Home Page 
 }
 #home_slide_nav_prev, #home_slide_nav_next {
     display: block;
-    height: 54px;
-    width: 54px;
+    height: 55px;
+    width: 55px;
     color: transparent;
     background: transparent url('../images/theme_new/home_nextprev.png') 0px 0px no-repeat;
     margin-top: 100px;
     margin-left: 5px;
 }
-#home_slide_nav_prev:hover { background-position: 0px -54px; }
-#home_slide_nav_next { background-position: -54px 0px; }
-#home_slide_nav_next:hover { background-position: -54px -54px; }
+#home_slide_nav_prev:hover { background-position: 0px -55px; }
+#home_slide_nav_next { background-position: -55px 0px; }
+#home_slide_nav_next:hover { background-position: -55px -55px; }
 #home_slide_1 .home_slide_left{ width: 440px;}
 #home_slide_1 .home_slide_right{ width: 330px;}
 #home_slide_2 .home_slide_left{ width: 350px;}
