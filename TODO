@@ -1,0 +1,77 @@
+Graphics
+========
+
+Add icons to nav
+Replace follow us icons version from AI file, add roll over state
+Overview graphics for challenges, communities, events
+Breadcrumb graphic (tiny icon )
+Add graphics for badges
+Redo left and right arrows on home page
+
+Text
+====
+About us in the footer
+Communites show page
+Challenges show page
+events show page
+badges show page
+
+
+HTML/CSS
+========
+Challenge nuggets
+Form error messages on nav_form
+Flash messages
+Communities nugget (profile pages)
+Community stats (community detail)
+events nugget (profile and community detail)
+Threaded comments (existing comments)
+Comment form
+Join this community button (w/states for pending request)
+My settings page
+Search box with green button
+Form style for homepage register and petition signing
+Petition progress bar
+Tabs on challenge details
+Badge stats (badge detail)
+Share links on badge detail
+Recent badge earned on home page
+Author details in blog detail sidebar
+Fat ribbon bottom of blog detail
+Links and downloads nugget
+Map styling
+Map markers
+Map info windows
+Event listings
+Events/communities search box
+Create links on logged in nav
+Event detail page map
+Badge overview nuggets
+
+Features
+========
+Commit/done/can't do buttons on action detail pages
+Log in widget (ajax login)
+Add Members to your community
+"Create a challenge" notification (community detail)
+Our events (community detail)
+Paginated challenges, badges, actions lists
+Clicking on "x badges" in logged in nav brings up Badges tab on profile
+Invite friends
+My calendar
+Sort by, Filter by dropdowns for actions, challenges, badges overview
+Change default icon
+Participants/members tab with paginated list of users
+Quick change to other actions/badges in the breadcrumb bar of action and badge detail pages
+Sort actions on action over page
+Image gallery
+Upload images to image gallery
+Event RSVP form
+
+
+Code cleanup
+============
+Remove group discussions code
+Standardize _ over - in urls.py (various apps)
+Standarize names for overview pages (list, show)
+
