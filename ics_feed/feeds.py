@@ -2,13 +2,13 @@ from datetime import date, timedelta, datetime
 from itertools import chain
 
 from events.models import Event
-from actions.models import UserActionProgress 
+from actions.models import UserActionProgress
 from ics_feed import ICalendarFeed, IcsEvent
 
 class CombinedICSFeed(ICalendarFeed):
     """Provides a simple iCal feed of the next week's events and commitments.
        """
-    
+
     def items(self):
         """Returns a combined list of all the events we wish to include to include in our feed.
            """
@@ -24,7 +24,7 @@ class CombinedICSFeed(ICalendarFeed):
 
         # Combine the lists.  FIXME: This is inefficient... 
         combined_items = list(chain(mapped_events, mapped_actions))
-        return combined_items 
+        return combined_items
 
 
     def _get_event_times(self, event):
@@ -33,10 +33,10 @@ class CombinedICSFeed(ICalendarFeed):
            """
         start = event.start_datetime()
 
-        if event.duration: 
+        if event.duration:
             duration_in_minutes = event.duration
             end = start + timedelta(minutes=duration_in_minutes)
         else:
-            end = None 
+            end = None
 
         return (start, end)

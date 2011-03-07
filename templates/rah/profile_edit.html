@@ -1,8 +1,8 @@
-{% extends "rah/base.html" %}
+{% extends "base/nav_form.html" %}
 
 {% load dated_static %}
 
-{% block right_content %}
+{% block content %}
     <h1>Edit your Profile</h1>
     <div id="profile_edit_tabs" class="tabs">
         <ul>
@@ -21,10 +21,10 @@
             </p>
             <form id="profile_edit_form" action="" method="post" autocomplete="false">
                 {% with account_form as form %}
-                    {% include "rah/_overset_form.html" %}
+                    {% include "base/_form.html" %}
                 {% endwith %}
                 {% with profile_form as form %}
-                    {% include "rah/_overset_form.html" %}
+                    {% include "base/_form.html" %}
                 {% endwith %}
                 <p><input type="submit" name="edit_account" value="Save profile" /></p>
                 {% csrf_token %}
@@ -33,7 +33,7 @@
         <div id="notifications_tab">
             <form id="notifications_form" action="" method="post" autocomplete="false">
                 {% with group_notification_form.notifications as field %}
-                    <div id="community_notifications" class="form_row overset {% if field.errors %}error{% endif %}">
+                    <div id="community_notifications" class="form_row {% if field.errors %}error{% endif %}">
                         {{ field.label_tag }}
                         <div class="notification_selectors" class="hidden">
                             <a class="selector select_all" href="">Select All</a> |
@@ -54,7 +54,7 @@
                 {% endwith %}
                 <br />
                 {% with stream_notification_form.stream_notifications as field %}
-                    <div id="stream_notifications" class="form_row overset {% if field.errors %}error{% endif %}">
+                    <div id="stream_notifications" class="form_row {% if field.errors %}error{% endif %}">
                         {{ field.label_tag }}
                         <div class="notification_selectors" class="hidden">
                             <a class="selector select_all" href="">Select All</a> |

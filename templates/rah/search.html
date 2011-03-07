@@ -1,8 +1,6 @@
-{% extends "rah/base.html" %}
+{% extends "base/nav_9c.html" %}
 {% block title %}Results for '{{request.GET.q}}'{% endblock %}
-{% block right_content %}
-<div class="box_three_top"></div>
-<div class="box_three_middle">
+{% block content %}
     <h1>Search Repower at Home</h1>
     <div id="cse_search_results"></div>
     <script type="text/javascript">
@@ -13,7 +11,5 @@
         var googleSearchPath = "/cse";
     </script>
     <script type="text/javascript" src="http://www.google.com/afsonline/show_afs_search.js"></script>
-</div>
-<div class="box_three_bottom"></div>
 {% endblock %}
 {% block js %}{% endblock %}

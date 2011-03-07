@@ -33,7 +33,7 @@ class IcsEvent(object):
             self.last_modified = last_modified
         if created != None:
             self.created = created
-        
+
 
 class ICalendarFeed(object):
     """Provides a base class for creating iCal feeds.
@@ -66,7 +66,7 @@ class ICalendarFeed(object):
         return response
 
     def items(self):
-        """Returns a list of IcsEvents to be added to the calendar. 
+        """Returns a list of IcsEvents to be added to the calendar.
         You _must_ override this method!
            """
         return []

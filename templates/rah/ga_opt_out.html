@@ -1,23 +1,19 @@
-{% extends "rah/base.html" %}
+{% extends "base/nav_form.html" %}
 {% block title %}Google Analytics Opt Out{% endblock %}
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
     Google Analytics Opt Out
 {% endblock %}
-{% block right_content %}
-<div class="grid_6 alpha">
-    <div class="box_two_top"></div>
-    <div class="box_two_middle">
+{% block form_info %}
+    Click the button below to opt out of our Google Analytics tracking. A cookie will be set for this browser
+    only. You need to opt out with every browser you don't want tracked. If you delete your cookies, tracking
+    will resume.
+{% endblock %}
+{% block content %}
+    <form>
         <h1>Opt out of Google Analytics</h1>
-        <p>
-            Click the button below to opt out of our Google Analytics tracking. A cookie will be set for this browser
-            only. You need to opt out with every browser you don't want tracked. If you delete your cookies, tracking
-            will resume.
-        </p>
-        <button id="opt_out_button">Opt Out</button>
-    </div>
-    <div class="box_two_bottom"></div>
-</div>
+        <button id="opt_out_button" class="button_mega">Opt Out</button>
+    </form>
 {% endblock %}
 {% block extrajs %}
     <script type="text/javascript" charset="utf-8">
