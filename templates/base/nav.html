@@ -15,49 +15,50 @@
                 <div id="nav_profile_location">{{ request.user.get_profile.location }}</div>
             {% endif %}
             <div id="nav_profile_stats">
-                <a href="">{{ request.user.get_profile.total_points }} points</a> | <a href="">8 badges</a>
+                <a href="{% url profile request.user.id %}">{{ request.user.get_profile.total_points }} points</a> | 
+                <a href="{% url profile request.user.id %}#badges">8 badges</a>
             </div>
         {% else %}
         {#Not logged in!#}
         {% endif %}
         <ul id="nav_primary" class="plain_list">
             <li class="{% ifequal nav_selected "actions" %}nav_selected{% endifequal %}">
-                <a href="{% url action_show %}">Actions</a>
+                <a href="{% url action_show %}"><span class="sprite_nav_actions"></span> Actions</a>
                 <div class="nav_pointer_wrap"></div>
             </li>
             <li class="{% ifequal nav_selected "communities" %}nav_selected{% endifequal %}">
-                <a href="{% url group_list %}">Communities</a>
+                <a href="{% url group_list %}"><span class="sprite_nav_communities"></span> Communities</a>
                 <div class="nav_pointer_wrap"></div>
             </li>
             <li class="{% ifequal nav_selected "challenges" %}nav_selected{% endifequal %}">
-            <a href="{% url challenges_list %}">Challenges</a>
+                <a href="{% url challenges_list %}"><span class="sprite_nav_challenges"></span> Challenges</a>
                 <div class="nav_pointer_wrap"></div>
             </li>
             <li class="{% ifequal nav_selected "events" %}nav_selected{% endifequal %}">
-                <a href="{% url event-show %}">Events</a>
+                <a href="{% url event-show %}"><span class="sprite_nav_events"></span> Events</a>
                 <div class="nav_pointer_wrap"></div>
             </li>
             <li class="{% ifequal nav_selected "badges" %}nav_selected{% endifequal %}">
-            <a href="{% url badge_list %}">Badges</a>
+                <a href="{% url badge_list %}"><span class="sprite_nav_badges"></span> Badges</a>
                 <div class="nav_pointer_wrap"></div>
             </li>
         </ul>
         {% if user.is_authenticated %}        
             <ul id="nav_secondary" class="plain_list">
                 <li>
-                    <a href="">My Calendar</a>
+                    <a href=""><span class="sprite_nav_calendar"></span>My Calendar</a>
                 </li>
                 <li>
-                    <a href="">My Profile / Settings</a>
+                    <a href=""><span class="sprite_nav_settings"></span>My Profile / Settings</a>
                 </li>
                 <li>
-                    <a href="">Invite Friends</a>
+                    <a href=""><span class="sprite_nav_invite"></span>Invite Friends</a>
                 </li>
                 <li>
-                    <a href="">Enter Commitment Cards</a>
+                    <a href=""><span class="sprite_nav_cards"></span>Enter Commitment Cards</a>
                 </li>
                 <li id="nav_logout_link">
-                    <a href="{% url logout %}">Log Out</a>
+                    <a href="{% url logout %}"><span class="sprite_nav_logout"></span>Log Out</a>
                 </li>
             </ul>
         {% endif %}

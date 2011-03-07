@@ -142,6 +142,7 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 }
 #footer_logo img{ padding-top:40px; }
 #footer_social_icons{ margin-top:30px; margin-left: 20px; }
+#footer_social_icons a {margin-left: 6px;}
 #footer_social_icons a:hover { text-decoration:none; }
 
 
@@ -209,7 +210,7 @@ Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar 
     overflow: auto;
     margin-bottom: 18px;
 }
-#title_bar_9c img, #title_bar_9c div {
+#title_bar_9c div {
     float: left;
 }
 #title_bar_9c h1 {
@@ -323,20 +324,19 @@ Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav 
 
 /* Primary */
 #nav_primary li {
-    font-family:"MuseoSlab500", Tahoma, sans-serif;
+    font-family:"MuseoSlab700", Tahoma, sans-serif;
     font-size: 18px;
     height:35px;
 }
 #nav_primary li a {
     color: #323232;
-    width:198px;
+    width:204px;
     display: inline-block;
     border-top: 1px solid #CCC;
-    padding:8px 0px 8px 9px;
+    padding:8px 0px 8px 0;
 }
 #nav_primary li a:hover {
     text-decoration: none;
-    color: #42AB35;
 }
 #nav .nav_pointer_wrap {
     display: none;
