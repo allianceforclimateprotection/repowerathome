@@ -36,7 +36,7 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
 .nugget_3c_grid_2 li {
     float: left;
     color: #0F3669;
-    background: #E0ECF2;
+    background: #E0ECF3;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -122,9 +122,64 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
 }
 
 /*nugget_6c_list -- used for displaying user's communities on their profile page*/
-.nugget_6c_list {
-
+.nugget_6c_list li {
+    overflow: auto;
+    height: 100%;
+    padding: 12px 0 6px 0;
+    border-top: 1px dotted #E6E5D2;
 }
+.nugget_6c_list .nugget_6c_list_last{
+    border-bottom: 1px dotted #E6E5D2;
+}
+.nugget_6c_list img {
+    padding: 9px;
+    border: 1px solid #CCC;
+}
+.nugget_6c_list .nugget_6c_list_image, .nugget_6c_list .nugget_6c_list_text {
+    float: left;
+}
+.nugget_6c_list .nugget_6c_list_stat {
+    float: right;
+}
+.nugget_6c_list .nugget_6c_list_text {
+    padding: 9px 0 0 9px;
+}
+.nugget_6c_list .nugget_6c_list_text a {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 16px;
+    width: 190px;
+}
+.nugget_6c_list .nugget_6c_list_text span {
+    color: #666;
+}
+.nugget_6c_list .nugget_6c_list_stat {
+    padding: 9px;
+    width: 61px;
+    height: 61px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background: #E0ECF3;
+    color: #0F3669;
+    text-align: center;
+    margin-left: 6px;
+    font-size: 12px;
+}
+.nugget_6c_list .nugget_6c_list_stat div {
+    font-size: 12px;
+    width: 60px;
+    font-family:"MuseoSlab900", Tahoma, sans-serif;
+    line-height: 40px;
+}
+.nugget_6c_list .nugget_6c_list_stat .digits_1 { font-size: 48px; }
+.nugget_6c_list .nugget_6c_list_stat .digits_2 { font-size: 48px; }
+.nugget_6c_list .nugget_6c_list_stat .digits_3 { font-size: 30px; }
+.nugget_6c_list .nugget_6c_list_stat .digits_4 { font-size: 24px; }
+.nugget_6c_list .nugget_6c_list_stat .digits_5 { font-size: 16px; }
+.nugget_6c_list .nugget_6c_list_stat .digits_6 { font-size: 16px; }
+.nugget_6c_list .nugget_6c_list_stat .digits_max { font-size: 12px; }
+
 
 /*nugget_3c -- Used on action, badge, and challenge landing pages*/
 

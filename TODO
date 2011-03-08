@@ -7,6 +7,7 @@ Graphics
 ========
 Breadcrumb graphic (tiny icon )
 Add graphics for badges
+Add star and check images to committed and completed nuggets
 
 Text
 ====
@@ -15,12 +16,12 @@ About us in the footer
 
 HTML/CSS
 ========
-Challenge nuggets
+Challenge nuggets (profile page)
+Event listings
+events nugget (profile and community detail)
+Community stats (community detail)
 Form error messages on nav_form
 Flash messages
-Communities nugget (profile pages)
-Community stats (community detail)
-events nugget (profile and community detail)
 Threaded comments (existing comments)
 Comment form
 Join this community button (w/states for pending request)
@@ -38,7 +39,6 @@ Links and downloads nugget
 Map styling
 Map markers
 Map info windows
-Event listings
 Events/communities search box
 Create links on logged in nav
 Event detail page map
@@ -66,6 +66,8 @@ Event RSVP form
 Tab JS
 jQuery UI calendar for event creation
 Fix change date, cancel functionality of action detail page
+Wrap "Is this action right for me?" text in a div.
+Profile picture uploader (Josh)
 
 Code cleanup
 ============

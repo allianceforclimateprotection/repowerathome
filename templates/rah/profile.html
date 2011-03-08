@@ -33,25 +33,25 @@
 {% block content %}
         {% if communities %}
             <h2>Communities</h2>
-            <ul class="plain_list">
+            <ul class="plain_list nugget_6c_list">
             {% for group in communities %}
-            <li>
-            <a href="{{ group.get_absolute_url }}">
-                <img src="{{ MEDIA_URL }}{{ group.image.thumbnail_colorspace_70x70smartcrop }}" alt="community image" height="60" width="60"/>
-            </a>
-            <div>
-                <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br/>
-                <span>{{ group.headquarters }}</span>
-            </div>
-            <div>
-                <div>Points</div>
-                {{ group.member_count }}
-            </div>
-            <div>
-                <div>Members</div>
-                {{ group.total_points }}
-            </div>
-                </li>
+            <li {% if forloop.last %}class="nugget_6c_list_last"{% endif %}>
+                <a href="{{ group.get_absolute_url }}" class="nugget_6c_list_image">
+                    <img src="{{ MEDIA_URL }}{{ group.image.thumbnail_colorspace_60x60smartcrop }}" alt="community image" height="60" width="60"/>
+                </a>
+                <div class="nugget_6c_list_text">
+                    <a href="{{ group.get_absolute_url }}">{{ group.name }}</a><br/>
+                    <span>{{ group.headquarters }}</span>
+                </div>
+                <div class="nugget_6c_list_stat">
+                    Members
+                    <div class="{% with group.member_count as digit %}{% if digit < 9 %}digit_1{% else %}{% if digit > 999999 %}digits_max{% else %}{% if digit > 99999 %}digits_6{% else %}{% if digit > 9999 %}digits_5{% else %}{% if digit > 999 %}digits_4{% else %}{% if digit > 99 %}digits_3{% else %}{% if digit > 9 %}digits_2{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endwith %}">{{ group.member_count|intcomma }}</div>
+                </div>
+                <div class="nugget_6c_list_stat">
+                    Points
+                    <div class="{% with group.total_points as digit %}{% if digit < 9 %}digit_1{% else %}{% if digit > 999999 %}digits_max{% else %}{% if digit > 99999 %}digits_6{% else %}{% if digit > 9999 %}digits_5{% else %}{% if digit > 999 %}digits_4{% else %}{% if digit > 99 %}digits_3{% else %}{% if digit > 9 %}digits_2{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endwith %}">{{ group.total_points|intcomma }}</div>
+                </div>
+            </li>
             {% endfor %}
             </ul>
         {% endif %}
@@ -99,7 +99,7 @@
     <ul class="plain_list nugget_3c_grid_2">
         <li>Actions Completed <div>{{ completed|length }}</div></li>
         <li>Actions Committed <div>{{ committed|length }}</div></li>
-        <li>Points Earned <div class="{% if profile.total_points > 99 %}digits_3{% endif %} {% if profile.total_points > 999 %}digits_4{% endif %} {% if profile.total_points > 9999 %}digits_5{% endif %}">{{ profile.total_points|intcomma }}</div></li>
+        <li>Points Earned <div class="{% with profile.total_points as digit %}{% if digit < 9 %}digit_1{% else %}{% if digit > 999999 %}digits_max{% else %}{% if digit > 99999 %}digits_6{% else %}{% if digit > 9999 %}digits_5{% else %}{% if digit > 999 %}digits_4{% else %}{% if digit > 99 %}digits_3{% else %}{% if digit > 9 %}digits_2{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endwith %}">{{ profile.total_points|intcomma }}</div></li>
         <li>Challenges Completed <div>0</div></li>
     </ul>
 
