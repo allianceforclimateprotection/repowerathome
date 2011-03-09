@@ -264,41 +264,38 @@ def login(request, template_name='registration/login.html',
     }, context_instance=RequestContext(request))
 
 def profile(request, user_id):
-
-    recommended, committed, completed = Action.objects.actions_by_status(request.user)[1:4]
-    twitter_status_form = TwitterStatusForm(initial={
-        "status":"I'm saving money and having fun with @repowerathome. Check out http://repowerathome.com/"
-    })
-    commitment_list = UserActionProgress.objects.commitments_for_user(request.user)
-    my_groups = Group.objects.filter(users=request.user, is_geo_group=False)
-    my_events = Event.objects.filter(guest__contributor__user=request.user)
-    records = Record.objects.user_records(request.user, 10)
-    pledge_card_count = ContributorSurvey.objects.filter(entered_by=request.user).count()
-
-    locals().update(_progress_stats())
-
-    try:
-        contributor = Contributor.objects.get(user=request.user)
-    except Contributor.DoesNotExist:
-        contributor = None
-    profile = request.user.get_profile()
-    zipcode = profile.location.zipcode if profile.location else ""
-    contributor_form = ContributorForm(instance=contributor, initial={"zipcode": zipcode})
-    pledge_card_form = PledgeCard(contributor, None)
-
     user = request.user if request.user.id is user_id else get_object_or_404(User, id=user_id)
+
     profile = user.get_profile()
     if request.user <> user and user.get_profile().is_profile_private:
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
 
     recommended, committed, completed = Action.objects.actions_by_status(user)[1:4]
+    commitment_list = UserActionProgress.objects.commitments_for_user(user)
+    groups = Group.objects.filter(users=user, is_geo_group=False)
+    events = Event.objects.filter(guest__contributor__user=user)
+    records = Record.objects.user_records(user, 10)
+    #pledge_card_count = ContributorSurvey.objects.filter(entered_by=user).count()
+
+    #locals().update(_progress_stats())
+
+    #try:
+        #contributor = Contributor.objects.get(user=request.user)
+    #except Contributor.DoesNotExist:
+        #contributor = None
+    #profile = request.user.get_profile()
+    #zipcode = profile.location.zipcode if profile.location else ""
+    #contributor_form = ContributorForm(instance=contributor, initial={"zipcode": zipcode})
+    #pledge_card_form = PledgeCard(contributor, None)
+
     return render_to_response('rah/profile.html', {
-        'profile_user': user,
-        'total_points': user.get_profile().total_points,
-        'completed': completed,
-        'profile': user.get_profile(),
+        'user': user,
+        #'total_points': user.get_profile().total_points,
+        #'completed': completed,
+        #'profile': user.get_profile(),
         'is_others_profile': request.user <> user,
         'commitment_list': UserActionProgress.objects.commitments_for_user(user),
+        'events': events,
         'communities': Group.objects.filter(users=user, is_geo_group=False),
         'records': Record.objects.user_records(user, 10),
     }, context_instance=RequestContext(request))

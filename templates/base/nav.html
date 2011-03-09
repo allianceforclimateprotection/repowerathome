@@ -4,7 +4,7 @@
     <div id="nav">
         {% if request.user.is_authenticated %}
             <a href="{% url profile request.user.id %}" title="View your profile">
-                <img id="nav_profile_picture" src="{{ user.get_profile.profile_picture_large }}" alt="Your profile picture" width="186" height="186"/>
+                <img id="nav_profile_picture" src="{{ request.user.get_profile.profile_picture_large }}" alt="Your profile picture" width="186" height="186"/>
             </a>
             <h3>
                 <a href="{% url profile request.user.id %}" title="View your profile">
