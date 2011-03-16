@@ -86,11 +86,8 @@ class Action(models.Model):
     def image_paths(self):
         images = {}
         images['small'] = timestamp_file("images/badges/%s-action-badge-0-small.png" % self.slug)
-        images['small_inactive'] = timestamp_file("images/badges/%s-action-badge-0-small-inactive.png" % self.slug)
         images['large'] = timestamp_file("images/badges/%s-action-badge-0-large.png" % self.slug)
-        images['large_inactive'] = timestamp_file("images/badges/%s-0-action-badge-large-inactive.png" % self.slug)
-        images['mega'] = timestamp_file("images/badges/%s-0-action-badge-mega.png" % self.slug)
-        images['white'] = timestamp_file("images/badges/%s-0-action-badge-white.png" % self.slug)
+        images['white'] = timestamp_file("images/badges/%s-action-badge-0-white.png" % self.slug)
         return images
 
 
