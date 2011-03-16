@@ -124,9 +124,19 @@
         {% endfor %}
     </ul>
     <div class="ribbon_small">
-        Badges
+        Badges ({{badges|length}})
         <div class="ribbon_small_wrap"></div>
     </div>
+    <ul class="plain_list nugget_3c_grid_3 nugget_3c_grid_badges">
+        {% for badge in badges %}
+        <li>
+        <a href="{% url badge_detail badge.slug %}">
+            <img src="{{ badge.img_small }}" width="60" height="60" 
+                alt="Badge for {{ badge.name }}" title="{{ badge.description }}"/>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
     <div class="ribbon_small">
         Committed Actions
         <div class="ribbon_small_wrap"></div>

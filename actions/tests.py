@@ -89,13 +89,11 @@ class ActionTest(TestCase):
         self.csp.commit_for_user(self.user, datetime.date.today())
         self.cfw.commit_for_user(self.user, datetime.date.today())
 
-        actions, recommended, committed, completed = Action.objects.actions_by_status(self.user)
-        sorted_actions = sorted(Action.objects.all(), key=lambda a: not a.has_illustration())
-        self.failUnlessEqual(list(actions), sorted_actions)
-        self.failUnlessEqual(recommended, 
-            [a for a in sorted_actions if a not in [self.iwh, self.csp, self.cfw]])
-        self.failUnlessEqual(committed, [self.cfw])
-        self.failUnlessEqual(completed, [self.csp, self.iwh])
+        actions = Action.objects.actions_by_status(self.user)
+        self.failUnlessEqual(len(actions), Action.objects.all().count())
+        self.failUnlessEqual(actions[0].committed, datetime.date.today())
+        self.failUnlessEqual(actions.pop().completed, 1)
+        self.failUnlessEqual(actions.pop().completed, 1)
 
     def test_complete_for_user(self):
         self.failUnlessRaises(UserActionProgress.DoesNotExist, UserActionProgress.objects.get,

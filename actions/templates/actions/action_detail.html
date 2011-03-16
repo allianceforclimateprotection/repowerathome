@@ -33,10 +33,10 @@
     <div class="title_bar_floater">
         <div class="floater_title">Badge</div>
         <div class="floater_body">
-            <a href="#">
-                <img src="{% dated_static 'images/theme_new/badge.png' %}"/>
+            <a href="/badges/{{ action.slug }}-action-badge/">
+                <img src="{{ action.image_paths.white }}" width="80" height="80" />
             </a>
-            <a href="#" class="white">View badge page</a>
+            <a href="/badges/{{ action.slug }}-action-badge/" class="white">View badge page</a>
         </div>
     </div>
 {% endblock %}

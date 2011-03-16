@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
@@ -8,16 +9,37 @@ from events.models import Event
 from media_widget.models import StickerImage
 from invite.models import Invitation
 from rah.models import Profile
+from dated_static.templatetags.dated_static import timestamp_file
 
 from brabeion import badges as badge_cache
 from brabeion.models import BadgeAward
 
+import badges
+
 def all_badges(user=None):
+    #Fetch all badges and add in the image links
     badges_dict = badge_cache._registry
+    for key,value in badges_dict.items():
+        badges_dict[key].awarded_at = None
+        badges_dict[key] = add_images(badges_dict[key])
+
+    #Add in the awarded date if the use is authenticated
     if user and user.is_authenticated():
-        for award in BadgeAward.objects.filter(user=user):
+        for award in BadgeAward.objects.filter(user=user).order_by("awarded_at"):
             badges_dict[award.slug].awarded_at = award.awarded_at
-    return badges_dict.values()
+
+    #Sort the values such that awarded badges are in cronological order at the top of the list
+    return sorted(badges_dict.values(), key=lambda x: x.awarded_at if x.awarded_at else datetime.max)
+
+def user_badges(user):
+    all_badges = badge_cache._registry
+    user_badges = []
+    for award in BadgeAward.objects.filter(user=user):
+        all_badges[award.slug].awarded_at = award.awarded_at
+        all_badges[award.slug].level = award.level
+        all_badges[award.slug] = add_images(all_badges[award.slug])
+        user_badges.append(all_badges[award.slug])
+    return user_badges
 
 def get_badge(slug, user=None):
     badge = badge_cache._registry[slug]
@@ -27,6 +49,15 @@ def get_badge(slug, user=None):
             badge.awarded_at = award.awarded_at
         except BadgeAward.DoesNotExist:
             pass
+    return add_images(badge)
+
+def add_images(badge):
+    badge.img_small = timestamp_file("images/badges/%s-0-small.png" % badge.slug)
+    badge.img_small_inactive = timestamp_file("images/badges/%s-0-small-inactive.png" % badge.slug)
+    badge.img_large = timestamp_file("images/badges/%s-0-large.png" % badge.slug)
+    badge.img_large_inactive = timestamp_file("images/badges/%s-0-large-inactive.png" % badge.slug)
+    badge.img_mega = timestamp_file("images/badges/%s-0-mega.png" % badge.slug)
+    badge.img_white = timestamp_file("images/badges/%s-0-white.png" % badge.slug)
     return badge
 
 def possibly_award_action_badge(sender, instance, created, **kwargs):

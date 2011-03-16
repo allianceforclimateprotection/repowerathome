@@ -21,6 +21,7 @@ from django.template import RequestContext, loader, Context
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.decorators.cache import cache_page
+from brabeion.models import BadgeAward
 
 from basic.blog.models import Post
 from tagging.models import Tag
@@ -39,6 +40,7 @@ from commitments.survey_forms import PledgeCard
 from events.models import Event, Guest
 from messaging.models import Stream
 from messaging.forms import StreamNotificationsForm
+from badges.models import user_badges
 
 from decorators import save_queued_POST
 from signals import logged_in
@@ -144,8 +146,6 @@ def index(request):
         return profile(request, request.user.id)
 
     section_class = "section_home"
-    # blog_posts = Post.objects.filter(status=2)[:3]
-    # pop_actions = Action.objects.get_popular(count=5)
     top_users = Profile.objects.filter(is_profile_private=False, location__isnull=False, facebook_connect_only=True).select_related("user").order_by("-total_points")[:6]
     top_communities = Group.objects.filter(is_featured=True).order_by("-member_count")[:2]
     locals().update(_progress_stats())
@@ -270,11 +270,12 @@ def profile(request, user_id):
     if request.user <> user and user.get_profile().is_profile_private:
         return forbidden(request, "Sorry, but you do not have permissions to view this profile.")
 
-    recommended, committed, completed = Action.objects.actions_by_status(user)[1:4]
+    actions = Action.objects.actions_by_status(user)
     commitment_list = UserActionProgress.objects.commitments_for_user(user)
     groups = Group.objects.filter(users=user, is_geo_group=False)
     events = Event.objects.filter(guest__contributor__user=user)
     records = Record.objects.user_records(user, 10)
+    badges = user_badges(user)
     #pledge_card_count = ContributorSurvey.objects.filter(entered_by=user).count()
 
     #locals().update(_progress_stats())
@@ -296,6 +297,7 @@ def profile(request, user_id):
         'is_others_profile': request.user <> user,
         'commitment_list': UserActionProgress.objects.commitments_for_user(user),
         'events': events,
+        'badges': badges,
         'communities': Group.objects.filter(users=user, is_geo_group=False),
         'records': Record.objects.user_records(user, 10),
     }, context_instance=RequestContext(request))

@@ -14,14 +14,25 @@
 {% endblock %}
 
 {% block content %}
-    <ul class='plain_list'>
+    <ul class="plain_list nugget_3c">
     {% for badge in badges %}
-        <li>
-            <p>
-                <a href='{% url badge_detail badge.slug %}'>{{ badge.name }}</a>
-                <span class='smaller'>{{ badge.awarded_at|date }}</span>
-            </p>
-        </li>
+    <li class="nugget_3c_narrow {% if badge.awarded_at %}nugget_3c_completed{% endif %}">
+        <a href='{% url badge_detail badge.slug %}'>
+            {% if badge.awarded_at %}
+                <img src="{{ badge.img_large}}" height="100" width="100" alt="Badge image for {{badge.name}}"/>
+            {% else %}
+                <img src="{{ badge.img_large_inactive }}" height="100" width="100" alt="Badge image for {{badge.name}}"/>
+            {% endif %}
+        </a>
+        <h2><a href='{% url badge_detail badge.slug %}'>{{ badge.name }}</a></h2>
+        <div class="">{{ badge.awarded_at|date }}</div>
+    </li>
     {% endfor %}
     </ul>
+    <script>
+        var RAH = RAH || {};
+        RAH.pagescripts = RAH.pagescripts || [];
+        RAH.pagescripts.push("{% dated_static 'js/pages/badge.show.js' %}");
+    </script>
 {% endblock %}
+

@@ -16,28 +16,31 @@ from messaging.models import Stream, Queue
 from rah.signals import logged_in
 
 class ActionManager(models.Manager):
-    
+
     def get_popular(self, count=6):
         # Returns the most popular actions where popularity is defined as the sum of completed and commited users
         # TODO: Write a unit test for get_popular
         actions = Action.objects.all()
         count = actions.count() if actions.count() < count else count
         return sorted(actions, reverse=True, key=lambda action: action.users_completed+action.users_committed)[:count]
-    
+
     def actions_by_status(self, user):
-        actions = Action.objects.select_related().all().extra(select_params = (user.id,), 
+        actions = Action.objects.select_related().all().extra(select_params = (user.id,),
                     select = { 'completed': 'SELECT uap.is_completed FROM actions_useractionprogress uap \
                                              WHERE uap.user_id = %s AND uap.action_id = actions_action.id'
                     }).extra(select_params = (user.id,),
                     select = { 'committed': 'SELECT uap.date_committed FROM actions_useractionprogress uap \
                                              WHERE uap.user_id = %s AND uap.action_id = actions_action.id'
                     })
-        actions = sorted(actions, key=lambda a: not a.has_illustration())
-        recommended = [a for a in actions if a.completed != 1 and a.committed == None]
-        committed = [a for a in actions if a.completed != 1 and a.committed != None]
-        completed = [a for a in actions if a.completed == 1]
-        return actions, recommended, committed, completed
-    
+        def action_sorter(action):
+            if action.completed:
+                return 2
+            elif action.committed:
+                return 0
+            else:
+                return 1
+        return sorted(actions, key=action_sorter)
+
     def process_commitment_card(self, user, new_user=False):
         # Are there any event_commitments for this user that were updated after the user's last_login timestamp?
         if new_user:
@@ -66,7 +69,7 @@ class ActionManager(models.Manager):
                         batch_object_pk=uap.user.pk)
                 changes.append(commitment)
         return changes
-        
+
 class Action(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(unique=True)
@@ -79,7 +82,18 @@ class Action(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = ActionManager()
-    
+
+    def image_paths(self):
+        images = {}
+        images['small'] = timestamp_file("images/badges/%s-action-badge-0-small.png" % self.slug)
+        images['small_inactive'] = timestamp_file("images/badges/%s-action-badge-0-small-inactive.png" % self.slug)
+        images['large'] = timestamp_file("images/badges/%s-action-badge-0-large.png" % self.slug)
+        images['large_inactive'] = timestamp_file("images/badges/%s-0-action-badge-large-inactive.png" % self.slug)
+        images['mega'] = timestamp_file("images/badges/%s-0-action-badge-mega.png" % self.slug)
+        images['white'] = timestamp_file("images/badges/%s-0-action-badge-white.png" % self.slug)
+        return images
+
+
     @transaction.commit_on_success
     def complete_for_user(self, user):
         try:
@@ -95,7 +109,7 @@ class Action(models.Model):
             Stream.objects.get(slug="commitment").dequeue(content_object=uap)
             record = Record.objects.create_record(user, "action_complete", self)
         return (uap, record)
-            
+
     def undo_for_user(self, user):
         try:
             uap = UserActionProgress.objects.get(user=user, action=self)
@@ -104,13 +118,13 @@ class Action(models.Model):
             uap.save()
             if was_completed:
                 if uap.date_committed:
-                    Stream.objects.get(slug="commitment").upqueue(content_object=uap, 
+                    Stream.objects.get(slug="commitment").upqueue(content_object=uap,
                         start=uap.created, end=uap.date_committed, batch_content_object=user)
                 Record.objects.void_record(user, "action_complete", self)
         except UserActionProgress.DoesNotExist:
             return False
         return True
-    
+
     @transaction.commit_on_success
     def commit_for_user(self, user, date, add_to_stream=True):
         try:
@@ -124,14 +138,14 @@ class Action(models.Model):
         record = None
         if add_to_stream:
             if was_committed:
-                Stream.objects.get(slug="commitment").upqueue(content_object=uap, start=uap.created, 
+                Stream.objects.get(slug="commitment").upqueue(content_object=uap, start=uap.created,
                     end=uap.date_committed, batch_content_object=user)
             else:
                 Stream.objects.get(slug="commitment").enqueue(content_object=uap, start=uap.updated,
                     end=uap.date_committed, batch_content_object=user)
                 record = Record.objects.create_record(user, "action_commitment", self, data={"date_committed": date})
         return (uap, record)
-            
+
     def cancel_for_user(self, user):
         try:
             uap = UserActionProgress.objects.get(user=user, action=self)
@@ -144,12 +158,12 @@ class Action(models.Model):
         except UserActionProgress.DoesNotExist:
             return False
         return True
-        
+
     def tag_list(self):
         tag_names = [t.name for t in self.tags]
         return ", ".join(tag_names) if tag_names else ""
     tag_list.short_description = "Tags"
-    
+
     def action_forms_with_data(self, user):
         return ActionForm.objects.filter(action=self).extra(
                 select_params = (user.id,),
@@ -157,17 +171,17 @@ class Action(models.Model):
                                         FROM actions_actionformdata afd
                                         WHERE afd.user_id = %s
                                         AND actions_actionform.id = afd.action_form_id"""})
-                                        
+
     def get_detail_illustration(self):
-        return timestamp_file("images/actions/%s/action_detail.jpg" % self.slug)
+        return timestamp_file("images/badges/%s-small." % self.slug)
 
     def get_nugget_illustration(self):
         return timestamp_file("images/actions/%s/action_nugget.jpg" % self.slug)
-    
+
     def has_illustration(self):
         path = "images/actions/%s/action_detail.jpg" % self.slug
         return os.path.exists(os.path.join(settings.MEDIA_ROOT, path))
-    
+
     def __unicode__(self):
         return u"%s" % self.name
 
@@ -178,9 +192,9 @@ tagging.register(Action)
 
 class UserActionProgressManager(models.Manager):
     def commitments_for_user(self, user):
-         return self.select_related().filter(user=user, is_completed=False, 
+         return self.select_related().filter(user=user, is_completed=False,
             date_committed__isnull=False).order_by("date_committed")
-            
+
     def pending_commitments(self, user=None):
         queryset = self.filter(is_completed=False, date_committed__isnull=False)
         return queryset if not user else queryset.filter(user=user)
@@ -193,17 +207,17 @@ class UserActionProgress(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = UserActionProgressManager()
-    
+
     class Meta:
         unique_together = ("user", "action",)
-        
+
     def other_commitments(self):
-        return UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False, 
+        return UserActionProgress.objects.filter(user=self.user, date_committed__isnull=False,
             is_completed=0).exclude(pk=self.pk).order_by("date_committed")
-        
+
     def email(self):
         return self.user.email
-    
+
     def __unicode__(self):
         return u"%s is working on %s" % (self.user, self.action)
 
@@ -218,13 +232,13 @@ class ActionForm(models.Model):
     var_name = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         unique_together = ("action", "form_name",)
-    
+
     def __unicode__(self):
         return u"%s is using form %s" % (self.action, self.form_name)
-        
+
 class ActionFormData(models.Model):
     """
     ActionFormData is used to store a users state for a particular action form, the
@@ -237,10 +251,10 @@ class ActionFormData(models.Model):
     # TODO: make ActionFormData.data a serialized field
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         unique_together = ("action_form", "user",)
-    
+
     def __unicode__(self):
         return u"%s is working on %s" % (self.user, self.action_form)
 
@@ -256,6 +270,6 @@ models.signals.post_save.connect(update_action_aggregates, sender=UserActionProg
 def apply_changes_from_commitment_cards(sender, request, user, is_new_user, **kwargs):
     changes = Action.objects.process_commitment_card(user, new_user=is_new_user)
     if changes:
-        messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes), 
+        messages.success(request, "%s actions were applied to your account from a commitment card" % len(changes),
             extra_tags="sticky")
 logged_in.connect(apply_changes_from_commitment_cards)

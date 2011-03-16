@@ -5,7 +5,6 @@ from django.template import RequestContext
 from brabeion import badges as badge_cache
 from brabeion.models import BadgeAward
 
-import badges
 from models import all_badges, get_badge
 
 def list(request):

@@ -21,14 +21,15 @@ from forms import ActionCommitForm
 def action_show(request, tag_slug=None):
     """Show all actions by Category"""
     nav_selected = "actions"
-    actions = Action.objects.all()
-    actions = sorted(actions, key=lambda a: not a.has_illustration())
 
     if request.user.is_authenticated():
-        actions, recommended, committed, completed = Action.objects.actions_by_status(request.user)
+        actions = Action.objects.actions_by_status(request.user)
+    else:
+        actions = Action.objects.all()
 
-    return render_to_response("actions/action_show.html", locals(),
-        context_instance=RequestContext(request))
+    return render_to_response("actions/action_show.html", {
+        'actions': actions
+    }, context_instance=RequestContext(request))
 
 
 def community_show(request):

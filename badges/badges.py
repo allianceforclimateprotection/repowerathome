@@ -14,14 +14,14 @@ class ActionBadge(Badge):
     events = ['action_completed']
     multiple = False
     action = None
-    levels = ['gold']
+    levels = ['']
     slug = None
 
     def award(self, **state):
         if not self.action:
             raise NotImplementedError('%s can not be used as a badge' % self.__class__)
         user = state['user']
-        if UserActionProgress.objects.filter(user=user, action=self.action, 
+        if UserActionProgress.objects.filter(user=user, action=self.action,
                 is_completed=True).exists():
             return BadgeAwarded()
 
@@ -147,7 +147,7 @@ class PaparazziBadge(Badge):
     slug = 'paparazzi-badge'
     name = 'Paparazzi'
     description = 'Uploaded an image to an action, event or community'
-    
+
     def award(self, **state):
         return BadgeAwarded()
 badge_cache.register(PaparazziBadge)
