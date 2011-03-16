@@ -28,15 +28,80 @@
         <link rel="alternate" type="application/atom+xml"  href="{% url blog_feed %}" title="Repower at Home Blog" />
         <link rel="shortcut icon" href="{% dated_static 'images/theme/favicon.ico' %}"/>
         <link rel="stylesheet" href="{% dated_static 'css/style_new.css' %}" type="text/css" media="screen" charset="utf-8"/>
-            <script type="text/javascript">
-                var _gaq = _gaq || [];
-                _gaq.push(['_setAccount', 'UA-11623269-1']);
-                _gaq.push(['_trackPageview']);
-            </script>
         {% block extrahead %}{% endblock %}
         {% if testing_feedback_form %}
             <link rel="stylesheet" href="{% dated_static 'css/testing_widget.css' %}" type="text/css" media="screen" charset="utf-8"/>
         {% endif %}
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-11623269-1']);
+            _gaq.push(['_trackPageview']);
+        </script>
+        <style type="text/css" media="screen">
+            /*
+             * Web Fonts from fontspring.com
+             *
+             * All OpenType features and all extended glyphs have been removed.
+             * Fully installable fonts can be purchased at http://www.fontspring.com
+             *
+             * The fonts included in this stylesheet are subject to the End User License you purchased
+             * from Fontspring. The fonts are protected under domestic and international trademark and 
+             * copyright law. You are prohibited from modifying, reverse engineering, duplicating, or
+             * distributing this font software.
+             *
+             * (c) 2010-2011 Fontspring
+             *
+             *
+             *
+             *
+             * The fonts included are copyrighted by the vendor listed below.
+             *
+             * Vendor:      exljbris
+             * License URL: http://www.fontspring.com/fflicense/exljbris
+             *
+             *
+             */
+            @font-face {
+                font-family: 'MuseoSlab300';
+                src: url('../fonts/museoslab/Museo_Slab_300-webfont.eot');
+                src: url('../fonts/museoslab/Museo_Slab_300-webfont.eot?iefix') format('eot'),
+                     url('../fonts/museoslab/Museo_Slab_300-webfont.woff') format('woff'),
+                     url('../fonts/museoslab/Museo_Slab_300-webfont.ttf') format('truetype'),
+                     url('../fonts/museoslab/Museo_Slab_300-webfont.svg#webfontY8VndmkE') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            @font-face {
+                font-family: 'MuseoSlab500';
+                src: url('../fonts/museoslab/Museo_Slab_500-webfont.eot');
+                src: url('../fonts/museoslab/Museo_Slab_500-webfont.eot?iefix') format('eot'),
+                     url('../fonts/museoslab/Museo_Slab_500-webfont.woff') format('woff'),
+                     url('../fonts/museoslab/Museo_Slab_500-webfont.ttf') format('truetype'),
+                     url('../fonts/museoslab/Museo_Slab_500-webfont.svg#webfont8VbsAwew') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            @font-face {
+                font-family: 'MuseoSlab700';
+                src: url('../fonts/museoslab/Museo_Slab_700-webfont.eot');
+                src: url('../fonts/museoslab/Museo_Slab_700-webfont.eot?iefix') format('eot'),
+                     url('../fonts/museoslab/Museo_Slab_700-webfont.woff') format('woff'),
+                     url('../fonts/museoslab/Museo_Slab_700-webfont.ttf') format('truetype'),
+                     url('../fonts/museoslab/Museo_Slab_700-webfont.svg#webfontCEWZYkyF') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            @font-face {
+                font-family: 'MuseoSlab900';
+                src: url('../fonts/museoslab/Museo_Slab_900-webfont.eot');
+                src: url('../fonts/museoslab/Museo_Slab_900-webfont.eot?iefix') format('eot'),
+                     url('../fonts/museoslab/Museo_Slab_900-webfont.woff') format('woff'),
+                     url('../fonts/museoslab/Museo_Slab_900-webfont.ttf') format('truetype'),
+                     url('../fonts/museoslab/Museo_Slab_900-webfont.svg#webfontLtlWo4vw') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+        </style>
     </head>
     <body>
         <div id="header_container">
