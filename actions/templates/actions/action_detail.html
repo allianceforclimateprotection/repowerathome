@@ -49,8 +49,8 @@
         {% get_content_type_id for action as content_type_id %}
         <a class="atom_link" href="{% url comments_feed content_type_id,action.id %}">{{ action }} comments feed</a>
         {% with action as object %}
-            {% render_comment_list for object %}
             {% render_comment_form for object %}
+            {% render_comment_list for object %}
         {% endwith %}
     </div>
     <div id="commit_widget">

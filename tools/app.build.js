@@ -2,7 +2,7 @@
     appDir: "../static",
     baseUrl: "js",
     dir: "../static_build",
-    optimizeCss: "standard",
+    optimizeCss: "standard.keepLines",
     modules: [
         {
             name: "pages/base",

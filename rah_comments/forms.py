@@ -17,7 +17,7 @@ class RahCommentForm(ThreadedCommentForm):
                     required=require_message_type)
             )
         super(RahCommentForm, self).__init__(target_object, parent=parent, data=data, initial=initial)
-    
+
     def clean(self):
         if self.cleaned_data['parent']:
             self.cleaned_data['message_type'] = u'C'
