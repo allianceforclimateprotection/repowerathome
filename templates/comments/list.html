@@ -4,75 +4,63 @@
 
 {% get_comment_list for object as comments %}
 {% if comments %}
-    <h2 id="comments_heading">What people are saying</h2>
     {% for comment in comments|annotate_tree %}
-        <div class="grid_6 alpha comment_wrapper" id="c{{ comment.id }}">
-            <div class="box_two_top"></div>
-            <div class="box_two_middle comment">
+    <div id="c{{ comment.id }}" class="comment{% if comment.parent %} comment_reply{% endif %} comment_counter_{{forloop.counter0}}">
+            {% if comment.parent %}
+                <img src="{{ comment.user.get_profile.profile_picture }}" alt="user gravatar" width="40" height="40"/>
+            {% else %}
+                <img src="{{ comment.user.get_profile.profile_picture }}" alt="user gravatar" width="60" height="60"/>
+            {% endif %}
+            {% if not comment.parent %}
+                {% if comment.title == "T" %}
+                    <div class="comment_type_icon sprite_tip_large"></div>
+                {% else %}
+                    {% if comment.title == "Q" %}
+                        <div class="comment_type_icon sprite_question_large"></div>
+                    {% else %}
+                        <div class="comment_type_icon sprite_comment_large"></div> 
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <div class="comment_body">
+            <a href="{% url profile comment.user.id %}" class="comment_author">{{ comment.user.get_full_name }}</a>
+            <span class="comment_date">
+                {{ comment.submit_date|timesince }} ago
+            </span>
+            <div>
                 {{ comment.comment|linebreaksbr }}
             </div>
-            <div class="box_two_bottom"></div>
-            <span class="point"></span>
-            <div class="comment_tools">
-                <span class="comment_date">
-                    {{ comment.submit_date|timesince }}
-                </span>
-                <div class="comment_buttons">
-                    {% get_rating_count for comment as users_voted %}
-                    {% get_rating_sum for comment as users_helped %}
-                    <span class="users_voted_stats">
-                        {% if users_voted %}
-                            <span class="users_helped">{{ users_helped }}</span> of
-                            <span class="users_voted">{{ users_voted }}</span> liked this
-                        {% endif %}
-                    </span>
-                    {% if user.is_authenticated %}
-                        {% get_rating_form for comment %}
-                        {% get_flag_form for comment %}
+            </div>
+            {% comment %}
+                {% get_rating_count for comment as users_voted %}
+                {% get_rating_sum for comment as users_helped %}
+                <span class="users_voted_stats">
+                    {% if users_voted %}
+                        <span class="users_helped">{{ users_helped }}</span> of
+                        <span class="users_voted">{{ users_voted }}</span> liked this
                     {% endif %}
-                </div>
-            </div>
+                </span>
+                {% if user.is_authenticated %}
+                    {% get_rating_form for comment %}
+                    {% get_flag_form for comment %}
+                {% endif %}
+            {% endcomment %}
         </div>
-        <div class="grid_3 omega">
-            <div class="comment_author">
-                <img class="gravatar" src="{{ comment.user.get_profile.profile_picture }}" alt="user gravatar" width="52" height="52"/>
-                <br class="clear" />
-                {% safe_user_link comment.user %}
-            </div>
-        </div>
-        <br class="clear" />
-        {% comment %}
-            only display the comment response form if this comment has no children
-            or
-            this is the last child in the tree
-        {% endcomment %}
-        {% if not comment.parent and not comment.last_child_id or comment.parent and comment.last %}
-            {% if request.user.is_authenticated %}
-                {% get_comment_form for object as response_form with comment.id %}
-                <form action="{% url comments-post-comment %}" method="post">
-                    <div>
-                        {% for field in response_form %}
-                            {% if field.is_hidden %}
-                                {{ field }}
-                            {% else %}
-                                {% if field.name == "honeypot" %}
-                                    <p style="display: none;">{{ field }}</p>
-                                {% else %}
-                                    {% if field.name == "comment" %}
-                                        {% if field.errors %}{{ field.errors }}{% endif %}
-                                        <p class="form_row {% if field.errors %}error {% endif %}">
-                                            {{ field }}
-                                        </p>
-                                    {% endif %}
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                        <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ object.get_absolute_url }}{% endif %}" />
-                        <input type="submit" value="Comment" id="add_comment_submit" />
-                        {% csrf_token %}
-                    </div>
-                </form>
+        {% if request.user.is_authenticated and comment.last or request.user.is_authenticated and comment.close %}
+            {% if comment.parent %}
+                {% get_comment_form for object as form with comment.parent.id %}
+            {% else %}
+                {% get_comment_form for object as form with comment.id %}            
             {% endif %}
+            <!--<a href="">Reply</a>-->
+            <form action="{% url comments-post-comment %}" method="post" class="comment_reply_form" >
+                {% include 'base/_form.html' %}
+                <div class="comment_reply_submit">
+                    <button type="submit">Comment</button>
+                    <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ object.get_absolute_url }}{% endif %}" />
+                </div>
+                {% csrf_token %}
+            </form>
         {% endif %}
     {% endfor %}
 {% endif %}

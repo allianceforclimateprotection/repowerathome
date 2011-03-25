@@ -86,6 +86,26 @@
 .sprite_social_rss:hover { background-position: -180px -420px; }
 
 
-/*misc images*/
-.sprite_check_white_small {}
-.sprite_star_white_small {}
+/*action nugget status bar images*/
+.sprite_check_white_small, .sprite_star_white_small {
+    display: inline-block;
+    background: transparent url('../images/theme_new/sprite.png') -40px -20px no-repeat;
+    width: 8px;
+    height: 8px;
+    margin-left: 6px;
+}
+.sprite_check_white_small {background-position: -60px -20px;}
+
+/* Comments */
+.sprite_tip_large, .sprite_question_large, .sprite_comment_large, .sprite_tip, .sprite_question, .sprite_comment {
+    background: transparent url('../images/theme_new/sprite.png') -120px 0px no-repeat;
+}
+.sprite_tip, .sprite_question, .sprite_comment {
+    display: inline-block;
+    width: 12px;
+    height: 18px;
+}
+.sprite_tip_large { background-position: -249px -522px; }
+.sprite_question_large { background-position: -249px -561px; }
+.sprite_comment_large { background-position: -251px -601px; }
+

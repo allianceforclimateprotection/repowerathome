@@ -3,9 +3,9 @@ from django import forms
 from threadedcomments.forms import ThreadedCommentForm
 
 COMMENT_TYPES = (
-    ('T', 'Tip/Idea',),
-    ('Q', 'Question',),
     ('C', 'Comment',),
+    ('Q', 'Question',),
+    ('T', 'Tip or Idea',),
 )
 
 class RahCommentForm(ThreadedCommentForm):
@@ -13,8 +13,12 @@ class RahCommentForm(ThreadedCommentForm):
         require_message_type = not bool(parent or (data and data['parent']))
         self.base_fields.insert(
                 self.base_fields.keyOrder.index('comment'), 'message_type',
-                forms.ChoiceField(choices=COMMENT_TYPES, widget=forms.RadioSelect,
-                    required=require_message_type)
+                forms.ChoiceField(
+                    choices = COMMENT_TYPES,
+                    widget = forms.RadioSelect,
+                    required = require_message_type,
+                    initial = u'C',
+                )
             )
         super(RahCommentForm, self).__init__(target_object, parent=parent, data=data, initial=initial)
 

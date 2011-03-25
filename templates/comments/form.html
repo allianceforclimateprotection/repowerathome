@@ -1,12 +1,15 @@
 {% load threadedcomments_tags %}
 
 {% if request.user.is_authenticated %}
-    <h2 id="comments_form_heading">Leave a comment</h2>
+    <h2 id="comments_form_heading">Recent Discussions</h2>
     {% if object %}
         {% get_comment_form for object as form %}
     {% endif %}
+    <div id="form_6c">
     <form id="comment_form" action="{% url comments-post-comment %}" method="post">
-        <div>
+        {% include 'base/_form.html' %}
+        {% csrf_token %}
+        {% comment %}
         {% for field in form %}
             {% if field.is_hidden %}
                 {{ field }}
@@ -23,11 +26,13 @@
                 {% endif %}
             {% endif %}
         {% endfor %}
-        <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ object.get_absolute_url }}{% endif %}" />
-        <input type="submit" value="ADD YOUR COMMENT" id="add_comment_submit" />
-        {% csrf_token %}
+        {% endcomment %}
+        <div class="right">
+            <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ object.get_absolute_url }}{% endif %}" />
+            <button type="submit">Submit</button>
         </div>
     </form>
+    </div>
 {% else %}
     <br/><br/>
     <a href="{% url login %}">Log in</a> or <a href="{% url register %}">sign up</a> to post comments.

@@ -12,15 +12,16 @@
     Showing {{ actions|length }} actions
 {% endblock %}
 {% block content %}
-
 <ul class="plain_list nugget_3c">
     {% for action in actions %}
     <li class="nugget_3c_{% if action.completed %}completed{% else %}{% if action.committed %}committed{% endif %}{% endif %}">
     <div class="nugget_3c_status">
     {% if action.completed %}
+        <span class="sprite_check_white_small"></span>
         COMPLETED   
     {% else %}
         {% if action.committed %}
+            <span class="sprite_star_white_small"></span>
             COMMITTED: {{action.committed|date:"N jS"}}
         {% else %}
             {{ action.points|intcomma }} Points
@@ -37,9 +38,9 @@
     </li>
     {% endfor %}
 </ul>
-    <script>
-        var RAH = RAH || {};
-        RAH.pagescripts = RAH.pagescripts || [];
-        RAH.pagescripts.push("{% dated_static 'js/pages/action.show.js' %}");
-    </script>
+<script>
+    var RAH = RAH || {};
+    RAH.pagescripts = RAH.pagescripts || [];
+    RAH.pagescripts.push("{% dated_static 'js/pages/action.show.js' %}");
+</script>
 {% endblock %}

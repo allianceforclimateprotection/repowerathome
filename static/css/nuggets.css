@@ -285,9 +285,7 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
     font-size: 12px;
     line-height: 16px;
     font-weight: bold;
-    /*padding-left: 9px;*/
 }
-
 .nugget_3c .nugget_3c_narrow div {
     color: #45AB02;
     font-size: 12px;
@@ -309,76 +307,4 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
     text-align: center;
     padding: 24px 24px 0px 24px;
 }
-
-
-/*.nugget_3c {*/
-    /*float: left;*/
-    /*margin: 0 9px 9px 0;*/
-    /*border: 1px solid #E5E5E5;*/
-    /*-webkit-border-radius: 5px;*/
-    /*-moz-border-radius: 5px;*/
-    /*border-radius: 5px;*/
-    /*width: 200px;*/
-    /*padding: 9px;*/
-    /*cursor: pointer;*/
-/*}*/
-
-/*[>hover<]*/
-/*.nugget_3c:hover {*/
-    /*border: 1px solid #666;*/
-/*}*/
-/*.nugget_3c:hover p{*/
-    /*[>color: #666;<]*/
-/*}*/
-/*.nugget_3c:hover .nugget_3c_image{*/
-    /*background-position: 0 0;*/
-/*}*/
-
-/*.nugget_3c h2 {*/
-    /*font-family:"MuseoSlab500", Tahoma, sans-serif;*/
-    /*letter-spacing: -1px;*/
-    /*font-size: 18px; */
-    /*line-height: 21px;*/
-    /*margin-bottom: 6px;*/
-/*}*/
-/*.nugget_3c p {*/
-    /*[>color: #CCCCCC;<]*/
-    /*font-size: 13px;*/
-    /*line-height: 16px;*/
-    /*min-height: 80px;*/
-    /*margin-bottom: 0px;*/
-/*}*/
-/*.nugget_3c p cite { display: none; }*/
-
-/*.nugget_3c h2 a:hover {*/
-    /*text-decoration: none;*/
-/*}*/
-/*.nugget_3c .nugget_3c_status {*/
-    /*color: #42AB35;*/
-    /*font-size: 12px;*/
-    /*font-weight: bold;*/
-    /*height: 16px;*/
-    /*margin-bottom: 3px;*/
-    /*line-height: 16px;*/
-    /*padding-top: 4px;*/
-/*}*/
-/*.nugget_3c .nugget_3c_status_complete, .nugget_3c .nugget_3c_status_committed {*/
-    /*-webkit-border-radius: 3px;*/
-    /*-moz-border-radius: 3px;*/
-    /*border-radius: 3px;*/
-    /*color: #fff;*/
-    /*padding: 3px 0 0 6px;*/
-    /*font-size: 10px;*/
-    /*border-bottom: 1px solid #c3ccd9;*/
-/*}    */
-/*.nugget_3c .nugget_3c_status_complete {*/
-    /*background-color: #42AB35;*/
-/*}*/
-/*.nugget_3c .nugget_3c_status_committed {*/
-    /*background-color: #103665;*/
-/*}*/
-/*.nugget_3c img {*/
-    /*float: left;*/
-    /*margin-right: 9px;*/
-/*}*/
 
