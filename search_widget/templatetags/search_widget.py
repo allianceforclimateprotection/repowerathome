@@ -32,7 +32,7 @@ class SearchWidgetNode(Node):
                 raise e
         request = copy.copy(context["request"])
         request.path = path
-        return loader.render_to_string("search_widget/_search_widget.html", {"path":path})
+        return loader.render_to_string("search_widget/_search_widget.html", {"request":request})
 
 @register.tag
 def search_widget(parser, token):

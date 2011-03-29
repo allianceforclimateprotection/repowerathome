@@ -12,7 +12,7 @@ def timestamp_file(static_file, https=False):
         media_url = settings.MEDIA_URL_HTTPS
     else:
         media_url = settings.MEDIA_URL
-    
+
     try:
         abs_path = os.path.join(settings.MEDIA_ROOT, static_file)
         paths = os.path.split(static_file)
@@ -24,7 +24,7 @@ def timestamp_file(static_file, https=False):
 class DatedStaticNode(template.Node):
     def __init__(self, static_file):
         self.static_file = static_file
-    
+
     def render(self, context):
         # figure out if we need to use https media url
         meta = context.get("request").META
@@ -32,14 +32,14 @@ class DatedStaticNode(template.Node):
             https = True
         else:
             https = False
-        
+
         return timestamp_file(self.static_file, https)
-        
+
 
 @register.tag
 def dated_static(parser, token):
     bits = token.contents.split()
     if len(bits) <> 2:
         raise template.TemplateSyntaxError("Wrong number of arguments passed. All we need is the path")
-    
+
     return DatedStaticNode(strip_quotes(bits[1]))

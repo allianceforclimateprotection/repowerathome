@@ -50,16 +50,13 @@ Header Header Header Header Header Header Header Header Header Header Header Hea
     background-color: #103665; }
 #header{ position:relative; }
 #header_logo { position:absolute; left: 0px; top:14px; }
-#header #cse_search_box_form{ position:absolute; right:360px; top:22px;}
+#header #cse_search_box_form{ left:350px; top:18px; width: 290px;}
 #cse_search_box{
-    color:#333;
+    /*color:#333;*/
     width:246px;
-    border:1px solid #FFFFFF;}
-#cse_search_box_submit{
+}
+#cse_search_box_submit, #cse_search_box{
     border: 1px solid #FFFFFF;
-    background-color: #8DD143;
-    color: #FFFFFF;
-    margin-left:-5px;
 }
 #header_links {
     position:absolute;

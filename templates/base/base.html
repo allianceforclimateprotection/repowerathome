@@ -46,13 +46,15 @@
                     <a href="/" title="Home" id="header_logo">
                         <img src="{% dated_static 'images/theme_new/header_logo.png' %}" alt="Repower at Home logo" width="239" height="35"/>
                     </a>
-                    <form action="/search" id="cse_search_box_form">
+                    <form action="/search" id="cse_search_box_form" class="search_widget">
                         <div>
                             <input type="hidden" name="cx" value="018322562804099680750:4l5wfmovb4q" />
                             <input type="hidden" name="cof" value="FORID:11" />
                             <input type="hidden" name="ie" value="UTF-8" />
-                            <input type="text" name="q" size="31" id="cse_search_box"/>
-                            <button type="submit" id="cse_search_box_submit">Go</button>
+                            <input type="text" name="q" size="31" id="cse_search_box" placeholder="Search the site..."/>
+                            <button type="submit" id="cse_search_box_submit" class="search_button">
+                                <span class="sprite_search_mag"></span>
+                            </button>
                         </div>
                     </form>
                     <div id="header_links">

@@ -23,7 +23,7 @@ host your own.
 </div>
 
 <div id="events_hosting">
-    <img src="{% dated_static 'images/theme_new/eventexample.jpg' %}" width="216" height="162" alt="People attending an event"/>
+    <img src="{% dated_static 'images/theme_new/event_example.jpg' %}" width="216" height="162" alt="People attending an event"/>
     <div>
         <h2>Hosting a Repower Meetup is fun and easy</h2>
         <p>
@@ -83,8 +83,7 @@ host your own.
         RAH.event_locations.push({
             lat: "{{ event.lat }}",
             lon: "{{ event.lon }}",
-            "info": info,
-            id: {{ event.id }}
+            "info": info
         });
     {% endfor %}
     //]]>

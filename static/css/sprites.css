@@ -109,3 +109,11 @@
 .sprite_question_large { background-position: -249px -561px; }
 .sprite_comment_large { background-position: -251px -601px; }
 
+/*Search button*/
+.sprite_search_mag {
+    background: transparent url('../images/theme_new/sprite.png') -160px -20px no-repeat;
+    display: inline-block;
+    width: 13px;
+    height: 12px;
+    margin: 0 6px;
+}
