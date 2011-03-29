@@ -45,6 +45,9 @@
  *                    cluster is to zoom into it.
  *     'averageCenter': (boolean) Wether the center of each cluster should be
  *                      the average of all markers in the cluster.
+ *     'minimumClusterSize': (number) The minimum number of markers to be in a
+ *                           cluster before the markers are hidden and a count
+ *                           is shown.
  *     'styles': (object) An object that has style properties:
  *       'url': (string) The image url.
  *       'height': (number) The image height.
@@ -96,6 +99,12 @@ function MarkerClusterer(map, opt_markers, opt_options) {
    * @private
    */
   this.gridSize_ = options['gridSize'] || 60;
+
+  /**
+   * @private
+   */
+  this.minClusterSize_ = options['minimumClusterSize'] || 2;
+
 
   /**
    * @type {?number}
@@ -244,6 +253,19 @@ MarkerClusterer.prototype.setupStyles_ = function() {
       width: size
     });
   }
+};
+
+/**
+ *  Fit the map to the bounds of the markers in the clusterer.
+ */
+MarkerClusterer.prototype.fitMapToMarkers = function() {
+  var markers = this.getMarkers();
+  var bounds = new google.maps.LatLngBounds();
+  for (var i = 0, marker; marker = markers[i]; i++) {
+    bounds.extend(marker.getPosition());
+  }
+
+  this.map_.fitBounds(bounds);
 };
 
 
@@ -397,8 +419,6 @@ MarkerClusterer.prototype.addMarkers = function(markers, opt_nodraw) {
  * @private
  */
 MarkerClusterer.prototype.pushMarkerTo_ = function(marker) {
-  marker.setVisible(false);
-  marker.setMap(null);
   marker.isAdded = false;
   if (marker['draggable']) {
     // If the marker is draggable add a listener so we update the clusters on
@@ -406,8 +426,7 @@ MarkerClusterer.prototype.pushMarkerTo_ = function(marker) {
     var that = this;
     google.maps.event.addListener(marker, 'dragend', function() {
       marker.isAdded = false;
-      that.resetViewport();
-      that.redraw();
+      that.repaint();
     });
   }
   this.markers_.push(marker);
@@ -454,8 +473,6 @@ MarkerClusterer.prototype.removeMarker_ = function(marker) {
   }
 
   this.markers_.splice(index, 1);
-  marker.setVisible(false);
-  marker.setMap(null);
 
   return true;
 };
@@ -558,12 +575,31 @@ MarkerClusterer.prototype.getGridSize = function() {
 
 
 /**
- * Returns the size of the grid.
+ * Sets the size of the grid.
  *
  * @param {number} size The grid size.
  */
 MarkerClusterer.prototype.setGridSize = function(size) {
   this.gridSize_ = size;
+};
+
+
+/**
+ * Returns the min cluster size.
+ *
+ * @return {number} The grid size.
+ */
+MarkerClusterer.prototype.getMinClusterSize = function() {
+  return this.minClusterSize_;
+};
+
+/**
+ * Sets the min cluster size.
+ *
+ * @param {number} size The grid size.
+ */
+MarkerClusterer.prototype.setMinClusterSize = function(size) {
+  this.minClusterSize_ = size;
 };
 
 
@@ -620,7 +656,7 @@ MarkerClusterer.prototype.isMarkerInBounds_ = function(marker, bounds) {
  * Clears all clusters and markers from the clusterer.
  */
 MarkerClusterer.prototype.clearMarkers = function() {
-  this.resetViewport();
+  this.resetViewport(true);
 
   // Set the markers a empty array.
   this.markers_ = [];
@@ -629,8 +665,9 @@ MarkerClusterer.prototype.clearMarkers = function() {
 
 /**
  * Clears all existing clusters and recreates them.
+ * @param {boolean} opt_hide To also hide the marker.
  */
-MarkerClusterer.prototype.resetViewport = function() {
+MarkerClusterer.prototype.resetViewport = function(opt_hide) {
   // Remove all the clusters
   for (var i = 0, cluster; cluster = this.clusters_[i]; i++) {
     cluster.remove();
@@ -639,11 +676,30 @@ MarkerClusterer.prototype.resetViewport = function() {
   // Reset the markers to not be added and to be invisible.
   for (var i = 0, marker; marker = this.markers_[i]; i++) {
     marker.isAdded = false;
-    marker.setMap(null);
-    marker.setVisible(false);
+    if (opt_hide) {
+      marker.setMap(null);
+    }
   }
 
   this.clusters_ = [];
+};
+
+/**
+ *
+ */
+MarkerClusterer.prototype.repaint = function() {
+  var oldClusters = this.clusters_.slice();
+  this.clusters_.length = 0;
+  this.resetViewport();
+  this.redraw();
+
+  // Remove the old clusters.
+  // Do it in a timeout so the other clusters have been drawn first.
+  window.setTimeout(function() {
+    for (var i = 0, cluster; cluster = oldClusters[i]; i++) {
+      cluster.remove();
+    }
+  }, 0);
 };
 
 
@@ -748,6 +804,7 @@ function Cluster(markerClusterer) {
   this.markerClusterer_ = markerClusterer;
   this.map_ = markerClusterer.getMap();
   this.gridSize_ = markerClusterer.getGridSize();
+  this.minClusterSize_ = markerClusterer.getMinClusterSize();
   this.averageCenter_ = markerClusterer.isAverageCenter();
   this.center_ = null;
   this.markers_ = [];
@@ -800,19 +857,25 @@ Cluster.prototype.addMarker = function(marker) {
     }
   }
 
-
-  if (this.markers_.length == 0) {
-    // Only 1 marker in this cluster so show the marker.
-    marker.setMap(this.map_);
-    marker.setVisible(true);
-  } else if (this.markers_.length == 1) {
-    // Hide the 1 marker that was showing.
-    this.markers_[0].setMap(null);
-    this.markers_[0].setVisible(false);
-  }
-
   marker.isAdded = true;
   this.markers_.push(marker);
+
+  var len = this.markers_.length;
+  if (len < this.minClusterSize_ && marker.getMap() != this.map_) {
+    // Min cluster size not reached so show the marker.
+    marker.setMap(this.map_);
+  }
+
+  if (len == this.minClusterSize_) {
+    // Hide the markers that were showing.
+    for (var i = 0; i < len; i++) {
+      this.markers_[i].setMap(null);
+    }
+  }
+
+  if (len >= this.minClusterSize_) {
+    marker.setMap(null);
+  }
 
   this.updateIcon();
   return true;
@@ -927,13 +990,12 @@ Cluster.prototype.updateIcon = function() {
     // The zoom is greater than our max zoom so show all the markers in cluster.
     for (var i = 0, marker; marker = this.markers_[i]; i++) {
       marker.setMap(this.map_);
-      marker.setVisible(true);
     }
     return;
   }
 
-  if (this.markers_.length < 2) {
-    // We have 0 or 1 markers so hide the icon.
+  if (this.markers_.length < this.minClusterSize_) {
+    // Min cluster size not yet reached.
     this.clusterIcon_.hide();
     return;
   }
@@ -1008,7 +1070,7 @@ ClusterIcon.prototype.onAdd = function() {
   }
 
   var panes = this.getPanes();
-  panes.overlayImage.appendChild(this.div_);
+  panes.overlayMouseTarget.appendChild(this.div_);
 
   var that = this;
   google.maps.event.addDomListener(this.div_, 'click', function() {
@@ -1144,14 +1206,15 @@ ClusterIcon.prototype.setCenter = function(center) {
  */
 ClusterIcon.prototype.createCss = function(pos) {
   var style = [];
-  if (document.all) {
-    style.push('filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(' +
-        'sizingMethod=scale,src="' + this.url_ + '");');
-  } else {
+  //These lines commented out because there is a bug http://code.google.com/p/google-maps-utility-library-v3/issues/detail?id=76
+  //if (document.all) {
+    //style.push('filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(' +
+        //'sizingMethod=scale,src="' + this.url_ + '");');
+  //} else {
     style.push('background-image:url(' + this.url_ + ');');
     var backgroundPosition = this.backgroundPosition_ ? this.backgroundPosition_ : '0 0';
     style.push('background-position:' + backgroundPosition + ';');
-  }
+  //}
 
   if (typeof this.anchor_ === 'object') {
     if (typeof this.anchor_[0] === 'number' && this.anchor_[0] > 0 &&
@@ -1192,6 +1255,8 @@ MarkerClusterer.prototype['addMarker'] = MarkerClusterer.prototype.addMarker;
 MarkerClusterer.prototype['addMarkers'] = MarkerClusterer.prototype.addMarkers;
 MarkerClusterer.prototype['clearMarkers'] =
     MarkerClusterer.prototype.clearMarkers;
+MarkerClusterer.prototype['fitMapToMarkers'] =
+    MarkerClusterer.prototype.fitMapToMarkers;
 MarkerClusterer.prototype['getCalculator'] =
     MarkerClusterer.prototype.getCalculator;
 MarkerClusterer.prototype['getGridSize'] =
@@ -1213,6 +1278,8 @@ MarkerClusterer.prototype['removeMarkers'] =
     MarkerClusterer.prototype.removeMarkers;
 MarkerClusterer.prototype['resetViewport'] =
     MarkerClusterer.prototype.resetViewport;
+MarkerClusterer.prototype['repaint'] =
+    MarkerClusterer.prototype.repaint;
 MarkerClusterer.prototype['setCalculator'] =
     MarkerClusterer.prototype.setCalculator;
 MarkerClusterer.prototype['setGridSize'] =

@@ -221,8 +221,8 @@ Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar 
     border: 1px solid #d6d6d6;
     margin-bottom: 21px;
 }
-#title_bar_9c_info {
-    margin-bottom: 18px;
+#title_bar_9c_info p {
+    margin-bottom: 0px;
 }
 #title_bar_9c_info span {
     color: #666666;

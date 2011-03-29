@@ -74,7 +74,7 @@ host your own.
     var RAH = RAH || {};
     RAH.pagescripts = RAH.pagescripts || [];
     RAH.pagescripts.push("{% dated_static 'js/pages/events.show.js' %}");
-    
+    RAH.sprite_url = "{% dated_static 'images/theme_new/sprite.png' %}";
     // Add locations for plotting on the map
     RAH.event_locations = [];
     {% for event in map_events %}

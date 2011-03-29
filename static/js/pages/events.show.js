@@ -43,7 +43,20 @@ require(["libs/jquery.validation", "libs/jquery.ui", "mods/search", "libs/marker
             });
             markers.push(marker);
         }
-        //var markerCluster = new MarkerClusterer(gmap, markers, {gridSize: 10});
+        var style = [{
+            url: RAH.sprite_url,
+            height: 41,
+            width: 48,
+            anchor: [14],
+            textColor: '#FFFFFF',
+            textSize: 12,
+            backgroundPosition: "-252px -264px"
+        }];
+        var markerCluster = new MarkerClusterer(gmap, markers, {
+            gridSize: 60, 
+            styles: style,
+            maxZoom: 10
+        });
     }
 );
 
