@@ -14,20 +14,63 @@ host your own.
 {% endblock %}
 {% block ribbon_bar %}Showing {{map_events|length}} events{% endblock %}
 {% block content %}
-<h1>Host an energy meeting</h1>
-<div id="events_map" style="width:100%; height:300px; border: 1px solid; margin-bottom:18px;"></div>
-<p>
-We have all the tools and resources you need to host an energy meet up. 
-Check them out <a href="/hosting/">here</a> or start creating your event right away.
-</p>
-{% search_widget event_search %}
+<div id="events_map_container">
+    <div id="events_map"></div>
+    <div id="events_map_shadow_top"></div>
+    <div id="events_map_shadow_right"></div>
+    <div id="events_map_shadow_bottom"></div>
+    <div id="events_map_shadow_left"></div>
+</div>
 
+<div id="events_hosting">
+    <img src="{% dated_static 'images/theme_new/eventexample.jpg' %}" width="216" height="162" alt="People attending an event"/>
+    <div>
+        <h2>Hosting a Repower Meetup is fun and easy</h2>
+        <p>
+            We have all the <a href="/hosting/">materials</a> you need to host an energy meet up. 
+            <!--Check them out or start creating your event right away.-->
+        </p>
+        <a href="{% url event-create %}" class="button">Create an Event</a>
+    </div>
+</div>
+<div id="events_search">
+    <h2>Search Events</h2>
+    {% search_widget event_search %}
+    <p class="smaller">
+        Can't find what you're looking for?<br/>
+        <a href="{% url event-archive %}">Browse past events</a>
+    </p>
+</div>
+<br class="clear"/>
 {% if events %}
-    <h3>Upcoming Events</h3>
-    {% include "events/_event_nugget_list.html" %}
+<h2>Recent Events</h2>
+<ul class="plain_list nugget_9c_list">
+    {% for event in events %}
+    <li>
+        <a href="{% url event-detail event.id %}">
+            <img src="http://maps.google.com/maps/api/staticmap?center={{event.lat}},{{event.lon}}&amp;zoom=10&amp;size=80x80&amp;markers=size:small%7C{{event.lat}},{{event.lon}}&amp;sensor=false" 
+                alt="Map of the event" width="80" height="80"/>
+        </a>
+        <div class="nugget_9c_list_name">
+            <a href="{% url event-detail event.id %}">{{ event }}</a>
+            <div>
+                <span>When:</span> {{ event.when|date }}<br/>
+                <span>Where:</span> {{ event.location }}
+            </div>
+        </div>
+        <div class="nugget_9c_list_desc">
+            {{ event.details|truncatewords_html:16 }}
+            <div>
+                <a href="{% url event-detail event.id %}">View Event Page</a>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
 {% endif %}
 
-<script>
+<script type="text/javascript">
+    //<![CDATA[
     var RAH = RAH || {};
     RAH.pagescripts = RAH.pagescripts || [];
     RAH.pagescripts.push("{% dated_static 'js/pages/events.show.js' %}");
@@ -35,16 +78,16 @@ Check them out <a href="/hosting/">here</a> or start creating your event right a
     // Add locations for plotting on the map
     RAH.event_locations = [];
     {% for event in map_events %}
-        var info = "<b>{{ event.title|escape|escapejs }}</b><br/>\
-            {{ event.where|escape|escapejs }}<br/>";
+        var info = "<b>{{ event.title|escape|escapejs }}</b><br/> {{ event.where|escape|escapejs }}<br/>";
             info += "<a href='{% url event-detail event.id %}'>View event</a>";
-        RAH.event_locations.push({ 
-            lat: "{{ event.lat }}", 
+        RAH.event_locations.push({
+            lat: "{{ event.lat }}",
             lon: "{{ event.lon }}",
             "info": info,
             id: {{ event.id }}
         });
     {% endfor %}
+    //]]>
 </script>
 {% endblock %}
 

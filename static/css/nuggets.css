@@ -308,3 +308,35 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
     padding: 24px 24px 0px 24px;
 }
 
+/*Used for event listings on show page and archive page*/
+.nugget_9c_list li {
+    padding: 9px;
+    background: #F2F2F2;
+    margin-bottom: 2px;
+    overflow: auto;
+    height: 100%;
+}
+.nugget_9c_list li img, .nugget_9c_list_name, .nugget_9c_list_desc {
+    float: left;
+}
+.nugget_9c_list li img {
+    margin-right: 12px;
+    padding: 6px;
+    border: 1px solid #666;
+    background: #fff;
+}
+.nugget_9c_list_name {
+    width: 248px;
+    margin-right: 18px;
+}
+.nugget_9c_list_name a {
+    font-size: 18px;
+    font-weight: bold;
+}
+.nugget_9c_list_name div span {
+    font-weight: bold;
+}
+.nugget_9c_list_desc {
+    width: 300px;
+}
+

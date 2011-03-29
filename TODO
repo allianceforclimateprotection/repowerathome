@@ -1,8 +1,6 @@
 Graphics
 ========
 Breadcrumb graphic (tiny icon )
-Add graphics for badges
-Add star and check images to committed and completed nuggets
 
 Text
 ====
@@ -16,8 +14,6 @@ Event listings
 Community stats (community detail)
 Form error messages on nav_form
 Flash messages
-Threaded comments (existing comments)
-Comment form
 Join this community button (w/states for pending request)
 My settings page
 Search box with green button

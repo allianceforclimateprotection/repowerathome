@@ -1,10 +1,7 @@
 <form class="search_widget" action="{{ path }}" method="get">
-    <h3>{{ search_title }}</h3>
-    <div class="search_fields">
-        <span class="form_row overset">
-            <label class="hidden" for="search_widget_input">Search</label>
-            <input id="search_widget_input" class="search_value" name="search" type="text" />
-        </span>
-        <input class="search_button" type="submit" value="go" />
+    <div class="form_row search_fields">
+        <input id="search_widget_input" class="search_value" name="search" type="text" />
+        <!--<input type="submit" class="search_button" value="Go"/>-->
+        <button class="search_button" type="submit">Go</button>
     </div>
 </form>

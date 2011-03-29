@@ -18,28 +18,15 @@ require(["libs/jquery.validation", "libs/jquery.ui", "mods/search", "libs/marker
                 }))
                 .appendTo(ul);
         };
-        $("#house_party_form").validate({ rules: { phone_number: { required: true }}});
-        $('#house_party_link').click(function () { 
-            $('#house_party_dialog').dialog('open'); 
-            return false; 
-        });
-        $('#house_party_dialog').dialog({
-            title: 'Energy meeting contact', 
-            modal: true, 
-            resizable: false, 
-            draggable: false, 
-            autoOpen: false, 
-            buttons: { "Give me a call": function () { 
-                $('#house_party_form').submit(); 
-            }}
-        });
         var myOptions = {
-            zoom: 3,
-            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            zoom: 4,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
             streetViewControl: false,
+            zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
+            panControl: false, 
             scrollwheel: false,
-            center: new google.maps.LatLng(37.0625, -95.677068)
+            center: new google.maps.LatLng(37.000000, -96.000000)
         };
         var gmap = new google.maps.Map(document.getElementById("events_map"), myOptions);
         var infowindow = new google.maps.InfoWindow({ content: "" });

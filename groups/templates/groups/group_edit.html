@@ -15,14 +15,14 @@
                     <li><a href="#discussions_tab">Discussions</a></li>
                 </ul>
                 <div id="group_tab">
-                    <form id="group_form" action="" method="post" enctype="multipart/form-data">
+                    <form id="group_form" action="" method="post" enctype="multipart/form-data" class="form_6c">
                         {% with group_form as form %}
                             {% include "groups/_group_form.html" %}
                         {% endwith %}
                             <p><input type="submit" name="change_group" value="Save Settings"></input></p>
                         {% csrf_token %}
                     </form>
-                    <form id="delete_group_form" action="" method="post">
+                    <form id="delete_group_form" action="" method="post" class="form_6c">
                         <h3>Delete Community</h3>
                         <p>Deleting a community will immediately remove it from our system.<br/>Communities cannot be undeleted.</p>
                         <p><input type="submit" name="delete_group" value="Delete Community"></input></p>
@@ -30,7 +30,7 @@
                     </form>
                 </div>
                 <div id="members_tab">
-                    <form id="membership_form" action="" method="post">
+                    <form id="membership_form" action="" method="post" class="form_6c">
                         {% with membership_form as form %}
                             {% include "groups/_membership_form.html" %}
                         {% endwith %}
@@ -38,7 +38,7 @@
                     </form>
                 </div>
                 <div id="discussions_tab">
-                    <form action="" method="post">
+                    <form action="" method="post" class="form_6c">
                         {{discussions_form.as_p}}
                         <p><input type="submit" name="discussion_settings" value="Save Discussion Settings"></input></p>
                         {% csrf_token %}

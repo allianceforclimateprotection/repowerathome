@@ -22,7 +22,7 @@
 </div>
 {% endblock %}
 {% block content %}
-    <form action="{% url login %}" method="post" autocomplete="off">
+    <form action="{% url login %}" method="post" class="form_6c">
         <h1>Log In</h1>
         {% with login_form as form %}
             {% include "base/_form.html" %}
