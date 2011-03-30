@@ -111,7 +111,7 @@
     height: 100%;
 }
 .search_widget input[type=text] {
-    border: 1px solid #000;
+    border: 1px solid #CCC;
     border-right: 0;
     background: #fff;
     font-size: 14px;
@@ -128,7 +128,7 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
-    border: 1px solid #000;
+    border: 1px solid #CCC;
     padding: 3px 0 2px 0;
     *padding: 5px 0 4px 0; /*ie7 hack*/
 }

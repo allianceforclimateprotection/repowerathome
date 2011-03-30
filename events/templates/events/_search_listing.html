@@ -6,13 +6,20 @@
     <a href="{% url event-show %}">Events</a> &rsaquo;
     Search Results
 {% endblock %}
-{% block title_bar_title %}Search Results{% endblock %}
-{% block ribbon_bar %}Showing {{object_list|length}} events{% endblock %}
+{% block title_bar_title %}Event Search Results{% endblock %}
+{% block title_bar_copy %}The results of your search are below{% endblock %}
+{% block ribbon_bar %}Showing {{object_list|length}} results{% endblock %}
 {% block content %}
-        {% with object_list as events %}
-            {% include 'events/_event_nugget_list.html' %}
-        {% endwith %}
-        {% if page_obj.has_next %}
-            <a class="search_more" href="{{ request.path }}?search={{ request.GET.search }}&amp;page={{ page_obj.next_page_number }}">more</a>
-        {% endif %}
+    {% with object_list as events %}
+        <ul class="plain_list nugget_9c_list">
+        {% for event in events %}
+            {% include 'base/_nugget_9c_list.html' %}
+        {% endfor %}
+        </ul>
+    {% endwith %}
+    {% if page_obj.has_next %}
+        <a class="search_more" href="{{ request.path }}?search={{ request.GET.search }}&amp;page={{ page_obj.next_page_number }}">More results</a>
+    {% endif %}
 {% endblock %}
+
+        

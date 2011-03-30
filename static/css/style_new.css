@@ -165,7 +165,7 @@ Events Show Events Show Events Show Events Show Events Show Events Show Events S
     background: #0F3669;
     width: 450px;
     overflow: auto;
-    height: 172px;
+    height: 100%;
     margin: 0 9px 18px 0;
     float: left;
 }
@@ -175,15 +175,22 @@ Events Show Events Show Events Show Events Show Events Show Events Show Events S
 #events_hosting h2, #events_search h2 { 
     font-size: 18px; 
     line-height: 22px; 
-    font-family: inherit; 
-    font-weight: bold; 
+    /*font-family: inherit; */
+    /*font-weight: bold; */
 }
 #events_hosting p a {
     text-decoration: underline;
 }
 #events_hosting div{
-    float: right;
-    width: 220px;
+    float: left;
+    width: 210px;
+}
+#events_hosting div a.button{
+    width: 174px;
+}
+#events_hosting img {
+    float: left;
+    margin-right: 18px;
 }
 #events_search {
     float: left;

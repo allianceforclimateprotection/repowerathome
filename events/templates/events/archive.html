@@ -1,18 +1,14 @@
-{% extends "base/nav_6c3c.html" %}
+{% extends "base/nav_9c.html" %}
 {% load dated_static %}
-{% block title %}Events on Repower at Home{% endblock %}
-{% block breadcrumbs %}
-    <a href="{% url index %}">Home</a> &rsaquo;
-    <a href="{% url event-show %}">Events</a> &rsaquo;
-   Events Archive 
-{% endblock %}
-{% block right_content %}
-<div class="grid_6 alpha">
-    <div class="box_two_top"></div>
-    <div class="box_two_middle">
-        <h1>Events Archive</h1>
-        {% include 'events/_event_nugget_list.html' %}
-    </div>
-    <div class="box_two_bottom"></div>
-</div>
+{% block title %}Events Archive{% endblock %}
+{% block title_bar_image %}{% endblock %}
+{% block title_bar_title %}Event Archive{% endblock %}
+{% block title_bar_copy %}This is an archive of all events past and future.{% endblock %}
+{% block ribbon_bar %}Showing {{events|length}} events{% endblock %}
+{% block content %}
+    <ul class="plain_list nugget_9c_list">
+    {% for event in events %}
+        {% include 'base/_nugget_9c_list.html' %}
+    {% endfor %}
+    </ul>
 {% endblock %}
