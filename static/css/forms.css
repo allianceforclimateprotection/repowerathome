@@ -285,7 +285,7 @@ button::-moz-focus-inner, input::-moz-focus-inner  { border: 0; padding:0; }
 #form_info, #form_info p, #form_info a {
     color: #FFF; 
 }
-#form_info a {
+#form_info p a {
     text-decoration: underline;
 }
 #form_info h3 {

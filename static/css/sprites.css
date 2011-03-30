@@ -6,7 +6,7 @@
 .sprite_nav_events,
 .sprite_nav_badges {
     display: inline-block;
-    width: 18px;
+    width: 19px;
     height: 18px;
     margin: 0 6px 0 12px;
     background: transparent url('../images/theme_new/sprite.png') 0px -60px no-repeat;

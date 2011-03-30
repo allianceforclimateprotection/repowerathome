@@ -28,7 +28,8 @@ def action_show(request, tag_slug=None):
         actions = Action.objects.all()
 
     return render_to_response("actions/action_show.html", {
-        'actions': actions
+        'actions': actions,
+        'nav_selected': nav_selected
     }, context_instance=RequestContext(request))
 
 
