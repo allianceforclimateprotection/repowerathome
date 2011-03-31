@@ -1,19 +1,19 @@
 /* Forms and misc */
 
-.white     { color: #FFFFFF !important;}
-a { color: #388ca0; text-decoration: none; }
-a:hover { text-decoration:underline; }
-a:active { color: #6EC3D1; text-decoration:underline; }
-.right {text-align:right;}
-.center {text-align:center;}
-.smaller {font-size:12px;}
-.hidden { display: none;}
-.error   { color: #D8000C; background-color: #FFBABA; }
-.form_row {
+#testing_widget .white     { color: #FFFFFF !important;}
+#testing_widget a { color: #388ca0; text-decoration: none; }
+#testing_widget a:hover { text-decoration:underline; }
+#testing_widget a:active { color: #6EC3D1; text-decoration:underline; }
+#testing_widget .right {text-align:right;}
+#testing_widget .center {text-align:center;}
+#testing_widget .smaller {font-size:12px;}
+#testing_widget .hidden { display: none;}
+#testing_widget .error   { color: #D8000C; background-color: #FFBABA; }
+#testing_widget .form_row {
     padding: 18px 0;
     width: 320px;
     position: relative; }
-.form_row input, .form_row textarea {
+#testing_widget .form_row input, #testing_widget .form_row textarea {
     width: 100%;
     border: 1px #A1D3E4 solid;
     padding: 4px;
@@ -22,24 +22,24 @@ a:active { color: #6EC3D1; text-decoration:underline; }
     background: #fff url(../images/theme/input_text_background.png?0000000006) repeat-x;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px; }
-.form_row li label { position: relative; }
-.form_row li input { width: inherit; }
-.form_row input[type="file"] { height: 24px; }
-.form_row input[type="checkbox"] { width: 15px; }
-.form_row input[type="checkbox"] + label { 
+#testing_widget .form_row li label { position: relative; }
+#testing_widget .form_row li input { width: inherit; }
+#testing_widget .form_row input[type="file"] { height: 24px; }
+#testing_widget .form_row input[type="checkbox"] { width: 15px; }
+#testing_widget .form_row input[type="checkbox"] + label { 
     position: relative;
     margin-left: 5px;
     top: -4px;
 }
-.form_row li { margin-right: 12px; margin-left: 0px; }
-.form_row[class~="error"] { background: transparent; }
-.form_row input.error, 
-.form_row[class~="error"] input,
-.form_row textarea.error,
-.form_row[class~="error"] textarea {
+#testing_widget .form_row li { margin-right: 12px; margin-left: 0px; }
+#testing_widget .form_row[class~="error"] { background: transparent; }
+#testing_widget .form_row input.error, 
+#testing_widget .form_row[class~="error"] input,
+#testing_widget .form_row textarea.error,
+#testing_widget .form_row[class~="error"] textarea {
     color: #DE6060;
     background: #FEDEDE url(../images/theme/input_text_error_background.png?0000000006) repeat-x; }
-.form_row label {
+#testing_widget .form_row label {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     position: absolute;
@@ -47,20 +47,20 @@ a:active { color: #6EC3D1; text-decoration:underline; }
     color: #555;
     top: 0;
     left: 0; }
-.form_row .help_text { font-size: 12px; color: grey; }
-.form_row label.error {
+#testing_widget .form_row .help_text { font-size: 12px; color: grey; }
+#testing_widget .form_row label.error {
     color: #DE6060;
     position: static;
     background-color: transparent; }
-.overset { position: relative;}
-.overset_form_message[class~="error"] {
+#testing_widget .overset { position: relative;}
+#testing_widget .overset_form_message[class~="error"] {
     color: #DE6060;
     background-color: transparent;
     width: 320px;}
 
-.form_row_float {float:left; width:148px;}
-.form_row_float_left_field {margin-right:24px;}
-.form_row ul li {list-style-type: none !important;}
+#testing_widget .form_row_float {float:left; width:148px;}
+#testing_widget .form_row_float_left_field {margin-right:24px;}
+#testing_widget .form_row ul li {list-style-type: none !important;}
 
 /* Testing Widget Specific*/
 
@@ -78,16 +78,16 @@ a:active { color: #6EC3D1; text-decoration:underline; }
 
 /*Controls*/
 #testing_widget .ticket_controls { position:relative; text-align:center; }
-#prev_ticket_control {float:left;}
-#next_ticket_control {float:right;}
+#testing_widget #prev_ticket_control {float:left;}
+#testing_widget #next_ticket_control {float:right;}
 
-.testing_feedback_form {width: 189px;}
-.testing_feedback_form #id_name, .testing_feedback_form #id_feedback { width: 190px; }
-.ticket_submit { width: 190px; }
-.testing_feedback_form .form_row li { float: left; }
-.testing_feedback_form label {font-weight: bold; }
-.testing_feedback_form #id_name, .testing_feedback_form #id_feedback { width: 179px; }
-.testing_feedback_form .form_row li { float: left; }
-.testing_feedback_form label {color:#FFF;}
-.ticket_instructions { background-color:#FFFFFF; padding: 9px; }
-.ticket_instructions div { max-height:162px; overflow:auto; }
+#testing_widget .testing_feedback_form {width: 189px;}
+#testing_widget .testing_feedback_form #id_name, #testing_widget .testing_feedback_form #id_feedback { width: 190px; }
+#testing_widget .ticket_submit { width: 190px; }
+#testing_widget .testing_feedback_form .form_row li { float: left; }
+#testing_widget .testing_feedback_form label {font-weight: bold; }
+#testing_widget .testing_feedback_form #id_name, #testing_widget .testing_feedback_form #id_feedback { width: 179px; }
+#testing_widget .testing_feedback_form .form_row li { float: left; }
+#testing_widget .testing_feedback_form label {color:#FFF;}
+#testing_widget .ticket_instructions { background-color:#FFFFFF; padding: 9px; }
+#testing_widget .ticket_instructions div { max-height:162px; overflow:auto; }
