@@ -145,16 +145,17 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar 
 --------------------------------------------------------------------------------------------------------------------- */
 #title_bar {
-    background: #0E8FDF url('../images/theme_new/content_title_bar.png') 0px -10px repeat-x;
+    background: #0E8FDF url('../images/theme_new/sprite.png') 0px -990px repeat-x;
     color: #FFF;
     padding: 9px 0 9px 18px;
     position: relative;
     font-weight: bold;
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
+    margin-bottom: 18px;
 }
 #title_bar_bottom_shadow {
-    background: #0E8FDF url('../images/theme_new/content_title_bar.png') 0px 0px repeat-x;
+    background: #0E8FDF url('../images/theme_new/sprite.png') 0px -480px repeat-x;
     height: 10px;
     width: 100%;
     bottom: 0px;
@@ -167,6 +168,9 @@ Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar 
     font-weight: bold;
     text-shadow: #333 0px -1px 0px;
     line-height: 40px;
+}
+#title_bar .title_bar_full_width_title h1 {
+    width: 693px;
 }
 #title_bar .title_bar_floater{
     background-color: #42ABE6;
@@ -221,6 +225,7 @@ Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar 
     padding: 9px;
     border: 1px solid #d6d6d6;
     margin-bottom: 21px;
+    float: left;
 }
 #title_bar_9c_info p {
     margin-bottom: 0px;
@@ -272,6 +277,7 @@ Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons 
 }
 .ribbon_small_dark {
     background-position: 0 0;
+    margin-top: 0;
 }
 .ribbon_small_wrap_dark{
     background-position: 0 -25px;
@@ -331,7 +337,8 @@ Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav 
     border-bottom-left-radius: 9px;
     -webkit-box-shadow: 1px 2px 6px #333;
     -moz-box-shadow: 1px 2px 6px #333;
-    box-shadow: 1px 2px 6px #333;    
+    box-shadow: 1px 2px 6px #333;
+    margin-bottom: 12px;
 }
 #nav_logged_out h2 {
     color: #96ACC0;
@@ -423,7 +430,7 @@ Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav 
     overflow: auto;
     height: 100%;
     background: transparent url('../images/theme_new/tab_nav_shadow.png') 0 100% repeat-x;
-    /*margin: 0 9px 0 9px;*/
+    margin: 0 9px 0 9px;
 }
 #tab_nav li {
     float: left;
@@ -449,6 +456,41 @@ Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav 
     color: #006499;
 }
 
+/* ---------------------------------------------------------------------------------------------------------------------
+Progress bar Progress bar Progress bar Progress bar Progress bar Progress bar Progress bar Progress bar Progress bar
+--------------------------------------------------------------------------------------------------------------------- */
+.progress_wrapper {
+    width: 90%;
+    height: 70px;
+    background: #CCC;
+    margin: 0 auto;
+    position: relative;
+    border: 2px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.progress_bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 50%;
+    background: #006499;
+}
+.progress_text {
+    padding-top: 14px;
+    color: #fff;
+    position: relative;
+    margin: 0 auto;
+    text-align: center;
+    font-family:"MuseoSlab700", Tahoma, sans-serif;
+    font-size: 36px;
+}
+.progress_text div {
+    font-size: 18px;
+    margin-top: 6px;
+}
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors Colors 
@@ -474,4 +516,3 @@ Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc Misc 
 .float {float: left;}
 .hidden {display: none;}
 .smaller {font-size: 12px; line-height: 16px;}
-

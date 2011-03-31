@@ -116,13 +116,7 @@
                 <h2 class="home_feature_heading">Featured Users</h2>
                 <ul class="plain_list nugget_2c_list">
                     {% for user in top_users %}
-                    <li>
-                    <img src="{{ user.profile_picture }}" width="40" height="40"/>
-                    <div>
-                        {% safe_user_link user.user %}<br/>
-                        {{ user.total_points|intcomma }} points
-                    </div>
-                    </li>
+                        {% include "base/_nugget_2c_list.html" %}
                     {% endfor %}
                 </ul>
                 <br/>

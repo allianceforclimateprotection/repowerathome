@@ -143,10 +143,14 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
     margin-left: 3px;
     line-height: 16px;
     float: left;
-    width: 98px;
+    width: 90px;
+    height: 48px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+.nugget_2c_list li div span {
+    color: #333;
 }
 
 /*nugget_4c_list -- Used on homepage for featured communities */

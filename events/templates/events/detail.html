@@ -75,7 +75,7 @@
     <br class="clear"/>
     <div id="comments">
         {% get_content_type_id for event as content_type_id %}
-        <a class="atom_link" href="{% url comments_feed content_type_id,event.id %}">{{ event }} comments feed</a>
+        <a class="feed_link" href="{% url comments_feed content_type_id,event.id %}">Feed</a>
         {% with event as object %}
             {% render_comment_list for object %}
             {% render_comment_form for object %}

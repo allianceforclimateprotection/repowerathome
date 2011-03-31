@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 
 from utils import forbidden
 
-from models import Challenge
+from models import Challenge, Support
 from forms import ChallengeForm, PetitionForm
 
 def _edit(request, challenge):
@@ -32,10 +32,16 @@ def create(request):
 def detail(request, challenge_id):
     nav_selected = "challenges"
     challenge = get_object_or_404(Challenge.objects.select_related(), id=challenge_id)
-    petition = PetitionForm(challenge=challenge, data=(request.POST or None))
-    if petition.is_valid():
-        petition.save()
+    form = PetitionForm(challenge=challenge, data=(request.POST or None))
+    if form.is_valid():
+        form.save()
         messages.success(request, 'Thanks for your support')
+        return redirect('challenges_detail', challenge_id=challenge_id)
+    supporter_count = Support.objects.filter(challenge=challenge).count()
+    supporters = Support.objects.filter(challenge=challenge).order_by("-pledged_at")[:12]
+    progress = (supporter_count / float(challenge.goal)) * 100
+    if progress > 100:
+        progress = 100
     return render_to_response('challenges/detail.html', locals(), context_instance=RequestContext(request))
 
 @login_required

@@ -1,0 +1,20 @@
+{% load humanize %}
+{% load dated_static %}
+<li>
+    {% if supporter.contributor.user.get_profile.profile_picture %}
+        <a href="{% url profile supporter.contributor.user.id %}">
+            <img src="{{ supporter.contributor.user.get_profile.profile_picture }}" width="40" height="40" alt="supporter avatar"/>
+        </a>
+    {% else %}
+        <img src="{% dated_static 'images/avatars/avatar_40.png' %}" width="40" height="40" alt="supporter avatar"/>
+    {% endif %}
+    <div>
+        {% if supporter.contributor.user %}
+            <a href="{% url profile supporter.contributor.user.id %}">{{supporter.contributor.user.get_full_name}}</a>
+        {% else %}
+        <span>{{supporter.contributor}}</span>
+        {% endif %}
+        <br/>
+        {{ supporter.pledged_at|date:"M. j, Y" }}
+    </div>
+</li>

@@ -9,10 +9,11 @@
     width: 19px;
     height: 18px;
     margin: 0 6px 0 12px;
+    vertical-align: text-top;
     background: transparent url('../images/theme_new/sprite.png') 0px -60px no-repeat;
 }
 .sprite_nav_communities { background-position:  0px -80px; }
-.sprite_nav_challenges {background-position:  0px -100px; height: 16px; }
+.sprite_nav_challenges {background-position:  0px -100px; height: 16px;margin-top: 2px; }
 .sprite_nav_events { background-position: 0px -120px; height: 19px; }
 .sprite_nav_badges { background-position: 0px -140px; }
 
@@ -28,6 +29,8 @@
 .sprite_nav_cards,
 .sprite_nav_logout {
     display: inline-block;
+    vertical-align: text-top;
+
     width: 18px;
     height: 14px;
     margin: 0 6px 0 4px;
@@ -117,3 +120,14 @@
     height: 12px;
     margin: 0 6px;
 }
+
+/*Feed icon*/
+.sprite_feed {
+    background: transparent url('../images/theme_new/sprite.png') -120px -20px no-repeat;
+    width: 16px;
+    height: 16px;
+    margin-right: 3px;
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+

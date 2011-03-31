@@ -81,9 +81,7 @@
     {% if group_records %}
         <h2>Community Activity
             {% if group.slug %}
-                <a class="atom_link" href="{% url group_activity_feed group.slug %}">
-                    <img src="{% dated_static 'images/theme/social_icons/16/feed.png' %}" alt="atom feed" width="16" height="16"/>
-                </a>
+                <a class="feed_link" href="{% url group_activity_feed group.slug %}">Feed</a>
             {% endif %}
         </h2>
         {% for record in group_records %}

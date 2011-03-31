@@ -6,11 +6,16 @@ from commitments.forms import ContributorForm
 from models import Challenge, Support
 
 class ChallengeForm(forms.ModelForm):
+    goal = forms.IntegerField(min_value=1)
+
     class Meta:
         model = Challenge
         fields = ('title', 'description', 'goal',)
 
 class PetitionForm(ContributorForm):
+    first_name = forms.CharField(min_length=2, widget=forms.TextInput(attrs={'class':'form_row_half'}))
+    last_name = forms.CharField(min_length=1, widget=forms.TextInput(attrs={'class':'form_row_half form_row_half_last'}))
+
     class Meta:
         model = Contributor
         fields = ('first_name', 'last_name', 'email',)

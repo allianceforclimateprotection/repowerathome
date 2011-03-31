@@ -1,32 +1,13 @@
 {% load threadedcomments_tags %}
 
 {% if request.user.is_authenticated %}
-    <h2 id="comments_form_heading">Recent Discussions</h2>
     {% if object %}
         {% get_comment_form for object as form %}
     {% endif %}
     <div id="form_6c">
-    <form id="comment_form" action="{% url comments-post-comment %}" method="post">
+    <form id="comment_form" action="{% url comments-post-comment %}" method="post" class="form_6c">
         {% include 'base/_form.html' %}
         {% csrf_token %}
-        {% comment %}
-        {% for field in form %}
-            {% if field.is_hidden %}
-                {{ field }}
-            {% else %}
-                {% if field.name == "honeypot" %}
-                    <p style="display: none;">{{ field }}</p>
-                {% else %}
-                    {% if field.name == "message_type" or field.name == "comment" %}
-                        {% if field.errors %}{{ field.errors }}{% endif %}
-                        <p class="form_row {% if field.errors %}error {% endif %}">
-                            {{ field }}
-                        </p>
-                    {% endif %}
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-        {% endcomment %}
         <div class="right">
             <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ object.get_absolute_url }}{% endif %}" />
             <button type="submit">Submit</button>

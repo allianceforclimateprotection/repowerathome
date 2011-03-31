@@ -1,27 +1,78 @@
 {% extends "base/nav_6c3c.html" %}
+{% load comments %}
+{% load humanize %}
 {% block breadcrumbs %}
+    <a href="{% url index %}">Home</a> &raquo;
     <a href="{% url challenges_list %}">Challenges</a> &raquo;
     {{ challenge.title }}
 {% endblock %}
 {% block title_bar_sub %}Petition Challenge{% endblock %}
-{% block title_bar %}{{ challenge.title }}{% endblock %}
+{% block title_bar %}<div class="title_bar_full_width_title">{{ challenge.title }}</div>{% endblock %}
 {% block tab_nav %}
-    <a href="{% url challenges_edit challenge.id %}">Edit this Challenge</a>
+    <li class="tab_nav_selected">Overview</li>
+    <li><a href="#supporters">Supporters</a></li>
+    <li><a href="#discussions">Discussions</a></li>
+    {% ifequal challenge.creator.id request.user.id %}
+        <li class="tab_nav_link"><a href="{% url challenges_edit challenge.id %}">Edit this Challenge</a></li>
+    {% endifequal %}
 {% endblock %}
 {% block content %}
+<p class="action_deck">
     {{ challenge.description }}
-    {% with petition as form %}
-    <form action="{% url challenges_sign challenge.id %}" method="post">
-            {% include "base/_form.html" %}
-            {% csrf_token %}
-            <div class="form_buttons">
-                <button class="button" type="submit">Sign the Petition</button>
-            </div>
-        </form>
+</p>
+    <form action="{% url challenges_sign challenge.id %}" method="post" class="form_6c form_6c_dark">
+        {% include "base/_form.html" %}
+        {% csrf_token %}
+        <div class="form_buttons">
+            <button class="button button_mega" type="submit">Sign the Petition</button>
+        </div>
+    </form>
+    <br/>
+    {% if supporters %}
+        <h2>Latest Supporters</h2>
+        <ul class="plain_list nugget_2c_list">
+            {% for supporter in supporters %}
+                {% include "base/_nugget_2c_list_supporter.html" %}
+            {% endfor %}
+        </ul>
+        {% if supporter_count > 12 %}
+        <p class="right">
+            <a href="">View all {{supporter_count|intcomma}} supporters</a>
+        </p>
+        {% endif %}
+    {% endif %}
+    <div id="comments">
+        <h2 id="comments_form_heading">
+            {% get_content_type_id for challenge as content_type_id %}
+            <a class="button button_small button_feed" href="{% url comments_feed content_type_id,challenge.id %}">
+                <span class="sprite_feed"></span> Feed
+            </a>
+            Discussions
+        </h2>
+        {% with challenge as object %}
+            {% render_comment_form for object %}
+            {% render_comment_list for object %}
+        {% endwith %}
+    </div>
+{% endblock %}
+{% block sidebar %}
+    <div class="ribbon_small ribbon_small_dark">
+        Share
+        <div class="ribbon_small_wrap ribbon_small_wrap_dark"></div>
+    </div>
+    {% with challenge as object %}
+        {% include "base/_nugget_share.html" %}
     {% endwith %}
-    <ul>
-        {% for supporter in challenge.supporters.all %}
-            <li>{{ supporter }}</li>
-        {% endfor %}
-    </ul>
+    <div class="ribbon_small">
+        Progress
+        <div class="ribbon_small_wrap"></div>
+    </div>
+    <div class="progress_wrapper">
+        <div class="progress_bar" style="width:{{progress}}%;"></div>
+        <div class="progress_text">
+            {{supporter_count|intcomma}}
+            <div>of {{challenge.goal|intcomma}}</div>
+        </div>
+    </div>
+
 {% endblock %}

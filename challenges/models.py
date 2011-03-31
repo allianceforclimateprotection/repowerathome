@@ -16,7 +16,7 @@ class ChallengeManager(models.Manager):
 class Challenge(models.Model):
     title = models.CharField(max_length=75)
     description = models.TextField(blank=False)
-    goal = models.PositiveIntegerField(help_text='What number of petions would you like to see signed?')
+    goal = models.IntegerField(help_text='How many petions do you want signed?')
     creator = models.ForeignKey('auth.user')
     supporters = models.ManyToManyField('commitments.contributor', through='Support')
     created = models.DateTimeField(auto_now_add=True)

@@ -50,7 +50,7 @@ require(["libs/jquery.validation", "libs/jquery.ui", "mods/search", "libs/marker
             anchor: [14],
             textColor: '#FFFFFF',
             textSize: 12,
-            backgroundPosition: "-252px -264px"
+            backgroundPosition: "-232px -104px"
         }];
         var markerCluster = new MarkerClusterer(gmap, markers, {
             gridSize: 60, 

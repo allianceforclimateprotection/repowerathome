@@ -36,7 +36,6 @@
             <a href="/badges/{{ action.slug }}-action-badge/">
                 <img src="{{ action.image_paths.white }}" width="80" height="80" />
             </a>
-            <a href="/badges/{{ action.slug }}-action-badge/" class="white">View badge page</a>
         </div>
     </div>
 {% endblock %}
@@ -47,7 +46,7 @@
     {% render_template_snippet action.content %}
     <div id="comments">
         {% get_content_type_id for action as content_type_id %}
-        <a class="atom_link" href="{% url comments_feed content_type_id,action.id %}">{{ action }} comments feed</a>
+        <a class="feed_link" href="{% url comments_feed content_type_id,action.id %}">Feed</a>
         {% with action as object %}
             {% render_comment_form for object %}
             {% render_comment_list for object %}
@@ -63,19 +62,9 @@
         Share
         <div class="ribbon_small_wrap ribbon_small_wrap_dark"></div>
     </div>
-    <ul class="plain_list nugget_3c_grid_3 nugget_3c_grid_3_share">
-        <li>
-            <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ action.get_absolute_url|urlencode }}&amp;layout=box_count&amp;show_faces=false&amp;width=47&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=60" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:47px; height:60px;" allowTransparency="true"></iframe>
-        </li>
-        <li>
-            <a href="http://twitter.com/share" class="twitter-share-button" data-text="{{ action.name }}" data-url="http://repowerathome.com{{ action.get_absolute_url }}" data-count="vertical" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-        </li>
-        <li>
-            <a class="addthis_counter"></a>
-            <!--TODO: Move this script out of here-->
-            <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4d659aab07c24995"></script>
-        </li>
-    </ul>
+    {% with action as object %}
+        {% include "base/_nugget_share.html" %}
+    {% endwith %}
     {% if progress.date_committed and not progress.is_completed %}
         <div class="ribbon_small">
             Your Commitment
