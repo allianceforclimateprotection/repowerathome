@@ -32,16 +32,22 @@ def create(request):
 def detail(request, challenge_id):
     nav_selected = "challenges"
     challenge = get_object_or_404(Challenge.objects.select_related(), id=challenge_id)
-    form = PetitionForm(challenge=challenge, data=(request.POST or None))
+    if request.user.is_authenticated():
+        initial = {
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'email': request.user.email,
+        }
+        if request.user.get_profile().location:
+            initial['zipcode'] = request.user.get_profile().location.zipcode
+    else:
+        initial = {}
+    form = PetitionForm(challenge=challenge, data=(request.POST or None), initial=initial)
     if form.is_valid():
         form.save()
         messages.success(request, 'Thanks for your support')
         return redirect('challenges_detail', challenge_id=challenge_id)
-    supporter_count = Support.objects.filter(challenge=challenge).count()
     supporters = Support.objects.filter(challenge=challenge).order_by("-pledged_at")[:12]
-    progress = (supporter_count / float(challenge.goal)) * 100
-    if progress > 100:
-        progress = 100
     return render_to_response('challenges/detail.html', locals(), context_instance=RequestContext(request))
 
 @login_required

@@ -4,20 +4,25 @@
 {% block breadcrumbs %}
     <a href="{% url index %}">Home</a> &rsaquo;
     <a href="{% url challenges_list %}">Challenges</a> &rsaquo;
-    {{ type_label }} a Challenge
-{% endblock %}
+    {% if challenge.id %}
+        <a href="{% url challenges_detail challenge.id %}">{{challenge.title|truncatewords:6}}</a> &rsaquo;
+    {% endif %}
+    {{ type_label }} challenge
+    {% endblock %}
 {% block content %}
     <form id="challenge_form" action="" method="post" class="form_6c">
-        <h1>{{ type_label }} a Challenge</h1>
+        <h1>{{ type_label }} Challenge</h1>
         {% include "base/_form.html" %}
         {% csrf_token %}
         <div class="form_buttons">
             {% if challenge.id %}
-                <a href="{% url challenges_detail challenge.id %}" class="form_cancel">Cancel</a>
+            <a href="{% url challenges_detail challenge.id %}" class="form_cancel">Cancel</a>
+            <button class="button_mega" type="submit">Save Challenge</button>
             {% else %}
-                <a href="{% url challenges_list %}" class="form_cancel">Cancel</a>
+            <a href="{% url challenges_list %}" class="form_cancel">Cancel</a>
+            <button class="button_mega" type="submit">Create Challenge</button>
             {% endif %}
-            <button class="button_mega" type="submit">{{ type_label }} Challenge</button>
+            
         </div>
     </form>
     <script>
@@ -26,6 +31,6 @@
     </script>
 {% endblock %}
 {% block form_info %}
-    Fill in this form to create a new challenge
+    Use this form to create or edit a challenge
 {% endblock %}
 

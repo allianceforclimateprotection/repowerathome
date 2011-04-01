@@ -35,9 +35,9 @@
                 {% include "base/_nugget_2c_list_supporter.html" %}
             {% endfor %}
         </ul>
-        {% if supporter_count > 12 %}
+        {% if challenge.number_of_supporters > 12 %}
         <p class="right">
-            <a href="">View all {{supporter_count|intcomma}} supporters</a>
+            <a href="">View all {{challenge.number_of_supporters|intcomma}} supporters</a>
         </p>
         {% endif %}
     {% endif %}
@@ -64,15 +64,9 @@
         {% include "base/_nugget_share.html" %}
     {% endwith %}
     <div class="ribbon_small">
-        Progress
+        Petitions signed
         <div class="ribbon_small_wrap"></div>
     </div>
-    <div class="progress_wrapper">
-        <div class="progress_bar" style="width:{{progress}}%;"></div>
-        <div class="progress_text">
-            {{supporter_count|intcomma}}
-            <div>of {{challenge.goal|intcomma}}</div>
-        </div>
-    </div>
+    {% include "challenges/_progress_bar.html" %}
 
 {% endblock %}

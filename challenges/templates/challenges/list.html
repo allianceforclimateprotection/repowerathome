@@ -1,12 +1,43 @@
 {% extends "base/nav_9c.html" %}
+{% load humanize %}
 {% block title %}Repower at Home Challenges{% endblock %}
 {% block title_bar_image %}sprite_section_challenges_large{% endblock %}
 {% block title_bar_title %}Challenges{% endblock %}
 {% block title_bar_copy %}
 Together we can achieve big things. Join a challenge to help your community
 reach a new goal and take the world one step closer to a clean energy
-transformation. 
+transformation.
+<br/><br/>
+<a href="{% url challenges_create %}" class="button">
+    <b>+</b> Create a Challenge
+</a>
 {% endblock %}
+{% block ribbon_bar %}Showing {{challenges|length}} challenges{% endblock %}
 {% block content %}
-    {% include "challenges/_nugget_list.html" %}
+<ul class='plain_list nugget_3c'>
+    {% for challenge in challenges %}
+        <li class="nugget_3c_tall {% if challenge.status %}nugget_3c_completed{% endif %}">
+            <div class="nugget_3c_status">
+                {% if challenge.status %}
+                    <span class="sprite_check_white_small"></span>
+                    COMPLETED
+                {% else %}
+                    Petition Challenge
+                {% endif %}
+            </div>
+
+            <h2>
+                <a href="{% url challenges_detail challenge.id %}">{{ challenge.title }} </a>
+            </h2>
+            <p>
+            Created by: 
+            <a href="{% url profile challenge.creator.id %}">{{challenge.creator.get_full_name}}</a><br/>
+            Goal: {{ challenge.goal|intcomma }} supporters
+
+            </p>
+            
+            {% include "challenges/_progress_bar.html" %}
+        </li>
+    {% endfor %}
+</ul>
 {% endblock %}

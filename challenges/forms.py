@@ -6,7 +6,7 @@ from commitments.forms import ContributorForm
 from models import Challenge, Support
 
 class ChallengeForm(forms.ModelForm):
-    goal = forms.IntegerField(min_value=1)
+    goal = forms.IntegerField(min_value=1, help_text="How many petitions do you want to collect?")
 
     class Meta:
         model = Challenge

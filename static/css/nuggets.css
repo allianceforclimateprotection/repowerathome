@@ -246,19 +246,20 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
     margin: 5px;
     padding: 9px 9px 0px 9px;
     width: 200px;
+    position: relative;
     border: 1px solid #E5E5E5;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
-    height: 150px;
+    height: 160px;
     cursor: pointer;
+    overflow: auto;
 }
 .nugget_3c li p {
-    float: left;
     font-size: 12px;
     line-height: 14px;
     color: #666;
-    width: 130px;
+    margin-bottom: 0px;
 }
 .nugget_3c li img {
     float: left;
@@ -286,9 +287,9 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
     -moz-border-radius: 3px;
     border-radius: 3px;
     color: #45AB02;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 11px;
     font-weight: bold;
+    margin-bottom: 3px;
 }
 .nugget_3c .nugget_3c_narrow div {
     color: #45AB02;
@@ -298,6 +299,8 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
 .nugget_3c h2 {
     font-size: 18px;
     line-height: 20px;
+    max-height: 60px;
+    overflow: hidden;
 }
 .nugget_3c h2 a:hover {
     text-decoration: none;
@@ -305,11 +308,28 @@ Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets Nuggets 
 .nugget_3c li:hover {
     border-color: #666;
 }
+/*specific for badges*/
 .nugget_3c .nugget_3c_narrow { 
-    width: 112px;
     height: 230px;
     text-align: center;
-    padding: 24px 24px 0px 24px;
+    padding: 24px 9px 0px 9px;
+}
+.nugget_3c .nugget_3c_narrow img {
+    float: none;
+}
+/*specific for challenges*/
+.nugget_3c .nugget_3c_tall { 
+    height: 230px;
+    padding: 9px;
+}
+.nugget_3c .nugget_3c_tall .progress_nugget {
+    position: absolute;
+    left: 9px;
+    bottom: 9px;
+    border-top: 1px solid #E5E5E5;
+}
+.nugget_3c .nugget_3c_tall .progress_nugget .progress_label {
+    display: block;
 }
 
 /*Used for event listings on show page and archive page*/

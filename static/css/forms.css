@@ -173,8 +173,8 @@ Button Button Button Button Button Button Button Button Button Button Button But
     font-size: 16px;
     padding: 5px 14px;
     line-height: 21px;
-    text-shadow: 0 -1px 0px #666;
-    font-family:"MuseoSlab500", Tahoma, sans-serif;
+    text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
+    font-family:"MuseoSlab700", Tahoma, sans-serif;
     font-weight: 500;
     font-style: normal;
     font-variant: normal;
@@ -196,7 +196,6 @@ Button Button Button Button Button Button Button Button Button Button Button But
     position: relative;
 }
 button::-moz-focus-inner, input::-moz-focus-inner  { border: 0; padding:0; }
-
 .button:hover, input[type=submit]:hover, button:hover {
     text-decoration: none;
     background: #FF9900;

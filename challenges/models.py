@@ -14,9 +14,9 @@ class ChallengeManager(models.Manager):
         return challenges
 
 class Challenge(models.Model):
-    title = models.CharField(max_length=75)
-    description = models.TextField(blank=False)
-    goal = models.IntegerField(help_text='How many petions do you want signed?')
+    title = models.CharField(max_length=70)
+    description = models.TextField(blank=False, help_text="Tell people what this challenge is about, why you're involved, and what you want to accomplish.")
+    goal = models.PositiveIntegerField()
     creator = models.ForeignKey('auth.user')
     supporters = models.ManyToManyField('commitments.contributor', through='Support')
     created = models.DateTimeField(auto_now_add=True)
@@ -25,6 +25,12 @@ class Challenge(models.Model):
 
     def number_of_supporters(self):
         return self.supporters.all().count()
+
+    def percent_complete(self):
+        percent_complete = (self.number_of_supporters() / float(self.goal)) * 100
+        if percent_complete > 100:
+            percent_complete = 100
+        return percent_complete
 
     @models.permalink
     def get_absolute_url(self):

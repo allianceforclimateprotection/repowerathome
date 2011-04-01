@@ -93,6 +93,7 @@ Content Content Content Content Content Content Content Content Content Content 
     -moz-border-radius-bottomright: 9px;
     border-bottom-right-radius: 9px;
     min-height: 500px;
+    *border-left: 1px solid #ccc; /*give a little visual contrast in IE7 that don't support box shadow*/
 }
 #content_9c{
     padding: 9px; 
@@ -459,11 +460,20 @@ Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav 
 /* ---------------------------------------------------------------------------------------------------------------------
 Progress bar Progress bar Progress bar Progress bar Progress bar Progress bar Progress bar Progress bar Progress bar
 --------------------------------------------------------------------------------------------------------------------- */
-.progress_wrapper {
+.progress_nugget {
     width: 90%;
+    margin: 0 auto;
+}
+.progress_label {
+    display: none;
+    clear: both;
+    font-size: 12px;
+    color: #666;
+    line-height: 28px;
+}
+.progress_wrapper {
     height: 70px;
     background: #CCC;
-    margin: 0 auto;
     position: relative;
     border: 2px solid #ccc;
     -webkit-border-radius: 3px;

@@ -95,7 +95,9 @@
     background: transparent url('../images/theme_new/sprite.png') -40px -20px no-repeat;
     width: 8px;
     height: 8px;
-    margin-left: 6px;
+    margin: 1px 3px 0 6px;
+    *margin-top: 2px;
+    vertical-align: text-top;
 }
 .sprite_check_white_small {background-position: -60px -20px;}
 
@@ -130,4 +132,3 @@
     display: inline-block;
     vertical-align: text-bottom;
 }
-

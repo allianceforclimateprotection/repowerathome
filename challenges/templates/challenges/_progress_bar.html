@@ -1,0 +1,11 @@
+{% load humanize %}
+<div class="progress_nugget">
+    <div class="progress_label">Petitions signed:</div>
+    <div class="progress_wrapper">
+        <div class="progress_bar" style="width:{{challenge.percent_complete}}%;"></div>
+        <div class="progress_text">
+            {{challenge.number_of_supporters|intcomma}}
+            <div>of {{challenge.goal|intcomma}}</div>
+        </div>
+    </div>
+</div>
