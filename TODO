@@ -9,16 +9,14 @@ About us in the footer
 
 HTML/CSS
 ========
+Email templates
 Challenge nuggets (profile page)
-Event listings
 Community stats (community detail)
 Form error messages on nav_form
 Flash messages
 Join this community button (w/states for pending request)
 My settings page
-Search box with green button
-Form style for homepage register and petition signing
-Petition progress bar
+Form style for homepage register
 Tabs on challenge details
 Badge stats (badge detail)
 Share links on badge detail
@@ -26,13 +24,10 @@ Recent badge earned on home page
 Author details in blog detail sidebar
 Fat ribbon bottom of blog detail
 Links and downloads nugget
-Map styling
-Map markers
 Map info windows
 Events/communities search box
 Create links on logged in nav
 Event detail page map
-Badge overview nuggets
 
 Features
 ========
@@ -65,4 +60,3 @@ Code cleanup
 Remove group discussions code
 Standardize _ over - in urls.py (various apps)
 Standarize names for overview pages (list, show)
-

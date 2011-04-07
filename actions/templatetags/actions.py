@@ -9,7 +9,7 @@ from utils import strip_quotes
 register = template.Library()
 
 class ActionFormNode(template.Node):
-    def __init__(self, complete_title="I did this!", 
+    def __init__(self, complete_title="I did this!",
         commit_title="Make a commitment", undo_title="Wait - I'm still working on this action."):
         self.complete_title = complete_title
         self.commit_title = commit_title
@@ -37,15 +37,14 @@ def action_form(parser, token):
     if len(arguments) > 3:
         params.append(strip_quotes(arguments[3]))
     return ActionFormNode(*params)
-    
+
 class TemplateSnippetNode(template.Node):
     def __init__(self, filter_expr):
         self.filter_expr = filter_expr
-        
     def render(self, context):
         template = Template(self.filter_expr.resolve(context))
         return template.render(context)
-    
+
 @register.tag
 def render_template_snippet(parser, token):
     try:

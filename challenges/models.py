@@ -30,6 +30,8 @@ class Challenge(models.Model):
         percent_complete = (self.number_of_supporters() / float(self.goal)) * 100
         if percent_complete > 100:
             percent_complete = 100
+        elif 0 < percent_complete < 3:
+            percent_complete = 3
         return percent_complete
 
     @models.permalink

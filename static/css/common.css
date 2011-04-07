@@ -49,10 +49,11 @@ Header Header Header Header Header Header Header Header Header Header Header Hea
     position:relative;
     background-color: #103665; }
 #header{ position:relative; }
-#header_logo { position:absolute; left: 0px; top:14px; }
-#header #cse_search_box_form{ left:350px; top:18px; width: 290px;}
+#header_logo { position:absolute; left: 0px; top:22px; color: #fff; }
+.logo_text {font-family:"MuseoSlab900"; font-size: 44px;}
+.logo_text:hover { text-decoration: none;}
+#header #cse_search_box_form{ left:383px; top:20px; width: 290px;}
 #cse_search_box{
-    /*color:#333;*/
     width:246px;
 }
 #cse_search_box_submit, #cse_search_box{
@@ -136,7 +137,7 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
     padding-top: 12px;
     line-height:24px; 
 }
-#footer_logo img{ padding-top:40px; }
+#footer_logo { padding-top:64px; display: block;}
 #footer_social_icons{ margin-top:30px; margin-left: 20px; }
 #footer_social_icons a {margin-left: 6px;}
 #footer_social_icons a:hover { text-decoration:none; }

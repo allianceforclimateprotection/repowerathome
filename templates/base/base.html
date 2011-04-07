@@ -25,9 +25,9 @@
         <meta name="DC.description" content="We can take action to keep millions of pounds of dirty coal from polluting our communities. Every point you earn means one less pound of coal needs to be burned." /> 
         <meta name="DC.format" content="text/html; charset=utf-8" />
         <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" /> 
-        <link rel="alternate" type="application/atom+xml"  href="{% url blog_feed %}" title="Repower at Home Blog" />
-        <link rel="shortcut icon" href="{% dated_static 'images/theme/favicon.ico' %}"/>
-        <link rel="stylesheet" href="{% dated_static 'css/style_new.css' %}" type="text/css" media="screen" charset="utf-8"/>
+        <link rel="alternate" type="application/atom+xml"  href="{% url blog_feed %}" title="Blog" />
+        <link rel="shortcut icon" href="{% dated_static 'images/theme_new/favicon.ico' %}"/>
+        <link rel="stylesheet" href="{% dated_static 'css/style.css' %}" type="text/css" media="screen" charset="utf-8"/>
         {% block extrahead %}{% endblock %}
         {% if testing_feedback_form %}
             <link rel="stylesheet" href="{% dated_static 'css/testing_widget.css' %}" type="text/css" media="screen" charset="utf-8"/>
@@ -43,8 +43,8 @@
         <div id="header_container">
             <div id="header" class="container_12">
                 <div class="grid_12 alpha omega">
-                    <a href="/" title="Home" id="header_logo">
-                        <img src="{% dated_static 'images/theme_new/header_logo.png' %}" alt="Repower at Home logo" width="239" height="35"/>
+                    <a href="/" title="Home" id="header_logo" class="logo_text">
+                        Project Name
                     </a>
                     <form action="/search" id="cse_search_box_form" class="search_widget">
                         <div>
@@ -80,8 +80,8 @@
         <div id="footer_container">
             <div id="footer" class="container_12">
                 <div class="grid_4 alpha">
-                    <a href="/" title="Home" id="footer_logo">
-                        <img src="{% dated_static 'images/theme_new/footer_logo.png' %}" alt="Repower at Home logo" width="267" height="40"/>
+                    <a href="/" title="Home" id="footer_logo" class="logo_text">
+                        Project Name
                     </a>
                 </div>
                 <div class="grid_4">
@@ -109,10 +109,9 @@
                     <a href="{% url rah.views.feedback %}" class="feedback_link" rel="nofollow">Feedback</a> | 
                     <a href="/terms/" rel="nofollow">Terms of Use</a> | 
                     <a href="/privacy/" rel="nofollow">Privacy Policy</a> |
-                    <a href="/about/">About Us</a>
-                    <br/>
-                    Copyright &copy; 2011 <a href="http://www.climateprotect.org/">The Alliance for Climate Protection</a> 
-                    . All Rights Reserved.
+                    <a href="/about/">About Us</a> | 
+                    Content on this site is licensed under a <a href="http://creativecommons.org/licenses/by/3.0/">
+                    Creative Commons Attribution 3.0 License</a>.
                 </div>
             </div>
         </div>
