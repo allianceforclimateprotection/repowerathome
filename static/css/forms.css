@@ -330,7 +330,7 @@ button::-moz-focus-inner, input::-moz-focus-inner  { border: 0; padding:0; }
     position: absolute;
     bottom: -5px;
     right: 0px;
-    background: transparent url('../images/theme_new/ribbon_form_info.png') 0 0 no-repeat;
+    background: transparent url('../images/theme/ribbon_form_info.png') 0 0 no-repeat;
     width: 240px;
     height: 5px;
 }

@@ -10,7 +10,7 @@
     height: 18px;
     margin: 0 6px 0 12px;
     vertical-align: text-top;
-    background: transparent url('../images/theme_new/sprite.png') 0px -60px no-repeat;
+    background: transparent url('../images/theme/sprite.png') 0px -60px no-repeat;
 }
 .sprite_nav_communities { background-position:  0px -80px; }
 .sprite_nav_challenges {background-position:  0px -100px; height: 16px;margin-top: 2px; }
@@ -34,7 +34,7 @@
     width: 18px;
     height: 14px;
     margin: 0 6px 0 4px;
-    background: transparent url('../images/theme_new/sprite.png') -40px -60px no-repeat; 
+    background: transparent url('../images/theme/sprite.png') -40px -60px no-repeat; 
 }
 .sprite_nav_settings { background-position: -40px -80px; height: 15px; }
 .sprite_nav_invite { background-position: -40px -100px; }
@@ -51,7 +51,7 @@
 .sprite_section_badges_large {
     width: 100px !important;
     height: 100px;
-    background: transparent url('../images/theme_new/sprite.png') 0px -160px no-repeat;
+    background: transparent url('../images/theme/sprite.png') 0px -160px no-repeat;
 }
 .sprite_section_communities_large {background-position: -100px -260px; }
 .sprite_section_challenges_large {background-position: -100px -160px;}
@@ -61,7 +61,7 @@
 /* Home page slider nav */
 
 .sprite_slide_nav_next, .sprite_slide_nav_prev {
-    background: transparent url('../images/theme_new/sprite.png') -80px -40px no-repeat;
+    background: transparent url('../images/theme/sprite.png') -80px -40px no-repeat;
     height: 55px;
     width: 55px;
 }
@@ -78,7 +78,7 @@
     display: inline-block;
     height: 52px;
     width: 51px;
-    background: transparent url('../images/theme_new/sprite.png') 0 -360px no-repeat;
+    background: transparent url('../images/theme/sprite.png') 0 -360px no-repeat;
 }
 .sprite_social_fb:hover { background-position: 0 -420px; }
 .sprite_social_twitter { background-position: -60px -360px; }
@@ -92,7 +92,7 @@
 /*action nugget status bar images*/
 .sprite_check_white_small, .sprite_star_white_small {
     display: inline-block;
-    background: transparent url('../images/theme_new/sprite.png') -40px -20px no-repeat;
+    background: transparent url('../images/theme/sprite.png') -40px -20px no-repeat;
     width: 8px;
     height: 8px;
     margin: 1px 3px 0 6px;
@@ -103,7 +103,7 @@
 
 /* Comments */
 .sprite_tip_large, .sprite_question_large, .sprite_comment_large, .sprite_tip, .sprite_question, .sprite_comment {
-    background: transparent url('../images/theme_new/sprite.png') -120px 0px no-repeat;
+    background: transparent url('../images/theme/sprite.png') -120px 0px no-repeat;
 }
 .sprite_tip, .sprite_question, .sprite_comment {
     display: inline-block;
@@ -116,7 +116,7 @@
 
 /*Search button*/
 .sprite_search_mag {
-    background: transparent url('../images/theme_new/sprite.png') -160px -20px no-repeat;
+    background: transparent url('../images/theme/sprite.png') -160px -20px no-repeat;
     display: inline-block;
     width: 13px;
     height: 12px;
@@ -125,7 +125,7 @@
 
 /*Feed icon*/
 .sprite_feed {
-    background: transparent url('../images/theme_new/sprite.png') -120px -20px no-repeat;
+    background: transparent url('../images/theme/sprite.png') -120px -20px no-repeat;
     width: 16px;
     height: 16px;
     margin-right: 3px;

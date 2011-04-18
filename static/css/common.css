@@ -76,11 +76,11 @@ Content Content Content Content Content Content Content Content Content Content 
     width: 100%; 
     height:100%;
     overflow:auto;
-    background: #00285c url('../images/theme_new/content_bg_inside.png') 0 0 repeat-x;
+    background: #00285c url('../images/theme/content_bg_inside.png') 0 0 repeat-x;
     padding-bottom:36px;
 }
 #content_container.section_home{
-    background: #F2F2F2 url('../images/theme_new/content_bg_home.png') 0 0 repeat-x;
+    background: #F2F2F2 url('../images/theme/content_bg_home.png') 0 0 repeat-x;
 }
 #content_9c_container {
     background-color: #FFF;
@@ -147,7 +147,7 @@ Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Footer Foo
 Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar 
 --------------------------------------------------------------------------------------------------------------------- */
 #title_bar {
-    background: #0E8FDF url('../images/theme_new/sprite.png') 0px -990px repeat-x;
+    background: #0E8FDF url('../images/theme/sprite.png') 0px -990px repeat-x;
     color: #FFF;
     padding: 9px 0 9px 18px;
     position: relative;
@@ -157,7 +157,7 @@ Title bar Title bar Title bar Title bar Title bar Title bar Title bar Title bar 
     margin-bottom: 18px;
 }
 #title_bar_bottom_shadow {
-    background: #0E8FDF url('../images/theme_new/sprite.png') 0px -480px repeat-x;
+    background: #0E8FDF url('../images/theme/sprite.png') 0px -480px repeat-x;
     height: 10px;
     width: 100%;
     bottom: 0px;
@@ -242,7 +242,7 @@ Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons 
 --------------------------------------------------------------------------------------------------------------------- */
 .ribbon_large {
     color: #FFFFFF;
-    background: #FFFFFF url('../images/theme_new/ribbon_large.png') 0 0 no-repeat; 
+    background: #FFFFFF url('../images/theme/ribbon_large.png') 0 0 no-repeat; 
     padding: 8px 0px 0px 18px;
     font-weight: bold;
     position: relative;
@@ -255,12 +255,12 @@ Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons 
     position: absolute;
     top: 0;
     right: -19px;
-    background: transparent url('../images/theme_new/ribbon_large.png') 0 -35px no-repeat;
+    background: transparent url('../images/theme/ribbon_large.png') 0 -35px no-repeat;
 }
 
 .ribbon_small {
     color: #FFFFFF;
-    background: #FFFFFF url('../images/theme_new/ribbon_small.png') 0 -53px no-repeat; 
+    background: #FFFFFF url('../images/theme/ribbon_small.png') 0 -53px no-repeat; 
     padding-left: 14px;
     font-weight: bold;
     font-size: 12px;
@@ -275,7 +275,7 @@ Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons Ribbons 
     position: absolute;
     top: 0;
     right: -10px;
-    background: transparent url('../images/theme_new/ribbon_small.png') 0 -78px no-repeat;
+    background: transparent url('../images/theme/ribbon_small.png') 0 -78px no-repeat;
 }
 .ribbon_small_dark {
     background-position: 0 0;
@@ -407,7 +407,7 @@ Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav 
 
 /*Selected Nav*/
 #nav .nav_selected {
-    background: #F2F2F2 url('../images/theme_new/nav_pointer.png') 101% 0 no-repeat;
+    background: #F2F2F2 url('../images/theme/nav_pointer.png') 101% 0 no-repeat;
     position: relative;
     margin-bottom: -1px;
 }
@@ -417,7 +417,7 @@ Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav Nav 
 }
 #nav .nav_selected .nav_pointer_wrap {
     display: block;
-    background: transparent url('../images/theme_new/nav_pointer.png') 0px -35px no-repeat;
+    background: transparent url('../images/theme/nav_pointer.png') 0px -35px no-repeat;
     position: absolute;
     left: -9px;
     top: 0;
@@ -431,7 +431,7 @@ Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav Tab Nav 
 #tab_nav {
     overflow: auto;
     height: 100%;
-    background: transparent url('../images/theme_new/tab_nav_shadow.png') 0 100% repeat-x;
+    background: transparent url('../images/theme/tab_nav_shadow.png') 0 100% repeat-x;
     margin: 0 9px 0 9px;
 }
 #tab_nav li {

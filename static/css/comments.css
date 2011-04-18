@@ -27,7 +27,7 @@ Comment form Comment form Comment form Comment form Comment form Comment form Co
     -moz-border-radius: 4px;
     border-radius: 4px;
     text-shadow: 0 -1px 0px #006499;
-    background: transparent url('../images/theme_new/sprite.png') -100px -607px no-repeat;
+    background: transparent url('../images/theme/sprite.png') -100px -607px no-repeat;
     cursor: pointer;
 }
 #comment_form .row_id_message_type li label[for='id_message_type_1'] { background-position: -95px -566px; }
