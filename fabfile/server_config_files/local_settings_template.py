@@ -3,10 +3,10 @@ TEMPLATE_DEBUG = DEBUG
 SEND_BROKEN_LINK_EMAILS = not DEBUG
 IGNORABLE_404_ENDS = ("ga.js/", "b.js/",)
 
-INTERNAL_IPS = ("127.0.0.1", "157.130.44.166")
+INTERNAL_IPS = ("127.0.0.1")
 
 ADMINS = (
-    ('Server Errors', 'servererrors@repowerathome.com'),
+    ('Server Errors', 'servererrors@example.com'),
 )
 MANAGERS = ADMINS
 
@@ -19,7 +19,7 @@ DATABASE_PORT     = "_db_port"
 
 # Email Settings
 EMAIL_HOST = "localhost"
-DEFAULT_FROM_EMAIL = "Repower at Home <noreply@repowerathome.com>"
+DEFAULT_FROM_EMAIL = "No Reply <noreply@example.com>"
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'

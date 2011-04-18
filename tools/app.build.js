@@ -9,14 +9,9 @@
             include: ["libs/jquery.ui", "libs/jquery.form", "libs/jquery.validation", "mods/messages", "mods/facebook"] 
         },
         {
-            name: "pages/rah.home_logged_out",
+            name: "pages/rah.home",
             exclude: ["pages/base"],
-            include: ["libs/jquery.cookie", "mods/pledge"]
-        },
-        {
-            name: "pages/rah.home_logged_in",
-            exclude: ["pages/base"],
-            include: ["mods/pledge", "mods/invite", "mods/commitments"]
+            include: ["libs/jquery.cookie"]
         },
         {
             name: "pages/rah.login",
@@ -81,16 +76,6 @@
             name: "pages/commitments.card",
             exclude: ["pages/base"],
             include: ["mods/commitments"]
-        },
-        {
-            name: "pages/rah.vampire_hunt",
-            exclude: ["pages/base"],
-            include: ["mods/invite"]
-        },
-        {
-            name: "pages/rah.trendsetter_sticker",
-            exclude: ["pages/base"],
-            include: ["libs/jquery.slimbox2"]
         },
         {
             name: "pages/group.list",

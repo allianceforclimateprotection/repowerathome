@@ -10,11 +10,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.template import loader, Context
 
+from settings import SITE_NAME
 from rah.models import Profile
 from rah.signals import logged_in
 
 def login(request):
-    facebook_user = facebook.get_user_from_cookie(request.COOKIES, 
+    facebook_user = facebook.get_user_from_cookie(request.COOKIES,
         settings.FACEBOOK_APPID, settings.FACEBOOK_SECRET)
     next = request.GET.get("next", None)
     if facebook_user:
@@ -26,7 +27,7 @@ def login(request):
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
-                username = hashlib.md5(email).hexdigest()[:30] 
+                username = hashlib.md5(email).hexdigest()[:30]
                 user = User.objects.create_user(username, email, "")
                 user.first_name = facebook_user["first_name"]
                 user.last_name = facebook_user["last_name"]
@@ -41,12 +42,12 @@ def login(request):
             logged_in.send(sender=None, request=request, user=user, is_new_user=is_new_user)
             auth.login(request, user)
             return redirect(next or "index")
-    messages.error("Facebook login credentials could not be verified, please try again.")
+    messages.error(request, "Facebook login credentials could not be verified, please try again.")
     return redirect(next or "login")
 
 @login_required
 def authorize(request):
-    facebook_user = facebook.get_user_from_cookie(request.COOKIES, 
+    facebook_user = facebook.get_user_from_cookie(request.COOKIES,
         settings.FACEBOOK_APPID, settings.FACEBOOK_SECRET)
     next = request.GET.get("next", "")
     profile_edit_link = reverse('profile_edit', kwargs={'user_id': request.user.id})
@@ -56,21 +57,21 @@ def authorize(request):
         profile = request.user.get_profile()
         profile.facebook_access_token = facebook_user["access_token"]
         profile.save()
-        messages.success(request, "Your Facebook account is now linked with Repower at Home")
+        messages.success(request, "Your Facebook account is now linked with %s" % SITE_NAME)
         return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)
-    messages.error("Facebook authorization credentials could not be verified, please try again.")
+    messages.error(request, "Facebook authorization credentials could not be verified, please try again.")
     return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)
-    
+
 @login_required
 def unauthorize(request):
     profile = request.user.get_profile()
     profile.facebook_access_token = None
     profile.facebook_share = False
     profile.save()
-    messages.success(request, "Your Facebook account has been unlinked with Repower at Home")
+    messages.success(request, "Your Facebook account has been unlinked with %s" % SITE_NAME)
     next = request.GET.get("next", None)
     return redirect(next) if next else redirect(reverse('profile_edit', kwargs={'user_id': request.user.id}) + "#social_networks_tab")
-    
+
 @login_required
 def sharing(request, is_enabled):
     profile = request.user.get_profile()
@@ -86,5 +87,5 @@ def sharing(request, is_enabled):
     next = request.GET.get("next", "")
     if not next:
         next = reverse('profile_edit', kwargs={'user_id': request.user.id}) + "#social_networks_tab"
-    
+
     return redirect(next) if next else redirect("profile_edit", user_id=request.user.id)

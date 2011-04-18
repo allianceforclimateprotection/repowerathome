@@ -63,13 +63,10 @@ urlpatterns = patterns('rah.views',
     url(r'^user/edit/(?P<user_id>\d+)/$', 'profile_edit', name='profile_edit'),
     url(r'^user/list/$', 'user_list', name='user_list'),
     url(r'^validate/$', 'validate_field', name="validate_field"),
-    url(r'^houseparty/$', 'house_party', name='house_party'),
     url(r'^feedback/$', 'feedback', name='feedback'),
     url(r'^search/$', 'search', name='search'),
     url(r'^user/ga-opt-out/$', 'ga_opt_out', name='ga_opt_out'),
     url(r'user/(?P<user_id>\d+)/feed/$', UserActivityFeed(), name='user_activity_feed'),
-    url(r'^vampirehunt/', 'vampire_hunt', name='vampire_hunt'),
-    url(r'^trendsetter_sticker/', 'trendsetter_sticker', name='trendsetter_sticker'),
 )
 
 urlpatterns += patterns('django.views.generic.simple',

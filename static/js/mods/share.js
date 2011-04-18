@@ -14,7 +14,7 @@ define(["libs/jquery.ui", "mods/facebook", "libs/jquery.validation", "mods/messa
                 var container = $("<div>");
                 container.html(data);
                 container.dialog({ autoOpen: false, modal: true, height: 312, width: 386,
-                    title: "Repower at Home &hearts; Facebook" });
+                    title: "Connect with Facebook" });
                 $("input.submit, .button, button", container).button();
                 $("#ask_to_share").submit(function () {
                     var form = $(this);

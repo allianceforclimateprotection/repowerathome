@@ -29,8 +29,7 @@ Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fo
     src: url('../fonts/museoslab/Museo_Slab_100-webfont.eot');
     src: url('../fonts/museoslab/Museo_Slab_100-webfont.eot?iefix') format('eot'),
          url('../fonts/museoslab/Museo_Slab_100-webfont.woff') format('woff'),
-         url('../fonts/museoslab/Museo_Slab_100-webfont.ttf') format('truetype'),
-         url('../fonts/museoslab/Museo_Slab_100-webfont.svg#webfontL1xosY6K') format('svg');
+         url('../fonts/museoslab/Museo_Slab_100-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -39,8 +38,7 @@ Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fo
     src: url('../fonts/museoslab/Museo_Slab_300-webfont.eot');
     src: url('../fonts/museoslab/Museo_Slab_300-webfont.eot?iefix') format('eot'),
          url('../fonts/museoslab/Museo_Slab_300-webfont.woff') format('woff'),
-         url('../fonts/museoslab/Museo_Slab_300-webfont.ttf') format('truetype'),
-         url('../fonts/museoslab/Museo_Slab_300-webfont.svg#webfontY8VndmkE') format('svg');
+         url('../fonts/museoslab/Museo_Slab_300-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -49,8 +47,7 @@ Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fo
     src: url('../fonts/museoslab/Museo_Slab_500-webfont.eot');
     src: url('../fonts/museoslab/Museo_Slab_500-webfont.eot?iefix') format('eot'),
          url('../fonts/museoslab/Museo_Slab_500-webfont.woff') format('woff'),
-         url('../fonts/museoslab/Museo_Slab_500-webfont.ttf') format('truetype'),
-         url('../fonts/museoslab/Museo_Slab_500-webfont.svg#webfont8VbsAwew') format('svg');
+         url('../fonts/museoslab/Museo_Slab_500-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -59,8 +56,7 @@ Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fo
     src: url('../fonts/museoslab/Museo_Slab_700-webfont.eot');
     src: url('../fonts/museoslab/Museo_Slab_700-webfont.eot?iefix') format('eot'),
          url('../fonts/museoslab/Museo_Slab_700-webfont.woff') format('woff'),
-         url('../fonts/museoslab/Museo_Slab_700-webfont.ttf') format('truetype'),
-         url('../fonts/museoslab/Museo_Slab_700-webfont.svg#webfontCEWZYkyF') format('svg');
+         url('../fonts/museoslab/Museo_Slab_700-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -69,9 +65,7 @@ Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fonts Fo
     src: url('../fonts/museoslab/Museo_Slab_900-webfont.eot');
     src: url('../fonts/museoslab/Museo_Slab_900-webfont.eot?iefix') format('eot'),
          url('../fonts/museoslab/Museo_Slab_900-webfont.woff') format('woff'),
-         url('../fonts/museoslab/Museo_Slab_900-webfont.ttf') format('truetype'),
-         url('../fonts/museoslab/Museo_Slab_900-webfont.svg#webfontLtlWo4vw') format('svg');
+         url('../fonts/museoslab/Museo_Slab_900-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
-

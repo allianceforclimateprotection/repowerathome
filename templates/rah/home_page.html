@@ -6,8 +6,8 @@
 
     <div class="grid_12 alpha omega" id="home_slide_nav">
         <a href="#1" id="home_slide_nav_1" class="home_slide_nav_selected">Welcome</a>
-        <a href="#2" id="home_slide_nav_2">Repower your Home</a>
-        <a href="#3" id="home_slide_nav_3">Repower your Community</a>
+        <a href="#2" id="home_slide_nav_2">Empower your Home</a>
+        <a href="#3" id="home_slide_nav_3">Empower your Community</a>
         <a href="#4" id="home_slide_nav_4">Create an Account</a>
     </div>
     <div class="grid_1 alpha center">
@@ -23,7 +23,7 @@
                     <div class="home_slide_right">
                         <h1>Be an Energy Trendsetter</h1>
                         <p>
-                            Repower at Home makes energy efficiency easy, fun and
+                            {{ SITE_NAME }} makes energy efficiency easy, fun and
                             social. Across the country, our members are working to
                             transform the way their homes and communities use energy.
                         </p>
@@ -59,11 +59,11 @@
                         <p>
                             Stay up-to-date on energy efficiency efforts in your
                             neighborhood, school, workplace or other group by joining a
-                            Repower at Home community. Communities make it easy to
+                            {{ SITE_NAME }} community. Communities make it easy to
                             share tips and stories with Trendsetters like you.
                         </p>
                         <p>
-                            <a href="{% url group_list %}" class="button button_mega button_shadow">Browse Communities &rsaquo;</a>
+                            <a href="{% url group_list %}" class="button button_mega button_shadow">Find Communities &rsaquo;</a>
                         </p>
                     </div>
                 </div>
@@ -87,25 +87,25 @@
     <div class="grid_12 alpha omega" id="home_stat_bar">
         <div class="home_stat_wrap">
             <div class="home_stat">
-                Total Repower at <br/>Home Trendsetters
+                Total {{ SITE_NAME }} Trendsetters
             </div>
             <div class="home_stat_num home_stat_1">{{ total_trendsetters|intcomma }}</div>
         </div>
         <div class="home_stat_wrap">
             <div class="home_stat">
-                Total Repower at Home Communities
+                Total {{ SITE_NAME }} Communities
             </div>
             <div class="home_stat_num home_stat_2">{{ total_communities|intcomma }}</div>
         </div>
         <div class="home_stat_wrap">
             <div class="home_stat">
-                Pounds of Coal Saved by Repower at Home
+                Pounds of Coal Saved by {{ SITE_NAME }}
             </div>
             <div class="home_stat_num home_stat_3">{{ total_points|intcomma }}</div>
         </div>
         <div class="home_stat_wrap home_stat_wrap_last">
             <div class="home_stat">
-                Actions Taken by Repower at Home 
+                Actions Taken by {{ SITE_NAME }} 
             </div>
             <div class="home_stat_num home_stat_4">{{ total_actions|intcomma }}</div> 
         </div>
@@ -154,6 +154,6 @@
     <script>
         var RAH = RAH || {};
         RAH.pagescripts = RAH.pagescripts || [];
-        RAH.pagescripts.push("{% dated_static 'js/pages/rah.home_logged_out.js' %}");
+        RAH.pagescripts.push("{% dated_static 'js/pages/rah.home.js' %}");
     </script>
     {% endblock %}

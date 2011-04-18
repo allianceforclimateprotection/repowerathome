@@ -12,6 +12,7 @@ from django.core.urlresolvers import resolve, Resolver404
 from django.forms.widgets import CheckboxSelectMultiple
 from django.template import Context, loader
 
+from settings import SITE_FEEDBACK_EMAIL
 from rah.models import Profile, Feedback, StickerRecipient
 from geo.models import Location
 
@@ -111,13 +112,13 @@ class FeedbackForm(forms.ModelForm):
 
     url = forms.CharField(widget=forms.HiddenInput, required=False)
     comment = forms.CharField(widget=forms.Textarea, required=False, label="Your Comments")
-    beta_group = forms.BooleanField(help_text="""Check here if you would like to be a part 
-                                                of our alpha group and receive information 
+    beta_group = forms.BooleanField(help_text="""Check here if you would like to be a part
+                                                of our alpha group and receive information
                                                 on new features before they launch.""", label="", required=False, widget=forms.HiddenInput)
     def send(self, request):
         template = loader.get_template('rah/feedback_email.html')
         context  = { 'feedback': self.cleaned_data, 'request': request, }
-        msg = EmailMessage('Feedback Form', template.render(Context(context)), None, ["feedback@repowerathome.com"])
+        msg = EmailMessage('Feedback Form', template.render(Context(context)), None, ["SITE_FEEDBACK_EMAIL"])
         msg.content_subtype = "html"
         msg.send()
 
@@ -147,7 +148,6 @@ class ProfileEditForm(forms.ModelForm):
             raise forms.ValidationError("Zipcode is invalid")
 
 class AccountForm(forms.ModelForm):
-    """docstring for AccountForm"""
     class Meta:
         model = User
         fields = ('email', 'first_name', 'last_name')
@@ -163,37 +163,6 @@ class AccountForm(forms.ModelForm):
             return email
         else:
              raise ValidationError('This email address has already been registered in our system.')
-
-class HousePartyForm(forms.Form):
-    name = forms.CharField()
-    phone_number = forms.CharField()
-    call_time = forms.ChoiceField(choices=(
-        ('anytime', 'Anytime'), 
-        ('morning', 'Morning'), 
-        ('afternoon', 'Afternoon'), 
-        ('evening', 'Evening')
-    ))
-
-    def __init__(self, user, *args, **kwargs):
-        form = super(HousePartyForm, self).__init__(*args, **kwargs)
-        if user.is_authenticated():
-            self.fields["name"].widget = forms.HiddenInput()
-            self.fields["name"].initial = user.get_full_name()
-
-    def send(self, user):
-        template = loader.get_template('rah/house_party_email.html')
-        context = {
-            'name': self.cleaned_data["name"],
-            'email': user.email if user.is_authenticated() else None,
-            'call_time': self.cleaned_data['call_time'],
-            'phone_number': self.cleaned_data['phone_number'],
-        }
-        try:
-            send_mail('House Party Contact', template.render(Context(context)), None, 
-                ["field@repowerathome.com"], fail_silently=False)
-        except SMTPException, e:
-            return False
-        return True
 
 class SetPasswordForm(auth_forms.SetPasswordForm):
     new_password1 = forms.CharField(min_length=5, label="New password", widget=forms.PasswordInput)

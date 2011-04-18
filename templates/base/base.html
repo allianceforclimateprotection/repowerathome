@@ -4,24 +4,22 @@
       xmlns:fb="http://www.facebook.com/2008/fbml" lang="en" xml:lang="en">
     <head>
         {% load dated_static %}
-        <title>{% block title %}Save energy at home and organize your community{% endblock %} | Repower at Home</title>
+        <title>{% block title %}Save energy at home and organize your community{% endblock %} | {{ SITE_NAME }}</title>
         <meta name="google-site-verification" content="LKUJZqwKMnEGjg_dQNKL-2eLLK3yvftU0RKv7SuymGQ" />
         <meta name="msvalidate.01" content="DC928E84A1569AF4933A7DB431C08DB4" />
         <meta name="y_key" content="9d9c6c76735e5a92"/>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
         <meta http-equiv="content-language" content="en-us" />
-        <meta name="geo.position" content="38.896231;-77.024158" />
         <meta name="geo.country" content="US"/>
         <meta name="geo.region" content="US-DC"/>
-        <meta name="geo.placename" content="Alliance for Climate Protection"/>
         <meta name="ICBM" content="38.896231, -77.024158"/>
-        <meta name="og:site_name" content="Repower at Home"/>
+        <meta name="og:site_name" content="{{ SITE_NAME }}"/>
         <meta name="fb:app_id" content="132085630163980"/>
-        <meta name="keywords" content="{% block meta_keywords %}energy efficiency, home energy, climate change, repower at home, alliance for climage protection{% endblock %}" />
+        <meta name="keywords" content="{% block meta_keywords %}energy efficiency, home energy, climate change, {{ SITE_NAME }}{% endblock %}" />
         <meta name="description" content="{% block meta_desc %}We can take action to keep millions of pounds of dirty coal from polluting our communities. Every point you earn means one less pound of coal needs to be burned.{% endblock %}" />
-        <meta name="DC.title" content="Repower at Home" /> 
-        <meta name="DC.creator" content="Alliance for Climate Protection" /> 
-        <meta name="DC.subject" content="energy efficiency; home energy; climate change; repower at home; alliance for climage protection" /> 
+        <meta name="DC.title" content="{{ SITE_NAME }}" /> 
+        <meta name="DC.creator" content="{{ SITE_NAME }}" /> 
+        <meta name="DC.subject" content="energy efficiency; home energy; climate change;" /> 
         <meta name="DC.description" content="We can take action to keep millions of pounds of dirty coal from polluting our communities. Every point you earn means one less pound of coal needs to be burned." /> 
         <meta name="DC.format" content="text/html; charset=utf-8" />
         <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" /> 
@@ -44,7 +42,7 @@
             <div id="header" class="container_12">
                 <div class="grid_12 alpha omega">
                     <a href="/" title="Home" id="header_logo" class="logo_text">
-                        Project Name
+                        {{ SITE_NAME }}
                     </a>
                     <form action="/search" id="cse_search_box_form" class="search_widget">
                         <div>
@@ -81,7 +79,7 @@
             <div id="footer" class="container_12">
                 <div class="grid_4 alpha">
                     <a href="/" title="Home" id="footer_logo" class="logo_text">
-                        Project Name
+                        {{ SITE_NAME }}
                     </a>
                 </div>
                 <div class="grid_4">
@@ -95,12 +93,12 @@
                 <div class="grid_4 omega">
                     <h2>Follow Us</h2>
                     <div id="footer_social_icons">
-                        <!--<a href="http://www.facebook.com/pages/Repower-at-Home/135501849796509" class="sprite_social_fb" title="Find us on Facebook" >-->
-                        <!--</a>-->
-                        <!--<a href="http://twitter.com/repowerathome" class="sprite_social_twitter" title="Follow us on Twitter">-->
-                        <!--</a>-->
-                        <!--<a href="http://www.youtube.com/repowerhome" class="sprite_social_yt" title="Watch us on YouTube">-->
-                        <!--</a>-->
+                        <a href="" class="sprite_social_fb" title="Find us on Facebook" >
+                        </a>
+                        <a href="" class="sprite_social_twitter" title="Follow us on Twitter">
+                        </a>
+                        <a href="" class="sprite_social_yt" title="Watch us on YouTube">
+                        </a>
                         <a href="{% url blog_feed %}" class="sprite_social_rss" title="Subscribe to our blog">
                         </a>
                     </div>

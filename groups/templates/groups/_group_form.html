@@ -4,7 +4,7 @@
 {% for field in form %}
     {% if field.name == "slug" %}
         <div id="group_slug_wrapper">
-            <label id="group_slug_domain">http://repowerathome.com/</label>
+            <label id="group_slug_domain">http://{{SITE_DOMAIN}}/</label>
             <p id="group_slug_address" class="form_row overset {% if field.errors %}error{% endif %}">
                 {{ form.slug.label_tag }}
                 {{ form.slug }}
@@ -14,6 +14,20 @@
             </p>
         </div>
     {% else %}
-        {% include 'rah/_field.html' %}
+        {% if field.is_hidden %}
+            <div class='hidden'>{{ field }}</div>
+        {% else %}
+            <div class="form_row {% if field.errors %}error{% endif %}{% if 'TextInput' in field.field.widget|pprint or 'Textarea' in field.field.widget|pprint %} overset{% endif %}">
+                {% if "CheckboxInput" in field.field.widget|pprint %}
+                    {{ field }}{{ field.label_tag }}
+                {% else %}
+                    {{ field.label_tag }}{{ field }}
+                {% endif %}
+                <span class="help_text">{{ field.help_text }}</span>
+                {% for error in field.errors %}
+                    <label class="error" for="{{ field.auto_id }}">{{ error|escape }}</label>
+                {% endfor %}
+            </div>
+        {% endif %}        
     {% endif %}
 {% endfor %}

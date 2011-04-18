@@ -3,7 +3,7 @@
 {% load dated_static %}
 {% load search_widget %}
 
-{% block title %}Events on Repower at Home{% endblock %}
+{% block title %}Events{% endblock %}
 {% block title_bar_image %}sprite_section_events_large{% endblock %}
 {% block title_bar_title %}Events{% endblock %}
 {% block title_bar_copy %}
@@ -25,10 +25,9 @@ host your own.
 <div id="events_hosting">
     <img src="{% dated_static 'images/theme/event_example.jpg' %}" width="216" height="162" alt="People attending an event"/>
     <div>
-        <h2>Hosting a Repower Meetup is fun and easy</h2>
+        <h2>Hosting a Meetup is fun and easy</h2>
         <p>
             We have all the <a href="/hosting/">materials</a> you need to host an energy meet up. 
-            <!--Check them out or start creating your event right away.-->
         </p>
         <a href="{% url event-create %}" class="button"><b>+</b> Create an Event</a>
     </div>

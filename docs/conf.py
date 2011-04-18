@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Repower at Home documentation build configuration file, created by
+# Documentation build configuration file, created by
 # sphinx-quickstart on Mon Feb 28 13:05:05 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Repower at Home'
-copyright = u'2011, Alliance for Climate Protection'
+copyright = u'2010, Alliance for Climate Protection'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -178,7 +178,7 @@ htmlhelp_basename = 'RepoweratHomedoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'RepoweratHome.tex', u'Repower at Home Documentation',
+  ('index', 'Documentation.tex', u'Documentation',
    u'Jon Lesser and Eric Buckley', 'manual'),
 ]
 

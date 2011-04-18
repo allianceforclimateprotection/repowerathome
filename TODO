@@ -1,3 +1,5 @@
+Setup Domain
+
 Graphics
 ========
 Breadcrumb graphic (tiny icon )
@@ -31,6 +33,7 @@ Event detail page map
 
 Features
 ========
+Add project_name, project_url vars to settings
 Commit/done/can't do buttons on action detail pages
 Log in widget (ajax login)
 Add Members to your community

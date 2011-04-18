@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from django.db import models, transaction
 
 from utils import hash_val
-
+from settings import SITE_FEEDBACK_EMAIL
 from fields import PickledObjectField
 
 URL_REGEX = re.compile(r"(?<!src=(\"|\'))(https?)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]", re.IGNORECASE)
@@ -21,7 +21,7 @@ class LinkReplacer(object):
     def __init__(self, recipient_message, *args, **kwargs):
         self.recipient_message = recipient_message
         self.count = 0
-        
+
     def replace_link(self, match_obj):
         # for each unique link in the body, create a Message link to track the clicks
         ml = MessageLink.objects.create(recipient_message=self.recipient_message,
@@ -42,7 +42,7 @@ class Message(models.Model):
         ("timeline_scale", "Send at X percent complete"),
     )
     TIMING_CODES = [t[0] for t in TIMING_TYPES]
-    
+
     name = models.CharField(max_length=50, unique=True, db_index=True)
     subject = models.CharField(max_length=100)
     body = models.TextField()
@@ -89,7 +89,7 @@ class Message(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = MessageManager()
-    
+
     @transaction.commit_manually
     def clean(self):
         from django.core.exceptions import ValidationError
@@ -113,10 +113,10 @@ class Message(models.Model):
                     else:
                         transaction.rollback()
         return examples
-    
+
     def natural_key(self):
         return [self.name]
-    
+
     def send_time(self, start, end=None):
         """
         Note that if an 'after start' or 'before end' send time is created, and it falls
@@ -125,22 +125,22 @@ class Message(models.Model):
         """
         if self.message_timing not in Message.TIMING_CODES:
             raise NotImplementedError("unknown delta type: %s" % self.message_timing)
-            
+
         if self.message_timing == "send_immediately":
             return datetime.datetime.now()
-            
+
         if not end:
             end = start
-        
+
         if start.__class__ == datetime.date:
             start = datetime.datetime.combine(start, datetime.time.min)
         if end.__class__ == datetime.date:
             end = datetime.datetime.combine(end, datetime.time.max)
-            
+
         if self.minimum_duration and end-start < datetime.timedelta(hours=self.minimum_duration):
             # There isn't enough time to send this message
             return None
-                
+
         if self.message_timing == "timeline_scale":
             timeline = end - start
             delta = (timeline * self.x_value) / 100
@@ -159,7 +159,7 @@ class Message(models.Model):
             return send_time.replace(hour=self.time_snap.hour, minute=self.time_snap.minute, 
                 second=self.time_snap.second)
         return send_time
-    
+
     def recipients(self, content_object):
         """
         The function that is invoked to gather the recipients can return one of four things.
@@ -167,11 +167,11 @@ class Message(models.Model):
             2. object (with attribute 'email')
             3. list of email addresses
             4. list of objects (such that each object as the 'email' attribute)
-        
+
         Regardless of what the invoked function returns, this function is responsible for returning
         a 2-tuple, where the first value is the email address and the second value is the object.
         If the object isn't defined this will be set to None.
-        
+
         Optionally we can also define the recipient_function to be a lambda with one argument, 
         the content object.  For example you could define a function like the following:
             labmda x: x.email
@@ -188,7 +188,7 @@ class Message(models.Model):
         if not hasattr(recipients, "__iter__"):
             recipients = [recipients]
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
-        
+
     def render_message(self, content_object, email, user_object, extra_params=None):
         recipient_message = RecipientMessage.objects.create(message=self, recipient=email, 
             token=hash_val([email, datetime.datetime.now()]))
@@ -226,16 +226,16 @@ class Message(models.Model):
             self.save()
             sent.append(Sent.objects.create(message=self, recipient=email, email=msg.message()))
         return sent
-    
+
     def unique_opens(self):
         return RecipientMessage.objects.filter(message=self, opens__gt=0).count()
-        
+
     def click_thrus(self):
         return RecipientMessage.objects.distinct().filter(message=self, messagelink__clicks__gt=0).count()
-        
+
     def related_streams(self):
         return Stream.objects.filter(models.Q(abtest__message=self) | models.Q(abtest__test_message=self))
-        
+
     def blacklisted_emails(self):
         """
         For a given message, collect all of the streams this message is related to, then
@@ -246,7 +246,7 @@ class Message(models.Model):
         for stream in self.related_streams():
             blacklisted_emails = blacklisted_emails + stream.blacklisted_emails()
         return blacklisted_emails
-    
+
     def __unicode__(self):
         return self.name
 
@@ -297,7 +297,7 @@ There are %s messages in the queue that cannot be sent %s.
 -----
 %s
 """ % (len(exceptions), [m.id for m,e in exceptions], [e for m,e in exceptions])
-            msg = EmailMessage("Broken Message Queue", body, None, ["servererrors@repowerathome.com"])
+            msg = EmailMessage("Broken Message Queue", body, None, [SITE_FEEDBACK_EMAIL])
             msg.send()
         return sent
 
@@ -314,11 +314,11 @@ class Queue(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = QueueManager()
-    
+
     def send(self):
         return self.message.send(content_object=self.content_object, 
             blacklisted_emails=self.message.blacklisted_emails())
-    
+
     def find_batchable_messages(self):
         if not self.message.send_as_batch:
             return None
@@ -327,14 +327,14 @@ class Queue(models.Model):
         queued = Queue.objects.filter(message__in=potential_messages, batch_content_type=self.batch_content_type,
             batch_object_pk=self.batch_object_pk, send_time__lte=self.send_time+delta_time).exclude(pk=self.pk)
         return queued if queued else None
-            
+
     def __unicode__(self):
         return "%s" % (self.pk)
-        
+
 class StreamManager(models.Manager):
     def get_by_natural_key(self, slug):
         return self.get(slug=slug)
-        
+
     def streams_not_blacklisted_by_user(self, user):
         return self.exclude(pk__in=user.blacklisted_set.all())
 
@@ -348,15 +348,15 @@ class Stream(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = StreamManager()
-    
+
     def natural_key(self):
         return [self.slug]
-        
+
     def _queued_messages(self, content_object):
         potential_messages = ABTest.objects.potential_messages(stream=self)
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
-    
+
     def enqueue(self, content_object, start, end=None, batch_content_object=None, 
         extra_params=None, send_expired=True):
         """
@@ -384,21 +384,21 @@ class Stream(models.Model):
                         enqueued.append(Queue.objects.create(message=message,
                             content_object=content_object, send_time=send_time))
         return enqueued
-    
+
     def upqueue(self, content_object, start, end=None, batch_content_object=None, extra_params=None):
         self.dequeue(content_object=content_object)
         return self.enqueue(content_object=content_object, start=start, end=end, 
             batch_content_object=batch_content_object, extra_params=extra_params, send_expired=False)
-    
+
     def dequeue(self, content_object):
         return self._queued_messages(content_object).delete()
-        
+
     def blacklisted_emails(self):
         return [u.email for u in self.blacklisted.all()]
-    
+
     def __unicode__(self):
         return self.label
-        
+
 class ABTestManager(models.Manager):
     def potential_messages(self, message=None, stream=None):
         query = self
@@ -421,25 +421,25 @@ class ABTest(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = ABTestManager()
-    
+
     def random_message(self):
         if not self.test_message or random.randint(0, 100) > self.test_percentage:
             return self.message
         else:
             return self.test_message
-    
+
     def control_sends(self):
         return self.message.sends
-    
+
     def control_opens(self):
         return self.message.unique_opens()
-    
+
     def test_sends(self):
         return self.test_message.sends
-    
+
     def test_opens(self):
         return self.test_message.unique_opens()
-    
+
     def __unicode__(self):
         return "%s [test: %s @ %s%%]" % (self.message, self.test_message, self.test_percentage)
 
@@ -449,10 +449,10 @@ class Sent(models.Model):
     email = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
+
     def __unicode__(self):
         return "%s" % self.message
-        
+
 class StreamBlacklist(models.Model):
     """
     Any user listed in this table will not recieve emails for the stream they are linked to.
@@ -467,12 +467,12 @@ class StreamBlacklist(models.Model):
 
     def __unicode__(self):
         return u"%s will not recieve emails for %s streams" % (self.user, self.stream)
-        
+
 class ExampleContentObjectManager(models.Manager):
     def add_model(self, content_object):
         content_type = ContentType.objects.get_for_model(content_object)
         return ExampleContentObject.objects.create(content_type=content_type, content_object=content_object)
-        
+
 class ExampleContentObject(models.Model):
     content_type = models.ForeignKey("contenttypes.contenttype")
     content_object = PickledObjectField()

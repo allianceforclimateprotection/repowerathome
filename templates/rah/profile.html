@@ -4,7 +4,7 @@
 {% load humanize %}
 {% block title %}{{user.get_full_name}}'s profile{% endblock %}
 {% block extrahead %}
-    <link rel="alternate" type="application/atom+xml"  href="{% url user_activity_feed user.id %}" title="Repower at Home User Activity" />
+    <link rel="alternate" type="application/atom+xml"  href="{% url user_activity_feed user.id %}" title="{{ SITE_NAME }} User Activity" />
     {# TODO: Add a noindex meta tag here if profile is private #}
 {% endblock %}
 {% block title_bar_image %}

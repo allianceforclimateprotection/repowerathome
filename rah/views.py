@@ -29,7 +29,7 @@ from actions.models import Action, UserActionProgress
 from rah.models import Profile, StickerRecipient
 from records.models import Record
 from rah.forms import RegistrationForm, RegistrationProfileForm, AuthenticationForm, \
-    HousePartyForm, AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm, StickerRecipientForm
+    AccountForm, ProfileEditForm, GroupNotificationsForm, FeedbackForm, StickerRecipientForm
 from settings import GA_TRACK_PAGEVIEW, GA_TRACK_CONVERSION, LOGIN_REDIRECT_URL, LOCALE
 from geo.models import Location
 from twitter_app.forms import StatusForm as TwitterStatusForm
@@ -82,59 +82,6 @@ def _progress_stats():
         progress_stats['total_events'] = _total_events()
         cache.set('progress_stats', progress_stats, 60 * 5)
         return progress_stats
-
-def _vampire_power_leaderboards():
-    key = 'vampire_hunt_leaderboards'
-    vamp_stats = cache.get(key, {})
-    if not vamp_stats:
-        vampire_action = Action.objects.get(slug="eliminate-standby-vampire-power")
-        vamp_stats['individual_leaders'] = User.objects.filter(is_staff=False,
-            contributorsurvey__contributor__commitment__action=vampire_action).annotate(
-            contributions=Count("contributorsurvey")).order_by("-contributions")[:5]
-        vamp_stats['community_leaders'] = Group.objects.filter(is_geo_group=False, groupusers__user__is_staff=False,
-            groupusers__user__contributorsurvey__contributor__commitment__action=vampire_action).annotate(
-            contributions=Count("groupusers__user__contributorsurvey")).order_by("-contributions")[:5]
-
-        cache.set(key, vamp_stats, 60 * 5)
-
-    return vamp_stats
-
-def _vampire_power_slayers():
-    key = 'vampire_hunt_slayers'
-    vamp_stats = cache.get(key, {})
-    if not vamp_stats:
-        locale.setlocale(locale.LC_ALL, LOCALE)
-
-        # This is wrapped in a try catch so tests which do not instantiate the vampire action will still pass
-        try:
-            vampire_action = Action.objects.get(slug="eliminate-standby-vampire-power")
-        except ObjectDoesNotExist:
-            return vamp_stats
-
-        # Get the number of slayers
-        slayer_count = (User.objects.filter(useractionprogress__action=vampire_action, useractionprogress__is_completed=True).count() or 0) + \
-            (Contributor.objects.filter(commitment__action=vampire_action, commitment__answer='D', user__isnull=True).distinct().count() or 0)
-        vamp_stats['slayers'] = locale.format('%d', slayer_count, True)
-
-        # Figure out who the last slayer is
-        last_user = UserActionProgress.objects.filter(action=vampire_action, is_completed=True).order_by("-updated").select_related("user")[:1]
-        last_user_date = last_user[0].updated if last_user else datetime(1, 1, 1, 0, 0, 0)
-        last_contributor = Commitment.objects.filter(question=vampire_action.slug.replace('-', '_'), answer='D', contributor__user__isnull=True).order_by("-updated").select_related("contributor")[:1]
-        last_contributor_date = last_contributor[0].updated if last_contributor else datetime(1, 1, 1, 0, 0, 0)
-
-        # Compare the latest contributor and user, then set some slayer vars
-        if last_user_date > last_contributor_date:
-            vamp_stats['last_slayer_is_user'] = True
-            vamp_stats['last_slayer'] = last_user[0].user
-            vamp_stats['last_slayer_loc'] = last_user[0].user.get_profile().location
-        elif last_contributor:
-            vamp_stats['last_slayer_is_user'] = False
-            vamp_stats['last_slayer'] = last_contributor[0].contributor
-            vamp_stats['last_slayer_loc'] = last_contributor[0].contributor.location
-
-        cache.set(key, vamp_stats, 60 * 5)
-
-    return vamp_stats
 
 @csrf_protect
 def index(request):
@@ -387,30 +334,6 @@ def validate_field(request):
                 valid = True
 
     return HttpResponse(json.dumps(valid))
-
-def house_party(request):
-    if request.method == 'POST':
-        form = HousePartyForm(user=request.user, data=request.POST)
-        if form.is_valid() and form.send(request.user):
-            if request.user.is_authenticated():
-                Record.objects.create_record(request.user, 'mag_request_party_host_info')
-            messages.add_message(request, messages.SUCCESS, 'Thanks! We will be in touch soon.')
-    return redirect('event-show')
-
-def vampire_hunt(request):
-    locals().update(_vampire_power_slayers())
-    locals().update(_vampire_power_leaderboards())
-    if request.user.is_authenticated():
-        my_contributors = Contributor.objects.filter(contributorsurvey__entered_by=request.user).count()
-    return render_to_response('rah/vampire_hunt.html', locals(), context_instance=RequestContext(request))
-
-def trendsetter_sticker(request):
-    from media_widget.forms import StickerImageUpload
-    from media_widget.models import StickerImage
-    image_gallery = StickerImage.objects.filter(approved=True)
-    image_upload_form = StickerImageUpload()
-
-    return render_to_response('rah/sticker_form.html', locals(), context_instance=RequestContext(request))
 
 def search(request):
     return render_to_response('rah/search.html', {}, context_instance=RequestContext(request))

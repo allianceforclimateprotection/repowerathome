@@ -1,6 +1,6 @@
 {% extends "records/base.html" %}
 {% block activity_item %}
-    {% safe_user_link record.user %} invited a friend to join Repower at Home
+{% safe_user_link record.user %} invited a friend to join {{ SITE_NAME }}
 {% endblock %}
 {% block activity_date %}
     on {{ record.created|date }}{% if record.points %} (+{{ record.points }} points){% endif %}

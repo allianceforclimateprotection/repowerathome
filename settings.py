@@ -4,6 +4,11 @@ from utils import local_join
 
 sys.path.insert(0, local_join('lib'))
 
+# Name of the site for use in templates
+SITE_NAME = "[Site Name]"
+SITE_DOMAIN = "[Site Domain]"
+SITE_FEEDBACK_EMAIL = "feedback@example.com"
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -72,6 +77,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.contrib.messages.context_processors.messages',
     'facebook_app.context_processors.facebook_appid',
+    'rah.context_processors.site_name',
     'records.context_processors.ask_to_share',
     'codebase.context_processors.testing_feedback_form',
 )
@@ -158,7 +164,7 @@ GZIP_CONTENT_TYPES = (
 
 COMMENTS_ALLOW_PROFANITIES = True
 
-IGNORABLE_404_ENDS = ('.google-analytics.com/ga.js/', '/b.js/')
+IGNORABLE_404_ENDS = ('.google-analytics.com/ga.js/', '/b.js/', 'index.php')
 
 THUMBMNAIL_PROCESSORS = (
     'thumbnails.processors.Colorspace',
@@ -168,7 +174,7 @@ THUMBNAIL_EXTENSION = '.png'
 
 MYSQLDUPLICATE_EXCLUDE = ("django_site", "messaging_queue", "messaging_sent")
 
-POSTMARK_SENDER = 'noreply@repowerathome.com'
+POSTMARK_SENDER = SITE_FEEDBACK_EMAIL
 
 CODEBASE_PROJECT_URL = 'https://api3.codebasehq.com/rah'
 CODEBASE_USERNAME = 'rah/macgruber'

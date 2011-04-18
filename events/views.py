@@ -15,7 +15,6 @@ from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
 from utils import forbidden
-from rah.forms import HousePartyForm
 from rah.signals import logged_in
 from invite.models import Invitation, make_token
 from records.models import Record

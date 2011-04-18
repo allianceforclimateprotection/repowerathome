@@ -3,7 +3,7 @@
         {% if not progress.date_committed %}
             <form class="action_commit_form" method="post" action="{% url action_commit action.slug %}">
                 {% with action_commit_form as form %}
-                    {% include "rah/_overset_form.html" %}
+                    {% include "base/_form.html" %}
                 {% endwith %}
                 <p>
                     <input type="submit" class="commit_trigger tooltip" value="{{ commit_title }}"
@@ -14,7 +14,7 @@
         {% else %}
             <form class="action_commit_form" method="post" action="{% url action_commit action.slug %}">
                 {% with action_commit_form as form %}
-                    {% include "rah/_overset_form.html" %}
+                    {% include "base/_form.html" %}
                 {% endwith %}
                 {% csrf_token %}
                 <h4>{{ days_till_commitment }} day{{ days_till_commitment|pluralize }} remaining</h4>

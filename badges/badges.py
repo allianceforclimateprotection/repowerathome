@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.comments.models import Comment
 
+from settings import SITE_NAME
 from actions.models import Action, UserActionProgress
 from commitments.models import ContributorSurvey
 
@@ -158,7 +159,7 @@ class MomentumBuilderBadge(Badge):
     levels = ['']
     slug = 'momentum-builder-badge'
     name = 'Momentum Builder'
-    description = 'Invited friends to Repower at Home'
+    description = 'Invited friends to %s' % SITE_NAME
 
     def award(self, **state):
         return BadgeAwarded()
@@ -172,10 +173,10 @@ class SocialMediaMavenBadge(Badge):
     name = 'Social Media Maven'
     description = '''
         <ul>
-            <li>Silver: Linked Twitter or Facebook account to Repower at Home</li>
-            <li>Gold: Linked both Twitter and Facebook accounts to Repower at Home</li>
+            <li>Silver: Linked Twitter or Facebook account to %s</li>
+            <li>Gold: Linked both Twitter and Facebook accounts to %s</li>
         </ul>
-    '''
+    ''' % (SITE_NAME, SITE_NAME)
 
     def award(self, **state):
         user = state['user']

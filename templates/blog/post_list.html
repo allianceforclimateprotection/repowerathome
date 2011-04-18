@@ -3,14 +3,12 @@
 {% load blog comments %}
 {% load dated_static %}
 
-{% block title %}Repower at Home Blog{% endblock %}
+{% block title %}Blog{% endblock %}
 
 {% block content_title %}{% endblock %}
 {% block content %}
 <div class="post_list">
     {% for post in object_list %}
-        <div class="box_three_top"></div>
-        <div class="box_three_middle">
             <h1 class="title">
                 <a href="{{ post.get_absolute_url }}" title="View this post">{{ post.title }}</a>
             </h1>
@@ -20,17 +18,10 @@
             <div class="post_body">
                 {{ post.body|safe }}
             </div>
-            <div>
-                <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Frepowerathome.com{{ post.get_absolute_url|urlencode }}&amp;layout=standard&amp;show_faces=false&amp;width=189&amp;action=like&amp;font=arial&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:189px; height:35px;" allowTransparency="true"></iframe>
-                <br />
-                <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://repowerathome.com{{ post.get_absolute_url }}" data-text="{{ post.title }}" data-count="horizontal" data-via="repowerathome">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-            </div>
             {% get_comment_count for post as comment_count %}
             <p>
                 <a href="{{ post.get_absolute_url }}#comments">{{ comment_count }} comment{{ comment_count|pluralize }}</a>
             </p>
-        </div>
-        <div class="box_three_bottom"></div>
     {% endfor %}
 </div>
 <p>
