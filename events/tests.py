@@ -553,7 +553,7 @@ class EventGuestsInviteViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "events/detail.html")
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, ["jon@gmail.com"])
-        self.failUnlessEqual(email.subject, "Invitation from %s to %s" % (self.user.get_full_name(), SITE_NAME))
+        self.failUnlessEqual(len(email.subject), 35)
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 8)
@@ -570,10 +570,10 @@ class EventGuestsInviteViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "events/detail.html")
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, ["eric@gmail.com"])
-        self.failUnlessEqual(email.subject, "Invitation from %s to %s" % (self.user.get_full_name(), SITE_NAME))
+        self.failUnlessEqual(len(email.subject), 35)
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, ["jon@gmail.com"])
-        self.failUnlessEqual(email.subject, "Invitation from %s to %s" % (self.user.get_full_name(), SITE_NAME))
+        self.failUnlessEqual(len(email.subject), 35)
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 9)
@@ -593,10 +593,10 @@ class EventGuestsInviteViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "events/detail.html")
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, ["test@test.com"])
-        self.failUnlessEqual(email.subject, "Invitation from %s to %s" % (self.user.get_full_name(), SITE_NAME))
+        self.failUnlessEqual(len(email.subject), 35)
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, ["jon@gmail.com"])
-        self.failUnlessEqual(email.subject, "Invitation from %s to %s" % (self.user.get_full_name(), SITE_NAME))
+        self.failUnlessEqual(len(email.subject), 35)
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 8)
@@ -613,7 +613,7 @@ class EventGuestsInviteViewTest(TestCase):
         self.failUnlessEqual(response.template[0].name, "events/detail.html")
         email = mail.outbox.pop()
         self.failUnlessEqual(email.to, ["jd@email.com"])
-        self.failUnlessEqual(email.subject, "Invitation from %s to %s" % (self.user.get_full_name(), SITE_NAME))
+        self.failUnlessEqual(len(email.subject), 35)
         event = response.context["event"]
         guests = event.guest_set.all()
         self.failUnlessEqual(len(guests), 7)
