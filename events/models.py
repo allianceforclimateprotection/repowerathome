@@ -265,7 +265,7 @@ class GuestManager(models.Manager):
                 AND `organize_commit`.contributor_id = cn.id
                 AND DATE(`organize_commit`.updated) >= '%(date_start)s'
                 AND DATE(`organize_commit`.updated) <= '%(date_end)s'
-            LEFT JOIN commitments_commitment `volunteer_commit` ON `volunteer_commit`.question = 'volunteer' 
+            LEFT JOIN commitments_commitment `volunteer_commit` ON `volunteer_commit`.question = 'volunteer'
                 AND `volunteer_commit`.contributor_id = cn.id
                 AND DATE(`volunteer_commit`.updated) >= '%(date_start)s'
                 AND DATE(`volunteer_commit`.updated) <= '%(date_end)s'

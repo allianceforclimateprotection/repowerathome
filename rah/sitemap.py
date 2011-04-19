@@ -6,12 +6,12 @@ from datetime import datetime
 class GenericUrl(object):
     def __init__(self, loc):
         self.location = loc
-        
+
 class RahSitemap(Sitemap):
     changefreq = "daily"
     priority = 0.5
     lastmod = datetime.now()
-    
+
     def items(self):
         """Add urls here and they will be added to sitemap.xml"""
         urls = [
@@ -25,6 +25,6 @@ class RahSitemap(Sitemap):
         for user in users:
             urls.append(reverse("profile", args=[user.id]))
         return [GenericUrl(url) for url in urls]
-    
+
     def location(self, obj):
         return obj.location

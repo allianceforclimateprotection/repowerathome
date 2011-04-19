@@ -9,10 +9,10 @@ from django.template import Context, loader
 from models import Stream, StreamBlacklist
 
 class StreamNotificationsForm(forms.Form):
-    stream_notifications = forms.ModelMultipleChoiceField(required=False, queryset=None, 
+    stream_notifications = forms.ModelMultipleChoiceField(required=False, queryset=None,
         widget=forms.CheckboxSelectMultiple, help_text="By selecting a reminder type, you have elected to \
         recieve reminder emails pertaining to that activity.", label="Reminder email notifications")
-    
+
     def __init__(self, user, *args, **kwargs):
         super(StreamNotificationsForm, self).__init__(*args, **kwargs)
         self.user = user
@@ -20,7 +20,7 @@ class StreamNotificationsForm(forms.Form):
         self.fields["stream_notifications"].queryset = self.streams
         self.not_blacklisted = [s.pk for s in Stream.objects.streams_not_blacklisted_by_user(user)]
         self.fields["stream_notifications"].initial = self.not_blacklisted
-                
+
     def save(self):
         notifications = self.cleaned_data["stream_notifications"]
         for stream in self.streams:

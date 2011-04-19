@@ -13,11 +13,11 @@ from models import Invitation, make_token
 from fields import MultiEmailField
 
 class InviteForm(forms.ModelForm):
-    emails = MultiEmailField(label="Email addresses", required=True, widget=forms.Textarea, 
+    emails = MultiEmailField(label="Email addresses", required=True, widget=forms.Textarea,
         help_text="Separate multiple email addresses with a comma.")
     note = forms.CharField(widget=forms.Textarea, label="Personal note (optional)", required=False)
     signature = forms.CharField(widget=forms.HiddenInput, required=True)
-    
+
     class Meta:
         model = Invitation
         fields = ("emails", "note", "content_type", "object_pk")
@@ -26,11 +26,11 @@ class InviteForm(forms.ModelForm):
             "content_type": forms.HiddenInput,
             "object_pk": forms.HiddenInput,
         }
-    
+
     def __init__(self, *args, **kwargs):
         form = super(InviteForm, self).__init__(*args, **kwargs)
         self.fields["signature"].initial = hash_val((self.instance.content_type, self.instance.object_pk,))
-        
+
     def clean(self):
         if "content_type" in self.cleaned_data and "object_pk" in self.cleaned_data and "signature" in self.cleaned_data:
             content_type = self.cleaned_data["content_type"]
@@ -41,11 +41,11 @@ class InviteForm(forms.ModelForm):
                 except ObjectDoesNotExist:
                     raise forms.ValidationError("No object found matching %s" % object_pk)
                 except ValueError:
-                    raise forms.ValidationError("Invalid parameters %s, %s" % (content_type_pk, object_pk))
+                    raise forms.ValidationError("Invalid parameters %s, %s" % (content_type, object_pk))
                 if hash_val((content_type, object_pk,)) != self.cleaned_data["signature"]:
                     raise forms.ValidationError("Signature has been currupted")
         return self.cleaned_data
-    
+
     def save(self, *args, **kwargs):
         invites = []
         for email in self.cleaned_data["emails"]:
@@ -61,7 +61,7 @@ class InviteForm(forms.ModelForm):
                 except Stream.DoesNotExist:
                     pass
             stream = stream or Stream.objects.get(slug="invite")
-            stream.enqueue(content_object=invite, start=invite.created, 
+            stream.enqueue(content_object=invite, start=invite.created,
                 extra_params={"note": self.cleaned_data["note"]})
             invites.append(Invitation.objects.get(pk=invite.pk))
         return invites

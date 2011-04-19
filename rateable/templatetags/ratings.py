@@ -20,34 +20,34 @@ class RatingNode(template.Node):
         if tokens[3] != "as":
             raise template.TemplateSyntaxError("Third argument in %r must be 'as'" % token[0])
         return parser.compile_filter(tokens[2]), tokens[4]
-    
+
     def __init__(self, object_expr, varname=None, query_eval=None):
         self.object_expr = object_expr
         self.varname = varname
         self.query_eval = query_eval
-        
+
     def get_target(self, context):
         return self.object_expr.resolve(context)
-        
+
     def get_query(self, context):
         content_object= self.get_target(context)
         content_type = ContentType.objects.get_for_model(content_object)
         return Rating.objects.filter(content_type=content_type, object_pk=content_object.pk)
-        
+
     def render(self, context):
         query = self.get_query(context)
         context[self.varname] = self.query_eval(query)
         return ""
-        
+
 class RatingFormNode(RatingNode):
     @classmethod
     def parse(cls, parser, token):
         tokens = token.contents.split()
         if tokens[1] != "for":
             raise template.TemplateSyntaxError("Second argument in %r tag must be 'for'" % tokens[0])
-            
+
         return parser.compile_filter(tokens[2])
-        
+
     def render(self, context):
         content_object = self.get_target(context)
         user = context.get("request").user
@@ -67,16 +67,16 @@ def get_rating_count(parser, token):
     is defined by the 'as' clause
 
     Syntax::
-    
+
         {% get_rating_count for [object] as [varname] %}
-        
+
     Example usage::
-    
+
         {% get_rating_count for post as rating_count %}
     """
     object_expr, varname = RatingNode.parse(parser, token)
     return RatingNode(object_expr, varname, lambda q: q.count())
-    
+
 @register.tag
 def get_rating_sum(parser, token):
     """
@@ -94,7 +94,7 @@ def get_rating_sum(parser, token):
     """
     object_expr, varname = RatingNode.parse(parser, token)
     return RatingNode(object_expr, varname, lambda q: q.aggregate(sum=models.Sum("score"))["sum"])
-    
+
 @register.tag
 def get_rating_avg(parser, token):
     """
@@ -112,14 +112,14 @@ def get_rating_avg(parser, token):
     """
     object_expr, varname = RatingNode.parse(parser, token)
     return RatingNode(object_expr, varname, lambda q: q.aggregate(avg=models.Avg("score"))["avg"])
-    
+
 @register.tag
 def get_rating_form(parser, token):
     """
     Get a form to rate an object
-    
+
     Syntax::
-    
+
         {% get_rating_form for [object] %}
     """
     object_expr = RatingFormNode.parse(parser, token)

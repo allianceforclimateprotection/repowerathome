@@ -14,15 +14,15 @@ class FlagFormNode(template.Node):
         tokens = token.contents.split()
         if tokens[1] != "for":
             raise template.TemplateSyntaxError("Second argument in %r tag must be 'for'" % tokens[0])
-            
+
         return parser.compile_filter(tokens[2])
-        
+
     def __init__(self, object_expr):
         self.object_expr = object_expr
-        
+
     def get_target(self, context):
         return self.object_expr.resolve(context)
-        
+
     def render(self, context):
         content_object = self.get_target(context)
         user = context.get("request").user
@@ -32,14 +32,14 @@ class FlagFormNode(template.Node):
         value = render_to_string("flagged/flag_form.html", {"form":form}, context)
         context.pop()
         return value
-    
+
 @register.tag
 def get_flag_form(parser, token):
     """
     Get a form to flag an object
-    
+
     Syntax::
-    
+
         {% get_flag_form for [object] %}
     """
     object_expr = FlagFormNode.parse(parser, token)

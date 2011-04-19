@@ -26,7 +26,7 @@ def login_required_save_POST(function, redirect_field_name=REDIRECT_FIELD_NAME):
         tup = settings.LOGIN_URL, redirect_field_name, path
         return HttpResponseRedirect('%s?%s=%s' % tup)
     return decorator
-    
+
 def save_queued_POST(request):
     if request.user.is_authenticated and LRSP in request.session:
         queue = request.session[LRSP]

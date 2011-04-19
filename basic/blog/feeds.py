@@ -11,7 +11,7 @@ from basic.blog.models import Post, Category
 
 class BlogPostsFeed(Feed):
     feed_type = Atom1Feed
-    
+
     _site = Site.objects.get_current()
     title = '%s feed' % _site.name
     subtitle = '%s posts feed.' % _site.name

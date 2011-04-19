@@ -14,7 +14,7 @@ class UserExportForm(forms.Form):
     filter_inactive = forms.BooleanField(required=False, label="Filter users with no activity")
     include_guests = forms.BooleanField(required=False, label="Include contributors who have entered commitments")
     excel_friendly = forms.BooleanField(required=False)
-    
+
     def save_to_writer(self, writer):
         date_start = self.cleaned_data["date_filter_start"] if "date_filter_start" in self.cleaned_data else None
         date_end = self.cleaned_data["date_filter_end"] if "date_filter_end" in self.cleaned_data else None

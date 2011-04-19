@@ -13,7 +13,7 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ("id",)
     date_hierarchy = "date_joined"
     search_fields = ("email", "first_name", "last_name",)
-    
+
     def location(self, obj):
         return obj.get_profile().location
     location.short_description = "Location"
@@ -28,20 +28,20 @@ admin.site.register(Profile, ProfileAdmin)
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("user_name", "parent", "comment", "likes", "dislikes", "submit_date",)
-    
+
     def __init__(self, *args, **kwargs):
         super(CommentAdmin, self).__init__(*args, **kwargs)
         self.content_type = ContentType.objects.get_for_model(Comment)
-    
+
     def parent(self, obj):
         return str(obj.content_object)
     parent.short_description = "Parent"
-    
+
     def likes(self, obj):
         return Rating.objects.filter(content_type=self.content_type, object_pk=obj.id,
             score=1).count()
     likes.short_description = "Likes"
-    
+
     def dislikes(self, obj):
         return Rating.objects.filter(content_type=self.content_type, object_pk=obj.id,
             score=0).count()

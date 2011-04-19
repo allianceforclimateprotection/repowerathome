@@ -1,5 +1,6 @@
 import gzip
 import os
+import sys
 
 from django.core.management.color import color_style
 from django.core.management.sql import custom_sql_for_model
@@ -20,7 +21,7 @@ def create_default_locations(app, created_models, verbosity, **kwargs):
                 continue
             if confirm == 'yes':
                 gunzip_location()
-                
+
                 connection = connections[DEFAULT_DB_ALIAS]
                 cursor = connection.cursor()
 
@@ -33,23 +34,20 @@ def create_default_locations(app, created_models, verbosity, **kwargs):
                             cursor.execute(sql)
                     except Exception, e:
                         sys.stderr.write("Failed to install custom SQL for geo.Location model: %s\n" % e)
-                        if show_traceback:
-                            import traceback
-                            traceback.print_exc()
                         transaction.rollback_unless_managed(using=DEFAULT_DB_ALIAS)
                     else:
                         transaction.commit_unless_managed(using=DEFAULT_DB_ALIAS)
                 else:
                     if verbosity >= 2:
                         print "No custom SQL for geo.Location model"
-                
+
                 gzip_location()
             break
-            
+
 def gzip_location():
     path = os.path.join(os.path.dirname(__file__), "../sql/location.sql")
     os.system("gzip %s" % path)
-    
+
 def gunzip_location():
     path = os.path.join(os.path.dirname(__file__), "../sql/location.sql.gz")
     os.system("gunzip %s" % path)

@@ -14,7 +14,7 @@ def user_is_event_manager(view_func):
             return view_func(request, event_id, *args, **kwargs)
         return forbidden(request, "You must be an event manager")
     return wraps(view_func, assigned=available_attrs(view_func))(_wrapped_view)
-    
+
 def user_is_guest(view_func):
     def _wrapped_view(request, event_id, *args, **kwargs):
         event = get_object_or_404(Event, id=event_id)
@@ -22,7 +22,7 @@ def user_is_guest(view_func):
             return view_func(request, event_id, *args, **kwargs)
         return forbidden(request, "You are not a registered guest")
     return wraps(view_func, assigned=available_attrs(view_func))(_wrapped_view)
-    
+
 def user_is_guest_or_has_token(view_func):
     def _wrapped_view(request, event_id, *args, **kwargs):
         event = get_object_or_404(Event, id=event_id)

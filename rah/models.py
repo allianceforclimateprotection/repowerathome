@@ -89,21 +89,21 @@ class ProfileManager(models.Manager):
                 CASE
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
                         JOIN commitments_contributor cn ON g.contributor_id = cn.id
-                        JOIN commitments_commitment cm ON cn.id = cm.contributor_id 
+                        JOIN commitments_commitment cm ON cn.id = cm.contributor_id
                         WHERE u.id = cn.user_id AND e.event_type_id IN (1,4,5)
                         AND DATE(cm.updated) >= '%(date_start)s' AND DATE(cm.updated) <= '%(date_end)s') = 1 THEN "completed"
                 END AS "energy event guest",
                 CASE
-                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id 
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
                         JOIN commitments_contributor cn ON g.contributor_id = cn.id
-                        JOIN commitments_commitment cm ON cn.id = cm.contributor_id 
+                        JOIN commitments_commitment cm ON cn.id = cm.contributor_id
                         WHERE u.id = cn.user_id AND e.event_type_id IN (2)
                         AND DATE(cm.updated) >= '%(date_start)s' AND DATE(cm.updated) <= '%(date_end)s') = 1 THEN "completed"
                 END AS "kickoff event guest",
                 CASE
-                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id 
+                    WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
                         JOIN commitments_contributor cn ON g.contributor_id = cn.id
-                        JOIN commitments_commitment cm ON cn.id = cm.contributor_id 
+                        JOIN commitments_commitment cm ON cn.id = cm.contributor_id
                         WHERE u.id = cn.user_id AND e.event_type_id IN (3)
                         AND DATE(cm.updated) >= '%(date_start)s' AND DATE(cm.updated) <= '%(date_end)s') = 1 THEN "completed"
                 END AS "field training guest"

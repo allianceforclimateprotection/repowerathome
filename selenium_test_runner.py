@@ -11,11 +11,11 @@ class ServerThread(threading.Thread):
         threading.Thread.__init__(self)
         self.command = command
         self.process = None
-    
+
     def run(self):
         self.process = subprocess.Popen(self.command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.process.communicate()
-    
+
     def stop(self):
         if self.process:
             self.process.kill()

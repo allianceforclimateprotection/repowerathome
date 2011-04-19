@@ -18,7 +18,7 @@ def create_test_users_and_action_tasks(object):
 class ChartPoint(TestCase):
     def test_add_record(self):
         pass
-    
+
     def get_date_as_milli_from_epoch(self):
         pass
 
@@ -29,11 +29,11 @@ class ProfileTest(TestCase):
         self.profile       = Profile.objects.create(user=user)
         self.expected_url  = "http://www.gravatar.com/avatar/b642b4217b34b1e8d3bd915fc65c4452?r=g&d=identicon&s=52"
         self.expected_hash = "b642b4217b34b1e8d3bd915fc65c4452"
-        
+
     def test_profile_picture(self):
         url = self.profile.profile_picture()
         self.failUnlessEqual(url, self.expected_url)
-    
+
     def test_email_hash(self):
         email_hash = self.profile._email_hash()
         self.failUnlessEqual(email_hash, self.expected_hash)

@@ -11,7 +11,7 @@ Requirements:
     The server aliases are used to describe what server you would like to duplicate and what
     server you would like to replace.  For example you could have the following in your
     settings.py file:
-    
+
         MYSQLDUPLICATE_ALIASES = {
             "local": {
                 "DATABASE": "test",
@@ -27,15 +27,15 @@ Requirements:
                 "PASSWORD": ";qewrgcas;lkdf"
             }
         }
-    
-    Notice by default a database cannot be replaced, if the database needs to be replaceable, 
-    you must set the "CAN_REPLACE" property to True.  Also if a server name is not provided it 
+
+    Notice by default a database cannot be replaced, if the database needs to be replaceable,
+    you must set the "CAN_REPLACE" property to True.  Also if a server name is not provided it
     assumes that the databased is stored locally.
-    
+
     Also the "HOST" property is optional in cases where the database is located on the server you
-    are connecting to.  But if for instance you need to ssh into a server that is communicating 
+    are connecting to.  But if for instance you need to ssh into a server that is communicating
     with a mysql database on another server, you will need to provide "HOST".
-    
+
 Usage:
     To execute the this module you can run something like the following:
         python mysqlduplicate.py --settings local_settings production local
@@ -52,10 +52,10 @@ class ServerAlias(object):
     """
     ServerAlias is a wrapper class for variables describing the location of a MYSQL database.
     It needs to know of a server, database name, database user and database password.  It makes
-    the assumption that any server you need to connect to via SSH can be done so with your 
+    the assumption that any server you need to connect to via SSH can be done so with your
     existing SSH keys.
     """
-    def __init__(self, name, server=None, database=None, user=None, password=None, 
+    def __init__(self, name, server=None, database=None, user=None, password=None,
         can_replace=False, host="127.0.0.1"):
         self.name = name
         self.server = server
@@ -64,12 +64,12 @@ class ServerAlias(object):
         self.user = user
         self.password = password
         self.can_replace = can_replace
-        
+
     def _connect_to_server(self, command=""):
         if self.server:
             command += "ssh -C %s " % self.server
         return command
-        
+
     def dump_command(self, exclude=None):
         """
         Create a MYSQL command that can be used to dump the contents of this database.  Optionally
@@ -80,7 +80,7 @@ class ServerAlias(object):
         if exclude:
             command += " ".join(self.get_tables(exclude))
         return command
-        
+
     def connect_command(self):
         """
         Create a MYSQL command that can be used to connect to the database, this is useful for
@@ -90,7 +90,7 @@ class ServerAlias(object):
         command = self._connect_to_server()
         command += "mysql -h %s -u %s -p'%s' %s" % (self.host, self.user, self.password, self.database)
         return command
-        
+
     def backup_data(self):
         """
         Backup all of the data within this MYSQL database and export it to a named/timestamped
@@ -103,7 +103,7 @@ class ServerAlias(object):
             stdout=subprocess.PIPE).communicate()[0]
         backup_file.write(output)
         backup_file.close()
-        
+
     def get_tables(self, exclude=None):
         """
         Get a list of all the tables within this database.  Optionally provide a list of tables
@@ -114,7 +114,7 @@ class ServerAlias(object):
         output = subprocess.Popen(shlex.split(self.connect_command()),
             stdin=subprocess.PIPE, stdout=subprocess.PIPE).communicate("SHOW tables;")[0]
         return [t for t in output.split() if t not in exclude][1:]
-        
+
     def drop_tables(self, exclude=None):
         """
         Drop all of the tables within this database.  Optionally provide a list of tables
@@ -126,7 +126,7 @@ class ServerAlias(object):
         drop_statement += "SET FOREIGN_KEY_CHECKS=1;"
         subprocess.Popen(shlex.split(self.connect_command()),
             stdin=subprocess.PIPE, stdout=subprocess.PIPE).communicate(drop_statement)[0]
-        
+
 def duplicate_data(duplicate_alias, replace_alias, exclude=None):
     """
     Duplicate the data in the database and pipe this data into the replacememnt database. Optionally
@@ -137,7 +137,7 @@ def duplicate_data(duplicate_alias, replace_alias, exclude=None):
     rc = subprocess.Popen(shlex.split(replace_alias.connect_command()),
         stdin=dc.stdout, stdout=subprocess.PIPE)
     return rc.communicate()[0]
-    
+
 def parse_args(args):
     usage = "usage: %prog [options] <DUPLICATE_ALIAS> <REPLACE_ALIAS>"
     parser = OptionParser(usage=usage)
@@ -146,13 +146,13 @@ def parse_args(args):
     parser.add_option("-a", "--all-tables", dest="all_tables", action="store_true", default=False,
         help="copy all tables regardless ignoring the exclude setting")
     options, args = parser.parse_args()
-    
+
     if len(args) != 2:
         parser.print_help()
         sys.exit(2)
-    
+
     settings = __import__(options.settings)
-    
+
     server_aliases = []
     for alias in (args[0], args[1]):
         server_alias = settings.MYSQLDUPLICATE_ALIASES.get(alias, None)
@@ -163,12 +163,12 @@ def parse_args(args):
         lowercase_dict = dict([(k.lower(), v) for k,v in server_alias.items()])
         server_aliases.append(ServerAlias(alias, **lowercase_dict))
     duplicate, replace = server_aliases
-    
+
     if not replace.can_replace:
         print "Sorry, but %s cannot be replaced" % replace.name
         parser.print_help()
         sys.exit(2)
-        
+
     return settings, options, duplicate, replace
 
 def main():

@@ -291,7 +291,7 @@ class GroupTest(TestCase):
 
     def test_is_poster(self):
         # User who isn't a member of the group
-        self.failUnlessEqual(self.sabres.is_poster(self.user), False)    
+        self.failUnlessEqual(self.sabres.is_poster(self.user), False)
 
         # User who is a member of the group
         gu = GroupUsers.objects.create(group=self.sabres, user=self.user)
@@ -309,7 +309,7 @@ class GroupTest(TestCase):
 
     def test_moderate_disc(self):
         # User who isn't a member of the group
-        self.failUnlessEqual(self.sabres.moderate_disc(self.user), True)    
+        self.failUnlessEqual(self.sabres.moderate_disc(self.user), True)
 
         # User who is a member of the group
         gu = GroupUsers.objects.create(group=self.sabres, user=self.user)
@@ -527,7 +527,7 @@ class GroupCreateViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         image = files.File(open("static/images/theme/geo_group.jpg"))
         response = self.client.post(self.group_create_url, {"name": "Test Group", "slug": "test-group",
-            "description": "This is a test group", "image": image, "membership_type": "O", 
+            "description": "This is a test group", "image": image, "membership_type": "O",
             "headquarters": "02804"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "groups/group_detail.html")
         test_group = response.context["group"]
@@ -943,7 +943,7 @@ class GroupEditViewTest(TestCase):
         self.client.login(username="test@test.com", password="test")
         image = open("static/images/theme/geo_group.jpg")
         response = self.client.post(self.url, {"name": "Changed Group", "slug": "changed-group",
-            "description": "This is a test group", "image": image, "membership_type": "C", 
+            "description": "This is a test group", "image": image, "membership_type": "C",
             "change_group": "True", "headquarters": "02804"}, follow=True)
         test_group = response.context["group"]
         self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
@@ -972,7 +972,7 @@ class GroupEditViewTest(TestCase):
     def test_invalid_change_membership(self):
         GroupUsers.objects.create(user=self.user, group=self.group, is_manager=True)
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"role": "N", "memberships": "%s" % self.user.pk, 
+        response = self.client.post(self.url, {"role": "N", "memberships": "%s" % self.user.pk,
             "change_membership": "True"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
         errors = response.context["membership_form"].errors
@@ -983,7 +983,7 @@ class GroupEditViewTest(TestCase):
         new_user = User.objects.create(username="2", email="newuser@email.com")
         GroupUsers.objects.create(user=new_user, group=self.group, is_manager=False)
         self.client.login(username="test@test.com", password="test")
-        response = self.client.post(self.url, {"role": "M", "memberships": "%s" % new_user.pk, 
+        response = self.client.post(self.url, {"role": "M", "memberships": "%s" % new_user.pk,
             "change_membership": "True"}, follow=True)
         self.failUnlessEqual(response.template[0].name, "groups/group_edit.html")
         errors = response.context["membership_form"].errors

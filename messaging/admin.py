@@ -29,15 +29,15 @@ class MessageAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ("name", "subject", "body", "sends", "recipient_function",)}),
         ("Send Time", {"fields": ("message_timing", "x_value",)}),
-        ("Advanced Options", {"fields": ("send_as_batch", "batch_window", "time_snap", 
+        ("Advanced Options", {"fields": ("send_as_batch", "batch_window", "time_snap",
             "minimum_duration", "content_types", "generic_relation_content_type"),
             "classes": ("collapse",)}),
     )
     actions = [preview_messages]
-    
+
 class ABTestAdmin(admin.ModelAdmin):
     list_display = ("__unicode__", "control_sends", "control_opens", "test_sends", "test_opens")
-    
+
 class StreamAdmin(admin.ModelAdmin):
     actions = [preview_stream]
 

@@ -16,6 +16,6 @@ def create_default_messages(app, created_models, verbosity, **kwargs):
             if confirm == 'yes':
                 call_command("loaddata", "messaging/fixtures/commitment.json", verbosity=0, interactive=True)
             break
-        
-signals.post_syncdb.connect(create_default_messages, sender=messaging_app, 
+
+signals.post_syncdb.connect(create_default_messages, sender=messaging_app,
     dispatch_uid="rah.management.create_default_messages")

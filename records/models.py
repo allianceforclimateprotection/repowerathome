@@ -15,7 +15,7 @@ try:
     import cPickle as pickle
 except:
     import pickle
-    
+
 from signals import record_created
 
 class ChartPoint(object):
@@ -78,9 +78,9 @@ class RecordManager(models.Manager):
     def create_record(self, user, activity, content_object=None, data=None):
         """
         user: A user object (required)
-        activity: str or Activty object (required) 
+        activity: str or Activty object (required)
         content_object: A model object to associate with the record
-        data: A python dictionary with additional data to be stored with the record 
+        data: A python dictionary with additional data to be stored with the record
         """
         if not isinstance(activity, Activity):
             activity = Activity.objects.get(slug=activity)
@@ -93,7 +93,7 @@ class RecordManager(models.Manager):
             # see if one exists in timeframe
             batch_minutes = activity.batch_time_minutes
             cutoff_time = datetime.now()-timedelta(minutes=batch_minutes)
-            batchable_items = Record.objects.filter(user=user, activity=activity, 
+            batchable_items = Record.objects.filter(user=user, activity=activity,
                                                     created__gt=cutoff_time).order_by('-created').all()[0:1]
 
             if batchable_items:
@@ -118,7 +118,7 @@ class RecordManager(models.Manager):
         if record:
             record[0].void = True
             record[0].save()
-    
+
     def get_chart_data(self, user):
         records = self.user_records(user).select_related().order_by("created")
         chart_points = list(sorted(set([ChartPoint(record.created.date()) for record in records])))
@@ -135,7 +135,7 @@ class Activity(models.Model):
     use_content_object_for_points = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
+
     def __unicode__(self):
         return u'%s' % (self.slug)
 
@@ -149,10 +149,10 @@ class Record(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = RecordManager()
-    
+
     class Meta:
         ordering = ["-created"]
-            
+
     def render(self, request):
         # TODO: Add a param to allow rendering specifically for the chart tooltip?
         if self.is_batched:
@@ -162,7 +162,7 @@ class Record(models.Model):
         content_object = self.content_objects.all()
         if content_object: content_object = content_object[0].content_object
         return loader.render_to_string(template_file, {"record": self, "content_object":content_object}, context_instance=RequestContext(request))
-        
+
     def render_for_social(self, request):
         if self.is_batched:
             template_file = "records/social/%s_batch.txt" % self.activity.slug
@@ -170,7 +170,7 @@ class Record(models.Model):
             template_file = "records/social/%s.txt" % self.activity.slug
         content_object = self.content_objects.all()
         if content_object: content_object = content_object[0].content_object
-        message = loader.render_to_string(template_file, {"record": self, 
+        message = loader.render_to_string(template_file, {"record": self,
             "content_object":content_object}, context_instance=RequestContext(request))
         return re.sub("\s+", " ", message)
 
@@ -190,10 +190,10 @@ class RecordActivityObject(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey()
     record = models.ForeignKey(Record, related_name="content_objects")
-    
+
     class Meta:
         unique_together = ('content_type', 'object_id', 'record',)
-    
+
     def __unicode__(self):
         return "%s %s" % (self.content_type, self.object_id)
 
@@ -206,14 +206,14 @@ def update_profile_points(sender, instance, **kwargs):
     total_points = Record.objects.filter(user=instance.user).aggregate(models.Sum('points'))['points__sum']
     profile.total_points = total_points if total_points else 0
     profile.save()
-    
+
 models.signals.post_save.connect(update_profile_points, sender=Record)
 
 def publish_to_social_networks(sender, request, record, **kwargs):
     from django.contrib.sites.models import Site
     from django.utils.html import strip_tags
     from facebook_app.models import publish_message
-    
+
     profile = request.user.get_profile()
     if profile.facebook_share or profile.twitter_share:
         message = record.render_for_social(request)

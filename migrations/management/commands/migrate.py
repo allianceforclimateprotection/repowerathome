@@ -76,7 +76,7 @@ class Command(NoArgsCommand):
         cursor = connection.cursor()
 
         transaction.commit_unless_managed(using=db)
-        
+
         custom_sql = custom_migrate_sql(self.style, connection)
         if custom_sql:
             if verbosity >= 1:

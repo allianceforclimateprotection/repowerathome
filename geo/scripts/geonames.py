@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 This script converts a data dump available from geonames.org into a series of insert statements
-that can be used to populate theh location table. 
+that can be used to populate theh location table.
 
 The data file needed for this script can be found at:
 US.txt          (http://download.geonames.org/export/zip/US.zip)

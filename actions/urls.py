@@ -13,8 +13,8 @@ urlpatterns = patterns('actions.views',
 )
 
 urlpatterns += patterns('django.views.generic.simple',
-    url(r'^eliminate-standby-vampire-power/power_strip/help/$', 'direct_to_template', 
+    url(r'^eliminate-standby-vampire-power/power_strip/help/$', 'direct_to_template',
         {'template': 'actions/vampire_power/power_strip_help.html'}, name='power_strip_help'),
-    url(r'^eliminate-standby-vampire-power/smart_power_strip/help/$', 'direct_to_template', 
+    url(r'^eliminate-standby-vampire-power/smart_power_strip/help/$', 'direct_to_template',
         {'template': 'actions/vampire_power/smart_power_strip_help.html'}, name='smart_power_strip_help'),
 )

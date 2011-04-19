@@ -11,7 +11,7 @@ def admin_list_export(modeladmin, request, queryset):
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % slugify(model.__name__)
     writer = csv.writer(response)
     model_admin = admin.site._registry[model]
-    list_display = model_admin.list_display 
+    list_display = model_admin.list_display
     # Write headers to CSV file
     if list_display and len(list_display) > 0:
         headers = list_display[1:]

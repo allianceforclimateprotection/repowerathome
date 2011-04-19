@@ -29,7 +29,7 @@ def flag(request, next=None, using=None):
     except ValueError:
         raise Http404("Invalid parameters %s, %s" % (content_type_pk, object_pk))
     success = Flag.objects.flag_content(content_object=target, user=request.user)
-    
+
     if success:
         messages.success(request, "You have added a flag. A moderator will review your submission shortly.")
     else:
@@ -37,7 +37,7 @@ def flag(request, next=None, using=None):
     next = request.POST.get("next", next)
     if next:
         return redirect(next)
-        
+
     template_list = [
         "flagged/%s/%s/flagged.html" % (content_type.model_class()._meta.app_label, content_type.model_class()._meta.module_name),
         "flagged/%s/flagged.html" % content_type.model_class()._meta.app_label,
@@ -81,7 +81,7 @@ def unflag(request, next=None, using=None):
         "flagged/unflagged.html",
     ]
     if request.is_ajax():
-        template_list = [ 
+        template_list = [
             "flagged/%s/ajax/unflagged.html" % content_type.model_class()._meta.app_label,
             "flagged/ajax/unflagged.html",
         ] + template_list

@@ -22,7 +22,7 @@ def open(request, token):
         # TODO: an invalid token was passed back, we should track this in some log
         pass
     return IMAGE_RESPONSE
-    
+
 def click(request, token):
     message_link = get_object_or_404(MessageLink, token=token)
     message_link.clicks += 1

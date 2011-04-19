@@ -9,7 +9,7 @@ fi
 
 for file in `git diff --cached --name-only | grep .py$`
 do  
-    if ! pylint -E --rcfile="$THIS_DIR/pylint.ini" "$file"
+    if ! pylint -E --disable=E1102 --rcfile="$THIS_DIR/pylint.ini" "$file"
     then
         echo "$file did not pass the pylint tests"
         exit 1

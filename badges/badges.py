@@ -252,7 +252,7 @@ class DoggedBadge(Badge):
 
     def award(self, **state):
         user = state['user']
-        num_dogged_actions = UserActionProgress.objects.filter(user=user, is_completed=True, 
+        num_dogged_actions = UserActionProgress.objects.filter(user=user, is_completed=True,
                 date_committed__isnull=False).count()
         if num_dogged_actions >= 5:
             return BadgeAwarded(level=3)

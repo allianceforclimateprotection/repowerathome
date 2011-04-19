@@ -8,7 +8,7 @@ from records.models import Record
 
 class GroupActivityFeed(Feed):
     feed_type = Atom1Feed
-    
+
     def get_object(self, request, group_slug):
         self.request = request
         return get_object_or_404(Group, slug=group_slug)
@@ -18,7 +18,7 @@ class GroupActivityFeed(Feed):
 
     def link(self, group):
         return group.get_absolute_url()
-        
+
     def feed_guid(self, group):
         return self.link(group)
 
@@ -27,12 +27,12 @@ class GroupActivityFeed(Feed):
 
     def items(self, group):
         return group.group_records(30)
-        
+
     def item_description(self, record):
         return record.render(self.request)
-        
+
     def item_link(self, record):
         return record.get_absolute_url()
-        
-    def item_pudate(self, item):
+
+    def item_pudate(self, record):
         return record.created

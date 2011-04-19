@@ -25,16 +25,16 @@ class SelectTimeWidget(Widget):
     """
     A Widget that splits time input into <select> elements.
     Allows form to show as 24hr: <hour>:<minute>:<second>, (default)
-    or as 12hr: <hour>:<minute>:<second> <am|pm> 
-    
+    or as 12hr: <hour>:<minute>:<second> <am|pm>
+
     Also allows user-defined increments for minutes/seconds
     """
     hour_field = '%s_hour'
     minute_field = '%s_minute'
-    second_field = '%s_second' 
+    second_field = '%s_second'
     meridiem_field = '%s_meridiem'
     twelve_hr = False # Default to 24hr.
-    
+
     def __init__(self, attrs=None, hour_step=None, minute_step=None, second_step=None, twelve_hr=False, use_seconds=True):
         """
         hour_step, minute_step, second_step are optional step values for
@@ -42,21 +42,21 @@ class SelectTimeWidget(Widget):
         twelve_hr: If True, forces the output to be in 12-hr format (rather than 24-hr)
         """
         self.attrs = attrs or {}
-        
+
         if twelve_hr:
             self.twelve_hr = True # Do 12hr (rather than 24hr)
             self.meridiem_val = 'a.m.' # Default to Morning (A.M.)
-        
+
         self.use_seconds = use_seconds
-        
+
         if hour_step and twelve_hr:
-            self.hours = range(1,13,hour_step) 
+            self.hours = range(1,13,hour_step)
         elif hour_step: # 24hr, with stepping.
             self.hours = range(0,24,hour_step)
         elif twelve_hr: # 12hr, no stepping
             self.hours = range(1,13)
         else: # 24hr, no stepping
-            self.hours = range(0,24) 
+            self.hours = range(0,24)
 
         if minute_step:
             self.minutes = range(0,60,minute_step)
@@ -83,12 +83,12 @@ class SelectTimeWidget(Widget):
                 if match:
                     time_groups = match.groups();
                     hour_val = int(time_groups[HOURS]) % 24 # force to range(0-24)
-                    minute_val = int(time_groups[MINUTES]) 
+                    minute_val = int(time_groups[MINUTES])
                     if time_groups[SECONDS] is None:
                         second_val = 0
                     else:
                         second_val = int(time_groups[SECONDS])
-                    
+
                     # check to see if meridiem was passed in
                     if time_groups[MERIDIEM] is not None:
                         self.meridiem_val = time_groups[MERIDIEM]
@@ -100,7 +100,7 @@ class SelectTimeWidget(Widget):
                                 self.meridiem_val = 'a.m.'
                         else:
                             self.meridiem_val = None
-                    
+
 
         # If we're doing a 12-hr clock, there will be a meridiem value, so make sure the
         # hours get printed correctly
@@ -109,7 +109,7 @@ class SelectTimeWidget(Widget):
                 hour_val = hour_val % 12
         elif hour_val == 0:
             hour_val = 12
-            
+
         output = []
         if 'id' in self.attrs:
             id_ = self.attrs['id']
@@ -137,7 +137,7 @@ class SelectTimeWidget(Widget):
             local_attrs['id'] = self.second_field % id_
             select_html = Select(choices=second_choices).render(self.second_field % name, second_val, local_attrs)
             output.append(select_html)
-    
+
         if self.twelve_hr:
             #  If we were given an initial value, make sure the correct meridiem gets selected.
             if self.meridiem_val is not None and  self.meridiem_val.startswith('p'):
@@ -166,12 +166,12 @@ class SelectTimeWidget(Widget):
         #NOTE: if meridiem is None, assume 24-hr
         if meridiem is not None:
             if meridiem.lower().startswith('p') and int(h) != 12:
-                h = (int(h)+12)%24 
+                h = (int(h)+12)%24
             elif meridiem.lower().startswith('a') and int(h) == 12:
                 h = 0
-        
+
         try:
             return '%0.2d:%0.2d:%0.2d' % (int(h), int(m), int(s))
         except ValueError:
             return super(SelectTimeWidget, self).value_from_datadict(data, files, name)
-    
+

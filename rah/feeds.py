@@ -9,7 +9,7 @@ from records.models import Record
 
 class UserActivityFeed(Feed):
     feed_type = Atom1Feed
-    
+
     def get_object(self, request, user_id):
         self.request = request
         return get_object_or_404(User, id=user_id)
@@ -72,7 +72,7 @@ class CommentsFeed(Feed):
 
     def item_author_name(self, comment):
         return comment.user.get_full_name()
-    
+
     def item_author_link(self, comment):
         if comment.user.get_profile().is_profile_private:
             return ''

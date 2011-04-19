@@ -80,7 +80,7 @@ class Message(models.Model):
         be rendered within this template.  Upon saving this form, the system will run a series\
         of tests to ensure that this message is compatible with the types of content you have\
         selected.")
-    generic_relation_content_type = models.ForeignKey("contenttypes.contenttype", null=True, 
+    generic_relation_content_type = models.ForeignKey("contenttypes.contenttype", null=True,
         blank=True, help_text="Only set this field if the content types, that are to be rendered\
         with this message, itself have generic relations to another model.  For example if we\
         were creating a message for Community Invites, the invitation model has a generic relationship\
@@ -156,7 +156,7 @@ class Message(models.Model):
             elif self.message_timing == "after_end":
                 send_time = end + delta
         if send_time and self.time_snap:
-            return send_time.replace(hour=self.time_snap.hour, minute=self.time_snap.minute, 
+            return send_time.replace(hour=self.time_snap.hour, minute=self.time_snap.minute,
                 second=self.time_snap.second)
         return send_time
 
@@ -172,7 +172,7 @@ class Message(models.Model):
         a 2-tuple, where the first value is the email address and the second value is the object.
         If the object isn't defined this will be set to None.
 
-        Optionally we can also define the recipient_function to be a lambda with one argument, 
+        Optionally we can also define the recipient_function to be a lambda with one argument,
         the content object.  For example you could define a function like the following:
             labmda x: x.email
         """
@@ -190,10 +190,10 @@ class Message(models.Model):
         return [(r.email, r) if hasattr(r, "email") else (r, None) for r in recipients]
 
     def render_message(self, content_object, email, user_object, extra_params=None):
-        recipient_message = RecipientMessage.objects.create(message=self, recipient=email, 
+        recipient_message = RecipientMessage.objects.create(message=self, recipient=email,
             token=hash_val([email, datetime.datetime.now()]))
         domain = Site.objects.get_current().domain
-        params = {"content_object": content_object, "domain": domain, "recipient": 
+        params = {"content_object": content_object, "domain": domain, "recipient":
             user_object if user_object else email }
         if extra_params:
             params.update(extra_params)
@@ -203,7 +203,7 @@ class Message(models.Model):
         body = template.Template(self.body).render(context)
         replacer = LinkReplacer(recipient_message=recipient_message)
         body = re.sub(URL_REGEX, replacer.replace_link, body)
-        open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open", 
+        open_link = '<img src="http://%s%s"></img>' % (domain, reverse("message_open",
             args=[recipient_message.token]))
         # insert an open tracking image into the body
         body += open_link
@@ -219,7 +219,7 @@ class Message(models.Model):
             if not email or email in blacklisted_emails:
                 continue # email has been blacklisted, don't send to this recipient
             # for each recipient, create a Recipient message to keep track of opens
-            msg = self.render_message(content_object=content_object, email=email, 
+            msg = self.render_message(content_object=content_object, email=email,
                 user_object=user_object, extra_params=extra_params)
             msg.send()
             self.sends += 1 # after the message is sent, increment the sends count
@@ -306,7 +306,7 @@ class Queue(models.Model):
     content_type = models.ForeignKey(ContentType, verbose_name="content type", related_name="%(class)s")
     object_pk = models.PositiveIntegerField("object ID")
     content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
-    batch_content_type = models.ForeignKey(ContentType, verbose_name="batch content type", 
+    batch_content_type = models.ForeignKey(ContentType, verbose_name="batch content type",
         related_name="%(class)s_batch", null=True)
     batch_object_pk = models.PositiveIntegerField("batch object ID", null=True)
     batch_content_object = generic.GenericForeignKey(ct_field="batch_content_type", fk_field="batch_object_pk")
@@ -316,7 +316,7 @@ class Queue(models.Model):
     objects = QueueManager()
 
     def send(self):
-        return self.message.send(content_object=self.content_object, 
+        return self.message.send(content_object=self.content_object,
             blacklisted_emails=self.message.blacklisted_emails())
 
     def find_batchable_messages(self):
@@ -343,7 +343,7 @@ class Stream(models.Model):
     label = models.CharField(max_length=50)
     description = models.CharField(max_length=255, blank=True)
     can_unsubscribe = models.BooleanField(default=True)
-    blacklisted = models.ManyToManyField("auth.User", through="StreamBlacklist", 
+    blacklisted = models.ManyToManyField("auth.User", through="StreamBlacklist",
         related_name="blacklisted_set")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -357,7 +357,7 @@ class Stream(models.Model):
         return Queue.objects.filter(message__in=potential_messages, object_pk=content_object.pk,
             content_type=ContentType.objects.get_for_model(content_object))
 
-    def enqueue(self, content_object, start, end=None, batch_content_object=None, 
+    def enqueue(self, content_object, start, end=None, batch_content_object=None,
         extra_params=None, send_expired=True):
         """
         Note that any extra parameters passed through are only available to messages that are
@@ -372,13 +372,13 @@ class Stream(models.Model):
             if send_time:
                 if send_time <= datetime.datetime.now():
                     if send_expired:
-                        message.send(content_object, 
+                        message.send(content_object,
                             blacklisted_emails=message.blacklisted_emails(),
                             extra_params=extra_params)
                 else:
                     if batch_content_object:
                         enqueued.append(Queue.objects.create(message=message,
-                            content_object=content_object, send_time=send_time, 
+                            content_object=content_object, send_time=send_time,
                             batch_content_object=batch_content_object))
                     else:
                         enqueued.append(Queue.objects.create(message=message,
@@ -387,7 +387,7 @@ class Stream(models.Model):
 
     def upqueue(self, content_object, start, end=None, batch_content_object=None, extra_params=None):
         self.dequeue(content_object=content_object)
-        return self.enqueue(content_object=content_object, start=start, end=end, 
+        return self.enqueue(content_object=content_object, start=start, end=end,
             batch_content_object=batch_content_object, extra_params=extra_params, send_expired=False)
 
     def dequeue(self, content_object):

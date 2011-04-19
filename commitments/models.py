@@ -21,11 +21,11 @@ class ContributorManager(models.Manager):
             except Contributor.DoesNotExist:
                 return self.create(first_name=user.first_name, last_name=user.last_name,
                     email=user.email, location=user.get_profile().location, user=user), False
-    
+
     def contirbutor_engagment(self, date_start=None, date_end=None):
         from django.db import connection, transaction
         from actions.models import Action
-        
+
         if not date_start:
             date_start = datetime.date.min
         if not date_end:
@@ -44,13 +44,13 @@ class ContributorManager(models.Manager):
             LEFT JOIN commitments_commitment `%s_commit` ON `%s_commit`.action_id = %s AND `%s_commit`.contributor_id = cn.id
                 AND DATE(`%s_commit`.updated) >= '%s' AND DATE(`%s_commit`.updated) <= '%s'
             """ % (a.slug, a.slug, a.id, a.slug, a.slug, date_start, a.slug, date_end) for a in actions]
-            
+
         query_dict = {
             "action_cases": ", ".join(action_cases),
             "action_joins": " ".join(action_joins),
             "date_start": date_start,
             "date_end": date_end,
-        }    
+        }
         query = """
             SELECT DISTINCT -1, cn.first_name AS "first name", cn.last_name AS "last name", cn.email,
                 cn.phone, l.name AS city, l.st AS state, l.zipcode AS "zip code",
@@ -68,39 +68,39 @@ class ContributorManager(models.Manager):
                 CASE
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
                         WHERE cn.id = g.contributor_id and g.is_host = 1
-                        AND DATE(e.when) >= '%(date_start)s' AND DATE(e.when) <= '%(date_end)s') = 1 
+                        AND DATE(e.when) >= '%(date_start)s' AND DATE(e.when) <= '%(date_end)s') = 1
                             THEN "completed"
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
                         WHERE cn.id = g.contributor_id and g.is_host = 1
-                        AND DATE(e.created) >= '%(date_start)s' AND DATE(e.created) <= '%(date_end)s') = 1 
+                        AND DATE(e.created) >= '%(date_start)s' AND DATE(e.created) <= '%(date_end)s') = 1
                             THEN "yes"
                 END AS "event host",
                 CASE
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
                         WHERE cn.id = g.contributor_id and e.event_type_id IN (1,4,5)
-                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1 
+                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1
                             THEN "completed"
                 END AS "energy event guest",
                 CASE
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
                         WHERE cn.id = g.contributor_id and e.event_type_id IN (2)
-                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1 
+                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1
                             THEN "completed"
                 END AS "kickoff event guest",
                 CASE
                     WHEN EXISTS(SELECT * FROM events_guest g JOIN events_event e ON g.event_id = e.id
                         WHERE cn.id = g.contributor_id and e.event_type_id IN (3)
-                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1 
+                        AND DATE(g.updated) >= '%(date_start)s' AND DATE(g.updated) <= '%(date_end)s') = 1
                             THEN "completed"
                 END AS "field training guest"
             FROM commitments_contributor cn
             LEFT JOIN commitments_commitment cm ON cn.id = cm.contributor_id
             LEFT JOIN geo_location l ON cn.location_id = l.id
-            LEFT JOIN commitments_commitment `organize_commit` ON `organize_commit`.question = 'organize' 
+            LEFT JOIN commitments_commitment `organize_commit` ON `organize_commit`.question = 'organize'
                 AND `organize_commit`.contributor_id = cn.id
                 AND DATE(`organize_commit`.updated) >= '%(date_start)s'
                 AND DATE(`organize_commit`.updated) <= '%(date_end)s'
-            LEFT JOIN commitments_commitment `volunteer_commit` ON `volunteer_commit`.question = 'volunteer' 
+            LEFT JOIN commitments_commitment `volunteer_commit` ON `volunteer_commit`.question = 'volunteer'
                 AND `volunteer_commit`.contributor_id = cn.id
                 AND DATE(`volunteer_commit`.updated) >= '%(date_start)s'
                 AND DATE(`volunteer_commit`.updated) <= '%(date_end)s'
@@ -124,17 +124,17 @@ class Contributor(models.Model):
     user = models.ForeignKey("auth.User", blank=True, null=True, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    objects = ContributorManager() 
-    
+    objects = ContributorManager()
+
     class Meta:
         unique_together = (("user",),("email",),)
         ordering = ['first_name', 'last_name']
         permissions = (("edit_any_contributor", "Can edit any contributor"),)
-        
+
     def __init__(self, *args, **kwargs):
         super(Contributor, self).__init__(*args, **kwargs)
         self.contributor_profile = ContributorProfile(self)
-        
+
     def _set_name(self, value):
         first, space, last = value.partition(" ")
         self.first_name = first
@@ -144,7 +144,7 @@ class Contributor(models.Model):
             return self.user.get_full_name()
         return ("%s %s" % (self.first_name, self.last_name)).strip()
     name = property(_get_name, _set_name)
-    
+
     def _set_zipcode(self, value):
         try:
             self.location = Location.objects.get(zipcode=value)
@@ -153,18 +153,18 @@ class Contributor(models.Model):
     def _get_zipcode(self):
         return self.location.zipcode if self.location else ""
     zipcode = property(_get_zipcode, _set_zipcode)
-    
+
     def needs_more_info(self):
         return not (self.user or (self.first_name and self.email))
-        
+
     def has_made_commitments(self):
         return Commitment.objects.filter(contributor=self).exists()
-        
+
     def get_profile(self):
         # Note: this is somewhat of a hack to get Commitment objects to behave like UserActionProgress objects
         return self.contributor_profile
     get_profile = property(get_profile)
-    
+
     def get_full_name(self):
         if self.user:
             return self.user.get_full_name()
@@ -172,10 +172,10 @@ class Contributor(models.Model):
             return self.name
         else:
             return self.email
-            
+
     def __unicode__(self):
         return self.get_full_name()
-        
+
 class ContributorProfile(object):
     def __init__(self, contributor):
         self.contributor = contributor
@@ -215,11 +215,11 @@ class ContributorProfile(object):
     def _commitment_due_on(self, due_date):
         commitments = Commitment.objects.pending_commitments(contributor=self.contributor)
         return [c for c in commitments if c.date_committed == due_date]
-        
+
 class SurveyManager(models.Manager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
-    
+
 class Survey(models.Model):
     name = models.CharField(max_length=50, unique=True)
     label = models.CharField(max_length=50)
@@ -230,36 +230,36 @@ class Survey(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = SurveyManager()
-    
+
     class Meta:
         ordering = ['name', 'updated']
-        
+
     def __unicode__(self):
         return "%s Survey" % self.name
-        
+
     def natural_key(self):
         return [self.name]
-        
+
     def questions(self):
         import survey_forms
         form = getattr(survey_forms, self.form_name)(None, None)
         return form.fields.keys()
-        
+
 class ContributorSurvey(models.Model):
     contributor = models.ForeignKey(Contributor)
     survey = models.ForeignKey(Survey)
     entered_by = models.ForeignKey("auth.user", null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-        
+
     class Meta:
         unique_together = (("contributor", "survey", "entered_by",),)
-        
+
 class CommitmentManager(models.Manager):
     def pending_commitments(self, contributor=None):
         queryset = self.filter(answer="C", action__isnull=False)
         return queryset if not contributor else queryset.filter(contributor=contributor)
-        
+
 class Commitment(models.Model):
     contributor = models.ForeignKey(Contributor, db_index=True)
     question = models.CharField(max_length=50)
@@ -271,19 +271,19 @@ class Commitment(models.Model):
 
     class Meta:
         unique_together = (("contributor", "question",),)
-        
+
     def _get_user(self):
         # Note: this is somewhat of a hack to get Commitment objects to behave like UserActionProgress objects
         return self.contributor
     user = property(_get_user)
-    
+
     def _get_date_committed(self):
         # Note: this is somewhat of a hack to get Commitment objects to behave like UserActionProgress objects
         if self.action and self.answer == "C":
             return (self.updated + datetime.timedelta(weeks=3)).date()
         return None
     date_committed = property(_get_date_committed)
-    
+
 def link_contributor_to_user(sender, instance, **kwargs):
     if instance.email:
         try:
@@ -292,7 +292,7 @@ def link_contributor_to_user(sender, instance, **kwargs):
         except User.DoesNotExist:
             instance.user = None
 models.signals.pre_save.connect(link_contributor_to_user, sender=Contributor)
-    
+
 def link_new_user_to_contributor(sender, instance, created, **kwargs):
     """
     When a user registers, see if they exists as a contributor record and if so, link them up.

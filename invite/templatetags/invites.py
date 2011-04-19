@@ -9,10 +9,10 @@ register = template.Library()
 class InviteFormNode(template.Node):
     def __init__(self, object_expr=None):
         self.object_expr = object_expr
-        
+
     def get_target(self, context):
         return self.object_expr.resolve(context) if self.object_expr else None
-        
+
     def render(self, context):
         user = context["request"].user
         content_object = self.get_target(context)
@@ -22,12 +22,12 @@ class InviteFormNode(template.Node):
         value = render_to_string("invite/invite_form.html", {"form":form}, context)
         context.pop()
         return value
-    
+
 @register.tag
 def get_invite_form(parser, token):
     """
     Get a form to send an invite to that is optionally related to an object
-    
+
     Syntax::
         {% get_invite_form %}
                 or

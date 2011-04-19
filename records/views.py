@@ -21,7 +21,7 @@ def chart(request, user_id):
     tooltips = [tooltip_template.render(Context({"records": cp.records, "request": request})) for cp in chart_points]
     context = {'chart_data': json.dumps({"point_data": point_data, "tooltips": tooltips})}
     return render_to_response("records/_chart.js", context, RequestContext(request), mimetype="text/javascript")
-    
+
 @login_required
 def ask_to_share(request):
     form = AskToShareForm(request=request, data=(request.POST or None))
@@ -37,7 +37,7 @@ def ask_to_share(request):
         return redirect("profile_edit", user_id=request.user.id)
     template = "records/_ask_to_share.html" if request.is_ajax() else "records/ask_to_share.html"
     return render_to_response(template, locals(), RequestContext(request))
-    
+
 @login_required
 def dont_ask_again(request):
     profile = request.user.get_profile()

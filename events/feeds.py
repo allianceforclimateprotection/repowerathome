@@ -12,14 +12,14 @@ from events.models import Event
 
 class EventsFeed(Feed):
     feed_type = Atom1Feed
-    
+
     _site = Site.objects.get_current()
     title = '%s feed' % _site.name
     subtitle = '%s events feed.' % _site.name
 
     def link(self):
         # TODO: Double check that this is where we want to drop them 
-        return reverse('event-show') 
+        return reverse('event-show')
 
     def items(self):
         # TODO: Create a better sort/order

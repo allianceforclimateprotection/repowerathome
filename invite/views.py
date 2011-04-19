@@ -21,11 +21,11 @@ def invite(request, next=None):
         messages.success(request, 'Invitation sent to %s' % emails)
     else:
         messages.error(request, 'Form values where invalid, please try fill out the form again.')
-    
+
     if request.is_ajax() and request.method == 'POST':
         message_html = loader.render_to_string('_messages.html', {}, RequestContext(request))
         return HttpResponse(message_html)
-    
+
     next = request.POST.get("next", next)
     if next:
         return redirect(next)
@@ -39,16 +39,16 @@ def rsvp(request, token, next=None):
         if created:
             messages.success(request, "Invitation from %s accepted" % invite.user.get_full_name())
         else:
-            messages.info(request, "You already accepted this invitation from %s" % invite.user.get_full_name(), 
+            messages.info(request, "You already accepted this invitation from %s" % invite.user.get_full_name(),
                 extra_tags="sticky")
     else:
         messages.info(request, "You cannot accept an invitation from yourself", extra_tags="sticky")
-        
+
     next = request.GET.get("next", next)
     if next:
         return redirect(next)
     return redirect("index")
-    
+
 # def invite_welcome(request, token):
 #     if request.user.is_authenticated():
 #         return redirect("rsvp", token=token)

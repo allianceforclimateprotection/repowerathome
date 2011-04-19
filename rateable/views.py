@@ -32,9 +32,9 @@ def rate(request, next=None, using=None, success_message=None, error_message=Non
     if score == None:
         raise Http404("Missing score value")
     score = int(score)
-    rating, created = Rating.objects.create_or_update(content_type=content_type, object_pk=object_pk, 
+    rating, created = Rating.objects.create_or_update(content_type=content_type, object_pk=object_pk,
         user=request.user, score=score)
-    
+
     if success_message and rating:
         messages.success(request, success_message)
     elif error_message and not rating:
@@ -42,14 +42,14 @@ def rate(request, next=None, using=None, success_message=None, error_message=Non
     next = request.POST.get("next", next)
     if next:
         return redirect(next)
-        
+
     template_list = [
         "rateable/%s/%s/rated.html" % (content_type.model_class()._meta.app_label, content_type.model_class()._meta.module_name),
         "rateable/%s/rated.html" % content_type.model_class()._meta.app_label,
         "rateable/rated.html",
     ]
     if request.is_ajax():
-        template_list = [ 
+        template_list = [
         "rateable/%s/%s/ajax/rated.json" % (content_type.model_class()._meta.app_label, content_type.model_class()._meta.module_name),
         "rateable/%s/ajax/rated.json" % content_type.model_class()._meta.app_label,
         "rateable/ajax/rated.json",

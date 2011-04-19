@@ -8,7 +8,7 @@ class EmailBackend(ModelBackend):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
-            
+
     def authenticate(self, username=None, password=None, is_facebook_connect=False):
         #If username is an email address, then try to pull it up
         if email_re.search(username):

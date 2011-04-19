@@ -25,9 +25,9 @@ class GroupForm(forms.ModelForm):
     headquarters = GoogleLocationField(label="Headquarters")
     image = forms.FileField(label="Upload a community image", help_text="You can upload png, jpg or gif files upto 512K", required=False)
 
-    states = ["ak", "al", "ar", "az", "ca", "co", "ct", "dc", "de", "fl", "ga", "hi", "ia", "id", "il", 
-        "in", "ks", "ky", "la", "ma", "md", "me", "mi", "mn", "mo", "ms", "mt", "nc", "nd", "ne", 
-        "nh", "nj", "nm", "nv", "ny", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", 
+    states = ["ak", "al", "ar", "az", "ca", "co", "ct", "dc", "de", "fl", "ga", "hi", "ia", "id", "il",
+        "in", "ks", "ky", "la", "ma", "md", "me", "mi", "mn", "mo", "ms", "mt", "nc", "nd", "ne",
+        "nh", "nj", "nm", "nv", "ny", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut",
         "va", "vt", "wa", "wi", "wv", "wy"]
     group_name_blacklist = ["user", "users", "admin", "event", "team", "teams", "community", "communities", "groups", "groups"]
 

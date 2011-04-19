@@ -8,6 +8,6 @@ class Thumbnail(models.Model):
     raw = models.CharField(max_length=255, db_index=True)
     thumbnail = models.CharField(max_length=255)
     objects = ThumbnailManager()
-    
+
     class Meta:
         unique_together = ("raw", "thumbnail",)

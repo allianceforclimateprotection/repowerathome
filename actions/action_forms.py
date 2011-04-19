@@ -15,7 +15,7 @@ class VampireSlayerWidget(forms.RadioSelect):
             attrs.update(html_class)
         else:
             attrs = html_class
-        return super(VampireSlayerWidget, self).__init__(attrs=attrs, *args, **kwargs)
+        super(VampireSlayerWidget, self).__init__(attrs=attrs, *args, **kwargs)
 
 class VampireField(forms.ChoiceField):
     def __init__(self, choices=None, widget=None, *args, **kwargs):
@@ -23,7 +23,7 @@ class VampireField(forms.ChoiceField):
             choices=VAMPIRE_OPTIONS
         if not widget:
             widget = VampireSlayerWidget
-        return super(VampireField, self).__init__(choices=choices, widget=widget, *args, **kwargs)
+        super(VampireField, self).__init__(choices=choices, widget=widget, *args, **kwargs)
 
 class VampirePowerWorksheetForm2(forms.Form):
     computers = VampireField(required=False)
@@ -33,12 +33,12 @@ class VampirePowerWorksheetForm2(forms.Form):
     dvd_players = VampireField(required=False, label="DVD/VCR Players")
     cable_box = VampireField(required=False, label="Cable Box/DVR")
     game_systems = VampireField(required=False, label="Video game Systems")
-    
+
     def home_office_fields(self):
         return [self['computers'], self['monitor'], self['computer_speakers']]
-        
+
     def home_entertainment_fields(self):
         return [self['televisions'], self['dvd_players'], self['cable_box'], self['game_systems']]
-        
+
     def my_vampires(self):
         return [f for f in self if f.data == 'y']
