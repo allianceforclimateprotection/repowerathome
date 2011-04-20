@@ -15,7 +15,7 @@ def _send_codebase(path, data=None):
     username = local("git config codebase.username", capture=True).strip()
     api_key = local("git config codebase.apikey", capture=True).strip()
     url = "https://%s/%s%s" % (domain, project, path)
-    headers = {"Content-type": "application/xml", "Accept": "application/xml", 
+    headers = {"Content-type": "application/xml", "Accept": "application/xml",
         "Authorization": "Basic %s" % base64.b64encode("%s/%s:%s" % (account, username, api_key))}
     request = urllib2.Request(url, data, headers)
     return urllib2.urlopen(request).read()

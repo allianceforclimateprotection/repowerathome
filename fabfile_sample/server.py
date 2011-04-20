@@ -15,8 +15,8 @@ from deploy import install_requirements
 env.disable_known_hosts = True
 
 env.zone = "us-east-1b"
-env.key_name = "acp-ec2"
-env.owner_id = "469777026267"
+env.key_name = "example"
+env.owner_id = "example"
 
 env.db_name = "rah"
 env.db_user = "rah_db_user"

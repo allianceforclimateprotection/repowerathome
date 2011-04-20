@@ -7,16 +7,16 @@ env.user = "ubuntu"
 env.disable_known_hosts = True
 
 env.roledefs = {
-    "application": ["ec2-75-101-252-146.compute-1.amazonaws.com", "ec2-50-16-73-62.compute-1.amazonaws.com"],
-    "loadbalancer": ["repowerathome.com"],
-    "staging": ["staging.repowerathome.com"],
+    "application": ["example.compute-1.amazonaws.com", "example2.compute-1.amazonaws.com"],
+    "loadbalancer": ["example.com"],
+    "staging": ["staging.example.com"],
 }
 
 env.deploy_to = "/home/%(user)s/webapp" % env
 env.parent = "origin"
 env.revision = "HEAD"
 env.sha = query_revision(env.revision)
-env.repository = "git@codebasehq.com:rah/rah/rah.git"
+env.repository = "git@example.com:rah/rah/rah.git"
 
 def staging():
     env.roles = ["staging"]

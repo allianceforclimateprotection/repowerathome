@@ -4,15 +4,15 @@ upstream app_servers {
 
 # repowerathome.com
 server {
-    server_name repowerathome.com;
+    server_name example.com;
     include sites-available/rah_base_http;
 }
 server {
-    server_name repowerathome.com;
+    server_name example.com;
     include sites-available/rah_base_https;
 }
 server {
-    server_name www.repowerathome.com;
+    server_name www.example.com;
     rewrite ^(.*)$ http://repowerathome.com$1 permanent;
 }
 
@@ -26,9 +26,9 @@ server {
     include sites-available/rah_base_https;
 }
 
-# staging.repowerathome.com
+# staging.example.com
 server {
-    server_name staging.repowerathome.com;
+    server_name staging.example.com;
     include sites-available/rah_base_http;
     satisfy  any;
     allow 157.130.44.166;
@@ -37,7 +37,7 @@ server {
     
 }
 server {
-    server_name staging.repowerathome.com;
+    server_name staging.example.com;
     include sites-available/rah_base_https;
     satisfy  any;
     allow 157.130.44.166;
@@ -47,6 +47,6 @@ server {
 
 # Redirects for net and org
 server {
-    server_name .repowerathome.net .repowerathome.org;
-    rewrite ^(.*)$ http://repowerathome.com$1 permanent;
+    server_name .example.net .example.org;
+    rewrite ^(.*)$ http://example.com$1 permanent;
 }

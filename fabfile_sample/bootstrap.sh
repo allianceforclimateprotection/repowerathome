@@ -195,7 +195,7 @@ function install_send_messages_cron {
     cat > '/etc/cron.d/send_read_messages' << EOF
 SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
-MAILTO="cron@repowerathome.com"
+MAILTO="cron@example.com"
 HOME=/home/ubuntu
 
 */15 * * * * ubuntu /home/ubuntu/webapp/manage.py send_ready_messages >> /home/ubuntu/send_ready_messages.log 2>&1
@@ -228,15 +228,15 @@ Host codebasehq.com
   IdentityFile /home/ubuntu/.ssh/deploy-pk.pem
   StrictHostKeyChecking no
 EOF
-    s3cmd get --force s3://private.repowerathome.com/codebase/deploy.pem "$USER_HOME/.ssh/deploy.pem"
-    s3cmd get --force s3://private.repowerathome.com/codebase/deploy-pk.pem "$USER_HOME/.ssh/deploy-pk.pem"
+    s3cmd get --force s3://private.example.com/codebase/deploy.pem "$USER_HOME/.ssh/deploy.pem"
+    s3cmd get --force s3://private.example.com/codebase/deploy-pk.pem "$USER_HOME/.ssh/deploy-pk.pem"
     chmod 0400 "$USER_HOME/.ssh/deploy.pem" "$USER_HOME/.ssh/deploy-pk.pem"
     chown ubuntu:ubuntu "$USER_HOME/.ssh/deploy.pem" "$USER_HOME/.ssh/deploy-pk.pem"
 }
 
 function init_project {
     USER_HOME=`get_user_home ubuntu`
-    sudo -u "ubuntu" git clone git@codebasehq.com:rah/rah/rah.git "$USER_HOME/webapp/"
+    sudo -u "ubuntu" git clone git@example.com:rah/rah/rah.git "$USER_HOME/webapp/"
     sudo -u "ubuntu" mkdir "$USER_HOME/requirements/"
     
     # Install requirements
@@ -252,7 +252,7 @@ function s3_key_replacement {
     KEY_NAME="$1"
     FILE="$2"
     PATTERN="$3"
-    s3cmd get --force "s3://private.repowerathome.com/$KEY_NAME" temp_key
+    s3cmd get --force "s3://private.example.com/$KEY_NAME" temp_key
     sed -i 's/[\&]/\\&/g' temp_key # escape any special chars in the key
     sed -i "s/$PATTERN/`cat temp_key`/g" "$FILE"
     rm temp_key
@@ -264,7 +264,7 @@ function install_local_settings {
     sudo -u "ubuntu" cat > "$USER_HOME/webapp/local_settings.py" << EOF
 ::server_config_files/local_settings_template.py::
 EOF
-    sed -i "s/_s3_bucket_name/`echo $ENVIRONMENT`.static.repowerathome.com/g" "$USER_HOME/webapp/local_settings.py"
+    sed -i "s/_s3_bucket_name/`echo $ENVIRONMENT`.static.example.com/g" "$USER_HOME/webapp/local_settings.py"
     sed -i "s|_aws_secret_key|`echo $AWS_SECRET_KEY`|g" "$USER_HOME/webapp/local_settings.py"
     sed -i "s/_aws_access_key/`echo $AWS_ACCESS_KEY`/g" "$USER_HOME/webapp/local_settings.py"
     sed -i "s/_db_password/`echo $DB_PASSWORD`/g" "$USER_HOME/webapp/local_settings.py"
@@ -324,22 +324,22 @@ EOF
     update-rc.d nginx defaults
     
     sed -i "s/_public_dns_name/`echo $PUBLIC_DNS_NAME`/" /etc/nginx/sites-available/*
-    sed -i "s/_s3_domain/`echo $ENVIRONMENT`.static.repowerathome.com/g" /etc/nginx/sites-available/*
+    sed -i "s/_s3_domain/`echo $ENVIRONMENT`.static.example.com/g" /etc/nginx/sites-available/*
     ln -s /etc/nginx/sites-available/rah /etc/nginx/sites-enabled/rah
 }
 
 function configure_ssl {
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.key /etc/ssl/repowerathome.key
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.csr /etc/ssl/private/repowerathome.csr
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.key /etc/ssl/private/repowerathome.key
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome_with_pass.key /etc/ssl/private/repowerathome_with_pass.key
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome.crt /etc/ssl/certs/repowerathome.crt
-    s3cmd get --force s3://private.repowerathome.com/ssl/repowerathome_with_gd_bundle.crt /etc/ssl/certs/repowerathome_with_gd_bundle.crt
+    s3cmd get --force s3://private.example.com/ssl/example.key /etc/ssl/example.key
+    s3cmd get --force s3://private.example.com/ssl/example.csr /etc/ssl/private/example.csr
+    s3cmd get --force s3://private.example.com/ssl/example.key /etc/ssl/private/example.key
+    s3cmd get --force s3://private.example.com/ssl/example_with_pass.key /etc/ssl/private/example_with_pass.key
+    s3cmd get --force s3://private.example.com/ssl/example.crt /etc/ssl/certs/example.crt
+    s3cmd get --force s3://private.example.com/ssl/example_with_gd_bundle.crt /etc/ssl/certs/example_with_gd_bundle.crt
 }
 
 function configure_htpasswd {
     USER_HOME=`get_user_home ubuntu`
-    s3cmd get s3://private.repowerathome.com/htpasswd "$USER_HOME/htpasswd"
+    s3cmd get s3://private.example.com/htpasswd "$USER_HOME/htpasswd"
     chown ubuntu:ubuntu "$USER_HOME/htpasswd"
 }
 

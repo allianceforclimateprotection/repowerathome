@@ -13,26 +13,26 @@ server {
 
 server {
     listen 80;
-    server_name staging.repowerathome.com;
+    server_name staging.example.com;
     include sites-available/maintenance_base;
 }
 
 server {
     listen 443;
-    server_name staging.repowerathome.com;
+    server_name staging.example.com;
     include sites-available/maintenance_base;
     include sites-available/maintenance_ssl;
 }
 
 server {
     listen 80;
-    server_name repowerathome.com;
+    server_name example.com;
     include sites-available/maintenance_base;
 }
 
 server {
     listen 443;
-    server_name repowerathome.com;
+    server_name example.com;
     include sites-available/maintenance_base;
     include sites-available/maintenance_ssl;
 }
