@@ -12,3 +12,4 @@ lib/src/*
 *.swp
 static_build/*
 docs/_build/*
+fabfile/
